@@ -411,3 +411,41 @@ CharacterDetail.{sculpt,expressions,skin,groom,maps,mantle,
 | `solids` trong object plan | vật thể có va chạm |
 | `variants` theo trạng thái | prop đổi hình sau lựa chọn |
 | `route` / `work` / `rest` | NPC tự đi, tự làm việc, nghỉ |
+
+---
+
+## Phần đã triển khai (commit `3918f4b`)
+
+Bảng dưới đây ghi rõ cái gì đã dùng, cái gì đã bỏ, và vì sao. Mọi thứ đều được
+điều chỉnh cho cốt truyện Chứng Nhân, không bê nguyên si từ Hành Trình Lời Chúa.
+
+| # | Khoảng trống đã nêu | Đã làm | Bằng chứng |
+|---|---|---|---|
+| 1 | Echo vô hình (một hàng bình gốc ở `decorate()`) | **Cơ chế echo thật**: mỗi quyết định đã xong sinh ra một vật thể ở đúng vùng đã tạo ra nó, có tên, lời mô tả và phần ghi lại quyết định. Bảng `echoMarks` ở `witness-content.js`, điều kiện ở `witness-model.js`, dựng vật thể ở `witness-world.js`. `callbacks()` giờ suy ra từ `echoes()` nên **không đổi một chữ nào** của sổ quyết định | `test/scene-plan.cjs` (14 kiểm tra) |
+| 2 | Chưa dùng `status.arrow` / `status.sensed` / `status.guide` | **La bàn mục tiêu** (`witness-compass.js`): kim chỉ về việc đang cần làm; **Nhận ra** (phím `X` + nút cảm ứng) dùng `engine.sense()` và cờ `unread` của engine; nhãn "Đang đi tới…" dùng `status.guide` | `test/browser.mjs` (2 kiểm tra mới) + ảnh `test/artifacts/game-desktop.png` |
+| 3 | `engine.pose('listen')` là no-op | Đổi thành `'talk'` (đúng tập tư thế `adventure-character.js` chấp nhận) | `test/browser.mjs` |
+| 4 | `onStatus` ghi DOM mỗi khung hình | Chỉ ghi khi nội dung thật sự đổi (cache theo khoá) | `test/browser.mjs` |
+| 5 | Gợi ý lộ đáp án ngay | **Gợi ý 3 cấp**: nhẹ (chỉ nguyên tắc) → nửa (đầu và cuối) → đầy (cả thứ tự), cho cả câu đối chiếu lẫn thao tác trong chương | `test/browser.mjs` + `test/spine-browser.mjs` |
+| 6 | 0 kiểm thử tiếng Việt có dấu | `test/charset.cjs`: NFC, không mojibake, không dấu thanh tách lẻ, không ba chấm trong chuỗi hiển thị | `test/charset.cjs` (6 kiểm tra) |
+| 7 | Chưa có seam để kiểm thử scene plan | `test/scene-plan.cjs` nạp `witness-world.js` với kẹp tối giản, kiểm tra vị trí dấu vết, biến thể prop, quyền `main` | `test/scene-plan.cjs` |
+| 8 | Nút cảm ứng hiện cả trên desktop | Chỉ hiện khi thiết bị có con trỏ thô (`pointer: coarse`) | `test/browser.mjs` |
+
+### Cố ý không dùng
+
+- **`scroll` trong nhánh Veil**: đã kiểm lại danh mục prop thật của engine — `scroll`
+  **hợp lệ** (nằm trong `props` của chính layout engine). Không sửa.
+- **Thời lượng 216/720 phút, camera pitch, `story-ui.js`**: thuộc về kiến trúc và nội
+  dung riêng của Hành Trình Lời Chúa, ghép vào đây sẽ phá hồ sơ v3.0.
+- **Toàn bộ nội dung minh họa** (companion, branch, campaign): chỉ mượn **cơ chế**,
+  không mượn một câu chữ hay một nhân vật nào.
+
+### Ghi chú kỹ thuật đã kiểm chứng
+
+- Engine đặt camera sau người chơi tại `player + (sin yaw, cos yaw)`, nên **hướng
+  nhìn = `yaw + PI`**. La bàn của Hành Trình Lời Chúa dùng `yaw` trực tiếp → lệch
+  180°. Bản ở đây dùng đúng quy ước của engine.
+- `engine.sense()` chỉ nhận target có cờ `unread`; game phải tự đặt cờ này (game cha
+  làm vậy ở `water-case.js`). Dấu vết ở đây luôn `unread` nên "Nhận ra" dùng được.
+- `status.arrow` bằng 0 vừa khi "mục tiêu thẳng phía trước" vừa khi "không có mục
+  tiêu", nên bản này tự tính góc từ `position` + `yaw` thay vì dùng `arrow`.
+
