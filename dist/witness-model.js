@@ -19,7 +19,7 @@
   function relation(s,who,amount){s.relationships[who]=Math.max(-2,Math.min(2,(s.relationships[who]||0)+amount));}
   function condition(s,key){const q=quest(s);return key==='pressure'?!!s.flags.pressure:key==='needs'?!s.flags.needsHeard&&!s.flags.pressure:key==='anonymous-unprotected'?s.quests.Q02.route==='anonymous'&&!s.flags.yosefSafe:true;}
   function actions(s){
-    if(s.finished)return [];
+    if(s.finished&&!s.layer)return [];
     if(s.layer){const l=s.layer,src=l.kind==='legend'?D.legends[l.id]:D.veils[l.id];if(l.format==='accessible_summary')return [{id:'read-summary',target:'layer-summary',title:'Tiếp tục bản tóm tắt',text:src.ref,at:src.start||[-7,4],layer:true}];const step=src.steps[l.step];const main=step?{id:step[0],target:'layer-'+l.step,title:step[1],text:step[2],at:layerAt(l.step,s),layer:true,kind:step.kind||'observe',choices:step.choices,order:step.order,orderLabels:step.orderLabels,beat:step.beat,reference:step.reference}:{id:'return',target:'layer-return',title:'Khép chương và trở về',text:src.bridge||'Trở lại với người đang sống',at:src.returnAt||[13,-10],layer:true};return [main,...(src.discoveries||[]).filter(d=>!(l.discovered||[]).includes(d.id)).map(d=>({id:'discover:'+d.id,target:'discovery-'+d.id,title:d.title,text:d.text,at:d.at,layer:true,kind:'discovery'}))];}
     const ch=chapter(s),q=quest(s);
     if(q.route){const due=dueLegend(s);return [...(s.chapter===2&&condition(s,'anonymous-unprotected')?[ch.tasks[0]]:[]),due?{id:'legend-gate',target:'gate',legend:due,title:D.legends[due].name+' — '+D.legends[due].title,text:'Chương chính · Chơi hoặc xem tóm tắt đủ nội dung để tiếp tục.',needs:[]}:{id:'advance',target:'gate',title:s.chapter===11?'Nhìn lại bến sau cuộc nói':'Tiếp tục hành trình',text:ch.ending[q.route]||ch.quiet,needs:[]},...bondAction(s)];}
@@ -33,7 +33,7 @@
     return [...result,...bondAction(s)];
   }
   function bondAction(s){const pending=s.pendingBond;if(!pending)return [];const b=D.bonds.find(b=>b.id===pending.id);if(!b||s.bonds[b.id])return [];return [{id:'bond-work',target:'bond-work',title:'Cùng thực hiện: '+b.title,text:b.choices.find(c=>c[0]===pending.choice)?.[2]||b.text,puzzle:['natan','titus','damar'].includes(b.person)?'brace':b.person==='rina'?'supplies':b.person==='lea'?'copy':'claims',bond:b.id,success:b.callback,needs:[]}];}
-  function layerAt(i,s){const l=s?.layer,src=l&&(l.kind==='legend'?D.legends[l.id]:D.veils[l.id]),step=src?.steps[i];return step?.routeAt?.[l.route||'near']||step?.at||[[-7,4],[0,-3],[9,-8]][i]||src?.returnAt||[13,-10];}
+  function layerAt(i,s){const l=s?.layer,src=l&&(l.kind==='legend'?D.legends[l.id]:D.veils[l.id]),step=src?.steps[i];return step?.routeAt?.[l.route||'near']||(Array.isArray(step?.at)?step.at:null)||[[-7,4],[0,-3],[9,-8]][i]||src?.returnAt||[13,-10];}
   function legendComplete(s,id){const src=D.legends[id],r=s.legends[id];return !!(src?.required&&r?.status==='committed'&&r.revision===src.revision&&r.finalAcknowledged&&r.receipts?.length===src.beats.length&&r.receipts.every((b,i)=>b.beat===src.beats[i].id&&b.revision===src.revision&&['interactive','accessible_summary'].includes(b.format)));}
   function dueLegend(s){return D.spine.find(id=>{const l=D.legends[id];return !legendComplete(s,id)&&(s.chapter>l.after||s.chapter===l.after&&!!s.quests[D.chapters[l.after].id].route);})||null;}
   const allLegends=s=>D.spine.every(id=>legendComplete(s,id));
@@ -100,6 +100,7 @@
   function act(state,id,options={}){
     if(state.layer)error('Hãy hoàn tất hoặc rời trải nghiệm hiện tại trước.');
     const s=clone(state),ch=chapter(s),q=quest(s);const a=actions(s).find(x=>x.id===id);if(!a)error('Việc này chưa sẵn sàng hoặc đã hoàn tất.');
+    if(a.legend)error('Hãy mở chương chính bằng phần chơi hoặc bản tóm tắt.');
     if(a.bond){if(!checkPuzzle(s,a,options.puzzle))error('Hãy hoàn tất phần cùng làm trước khi ghi nhận.');return bond(s,a.bond,s.pendingBond.choice,{completedWork:true});}
     if(id==='advance'){
       if(dueLegend(s))error('Chương Kinh Thánh chính còn dở. Hãy tiếp tục hoặc xem tóm tắt đủ nội dung.');
@@ -124,10 +125,10 @@
     const s=clone(state),ch=chapter(s),source=kind==='legend'?D.legends:D.veils,src=source[id];
     if(s.layer||!src||!['legend','veil'].includes(kind))error('Trải nghiệm này chưa mở trong hành trình.');
     const required=kind==='legend'&&src.required,replay=required?legendComplete(s,id):!!s[kind==='legend'?'legends':'veils'][id]?.completed;
-    if(required){if(!replay&&dueLegend(s)!==id)error('Chương này mở sau phần chuẩn bị và chương nguồn trước nó.');}else if((kind==='legend'?ch.legend:ch.veil)!==id)error('Trải nghiệm này chưa mở trong hành trình.');
-    if(format&&!['interactive','accessible_summary'].includes(format))error('Định dạng không hợp lệ.');
+    if(required){const earlier=D.spine.slice(0,D.spine.indexOf(id));if(!replay&&(dueLegend(s)!==id||!s.quests[D.chapters[src.after].id].route||!earlier.every(k=>legendComplete(s,k))))error('Chương này mở sau phần chuẩn bị và chương nguồn trước nó.');}else if((kind==='legend'?ch.legend:ch.veil)!==id)error('Trải nghiệm này chưa mở trong hành trình.');
+    if(format&&(!['interactive','accessible_summary'].includes(format)||format==='accessible_summary'&&!required))error('Định dạng không hợp lệ.');
     const checkpoint=required&&!replay?s.legends[id]?.checkpoint:null;
-    s.layer=checkpoint?clone(checkpoint):{kind,id,step:0,reflection:null,format:'interactive',summaryIndex:0,receipts:[],discovered:[],route:'near'};s.layer.replay=replay;
+    s.layer=checkpoint?clone(checkpoint):{kind,id,step:0,reflection:null,format:'interactive',summaryIndex:0,receipts:[],discovered:[],route:'near'};s.layer.replay=replay;if(replay)delete s.positions[ch.id+'.'+id];
     if(format&&format!==s.layer.format)return switchLayer(s,format);
     rememberLayer(s);return s;
   }
@@ -187,7 +188,7 @@
     const validReceipts=(id,list)=>Array.isArray(list)&&list.length<=D.legends[id].beats.length&&list.every((r,i)=>r?.beat===D.legends[id].beats[i].id&&r.revision===D.legends[id].revision&&['interactive','accessible_summary'].includes(r.format));
     s.legends=Object.fromEntries(Object.entries(s.legends).filter(([id])=>Object.hasOwn(D.legends,id)));
     s.veils=Object.fromEntries(Object.entries(s.veils).filter(([id])=>Object.hasOwn(D.veils,id)));
-    for(const id of D.spine){const r=s.legends[id];if(legacy){s.legends[id]={status:'needs_revisit',completed:false,receipts:[],revision:D.coreRevision};continue;}if(r&&!validReceipts(id,r.receipts))error('Tiến độ bản văn trong bản lưu không hợp lệ.');if(r?.status==='committed'&&!legendComplete(s,id))error('Chương được đánh dấu xong nhưng chưa đủ nội dung.');if(legendComplete(s,id)){s.campaignProgress.requiredLegends[id]=D.coreRevision;s.unlockedBridgeContext.push(id);}}
+    for(const id of D.spine){const r=s.legends[id];if(legacy){s.legends[id]={status:'needs_revisit',completed:false,receipts:[],revision:D.coreRevision};continue;}if(r&&!validReceipts(id,r.receipts))error('Tiến độ bản văn trong bản lưu không hợp lệ.');const cp=r?.checkpoint;if(cp&&(cp.kind!=='legend'||cp.id!==id||!Number.isInteger(cp.step)||cp.step<0||cp.step>D.legends[id].steps.length||!validReceipts(id,cp.receipts)||!['interactive','accessible_summary'].includes(cp.format)||!Number.isInteger(cp.summaryIndex)||cp.summaryIndex<0||cp.summaryIndex>D.legends[id].beats.length))error('Điểm dừng chương trong bản lưu không hợp lệ.');if(r?.status==='committed'&&!legendComplete(s,id))error('Chương được đánh dấu xong nhưng chưa đủ nội dung.');if(legendComplete(s,id)){s.campaignProgress.requiredLegends[id]=D.coreRevision;s.unlockedBridgeContext.push(id);}}
     if(raw.layer&&['legend','veil'].includes(raw.layer.kind)){const src=raw.layer.kind==='legend'?D.legends:D.veils,l=raw.layer;if(!src[l.id]||!Number.isInteger(l.step)||l.step<0||l.step>src[l.id].steps.length)error('Cảnh trải nghiệm trong bản lưu không hợp lệ.');if(!(legacy&&src[l.id].required)){if(src[l.id].required&&(!validReceipts(l.id,l.receipts)||!['interactive','accessible_summary'].includes(l.format)||!Number.isInteger(l.summaryIndex)||l.summaryIndex<0||l.summaryIndex>src[l.id].beats.length))error('Trang nguồn trong bản lưu không hợp lệ.');s.layer=clone(l);}}
     for(const key of ['money','food','tools'])if(!Number.isFinite(s.resources[key])||s.resources[key]<0||s.resources[key]>100)error('Tài nguyên trong bản lưu không hợp lệ.');
     s.events=Array.isArray(raw.events)?raw.events.filter(e=>e&&typeof e.type==='string').slice(-4000):[];s.finished=!!raw.finished&&!!s.quests.Q12.route&&allLegends(s);s.pendingEscort=raw.pendingEscort&&raw.pendingEscort.chapter===chapter(s).id?clone(raw.pendingEscort):null;
