@@ -2905,12 +2905,12 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
   root.AdventureCharacter.create=function(T,role,options={}){
     if(!options.appearance){
       if(!current?.layer){const p=current?.profile||{};options={...options,overrides:{...root.CharacterProfiles.get('traveler'),id:'witness-avatar',name:p.name||'Người Chứng',gender:p.gender||'male',age:.29,kind:'fictional',tunic:{sand:'#b6a07b',green:'#59716b',blue:'#566d83'}[p.attire||'sand'],mantle:'#84735a',hairColor:'#332820',headcover:'bare',hem:p.gender==='female'?.075:.30,beard:p.gender==='female'?0:.025,ornament:'none',item:'bag',belt:'cord'}};}
-      else if(current.layer.kind==='legend'){const id={L01:'moses',L02:'david',L03:'isaiah',L04:'peter',L05:'traveler'}[current.layer.id];options={...options,overrides:{...root.CharacterProfiles.get(id),id:'legend-'+current.layer.id,ornament:'none',belt:'cord',headcover:current.layer.id==='L02'?'bare':root.CharacterProfiles.get(id).headcover}};}
+      else if(current.layer.kind==='legend'){const id={L01:'moses',L02:'david',L03:'isaiah',L04:'peter',L05:'traveler'}[current.layer.id];options={...options,overrides:{...root.CharacterProfiles.get(id),id:'legend-'+current.layer.id,ornament:'none',belt:'cord',item:current.layer.id==='L03'?null:root.CharacterProfiles.get(id).item,headcover:current.layer.id==='L02'?'bare':root.CharacterProfiles.get(id).headcover}};}
     }
     return createCharacter(T,role,options);
   };
   function descriptor(s){if(!s.layer)return {...D.regions[M.chapter(s).region],region:M.chapter(s).region};const src=s.layer.kind==='legend'?D.legends[s.layer.id]:D.veils[s.layer.id];return {base:src.base,biome:src.biome,name:src.title,region:s.layer.id};}
-  function layout(s){const d=descriptor(s),base=root.Adventure3D.layoutFor(d.base),nodes=s.layer?[M.layerAt(0),M.layerAt(1),M.layerAt(2)]:M.chapter(s).nodes.map(n=>n.at);return {...base,biome:d.biome,start:s.layer?.id==='L03'?[-9,7]:[-15,12],nodes,mission:nodes,routes:[[[ -15,12],[-9,5],[-2,0],[8,-3],[17,4],[23,9]],...nodes.map(at=>[[-2,0],at])],decoys:[],title:d.name};}
+  function layout(s){const d=descriptor(s),base=root.Adventure3D.layoutFor(d.base),nodes=s.layer?[M.layerAt(0),M.layerAt(1),M.layerAt(2)]:M.chapter(s).nodes.map(n=>n.at);return {...base,biome:d.biome,start:s.layer?.id==='L03'?[-4,2]:[-15,12],nodes,mission:nodes,routes:[[[ -15,12],[-9,5],[-2,0],[8,-3],[17,4],[23,9]],...nodes.map(at=>[[-2,0],at])],decoys:[],title:d.name};}
   function plan(s){
     const active=M.actions(s),q=M.quest(s),ch=M.chapter(s),objects=[],targets=[];
     if(s.layer){const src=s.layer.kind==='legend'?D.legends[s.layer.id]:D.veils[s.layer.id];for(let i=0;i<src.steps.length;i++){const at=M.layerAt(i);objects.push({id:'layer-'+i,at,kind:'prop',variant:s.layer.id==='L03'?['lamp','cloth','stakes'][i]:s.layer.id==='L04'?['net','boat','table'][i]:s.layer.kind==='veil'?['scroll','table','lamp'][i]:['waystone','cloth','gate'][i]});}objects.push({id:'layer-return',at:[13,-10],kind:'prop',variant:'gate'});for(const a of active)targets.push({id:a.target,at:a.at,actor:a.target,name:a.id==='return'?'Trở lại đời thường':a.title,range:3,main:true,elevation:1.5,symbol:'◇'});return {objects,targets};}
@@ -2961,7 +2961,6 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
     }else if(s.layer?.id==='L03'){
       scene.fog=new T.FogExp2('#51493d',.022);if(ground)ground.material=new T.MeshStandardMaterial({color:'#746852',roughness:1});
       mesh(new T.CylinderGeometry(18,18,11,64,1,true),'#827159',0,5.5,-3,{side:T.BackSide});
-      for(let level=0;level<9;level++){const rim=mesh(new T.TorusGeometry(17.96,.045,4,64),'#675c49',0,level*1.2,-3);rim.rotation.x=Math.PI/2;}
       const lip=mesh(new T.TorusGeometry(18,.45,6,64),'#ab9878',0,11,-3);lip.rotation.x=Math.PI/2;
       const rope=mesh(new T.CylinderGeometry(.055,.055,10,8),'#d0b183',0,5,-4);rope.rotation.z=.045;cloth(0,-5,1.3,'#a59375');const openingLight=new T.PointLight('#f2dcb4',55,32,1.3);openingLight.position.set(0,10,-3);decor.add(openingLight);lamp(-5,4);
     }else if(s.layer?.id==='L05'){
