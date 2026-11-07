@@ -1,0 +1,7 @@
+{
+  "name": "the-witness-legacy-of-the-covenant",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {"test": "node test/campaign.cjs", "build": "node tools/build.cjs", "dev": "node tools/serve.cjs"},
+  "engines": {"node": ">=20"}
+}
