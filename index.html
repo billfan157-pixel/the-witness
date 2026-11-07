@@ -18,6 +18,7 @@
   <script src="./witness-spine.js" defer></script>
   <script src="./witness-model.js" defer></script>
   <script src="./witness-world.js" defer></script>
+  <script src="./witness-compass.js" defer></script>
   <script src="./vendor/adventure-3d.js" defer></script>
   <script src="./witness-app.js" defer></script>
 </head>
@@ -34,8 +35,8 @@
     <div id="companion-hud" class="companion-hud" hidden></div>
     <aside id="combat-hud" class="combat-hud" hidden><strong>Sân luyện · không gây thương tích</strong><p id="combat-state"></p><span id="combat-tell"></span><div><button data-act="strike">Đánh <kbd>K</kbd></button><button data-act="guard" id="touch-guard">Giữ để đỡ <kbd>H</kbd></button><button data-act="dodge">Né <kbd>Space</kbd></button><button data-act="stop-trial">Dừng tập</button></div></aside>
     <div id="subtitle" class="ambient-line" role="status" aria-live="polite"></div>
-    <footer id="hud-bottom" class="hud-bottom" hidden><div class="control-legend"><span><kbd>W A S D</kbd> Di chuyển</span><span><kbd>Kéo</kbd> Nhìn quanh</span><span><kbd>J</kbd> Sổ</span></div><div class="interaction"><small id="distance-label"></small><button id="interact-button" class="primary" data-act="interact"><kbd>E</kbd><span id="interact-label">Khám phá bến cảng</span></button></div><span id="save-status" class="save-status">Đã lưu</span></footer>
-    <div id="touch-controls" class="touch-controls" hidden><div id="stick" class="stick"><i></i></div><div class="touch-camera"><button data-act="recenter" aria-label="Đặt lại góc nhìn">↻</button><button data-act="zoom-in" aria-label="Đến gần">+</button><button data-act="zoom-out" aria-label="Lùi xa">−</button></div></div>
+    <footer id="hud-bottom" class="hud-bottom" hidden><div class="control-legend"><span><kbd>W A S D</kbd> Di chuyển</span><span><kbd>Kéo</kbd> Nhìn quanh</span><span><kbd>J</kbd> Sổ</span></div><div class="interaction"><span id="compass" class="compass" hidden aria-hidden="true"><i></i></span><small id="distance-label"></small><button id="interact-button" class="primary" data-act="interact"><kbd>E</kbd><span id="interact-label">Khám phá bến cảng</span></button></div><span id="save-status" class="save-status">Đã lưu</span></footer>
+    <div id="touch-controls" class="touch-controls" hidden><div id="stick" class="stick"><i></i></div><div class="touch-camera"><button data-act="sense" aria-label="Nhận ra dấu vết gần đây">◎</button><button data-act="recenter" aria-label="Đặt lại góc nhìn">↻</button><button data-act="zoom-in" aria-label="Đến gần">+</button><button data-act="zoom-out" aria-label="Lùi xa">−</button></div></div>
     <div id="modal-host"></div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <div id="transition" class="transition" aria-hidden="true"><span></span><h2></h2><p></p></div>

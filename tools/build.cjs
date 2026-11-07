@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'dist');fs.mkdirSync(out,{recursive:true});
-const files=['index.html','witness.css','witness-content.js','witness-spine.js','witness-model.js','witness-world.js','witness-app.js'];
+const files=['index.html','witness.css','witness-content.js','witness-spine.js','witness-model.js','witness-world.js','witness-compass.js','witness-app.js'];
 for(const f of files)fs.copyFileSync(path.join(root,f),path.join(out,f));
 for(const dir of ['assets','vendor'])fs.cpSync(path.join(root,dir),path.join(out,dir),{recursive:true});
 const all=[...files,...['assets','vendor'].flatMap(dir=>fs.readdirSync(path.join(root,dir)).map(f=>dir+'/'+f))];

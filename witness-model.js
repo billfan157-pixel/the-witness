@@ -163,18 +163,23 @@
     const named=s.consent.witness1?.scope==='public_named'&&s.consent.witness1?.voluntary&&s.consent.witness1?.safe;
     return {claims:allowedClaims(s,audience).map(id=>({id,title:D.claims[id].title,text:D.claims[id].text})),witness:named?'Người nhận lệnh tự nguyện đứng tên':'Nội dung nhân chứng được giữ ẩn danh hoặc không đưa vào bản này.',father:s.flags.fatherConcealment?'Phần tự nhận của Haddai đã bị bỏ khỏi bản trao; cần đính chính trước nhóm.':'Haddai có trách nhiệm về việc ký trước. Không có kết luận ông lấy toàn bộ phần thiếu.'};
   }
-  function callbacks(s){const items=[];
-    if(s.quests.Q01.route)items.push(s.quests.Q01.route==='lodging'?'Góc bàn đã thuê còn là nơi sao giấy và gửi lời.':'Có người nhận ca từ bữa bạn đã góp dầu.');
-    if(s.quests.Q02.route)items.push(s.flags.yosefSafe?'Người chuyển bao đã có nơi nhận an toàn.':'Bản ẩn danh đã được giao; việc bảo vệ còn cần hoàn tất.');
-    if(s.flags.bridge)items.push('Lối qua rãnh đã sửa trở thành đường có thể dùng lại.');
-    if(s.quests.Q04.route)items.push(s.quests.Q04.route==='tools'?'Bộ neo giữ lại từ đêm kho đóng có mặt trên tuyến đồi.':'Phần thực phẩm dự phòng giảm công huy động bữa khi trở về.');
-    if(s.quests.Q05.route)items.push(s.quests.Q05.route==='open_audit'?'Cuộc kiểm lượng công khai mở lời giới thiệu qua sân chung.':'Nguồn đối chiếu riêng mở đường gặp kín.');
-    if(s.flags.amonInjured)items.push('Amon còn cần chăm sóc sau lần kéo cùng tải.');
-    if(s.flags.paperIntegrity==='partial')items.push('Phần bản phụ bị ướt vẫn được ghi là không đọc được.');
-    if(s.flags.fatherCorrected)items.push('Nhóm đã nhận bản đính chính; lần giấu trước vẫn được nhớ.');
-    for(const b of D.bonds)if(s.bonds[b.id])items.push(b.callback);
-    return items;
+  // Dấu vết để lại trong thế giới: mỗi quyết định đã xong sinh ra một vật thể ở đúng vùng
+  // của nó. Bảng mô tả nằm ở witness-content.js; điều kiện xuất hiện nằm ở đây.
+  function echoes(s){
+    const out=[],q=s.quests;
+    const add=id=>{const mark=D.echoMarks.find(m=>m.id===id);if(!mark)return;const bond=D.bonds.find(b=>'E-'+b.id===id);out.push(bond?{...mark,text:bond.callback}:{...mark});};
+    if(q.Q01.route)add(q.Q01.route==='lodging'?'E-lodging':'E-meal');
+    if(q.Q02.route)add(s.flags.yosefSafe?'E-shelter':'E-anonymous');
+    if(s.flags.bridge)add('E-bridge');
+    if(q.Q04.route)add(q.Q04.route==='tools'?'E-tools':'E-food');
+    if(q.Q05.route)add(q.Q05.route==='open_audit'?'E-audit':'E-private');
+    if(s.flags.amonInjured)add('E-amon');
+    if(s.flags.paperIntegrity==='partial')add('E-paper');
+    if(s.flags.fatherCorrected)add('E-father');
+    for(const b of D.bonds)if(s.bonds[b.id])add('E-'+b.id);
+    return out;
   }
+  function callbacks(s){return echoes(s).map(e=>e.text);}
   function restore(raw){
     if(typeof raw==='string'){if(raw.length>2000000)error('Bản lưu vượt dung lượng cho phép.');try{raw=JSON.parse(raw);}catch{error('Không đọc được bản lưu JSON.');}}
     const legacy=raw?.schema===1&&raw.campaignId==='the-witness-legacy'&&raw.contentVersion==='2.0';
@@ -197,6 +202,6 @@
   }
   function save(state,storage=root.localStorage){const s=clone(state);s.lastSaved=new Date().toISOString();try{const previous=storage.getItem(STORE);if(previous){try{restore(previous);storage.setItem(BACKUP,previous);}catch{}}storage.setItem(STORE,JSON.stringify(s));return {state:s,persisted:true};}catch{return {state:s,persisted:false};}}
   function load(storage=root.localStorage){try{const text=storage.getItem(STORE);if(!text){const old=storage.getItem(LEGACY);return old?{state:restore(old),recovered:false,migrated:true}:{state:null,recovered:false};}try{return {state:restore(text),recovered:false};}catch{const b=storage.getItem(BACKUP);if(b)return {state:restore(b),recovered:true};return {state:null,recovered:false,corrupt:true};}}catch{return {state:null,recovered:false,unavailable:true};}}
-  const Model={fresh,chapter,quest,actions,planAllowed,checkPuzzle,act,chooseAgain,escort,openLayer,layerStep,closeLayer,switchLayer,summaryStep,legendComplete,dueLegend,allLegends,startBond,bond,hasClaim,allowedClaims,release,callbacks,restore,save,load,layerAt,STORE,BACKUP,LEGACY};
+  const Model={fresh,chapter,quest,actions,planAllowed,checkPuzzle,act,chooseAgain,escort,openLayer,layerStep,closeLayer,switchLayer,summaryStep,legendComplete,dueLegend,allLegends,startBond,bond,hasClaim,allowedClaims,release,echoes,callbacks,restore,save,load,layerAt,STORE,BACKUP,LEGACY};
   root.WitnessModel=Model;if(typeof module!=='undefined')module.exports=Model;
 })(globalThis);

@@ -45,7 +45,7 @@ try{
       await waitFor('(()=>{const p=document.querySelector("#world").dataset;return Math.hypot(Number(p.playerX)-('+a.at[0]+'),Number(p.playerZ)-('+a.at[1]+'))<2.8})()',30000);
       await click('[data-world-target="'+a.target+'"]');await waitFor('!!document.querySelector("dialog")');
       if(a.kind==='route')await click('dialog [data-act=layer-choice][data-choice=overlook]');
-      else{if(a.kind==='order')await click('dialog [data-act=legend-order-hint]');if(a.kind==='source'&&id==='L02'&&a.beat==='L02.B02')await shot('david-source.png');await click('dialog [data-act=layer-step]');}
+      else{if(a.kind==='order'){await click('dialog [data-act=legend-order-hint]');assert((await evaluate('document.getElementById("legend-order-feedback").textContent')).includes('Gợi ý nhẹ'),'Level one hint must stay vague');await click('dialog [data-act=legend-order-hint]');await click('dialog [data-act=legend-order-hint]');}if(a.kind==='source'&&id==='L02'&&a.beat==='L02.B02')await shot('david-source.png');await click('dialog [data-act=layer-step]');}
       await waitFor('JSON.parse(localStorage.getItem(WitnessModel.STORE)).layer.step>'+current.layer.step);
     }
     await waitFor('!!document.querySelector("dialog [data-act=layer-return]")');await shot(id+'-ending.png');await click('dialog [data-act=layer-return]');await waitFor('JSON.parse(localStorage.getItem(WitnessModel.STORE)).layer===null');

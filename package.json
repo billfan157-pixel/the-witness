@@ -3,7 +3,8 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "test": "node test/campaign.cjs && node test/spine.cjs",
+    "test": "node test/campaign.cjs && node test/spine.cjs && node test/charset.cjs && node test/scene-plan.cjs",
+    "test:browser": "node test/browser.mjs && node test/scene.mjs && node test/spine-browser.mjs",
     "build": "node tools/build.cjs",
     "dev": "node tools/serve.cjs"
   },

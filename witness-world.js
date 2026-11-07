@@ -29,6 +29,13 @@
       if(id==='gate'&&!q.route)continue;
       targets.push({id,actor:id,at,name:choices[0]?.title||n.name,range:n.person?2.9:2.6,elevation:n.person?2.0:1.2,main:active[0]?.target===id,symbol:choices.length?'◆':bond?'◇':'·',choices:choices.map(a=>a.id),person:n.person});
     }
+    // Dấu vết để lại: chỉ hiện ở đúng vùng đã tạo ra nó, và có thể chạm vào đọc lại.
+    for(const echo of M.echoes(s)){
+      if(echo.region!==ch.region)continue;
+      const id='trace-'+echo.id;
+      objects.push({id,at:echo.at,kind:'prop',variant:echo.variant});
+      targets.push({id,actor:id,at:echo.at,name:echo.name,range:2.9,elevation:1.2,main:false,symbol:'·',unread:true,trace:echo.id});
+    }
     if(s.pendingBond){objects.push({id:'bond-work',at:[-16,-4],kind:'prop',variant:'table'});targets.push({id:'bond-work',actor:'bond-work',at:[-16,-4],name:'Phần việc riêng đã nhận',range:2.8,elevation:1.2,symbol:'◇'});}
     if(s.flags.trainingSpawned){objects.push({id:'training',at:[-21,16],kind:'npc',variant:'man',appearance:'guard',fixed:true});targets.push({id:'training',actor:'training',at:[-21,16],name:'Người hướng dẫn sân gậy',range:2.9,elevation:2,symbol:'◇'});}
     if(ch.legend||ch.veil){const n=ch.nodes.find(n=>n.id==='rest');if(n){const t=targets.find(t=>t.id==='rest');if(t){t.name='Một khoảng dừng để lắng nghe';t.symbol='◇';}}}
@@ -100,7 +107,6 @@
       pole(-3,-2,1.2);pole(12,-9,1.1);box('#927752',13,.2,-8,4,.2,3);lamp(-9,8);
     }else{house(-24,-11,7,5,3);cloth(8,-8,6,'#ab9370');for(let i=0;i<5;i++)jar(17+i*.7,-12,.8);lamp(-11,7);}
     if(!s.layer){
-      const echoes=M.callbacks(s);for(let i=0;i<Math.min(5,echoes.length);i++)jar(-17+i*.8,14,.55);
       if(s.flags.bridge)box('#9a805e',-2,.12,-1,4,.22,1.8);
       if(s.quests.Q04.route==='tools'){box('#8c7049',9,.4,10,2,.7,.7);pole(10,10,1.4);}
       if(M.chapter(s).id==='Q01'){pole(-11.4,5.5,2.5);pole(-8.6,5.5,2.5);box('#77583c',-10,2.5,5.5,3,.18,.22);const hanging=box('#9d7954',-10,1.2,5.7,2,.9,1.1);hanging.userData.reactive=true;const apply=next=>{hanging.rotation.z=next.quests.Q01.done.includes('brace')?0:.18;};reactive.push(apply);apply(s);}

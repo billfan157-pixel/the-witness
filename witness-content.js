@@ -102,7 +102,30 @@
     {id:'B05',person:'natan',from:3,title:'Bìa sổ và một chuyến thuyền',text:'Natan nhớ Haddai qua công việc đã làm cùng. Ký ức ấy không xác nhận tội hay vô tội.',choices:[['two_memories','Hỏi hai người ở hai thời điểm','Họ nhớ hai điều khác nhau về cùng một người.'],['repair_and_listen','Cùng sửa thuyền rồi nghe Natan kể','“Lần đầu ông ấy cũng nghĩ là xong.”']],callback:'Bạn có thể nhớ cha bằng một việc nhỏ ngoài vụ án.'},
     {id:'B06',person:'rina',from:0,title:'Ai nhận lượt sau',text:'Phần bữa thiếu cần một quy tắc những người chịu ảnh hưởng có thể hiểu. Không ai được xếp giá trị một mạng người.',choices:[['discuss_needs','Hỏi nhu cầu rồi cùng thống nhất','Có người tự nhận một ca để người khác nghỉ.'],['temporary_rule_and_review','Dùng quy tắc tạm và hẹn kiểm lại','Rina nói rõ phần chưa biết, thay vì giả vờ đã công bằng hoàn toàn.']],callback:'Bữa sau cuộc nói có người cùng nhận phần việc, không chỉ lời hứa.'}
   ];
-  const Data={people,regions,evidence,claims,chapters,legends,veils,bonds,version:'2.0',release:'0.1.0'};
+  // Dấu vết để lại trong thế giới đời thường: mỗi mục là một vật thể có hình dạng,
+  // một lời mô tả ngắn và một đoạn ghi lại quyết định của người chơi.
+  // Chỉ hiện ở đúng vùng đã tạo ra nó. Điều kiện xuất hiện nằm ở witness-model.js.
+  const echoMarks=[
+    {id:'E-lodging',region:'caesarea',at:[8,-8],variant:'writing-desk',name:'Góc bàn có đèn',line:'Một góc bàn được thuê riêng; giấy vẫn nằm trên mặt bàn sáng.',text:'Góc bàn đã thuê còn là nơi sao giấy và gửi lời.'},
+    {id:'E-meal',region:'caesarea',at:[12,7],variant:'lamp',name:'Đèn ở bữa chung',line:'Đèn treo ở sân bữa chung vẫn cháy tới khuya.',text:'Có người nhận ca từ bữa bạn đã góp dầu.'},
+    {id:'E-shelter',region:'caesarea',at:[14,10],variant:'bench',name:'Chỗ chờ sau kho',line:'Một ghế dài còn vương vải trùm đêm ở lối sau kho.',text:'Người chuyển bao đã có nơi nhận an toàn.'},
+    {id:'E-anonymous',region:'caesarea',at:[19,-4],variant:'basket',name:'Giỏ bản ẩn danh',line:'Trong giỏ có một bản ghi đã bỏ tên, niêm phong lại.',text:'Bản ẩn danh đã được giao; việc bảo vệ còn cần hoàn tất.'},
+    {id:'E-bridge',region:'road',at:[-6,-6],variant:'cairn',name:'Đống đá ở lối qua rãnh',line:'Một đống đá nhỏ đánh dấu chỗ ván đã được thay.',text:'Lối qua rãnh đã sửa trở thành đường có thể dùng lại.'},
+    {id:'E-tools',region:'caesarea',at:[12,-10],variant:'stakes',name:'Bộ neo chờ trên tuyến',line:'Cọc neo còn dựng ở mép xe, chờ một chuyến đi nữa.',text:'Bộ neo giữ lại từ đêm kho đóng có mặt trên tuyến đồi.'},
+    {id:'E-food',region:'caesarea',at:[15,-2],variant:'basket',name:'Giỏ thực phẩm dự phòng',line:'Giỏ lương khô vẫn để trên sàn, đã chia sẵn phần.',text:'Phần thực phẩm dự phòng giảm công huy động bữa khi trở về.'},
+    {id:'E-audit',region:'galilee',at:[17,7],variant:'table',name:'Bàn kiểm lượng ở sân',line:'Hai bản số đặt cạnh nhau trên bàn dài ngoài sân.',text:'Cuộc kiểm lượng công khai mở lời giới thiệu qua sân chung.'},
+    {id:'E-private',region:'galilee',at:[11,-8],variant:'writing-desk',name:'Bàn đối chiếu riêng',line:'Một bàn kê sau lều, chỉ đủ cho hai người ngồi.',text:'Nguồn đối chiếu riêng mở đường gặp kín.'},
+    {id:'E-amon',region:'ravine',at:[18,-12],variant:'hearth',name:'Lửa sưởi bên bờ',line:'Đống lửa nhỏ còn tro ở chỗ kéo người ra.',text:'Amon còn cần chăm sóc sau lần kéo cùng tải.'},
+    {id:'E-paper',region:'ravine',at:[12,-6],variant:'tablet',name:'Trang giấy không đọc được',line:'Một trang giấy ướt nằm sấp, chữ đã chảy.',text:'Phần bản phụ bị ướt vẫn được ghi là không đọc được.'},
+    {id:'E-father',region:'jerusalem',at:[12,-8],variant:'tablet',name:'Bản đính chính',line:'Một bản ghi mới đặt cạnh bản cũ, dấu đính chính còn rõ.',text:'Nhóm đã nhận bản đính chính; lần giấu trước vẫn được nhớ.'},
+    {id:'E-B01',region:'caesarea',at:[-12,2],variant:'cloth',name:'Món đồ đã đổi',line:'Mảnh vải cũ còn gấp ở sân bữa, không ai đòi lại.'},
+    {id:'E-B02',region:'galilee',at:[-13,2],variant:'waystone',name:'Lối ra đã mở',line:'Một cọc đá mới đánh dấu lối ra, không còn cần người khác dắt.'},
+    {id:'E-B03',region:'galilee',at:[9,8],variant:'writing-desk',name:'Dòng trống có lý do',line:'Trên bàn có một dòng bị bỏ, bên cạnh là lý do được ghi lại.'},
+    {id:'E-B04',region:'caesarea',at:[10,-2],variant:'stakes',name:'Cái chốt của người khác',line:'Một chốt mới đóng trên sàn xưởng, ai cũng có thể dùng.'},
+    {id:'E-B05',region:'caesarea',at:[-9,-4],variant:'net',name:'Lưới còn ướt',line:'Một tấm lưới phơi cạnh xưởng, vẫn còn mùi biển.'},
+    {id:'E-B06',region:'caesarea',at:[4,7],variant:'bread',name:'Bữa chia phần',line:'Bánh đã được chia sẵn, mỗi phần có tên một người nhận.'}
+  ];
+  const Data={people,regions,evidence,claims,chapters,legends,veils,bonds,echoMarks,version:'2.0',release:'0.1.0'};
   root.WitnessContent=Data;
   if(typeof module!=='undefined') module.exports=Data;
 })(globalThis);
