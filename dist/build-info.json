@@ -1,9 +1,17 @@
 {
-  "release": "0.1.0",
-  "design": "2.0",
-  "revision": "89b4c9ac63c0",
-  "mainQuests": 12,
+  "release": "0.2.0",
+  "design": "3.0",
+  "revision": "da8106357c65",
+  "bridgeQuests": 12,
+  "requiredLegends": [
+    "L01",
+    "L02",
+    "L04"
+  ],
   "legends": 5,
+  "coreBeats": 16,
   "veils": 4,
-  "relationshipQuests": 6
+  "relationshipQuests": 6,
+  "productionDurationTargetMet": false,
+  "expertReview": "unassigned"
 }

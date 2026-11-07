@@ -16,10 +16,10 @@
     return createCharacter(T,role,options);
   };
   function descriptor(s){if(!s.layer)return {...D.regions[M.chapter(s).region],region:M.chapter(s).region};const src=s.layer.kind==='legend'?D.legends[s.layer.id]:D.veils[s.layer.id];return {base:src.base,biome:src.biome,name:src.title,region:s.layer.id};}
-  function layout(s){const d=descriptor(s),base=root.Adventure3D.layoutFor(d.base),nodes=s.layer?[M.layerAt(0),M.layerAt(1),M.layerAt(2)]:M.chapter(s).nodes.map(n=>n.at);return {...base,biome:d.biome,start:s.layer?.id==='L03'?[-4,2]:[-15,12],nodes,mission:nodes,routes:[[[ -15,12],[-9,5],[-2,0],[8,-3],[17,4],[23,9]],...nodes.map(at=>[[-2,0],at])],decoys:[],title:d.name};}
+  function layout(s){const d=descriptor(s),base=root.Adventure3D.layoutFor(d.base),src=s.layer&&(s.layer.kind==='legend'?D.legends[s.layer.id]:D.veils[s.layer.id]),nodes=s.layer?[...src.steps.map((_,i)=>M.layerAt(i,s)),...(src.discoveries||[]).map(d=>d.at),src.returnAt||[13,-10]]:M.chapter(s).nodes.map(n=>n.at),start=src?.start||(s.layer?.id==='L03'?[-4,2]:[-15,12]);return {...base,clearLegacyProps:!!src?.required,flatGround:!!src?.required,biome:d.biome,start,nodes,mission:nodes,routes:[[start,...nodes],...nodes.map(at=>[[-2,0],at]),...(src?.steps||[]).filter(a=>a.routeAt).map(a=>Object.values(a.routeAt))],decoys:[],title:d.name};}
   function plan(s){
     const active=M.actions(s),q=M.quest(s),ch=M.chapter(s),objects=[],targets=[];
-    if(s.layer){const src=s.layer.kind==='legend'?D.legends[s.layer.id]:D.veils[s.layer.id];for(let i=0;i<src.steps.length;i++){const at=M.layerAt(i);objects.push({id:'layer-'+i,at,kind:'prop',variant:s.layer.id==='L03'?['lamp','cloth','stakes'][i]:s.layer.id==='L04'?['net','boat','table'][i]:s.layer.kind==='veil'?['scroll','table','lamp'][i]:['waystone','cloth','gate'][i]});}objects.push({id:'layer-return',at:[13,-10],kind:'prop',variant:'gate'});for(const a of active)targets.push({id:a.target,at:a.at,actor:a.target,name:a.id==='return'?'Trở lại đời thường':a.title,range:3,main:true,elevation:1.5,symbol:'◇'});return {objects,targets};}
+    if(s.layer){const src=s.layer.kind==='legend'?D.legends[s.layer.id]:D.veils[s.layer.id];for(let i=0;i<src.steps.length;i++){const at=M.layerAt(i,s);objects.push({id:'layer-'+i,at,kind:'prop',variant:src.required?(src.steps[i].kind==='source'?'waystone':src.steps[i].kind==='order'?'supplies':'stakes'):s.layer.id==='L03'?['lamp','cloth','stakes'][i]:s.layer.kind==='veil'?['scroll','table','lamp'][i]:'waystone'});}for(const d of src.discoveries||[])objects.push({id:'discovery-'+d.id,at:d.at,kind:'prop',variant:d.variant});objects.push({id:'layer-return',at:src.returnAt||[13,-10],kind:'prop',variant:'gate'});for(const a of active)targets.push({id:a.target,at:a.at,actor:a.target,name:a.title,range:3,main:a.kind!=='discovery',elevation:1.5,symbol:a.kind==='discovery'?'○':'◇'});return {objects,targets};}
     for(const n of ch.nodes){
       const id=n.id;let at=n.at;
       const escorted=Object.values(ch.execution).flat().find(a=>a.escort&&a.target===n.id);if(escorted&&q.done.includes(escorted.id))at=ch.nodes.find(n=>n.id===escorted.destination)?.at||at;
@@ -72,9 +72,17 @@
     }else if(s.layer?.id==='L05'){
       for(const x of [-15,15])box('#807660',x,3,-3,1.2,7,25);box('#756957',0,3,-16,30,7,1.2);for(let x=-12;x<14;x+=1.1)box('#665a49',x,2.5,-11,.12,5,.12);lamp(-8,5);lamp(9,-9);
     }else if(s.layer?.id==='L02'){
-      scene.fog=new T.FogExp2('#5f665e',.027);for(let i=0;i<9;i++){const o=mesh(new T.DodecahedronGeometry(3.5,0),'#8f8874',-18+i*4.6,2,-15);o.scale.y=1.5;}lamp(-9,5);
+      scene.fog=new T.FogExp2('#5f665e',.017);for(let i=0;i<11;i++){const o=mesh(new T.DodecahedronGeometry(3.5,0),'#8f8874',-24+i*4.6,2,-17);o.scale.y=1.8;}
+      for(const x of [-25,10])box('#7b796b',x,3,-5,3,7,24);box('#7c786b',-7,7,-8,31,1.4,20);box('#a2987b',-21,.15,1,3,.2,18);lamp(-12,5);lamp(0,-9);
+      cloth(2,-13,2,'#9d8764');box('#c4b38e',13,.025,12,14,.05,10);
+    }else if(s.layer?.id==='L04'){
+      sea(-22);boat(-13,-13,1.15,false);box('#977c55',-13,.3,-10,7,.3,14);cloth(-14,-10,3,'#a99d7e');
+      for(let i=0;i<7;i++)box('#a8a58c',-1+i*3,.03,-1,2.4,.06,1.2);
+      const fire=mesh(new T.SphereGeometry(.35,10,6),'#9a5d35',5,.15,2,{emissive:'#c5783d',emissiveIntensity:.6});for(let i=0;i<5;i++)jar(4+i*.5,4,.45);box('#9d8c67',7,.45,2,2.5,.16,1.5);lamp(10,9);
     }else if(s.layer?.id==='L01'){
-      for(const x of [-24,24]){const o=box('#537f88',x,4,-10,8,9,55);o.material=mat('#537f88',{transparent:true,opacity:.7,roughness:.25});}for(let i=0;i<8;i++)box('#bda97c',-15+i*4,.03,-3,1,.05,12);lamp(-10,6);
+      cloth(-23,10,5,'#b8a278');cloth(-13,17,5,'#a89472');cloth(-2,10,4,'#beae8a');for(let i=0;i<5;i++)jar(-25+i*.8,13,.8);
+      for(const x of [-29,29]){const o=box('#537f88',x,4,-19,7,9,35);o.material=mat('#537f88',{transparent:true,opacity:.66,roughness:.25});o.visible=s.layer.step>=7;o.userData.reactive=true;reactive.push(next=>{o.visible=next.layer?.id==='L01'&&next.layer.step>=7;});}
+      for(let i=0;i<8;i++)box('#bda97c',-5+i*4,.03,-12,1,.05,12);lamp(-10,6);
     }else if(desc.region==='caesarea'){
       sea(-24);house(-23,-13,9,7,5.2);house(-10,-21,8,6,4.5);house(4,-22,10,5,5.2);house(27,-10,6,10,5.5);cloth(6,10,6,'#b69b72');
       for(let i=0;i<6;i++){box('#927554',12+i*2,.25,-24,1.9,.35,8);pole(12+i*2,-21,1.4);}boat(18,-31,1.1);boat(-1,-32,.7,false);

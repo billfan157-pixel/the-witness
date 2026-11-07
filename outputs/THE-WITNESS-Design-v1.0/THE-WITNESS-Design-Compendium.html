@@ -1,0 +1,699 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>THE WITNESS — Design Compendium v1.0</title><style>
+:root{--ink:#1e292b;--paper:#f6f3ed;--muted:#596365;--accent:#785328;--line:#d8d1c6}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:32px}
+body{margin:0;color:var(--ink);background:var(--paper);font:17px/1.78 'Segoe UI',Arial,sans-serif}
+aside{position:fixed;inset:0 auto 0 0;width:305px;border-right:1px solid var(--line);padding:30px 25px;overflow:auto;background:#eee9df}
+.brand{font:600 27px/1.2 Georgia,serif;letter-spacing:2px}.subtitle{color:var(--muted);font-size:13px;margin:8px 0 22px}
+nav a{display:block;text-decoration:none;color:var(--ink);font-size:13px;line-height:1.5;padding:9px 0;border-bottom:1px solid var(--line)}
+nav a:hover,nav a.active{color:var(--accent);font-weight:600}
+main{margin-left:305px;max-width:1380px;padding:55px 60px 100px}
+.cover{padding:25px 0 60px;border-bottom:2px solid var(--ink);margin-bottom:65px}
+.cover h1{font:normal clamp(34px,5vw,68px)/1.1 Georgia,serif;letter-spacing:3px;margin:15px 0}.cover h2{font:normal 25px/1.4 Georgia,serif;color:var(--accent)}
+.cover p{max-width:740px}.eyebrow{font-size:11px;letter-spacing:2px;color:var(--muted);font-weight:600}
+article{padding-bottom:65px;margin-bottom:65px;border-bottom:1px solid var(--line);scroll-margin-top:32px}
+article h1{font:normal 34px/1.3 Georgia,serif;margin:12px 0 30px}
+article h2{font-size:23px;line-height:1.5;margin-top:40px}article h3{font-size:19px;margin-top:32px}
+p{margin:16px 0}li{margin:8px 0}a{color:var(--accent);text-underline-offset:3px;overflow-wrap:anywhere}
+code{font-size:.86em;background:#eae4d9;padding:2px 5px;overflow-wrap:anywhere}pre{overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.6;margin:24px 0;table-layout:fixed}
+th,td{text-align:left;vertical-align:top;padding:12px 9px;border:1px solid var(--line);overflow-wrap:anywhere}th{background:#eae4d9}
+input{width:100%;border:1px solid #ada79d;background:#fffdf8;padding:11px;font:14px 'Segoe UI',sans-serif;border-radius:0}
+button{border:1px solid #8b8174;background:transparent;padding:9px 13px;color:var(--ink);cursor:pointer;font:14px 'Segoe UI',sans-serif;margin-top:12px}
+#result{font-size:12px;color:var(--muted);min-height:22px;margin-top:5px}.no-print{font-size:13px}
+[hidden]{display:none!important}footer{font-size:13px;color:var(--muted)}
+@media(max-width:1000px){aside{position:relative;width:100%;max-height:none;padding:24px}nav{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}main{margin:0;padding:30px 24px}article h1{font-size:28px}table{font-size:12px}}
+@media(max-width:550px){nav{display:block}table{display:block;overflow:auto;table-layout:auto}th,td{min-width:130px}main{padding:24px 18px}}
+@media print{@page{size:A4;margin:17mm 15mm}body{background:white;font-size:10pt;line-height:1.55}aside,.no-print,button{display:none}main{margin:0;padding:0;max-width:none}.cover{break-after:page;margin:0;padding-top:35mm;border:0}.cover h1{font-size:40pt}article{break-before:page;border:0;margin:0;padding:0}article h1{font-size:25pt}article h2{font-size:16pt;break-after:avoid}article h3{font-size:13pt;break-after:avoid}p,li{orphans:3;widows:3}table{font-size:8pt;table-layout:fixed}tr{break-inside:avoid}a{color:inherit}article[hidden]{display:block!important}}
+</style></head><body>
+<aside><div class="brand">THE WITNESS</div><div class="subtitle">Legacy of the Covenant<br>HỒ SƠ TIỀN SẢN XUẤT / v1.0</div><label for="search" class="no-print">Tìm trong bộ tài liệu (có thể gõ không dấu)</label><input id="search" type="search" placeholder="Ví dụ: đồng thuận, Giêrêmia"><div id="result" role="status" aria-live="polite"></div><nav><a href="#overview">THE WITNESS — Legacy of the Covenant</a><a href="#chapter-01">01 • Tổng quan sáng tạo và nghiên cứu</a><a href="#chapter-02">02 • Game Design Document</a><a href="#chapter-03">03 • Narrative Bible</a><a href="#chapter-04">04 • World Bible</a><a href="#chapter-05">05 • Character Bible</a><a href="#chapter-06">06 • Chiến dịch và nhiệm vụ</a><a href="#chapter-07">07 • Vertical slice — Những tên không được đọc</a><a href="#chapter-08">08 • Tài liệu tham chiếu Kinh Thánh và chuyển thể</a><a href="#chapter-09">09 • Sản xuất và kiến trúc hệ thống</a><a href="#chapter-10">10 • Nguồn nghiên cứu và sổ luận cứ</a></nav><button id="print">In / Lưu thành PDF</button></aside>
+<main><header class="cover"><div class="eyebrow">GAME DESIGN • NARRATIVE • WORLD • SCRIPTURE</div><h1>THE WITNESS</h1><h2>Legacy of the Covenant</h2><p><strong>Chứng Nhân: Di Sản Giao Ước</strong></p><p>“Across the ages, every life bears witness.”<br>Qua các thời đại, mỗi cuộc đời đều để lại một lời chứng.</p><p>Bộ thiết kế nền cho RPG phiêu lưu điện ảnh ba tầng: thế giới con người, những chứng nhân Kinh Thánh và thế giới thị kiến biểu tượng.</p><p class="no-print">11 tài liệu • 21 nguồn nghiên cứu chính • 1 hợp đồng dữ liệu mẫu<br>Thiết kế đề xuất v1.0 — chưa thẩm định chuyên gia và chưa triển khai thành game.</p></header><article id="overview" data-chapter><div class="eyebrow">DESIGN DOSSIER / 07.11.2026</div><h1>THE WITNESS — Legacy of the Covenant</h1>
+<h2>Chứng Nhân: Di Sản Giao Ước</h2>
+<p>“Across the ages, every life bears witness.”<br />
+Qua các thời đại, mỗi cuộc đời đều để lại một lời chứng.</p>
+<p><strong>Bộ hồ sơ tiền sản xuất v1.0 • 07/11/2026 • Ngôn ngữ gốc: tiếng Việt</strong></p>
+<p>Đây là thiết kế đề xuất cho hướng phát triển mới do chủ dự án xác lập: RPG phiêu lưu điện ảnh, khám phá lịch sử Kinh Thánh, nhập vai nhiều nhân vật và trải nghiệm siêu nhiên. Ba tầng THE MORTAL WORLD, LEGENDS OF SCRIPTURE và THE INNER VEIL là yêu cầu đã xác nhận. Các quyết định cụ thể về thời đại, nhân vật hư cấu, cơ chế, quy mô, nền tảng và cốt truyện dưới đây là phương án thiết kế v1, có thể điều chỉnh qua prototype; chúng chưa phải quyết định đã được chủ dự án duyệt.</p>
+<p><strong>Tầm nhìn AAA là đích chất lượng và quy mô dài hạn.</strong> Bộ hồ sơ này không chứng minh đã có đội ngũ, ngân sách, công nghệ hay chất lượng AAA. Sản phẩm hiện tại là nghiên cứu và tài liệu thiết kế, chưa phải bản game mới. Không đổi tên giao diện, sửa save, xóa bản cũ hoặc triển khai lại game trong đợt này.</p>
+<h2>Đọc theo nhu cầu</h2>
+<ol>
+<li><a href="#chapter-01">Tổng quan sáng tạo và nghiên cứu</a>: luận đề sản phẩm, so sánh tham chiếu, phương pháp và phát hiện.</li>
+<li><a href="#chapter-02">Game Design Document</a>: vòng chơi, chiến đấu, điều tra, tiến triển, quan hệ, UI và phạm vi.</li>
+<li><a href="#chapter-03">Narrative Bible</a>: cốt truyện xuyên suốt, ba tầng, chủ đề, hồi, nhánh và kết thúc.</li>
+<li><a href="#chapter-04">World Bible</a>: địa lý, thời đại, đời sống, văn hóa, mỹ thuật và âm thanh.</li>
+<li><a href="#chapter-05">Character Bible</a>: nhân vật trung tâm, bạn đồng hành, đối trọng và các vai Kinh Thánh.</li>
+<li><a href="#chapter-06">Chiến dịch và thiết kế nhiệm vụ</a>: 12 nhiệm vụ chính, 5 Legends, 4 Veil và nhiệm vụ quan hệ.</li>
+<li><a href="#chapter-07">Kịch bản vertical slice</a>: mẫu chơi 55–70 phút, lời thoại gốc, blocking, nhánh và điều kiện.</li>
+<li><a href="#chapter-08">Kinh Thánh và quy tắc chuyển thể</a>: ma trận phân đoạn, điều bất biến, quyền chủ động và giới hạn.</li>
+<li><a href="#chapter-09">Sản xuất và kiến trúc hệ thống</a>: cổng chất lượng, backlog, save, pipeline và rủi ro.</li>
+<li><a href="#chapter-10">Nguồn nghiên cứu và sổ luận cứ</a>: nguồn sơ cấp, mức xác minh, giới hạn, các việc cần nghiên cứu tiếp.</li>
+<li><a href="sources/design-contract.json">Đặc tả dữ liệu mẫu</a>: hợp đồng trạng thái để đội kỹ thuật triển khai thử.</li>
+</ol>
+<p><strong>Bản đọc liền mạch:</strong> <code>THE-WITNESS-Design-Compendium.html</code> trong thư mục đầu ra; có mục lục, tìm kiếm và chế độ in. Markdown là nguồn biên tập chính. Số phiên bản này áp dụng cho cả bộ.</p>
+<h2>Quy tắc dùng hồ sơ</h2>
+<ul>
+<li><strong>[K]</strong>: dữ kiện được bản văn Kinh Thánh nêu; không đồng nghĩa khảo cổ đã kiểm chứng độc lập.</li>
+<li><strong>[L]</strong>: dữ kiện lịch sử/hiện vật có nguồn, phạm vi và niên đại xác định.</li>
+<li><strong>[G]</strong>: giáo huấn hoặc nguyên tắc giải thích Công giáo có nguồn.</li>
+<li><strong>[H]</strong>: sáng tác nhân vật, lời thoại, cơ chế hoặc bố cục nghệ thuật.</li>
+<li><strong>[C]</strong>: giả thuyết còn cần kiểm tra; không dùng làm lời khẳng định trong codex phát hành.</li>
+</ul>
+<p>Các mã S01…S19 dẫn đến nguồn trong hồ sơ 10. Những đề xuất thiết kế không mang mã nguồn là sáng tác [H], không phải kết luận của tài liệu tham khảo. Lời thoại trong kịch bản mẫu do dự án sáng tác; không trình bày như trích dẫn Kinh Thánh. Chưa sao chép bản dịch Kinh Thánh tiếng Việt để phát hành.</p>
+<h2>Quyết định nền tảng v1</h2>
+<ul>
+<li>Một nhân vật hư cấu có thể tùy biến, sống trong một thời đại; không luân hồi và không du hành thời gian.</li>
+<li>Thế giới chính đặt khoảng 58–60 CN ở Galilê, Giêrusalem và Xêdarê: <strong>khung sáng tác dự kiến</strong>, không chốt niên biểu mọi sự kiện Tân Ước.</li>
+<li>Năm chương Legends cho Môsê, Đavít, Giêrêmia, Phêrô, Phaolô là các phần chơi chuyển thể có khung bản văn riêng.</li>
+<li>Bốn chương Inner Veil là giấc mơ/ẩn dụ có nhãn rõ; không cung cấp bằng chứng điều tra, tiết lộ tương lai thật hay tạo học thuyết mới.</li>
+<li>Hậu quả làm thay đổi người và nơi hư cấu; kết cục các biến cố Kinh Thánh không do người chơi viết lại.</li>
+<li>Một game single-player theo vùng mở, tránh bắt đầu bằng bản đồ khổng lồ trải khắp các thiên niên kỷ.</li>
+</ul>
+<h2>Trạng thái chuyên môn</h2>
+<p>Đã nghiên cứu nguồn công khai và chuyển thành các quy tắc thiết kế có thể kiểm tra. Chưa có thẩm định của chuyên gia Kinh Thánh, khảo cổ, thần học, ngôn ngữ cổ hoặc pháp lý. Bản v1 đủ làm nền thảo luận và prototype; kịch bản sản xuất hoàn chỉnh cho mọi nhiệm vụ, storyboard từng shot, mọi hội thoại điều kiện và hồ sơ hiện vật từng asset thuộc giai đoạn tiếp theo, được ghi rõ trong kế hoạch sản xuất.</p></article><article id="chapter-01" data-chapter><div class="eyebrow">DESIGN DOSSIER / 07.11.2026</div><h1>01 • Tổng quan sáng tạo và nghiên cứu</h1>
+<h2>1. Luận đề sản phẩm</h2>
+<p>THE WITNESS là RPG về cái giá của việc làm chứng: giữa một thế giới nơi sinh tồn thường đòi hỏi im lặng, người bình thường có thể bảo vệ sự thật và con người như thế nào? Người chơi đi qua bến cảng, làng chài và thành phố; học cách đọc dấu vết, giữ lời hứa, bảo vệ người yếu thế và chịu trách nhiệm khi chọn sai. Quy mô sử thi xuất hiện qua các chứng nhân Kinh Thánh. Cảm giác riêng biệt xuất hiện khi nỗi sợ và cám dỗ trở thành không gian có thể bước vào.</p>
+<p><strong>Lời hứa với người chơi:</strong> “Tôi không điều khiển lịch sử cứu độ; tôi được sống một cuộc đời có ý nghĩa bên trong thế giới ấy.” Đây là ranh giới tạo sức mạnh cho cả tự do nhập vai và độ trung thực bản văn.</p>
+<p>Đối tượng giả định: người chơi thích RPG kể chuyện và khám phá, kể cả người chưa biết Kinh Thánh; người Công giáo là nhóm có yêu cầu đặc biệt về độ chính xác, không phải điều kiện để hiểu trò chơi. Mục tiêu nội dung dự kiến phù hợp người chơi từ tuổi thiếu niên lớn trở lên, nhưng chưa có phân loại tuổi chính thức. Bạo lực, giam giữ, đói khổ, phản bội, bách hại và tôn giáo là các chủ đề phải mô tả trong hồ sơ gửi cơ quan phân loại sau này.</p>
+<h2>2. Ba trụ trải nghiệm và thước đo</h2>
+<p><strong>Sống cùng người thường.</strong> Một quyết định phải có người cụ thể chịu tác động. Thước đo prototype: người thử kể lại được ai được giúp, ai phải trả giá và nhìn thấy ít nhất một hệ quả trong thế giới.</p>
+<p><strong>Bước vào lời chứng.</strong> Legends thay đổi nhân vật và động từ chơi, không chỉ thay skin. Môsê dẫn đoàn, Đavít kiềm chế bạo lực, Giêrêmia sống sự bất lực, Phêrô trở lại với tương quan, Phaolô ở lại với người khác. Người thử phải nhận biết sự khác nhau bằng hành động, không cần học thuộc tên chương.</p>
+<p><strong>Đối diện điều bên trong.</strong> Inner Veil dùng không gian, âm thanh, nhịp điệu và lựa chọn để diễn đạt nỗi sợ. Người thử hiểu đây là giấc mơ hư cấu, không coi nó là một đoạn Kinh Thánh bị thất lạc. Đo bằng phỏng vấn tự do, không chỉ câu hỏi có/không dẫn dắt.</p>
+<h2>3. Kết quả nghiên cứu chuyển thành quyết định</h2>
+<p><strong>Thể loại và bối cảnh bản văn có ý nghĩa.</strong> Dei Verbum 12 yêu cầu chú ý thể văn và hoàn cảnh diễn đạt [G; S01]. Suy ra cho sản xuất: một thị kiến, một bài thơ và một trình thuật không dùng chung quy trình “dựng lại như máy quay lịch sử”. Mỗi scene phải khai báo thể loại nguồn. Đây là ứng dụng thiết kế của dự án, không phải quy định làm game của Công đồng.</p>
+<p><strong>Không biến sáng tác thành mặc khải.</strong> Giáo lý về mặc khải phân biệt nội dung đức tin với các mặc khải tư [G; S02]. THE INNER VEIL còn ở mức sáng tác nghệ thuật: không tự nhận là mặc khải tư đã được công nhận. Nhãn đầu cảnh và codex cần giữ phân biệt này; ánh sáng hoành tráng không thay thế thẩm định.</p>
+<p><strong>Không gian lịch sử phải giữ khoảng cách niên đại.</strong> Tài liệu Lachish cho biết đây là địa điểm nhiều lớp cư trú, có tư liệu thời Đồng và Đồ Sắt [L; S12]. Kết luận sản xuất: asset phải ghi vùng và thời kỳ; hiện vật đời sau chỉ được dùng làm so sánh có nhãn. Không có “bộ đồ Kinh Thánh” dùng được cho tất cả thế kỷ.</p>
+<p><strong>Lựa chọn cần được dàn dựng và giới hạn để sản xuất được.</strong> Mô tả buổi nói chuyện của Paweł Sasko nêu lựa chọn/hệ quả, cảm xúc và hiệu quả sản xuất [S14]. Dự án chọn nhánh hội tụ với trạng thái bền, thay vì mỗi lựa chọn mở một chiến dịch riêng. Đây là suy luận thiết kế; chưa xem toàn bộ video để khẳng định các kỹ thuật cụ thể là lời diễn giả.</p>
+<p><strong>Điện ảnh có tính phản ứng cần pipeline.</strong> Giới thiệu phiên Larian nói về việc công cụ, đội ngũ và cách làm thay đổi để đáp ứng quy mô cinematics [S15]. Dự án dành cinematic thủ công cho ít điểm nhấn; phần lớn hội thoại dùng blocking tái sử dụng và điều kiện dữ liệu. Không lấy trailer làm cơ sở dự toán.</p>
+<p><strong>Tiếp cận phải được thiết kế từ đầu.</strong> Hướng dẫn accessibility cung cấp các biện pháp về điều khiển, chữ, âm thanh và vận động [S17]. Áp dụng v1: remap, hold/toggle, phụ đề có tên người nói, tắt rung camera, gợi ý nhiều cấp và bỏ áp lực thời gian trong puzzle. Danh sách kiểm tra cụ thể ở GDD là phạm vi của dự án.</p>
+<h2>4. Tham chiếu sáng tạo</h2>
+<ul>
+<li><strong>Baldur’s Gate 3:</strong> trang sản phẩm nhấn mạnh bạn đồng hành, lựa chọn và kể chuyện điện ảnh [S16]. Học ở tính gắn bó và phản hồi quan hệ; không sao chép hệ luật, nhân vật, plot hay quy mô phân nhánh.</li>
+<li><strong>The Witcher 3 / Cyberpunk 2077:</strong> tham chiếu qua phiên GDC [S14] để đặt câu hỏi về nhịp nhiệm vụ, thông tin và hệ quả. Không biến mọi yêu cầu thành đánh quái rồi lấy vật phẩm.</li>
+<li><strong>THE WITNESS của dự án này:</strong> danh tính riêng nằm ở hành vi làm chứng, hai loại chủ động khác nhau giữa lịch sử và hư cấu, và việc trở về đời sống sau cảnh sử thi. Không sử dụng puzzle đường kẻ, hình ảnh nhận diện hoặc thiết kế đảo của game The Witness đang tồn tại [S19].</li>
+</ul>
+<h2>5. Khác biệt có thể chứng minh</h2>
+<p>Một nhiệm vụ đạt chuẩn hybrid cần hoàn thành chuỗi: vấn đề đời thường → va chạm với lời chứng → trải nghiệm nội tâm → quyết định đời thường có hệ quả. Không bắt mọi nhiệm vụ phụ chạy đủ chuỗi; nếu lặp cứng thành công thức, người chơi sẽ đoán được nhịp. Với nhiệm vụ “Những tên không được đọc”, chứng kiến việc cứu người khỏi hố dẫn tới giấc mơ về tên bị xóa, rồi trở lại lựa chọn cách bảo vệ người cung cấp lời chứng. Giấc mơ không cho biết ai là thủ phạm.</p>
+<h2>6. Các giả định cần kiểm tra</h2>
+<ol>
+<li>Người chơi chấp nhận Legends có kết cục cố định nếu quyền chủ động nằm ở hành động và góc nhìn. Thử nghiệm so sánh một cảnh có động từ rõ với bản chỉ đi và xem.</li>
+<li>Điều tra vẫn hấp dẫn khi không có “mắt thần” chỉ sự thật. Thử độ rõ của ba dấu vết độc lập và sự khác biệt giữa chứng cứ với lời đồn.</li>
+<li>Không chiến đấu trong mọi chương vẫn giữ nhịp phiêu lưu. Thử pacing với leo trèo, hộ tống, thuyết phục và khủng hoảng môi trường.</li>
+<li>Người không theo đạo có hiểu động cơ và thuật ngữ? Thử glossary theo ngữ cảnh, tránh bắt đọc codex trước khi chơi.</li>
+<li>Người theo đạo có nhầm cảnh mơ thành giáo huấn? Nếu có, sửa nội dung và hình thức chuyển cảnh, không chỉ thêm disclaimer dài hơn.</li>
+</ol>
+<h2>7. Tầm nhìn và phạm vi</h2>
+<p>Đích dài hạn: chất lượng diễn xuất, không gian, ánh sáng, animation và phản ứng lựa chọn ở mức RPG cao cấp. Phạm vi bản thiết kế nền: 3 vùng chính, 12 nhiệm vụ tuyến chính, 5 Legends, 4 Veil, 6 nhiệm vụ quan hệ. Thời lượng <strong>mục tiêu</strong>, chưa đo: 18–24 giờ tuyến chính, 28–35 giờ khi khám phá sâu. Không cộng thời lượng cinematic vào lời quảng cáo như một chỉ số chất lượng.</p>
+<p>Điểm ra quyết định đầu tiên là một vertical slice 55–70 phút chứng minh ba tầng nối được với nhau. Chỉ mở rộng thế giới khi slice cho thấy vòng chơi đủ thú vị, nội dung đủ phân biệt và chi phí mỗi phút hoàn thiện có thể kiểm soát.</p></article><article id="chapter-02" data-chapter><div class="eyebrow">DESIGN DOSSIER / 07.11.2026</div><h1>02 • Game Design Document</h1>
+<h2>1. Thông số nền</h2>
+<p>RPG hành động phiêu lưu góc nhìn thứ ba; single-player, chơi offline sau cài đặt. Bàn phím/chuột và tay cầm là mục tiêu ban đầu. PC là nền prototype; console chỉ chốt sau đo hiệu năng và kế hoạch chứng nhận. Điện thoại/browser giữ vai trò prototype truyện và công cụ đọc, không mặc định là nền cho bản chất lượng AAA. Không PvP, live-service, loot box hay cơ chế trả tiền để mạnh hơn trong v1. Mô hình phát hành trả phí một lần là giả định thiết kế kinh tế, chưa phải quyết định thương mại.</p>
+<p>Nhân vật chính mang tên người chơi chọn; tên dùng trong văn bản là <strong>Người Chứng</strong>. Tùy biến ngoại hình, giọng, tên và xuất thân. Căn tính nghề nghiệp mặc định là người chuyển thư kiêm sao chép sổ sách. Xuất thân chọn một trong ba: thợ bến cảng, người học chép, người giữ đường; thay điểm khởi đầu và cách tiếp cận, không thay toàn bộ cốt truyện. Bốn bạn đồng hành có thể đi cùng; chỉ một người hoạt động cùng lúc trong slice, mục tiêu tối đa hai trong bản lớn nếu AI đạt chuẩn.</p>
+<h2>2. Vòng chơi</h2>
+<p><strong>30–90 giây:</strong> quan sát → xác định vật/người có ích → thao tác → phản hồi nghe/nhìn → lựa chọn tiếp theo. Một manh mối phải có dấu hình thể, lời mô tả và phản ứng kiểm chứng; không chỉ sáng viền.</p>
+<p><strong>10–25 phút:</strong> nhận một nhu cầu có người chịu thiệt → đi theo ít nhất hai hướng điều tra → xử lý trở ngại → chọn hành động → thấy hậu quả cục bộ → mang món nợ hoặc quan hệ về hub.</p>
+<p><strong>Một hồi:</strong> khám phá vùng → nối các lời chứng → Legends mở một câu hỏi đạo đức → Veil tạo hình cho xung đột cá nhân → hành động trong Mortal World thay đổi thế giới hư cấu. Legends và Veil mở bằng tiến độ truyện, không bằng farm điểm đạo đức.</p>
+<p><strong>Toàn chiến dịch:</strong> năng lực tăng giúp người chơi có thêm cách tiếp cận; lựa chọn đã làm khiến một số người tin, sợ, xa lánh hoặc chịu gặp lại. Phần thưởng lớn là quyền tiếp cận, đồng minh và thay đổi cộng đồng, bên cạnh vật dụng hữu ích.</p>
+<h2>3. Động từ và điều khiển</h2>
+<ul>
+<li>Di chuyển: đi, chạy ngắn, cúi, bám mép theo tuyến xác định, vượt chướng ngại thấp, kéo người bị thương. Không free-climb mọi bề mặt.</li>
+<li>Tương tác: xem, nghe, hỏi, đối chiếu, mang, đặt, buộc dây, mở lối, giúp đỡ. Một nút tương tác ngữ cảnh; nút riêng để hủy và lùi.</li>
+<li>Điều tra: đánh dấu nguồn, so sánh vật, ghi giả thuyết, hỏi xác nhận. Sổ hỗ trợ ghi nhớ, không tự giải án.</li>
+<li>Xung đột: né, đỡ, đẩy, đánh nhanh, đánh có lực, rút lui, gọi hỗ trợ. Khóa mục tiêu tùy chọn.</li>
+<li>Hội thoại: chọn ý định được diễn đạt rõ; không chọn “nói thẳng” rồi nhân vật tự buột miệng một lời xúc phạm khác nghĩa.</li>
+<li>Tay cầm: cần trái di chuyển, cần phải nhìn, cò trái phòng thủ, cò phải đánh có lực, nút mặt cho tương tác/né/đánh nhanh; toàn bộ được đổi gán. Đây là bố trí đề xuất, kiểm thử công thái học trước khi khóa.</li>
+</ul>
+<h2>4. Khám phá theo vùng</h2>
+<p>Mỗi vùng gồm hub, 2–3 tuyến hành trình và những không gian nhiệm vụ có chiều sâu. Bản đồ nén khoảng cách có ghi chú; không công bố là tỷ lệ địa lý thật. Điểm mốc dùng hình dáng: tháp cổng, vệt đá trắng, vòm kho, đường chân trời. Nhiệm vụ có hướng dẫn theo địa vật trước, marker là tùy chọn. Một đường chính dễ đọc, một đường khó nhưng yên tĩnh, một lối mở bởi quan hệ là mẫu blockout, không phải khuôn bắt buộc cho mọi level.</p>
+<p>Thời gian chuyển theo mốc nhiệm vụ và nghỉ; không có chu kỳ ngày đêm làm NPC quan trọng biến mất vô hạn. Hạn chót chỉ áp dụng khi người chơi đã nhận và xác nhận “bắt đầu giai đoạn có áp lực”. Khám phá tự do không âm thầm giết con tin. Fast travel giữa điểm an toàn đã khám phá; bị khóa ngắn trong đoạn hộ tống có thông báo trước.</p>
+<h2>5. Chiến đấu và thoát hiểm</h2>
+<p>Mục tiêu chiến đấu: tạo khoảng trống để bảo vệ, rút lui hoặc kiểm soát tình huống. Không dùng XP theo số người giết. Nhân vật thường đối đầu 1–3 đối thủ hoạt động; số này là giả định cân bằng cho prototype, không phải chuẩn chất lượng đã đạt.</p>
+<p>Hai tài nguyên thân thể: sức khỏe và sức bền. Sức bền dùng cho né/đỡ/đánh nặng; cạn thì phòng thủ yếu đi, không khóa chạy thoát hoàn toàn. Prototype khởi tạo 100 sức bền; né 20, đỡ chịu đòn 15, đánh nặng 25, hồi 15/giây sau 1 giây không hành động. Dùng số này để đo cảm giác, không đưa vào canon thiết kế vĩnh viễn.</p>
+<p>Vũ khí v1: gậy, khiên nhỏ và công cụ lao động theo vùng; kiếm chỉ xuất hiện ở encounter đã xét ngữ cảnh. Không phép nguyên tố, không thánh tích tăng sát thương, không “lửa đức tin”. Đòn đẩy có thể làm đối thủ rơi nguy hiểm; non-lethal không được mặc định chỉ vì nút tên “đẩy”. Level phải phân biệt vùng an toàn và vùng chết người.</p>
+<p>Ba archetype đối thủ hư cấu: kẻ áp sát dễ lộ đòn; người giữ khiên cần đổi góc; người cảnh giới gọi tiếp viện. Thủ lĩnh kho là người có công cụ gây áp lực, không phải boss có máu lớn. Có phương án né tránh, đàm phán hoặc chia cắt cho encounter chính. Chương Giêrêmia và Phêrô không cấy combat để đủ tỷ lệ.</p>
+<p>Thua Mortal World: checkpoint trước encounter; một số nhiệm vụ có trạng thái bị bắt/mất đồ nếu đã viết nhánh hợp lệ. Không tự động mất bạn đồng hành vĩnh viễn do lỗi AI. Thua Legends: phục hồi đoạn chơi trước; không ghi một lịch sử thay thế. Không phát thưởng “săn lính La Mã” theo sắc tộc hoặc tôn giáo.</p>
+<h2>6. Điều tra và đối thoại</h2>
+<p>Manh mối có loại <strong>vật chứng / lời chứng / suy luận / lời đồn</strong> và nguồn. Sổ thể hiện “đã thấy”, “được kể” và “chưa xác minh”. Người chơi kết nối hai mục để tạo giả thuyết; giả thuyết sai được phép giữ và sửa. Khả năng Quan sát làm rõ chi tiết vật lý; không nhìn thấy linh hồn, thiện ác hay sự thật tuyệt đối.</p>
+<p>Một yêu cầu thuyết phục có ba thành phần: thông tin người chơi biết, nhu cầu của NPC và mức an toàn của tình huống. Không tung xúc xắc bí mật khiến câu trả lời đúng bị khóa ngẫu nhiên. Kỹ năng mở cách hỏi hoặc giảm chi phí; một chứng cứ mâu thuẫn không trở thành đúng vì chỉ số cao. Thất bại hỏi chuyện có lối khôi phục bằng hành động hữu ích, nguồn thứ hai hoặc chờ điểm hẹn; không spam cùng câu để tăng tin cậy.</p>
+<h2>7. Tiến triển</h2>
+<p>Bốn năng lực: <strong>Quan sát</strong>, <strong>Thủ công</strong>, <strong>Giao tiếp</strong>, <strong>Tự vệ</strong>. Mỗi năng lực ba bậc; tổng 8 điểm phát triển trong chiến dịch buộc ưu tiên, có thể học lại tại hub sau hồi I bằng tài nguyên thường. Điểm nhận khi hoàn thành cột mốc, không vì cầu nguyện hay thuộc câu Kinh Thánh.</p>
+<p>Ví dụ: Quan sát I phân biệt mép giấy mới/cũ, II phát hiện dấu sửa sổ, III đối chiếu chuỗi nguồn nhanh hơn. Thủ công I buộc dây an toàn, II dựng đòn bẩy, III sửa cơ cấu có tải. Giao tiếp I nêu câu hỏi mở, II tổ chức lời chứng nhiều người, III thương lượng bảo đảm. Tự vệ I đỡ tốt, II giải giữ, III bảo vệ bạn trong lúc rút. Mỗi lối tối thiểu đều phải hoàn thành được với kỹ năng cơ bản.</p>
+<p>Trang bị thay chức năng: túi thêm chỗ dụng cụ, dép giảm tiếng bước, áo mưa giảm ảnh hưởng thời tiết. Không áo “+20 thánh thiện”. Hành trang có 6 ô dụng cụ, vật nhiệm vụ không chiếm ô và không thể vô tình bán. Giới hạn này là mục tiêu prototype. Tài nguyên gồm thực phẩm, dầu đèn, vải, dây và tiền quy ước; không giả vờ mô phỏng tỷ giá cổ đại nếu chưa có nguồn.</p>
+<p>Kinh tế không cho hủy cứu trợ để farm. Kho đã nhận hàng không bán lại vô hạn; giá theo chương có biên độ rõ. Nghỉ ở nơi an toàn hồi phục cơ bản, thức ăn hỗ trợ chuẩn bị; không bắt grind để được tiếp tục truyện.</p>
+<h2>8. Quan hệ và hệ quả</h2>
+<p>Quan hệ lưu <strong>tin cậy -2…+2</strong>, <strong>bất đồng theo chủ đề</strong>, <strong>lời hứa</strong>, <strong>hành động đã chứng kiến</strong>. Tin cậy không đồng nghĩa đồng ý; Miriam có thể tin người chơi nhưng phản đối cách công bố danh sách. Giao diện dùng ngôn ngữ: “Cô ấy tin bạn giữ lời”, không “Miriam +5”. Không tồn tại thanh đo mức được Thiên Chúa yêu.</p>
+<p>Hệ quả chia theo thời gian: phản ứng ngay; thay đổi điểm chờ sau khi quay hub; thay đổi đường tiếp cận nhiệm vụ sau; một câu và một hình ảnh ở kết thúc. Mỗi lựa chọn lớn cần ít nhất hai tầng hệ quả, một trong số đó có tác động chơi được. Người chơi có thể hối cải và sửa thiệt hại ở nhánh hư cấu; sửa lỗi không xóa ký ức của NPC.</p>
+<h2>9. Luật ba tầng</h2>
+<p>Mortal World ghi trạng thái thế giới. Legends có loadout riêng, không chuyển vũ khí/tiền; hoàn thành ghi <code>legend.completed</code> và mở đối thoại theo chủ đề. Inner Veil nhận biến ký ức đã có để đổi hình ảnh và câu tự vấn; chỉ ghi <code>veil.completed</code> và <code>reflection</code>, không tạo vật chứng, điểm mạnh thần bí hay phán quyết thiện ác. “Skip” giữ tiến độ hoàn thành nhưng không giả mạo câu trả lời phản tư người chơi chưa chọn.</p>
+<p>Trước Legends hiện: “Chương chuyển thể từ [sách, chương, câu]. Bố cục và một phần tương tác được sáng tác.” Trước Veil hiện: “Giấc mơ hư cấu — ẩn dụ nghệ thuật, không thuộc bản văn Kinh Thánh.” Sau cảnh có thể mở so sánh “bản văn / chuyển thể”. Không dùng một nhãn mơ hồ chung cho cả hai.</p>
+<h2>10. UI, âm thanh và tiếp cận</h2>
+<p>HUD mặc định chỉ có mục tiêu ngắn, sức bền khi dùng, prompt và phản hồi nguy hiểm. Sổ gồm Người / Việc / Dấu vết / Kinh Thánh / Phản tư. Tìm kiếm không bắt nhớ phiên âm. Tên Việt và tên quốc tế ở lần xuất hiện đầu; từ điển theo ngữ cảnh.</p>
+<p>Yêu cầu v1 [định hướng từ S17]: phụ đề đổi cỡ và nền, tên người nói, phụ đề âm thanh thiết yếu; remap, hold/toggle, thay mash bằng giữ; không puzzle chỉ dựa vào màu/âm; chỉnh camera, tắt head-bob, rung, blur; pause khi đọc; chế độ thời gian thoải mái; gợi ý 3 cấp; xem lại hội thoại; tự lưu và lưu tay ngoài combat; tùy chọn giảm hình ảnh đau khổ nhưng vẫn giữ ý nghĩa cốt truyện. Cảnh siêu nhiên không dùng nháy chớp làm chìa khóa gameplay.</p>
+<p>Độ khó tách combat, điều hướng và puzzle. Chế độ kể chuyện không phạt quyền nhận kết thúc. Ngôn ngữ đầu tiên tiếng Việt; glossary Anh–Việt dùng chung mã, nội dung thiết kế không gắn cứng tên hiển thị vào logic.</p>
+<h2>11. Ngân sách nội dung và tiêu chí</h2>
+<p>Phạm vi mục tiêu bản lớn: 12 nhiệm vụ chính, 6 nhiệm vụ quan hệ, 5 Legends, 4 Veil; 3 hub; 4 companion, 8 NPC tái xuất quan trọng; 3 archetype combat và biến thể trang bị. Không coi nhân vật nền là companion. 18–24 giờ tuyến chính bao gồm Legends/Veil và đi lại; chỉ là giả định cần đo.</p>
+<p>Slice đạt chuẩn khi người mới tự tìm hai cách giải; nêu được đánh đổi của quyết định; thấy phản ứng của NPC và thay đổi hub; phân biệt cảnh mơ với bản văn; có thể hoàn thành bằng tay cầm và bàn phím, dùng subtitle và tắt rung. Chỉ tiêu số cụ thể và quy trình đo ở hồ sơ 09; không dùng từ “đạt” trước khi thử.</p></article><article id="chapter-03" data-chapter><div class="eyebrow">DESIGN DOSSIER / 07.11.2026</div><h1>03 • Narrative Bible</h1>
+<h2>1. Premise và câu hỏi xuyên suốt</h2>
+<p><strong>[H]</strong> Khoảng 58–60 CN, một người chuyển thư kiêm sao chép sổ trở lại bến cảng Xêdarê sau cái chết của cha. Cha từng bị coi là kẻ làm giả lời chứng trong một vụ mất lương thực. Một cuốn sổ hộ gia đình cho thấy hàng cứu trợ đã bị chuyển hướng; nhưng chính nó cũng có thể biến thành danh sách để đe dọa những người cung cấp thông tin. Người chơi phải tìm điều đã xảy ra, chọn cách bảo vệ người còn sống và đối diện việc chính mình từng im lặng khi cha bị buộc tội.</p>
+<p>Đây là tuyến truyện hư cấu, không tự nhận một biến cố đã được lịch sử ghi nhận. Sổ không phải bản Kinh Thánh thất lạc, mật mã của Giao Ước, gia phả bí mật của Đức Giêsu hay vật có phép. Tên phụ đề nói đến trách nhiệm được trao truyền, không nói người chơi sở hữu hay hoàn tất Giao Ước.</p>
+<p><strong>Câu hỏi:</strong> sự thật có còn là lời chứng khi con người bị biến thành công cụ để công bố nó? Đối trọng không phải “nói thật hay nói dối đều đúng”; hành vi gian dối gây thiệt hại được gọi đúng tên. Tranh chấp nằm ở thời điểm, bằng chứng, sự đồng thuận, trách nhiệm và phương tiện bảo vệ.</p>
+<h2>2. Chủ đề, mô-típ và tông</h2>
+<ul>
+<li><strong>Lời chứng và trách nhiệm:</strong> nói ra điều mình biết; nhận giới hạn điều mình không biết.</li>
+<li><strong>Tự do và sợ hãi:</strong> can đảm không xóa run sợ; hành động có ý nghĩa dù không chắc thắng.</li>
+<li><strong>Ký ức và lòng thương:</strong> người chết cần được nhớ nhưng không đòi người sống trở thành vật hy sinh cho danh dự.</li>
+<li><strong>Giao ước và tương quan:</strong> được đọc theo nền Công giáo; không diễn đạt như người chơi mua ân sủng hoặc thay thế dân Israel.</li>
+</ul>
+<p>Mô-típ: sợi dây vừa cứu người vừa trói người; nước vừa nuôi sống vừa chia cắt; vải vừa che chở vừa che giấu; tên vừa giữ ký ức vừa khiến con người bị truy tìm. Không thiết lập công thức “nước luôn nghĩa là điều này” áp vào mọi sách Kinh Thánh.</p>
+<p>Tông: cụ thể, giàu cảm giác, có khoảng yên và hài hước đời thường. Người bán cá có thể đùa về mùi bến; không chèn trò đùa ngay khi một người kể về bị bức hại. Đau khổ có nhân phẩm, không dùng trẻ em gặp nạn lặp lại để buộc người chơi xúc động.</p>
+<h2>3. Người trung tâm và vết thương</h2>
+<p>Người Chứng từng được yêu cầu xác nhận một lần giao hàng nhưng đã im lặng vì sợ mất việc. Cha nhận lỗi thay, song sự thật phức tạp hơn: ông từng ký một ghi chép tạm để giữ kho mở, rồi không sửa được nó trước khi bị lợi dụng. Ông không hoàn toàn vô tội và cũng không là chủ mưu. Cuối truyện người chơi có thể minh oan phần bị vu cáo mà không biến cha thành thánh không tì vết.</p>
+<p>Người chơi tự quyết thái độ với người cha qua hội thoại, không bị ép yêu, ghét hay tha thứ vào một thời điểm định sẵn. Game không đánh giá đức tin từ lựa chọn tha thứ. Nội tâm của nhân vật trung tâm có những sự kiện quá khứ cố định nhưng cách hiểu và đáp lại thuộc người chơi.</p>
+<h2>4. Cấu trúc ba hồi</h2>
+<h3>Hồi I — Những cái tên còn ở lại (Q01–Q04)</h3>
+<p>Trở lại Xêdarê, nhận sổ chưa đầy đủ từ người thợ đóng thuyền Natan, gặp Miriam chăm người bệnh và Damar có kinh nghiệm dẫn đường. Q01 cho thấy kho thiếu hàng nhưng nhân viên vẫn làm đúng phần việc nhỏ của mình. Q02 tạo xung đột về bảo vệ tên nhân chứng. Q03 tìm dấu chuyển hàng ngoài thành. Q04 yêu cầu bảo vệ một cộng đồng trước khi rời bến. Kết hồi: một trang đối chiếu cho thấy chữ ký của cha là thật; cách giải thích ban đầu của người chơi bị lung lay.</p>
+<p>Legends Giêrêmia và Môsê gợi hai mặt: cứu một con người có thể bắt đầu bằng một việc rất nhỏ; dẫn người ra khỏi nguy hiểm không đồng nghĩa nắm quyền trên số phận họ. Veil I xuất hiện sau Q02, Veil II sau Q04. Các chương không được NPC trong thế giới xác nhận là trải nghiệm du hành thật.</p>
+<h3>Hồi II — Điều một người giữ lại (Q05–Q08)</h3>
+<p>Đến Galilê theo dấu đơn vận chuyển. Người chơi phát hiện mạng lưới phân phối gồm người tốt, kẻ trục lợi và người sợ mất việc, không phải một giáo phái bí mật thao túng toàn bộ lịch sử. Hanan, người trung gian kho, từng giữ lượng thực để đề phòng một đợt đứt nguồn; về sau biến cách “giữ cho ngày mai” thành phương tiện kiểm soát người đói hôm nay. Anh ta tự biện hộ nhưng câu chuyện không tẩy trách nhiệm.</p>
+<p>Ở Q06 người chơi có cơ hội trả thù một tay sai đã đánh cha. Legends Đavít đặt giới hạn của bạo lực bên cạnh lựa chọn của người chơi, nhưng không bắt người chơi giả làm vua trong Mortal World. Q07 cho companion phản đối kế hoạch vì lý do riêng. Q08 khiến người chơi chọn tổn thất phải chấp nhận: bảo toàn toàn bộ vật chứng hoặc cứu người đang mang chúng. Lựa chọn cứu người vẫn có nguồn khác để hoàn tất truyện, với mức chắc chắn thấp hơn và chi phí cao hơn.</p>
+<p>Legends Phêrô dùng sau một đổ vỡ quan hệ; không đóng vai đoạn “nâng điểm tha thứ”. Veil III mô tả cám dỗ kiểm soát lời người khác. Kết hồi: người chơi biết cha đã sửa sai bằng một bản đối chiếu gửi trước khi mất; người đang giữ nó sợ sự thật bị dùng làm cớ đàn áp rộng hơn.</p>
+<h3>Hồi III — Một lời chứng không thuộc riêng ai (Q09–Q12)</h3>
+<p>Đến Giêrusalem gặp những người có tên trong sổ và lấy sự đồng thuận. Q09 không “mở khóa cả thành” bằng uy tín; từng nhóm có điều kiện gặp riêng. Q10 truy nguồn bản đối chiếu và chọn bảo vệ ai trong nhóm hư cấu bị đe dọa. Q11 quay lại Xêdarê tập hợp một phương án công bố khả thi; Legends Phaolô cho thấy chủ động ở lại cùng người khác trong khủng hoảng. Q12 không cứu được mọi mất mát: chọn phương thức làm chứng, thực hiện nó và nhìn xem ai còn sẵn lòng cùng xây lại kho chung.</p>
+<p>Veil IV trước Q12 đưa người chơi về chiếc ghế trống của cha. Không có bóng cha ban lời tiên tri; âm thanh là ký ức đã được nghe, có thể sai lệch vì nhân vật đang nhớ. Kết truyện là bữa ăn hoặc bến kho đã đổi, không là ngai vàng hay danh hiệu được Thiên Chúa trao.</p>
+<h2>5. Cơ chế chuyển tầng trong truyện</h2>
+<p><strong>Legends:</strong> mở bằng nghe đọc, trò chuyện hoặc xem một dấu tích văn hóa trong thế giới, sau đó cắt sang chương chuyển thể với thẻ nguồn. Đây là cách kể của game dành cho người chơi. Không khẳng định nhân vật hư cấu có đầy đủ các sách Tân Ước dưới dạng một cuốn Kinh Thánh hoàn chỉnh vào năm 58 CN. Một bản kể trong đời sống có thể chưa đầy đủ; chương Legends trình bày tách khỏi nó.</p>
+<p><strong>Veil:</strong> vào khi nghỉ hoặc sau khủng hoảng; ghi nhận đó là mơ trước khi hình ảnh biến đổi. Chọn bỏ qua luôn quay về điểm an toàn, có tóm tắt. Không chuyển bất ngờ từ cái chết trong mơ sang NPC chết thật. Ngôn ngữ giao diện dùng “Trong giấc mơ của bạn”, không “Thiên Chúa vừa bảo bạn”.</p>
+<p><strong>Trở lại:</strong> nhiệm vụ mới dùng cùng câu hỏi theo cách khác. Sau Giêrêmia, người chơi không nhận skill “ngôn sứ”; họ được quyền hỏi Miriam ai cần đưa ra khỏi nguy hiểm trước khi lấy lời khai. Câu hỏi có thể xuất hiện ngay cả khi bỏ qua chương, vì nội dung truyện cần tiếp cận được.</p>
+<h2>6. Lựa chọn lớn và trạng thái</h2>
+<p>Ba trục kết thúc độc lập tương đối: <strong>phương thức làm chứng</strong> (công khai có đồng thuận / bảo mật qua nhóm được tin / trì hoãn để bảo vệ), <strong>mức bảo toàn chứng cứ</strong> (đối chiếu đủ / từng phần), <strong>tương quan</strong> (còn liên kết / rạn nứt). Không gọi đây là “8 kết thúc riêng”: tổ hợp được tổng hợp thành 3 cảnh kết theo phương thức, 2 biến thể bằng chứng và phản ứng companion, chỉ chơi những tổ hợp thực sự đạt được.</p>
+<p>Nếu thiếu chứng cứ không được dùng ngôn ngữ tuyên án chắc chắn. Công bố công khai chỉ mở khi có đồng thuận của các nhân chứng sẽ nêu tên; nếu thiếu, chỉ có thể công bố dữ kiện đã ẩn danh và lời chứng của chính mình. Đốt sổ hoặc lộ tên không khóa game; chuyển sang tuyến phục hồi, NPC bị ảnh hưởng có ký ức về tổn hại. Không có lựa chọn “xóa hậu quả bằng lời cầu nguyện”.</p>
+<p>Q12 có một đối trọng thật: công bố đủ nhanh giúp chặn mất hàng tiếp nhưng tăng rủi ro đối với người chưa rời khỏi mạng lưới; bảo mật bảo vệ danh tính nhưng sức ép lên thủ phạm yếu hơn; trì hoãn có kế hoạch cứu người trước nhưng một phần hàng mất không lấy lại được. Game cho thấy chi phí và phương án sửa chữa, không thưởng một đáp án ẩn gọi là “kết thúc Công giáo”.</p>
+<h2>7. Kết thúc và hậu truyện</h2>
+<p><strong>Lời trước sân kho:</strong> nhóm đưa ra dữ kiện công khai, người tự nguyện đứng tên bước lên. Hanan không chết trong boss fight; chịu hậu quả xã hội và những bước xử lý của thiết chế hư cấu ở địa phương, chưa dựng một phiên tòa La Mã giả chính xác. Mức chứng cứ quyết định người kể nói “đã xác nhận” hay “còn cần làm rõ”.</p>
+<p><strong>Những người giữ đèn:</strong> bản đối chiếu được gửi tới nhiều người giữ bản, danh tính nhạy cảm tách riêng; mạng lưới cứu trợ được thay bằng tổ giám sát nhỏ. Không tuyên bố chiến thắng toàn bộ hệ thống, kho vẫn có áp lực và nguy cơ.</p>
+<p><strong>Con đường chưa đọc hết:</strong> người chơi ưu tiên di chuyển người gặp nguy hiểm, giữ hồ sơ còn lại và nhận rằng cha chưa được minh oan hoàn toàn. Hậu truyện cho thấy nhân chứng được sống để có thể nói sau. Trì hoãn không đồng nghĩa chối bỏ sự thật; nếu người chơi đã bán đứng người khác, cảnh kết phải nhắc tổn hại ấy.</p>
+<p>Trong mỗi kết, companion có thể hiện diện, gửi thư hoặc vắng mặt tùy cam kết. Không hồi sinh NPC đã chết hư cấu chỉ để đủ cảnh đoàn tụ. Tiếng nói cuối là một người thường kể lại một việc nhỏ người chơi đã làm, cụ thể hơn câu tuyên ngôn của tác giả.</p>
+<h2>8. Quy tắc viết</h2>
+<p>Không độc thoại quá 90 giây liên tục trong cảnh tương tác mục tiêu; số này được thử, không áp cứng cho đoạn trích đã được duyệt. Thông tin quan trọng xuất hiện bằng hai kênh. NPC không biết điều họ không chứng kiến trừ khi có sự kiện truyền tin. “Tôi nghe nói” phải có nguồn khi nó ảnh hưởng điều tra. Không cho mọi dân thường nói như học giả thần học hiện đại.</p>
+<p>Lời của Đức Giêsu trong cảnh chuyển thể phải có mã phân đoạn và bản dịch đã được phép dùng; kịch bản v1 dùng paraphrase hoặc chỉ dẫn nguồn. Không viết lời mới rồi gán như nguyên văn của Người. Hội thoại hư cấu với nhân vật Kinh Thánh ở khoảng trống bản văn cần nhãn và thẩm định; ưu tiên đặt lời bổ sung vào NPC hư cấu bên ngoài cảnh nguồn.</p></article><article id="chapter-04" data-chapter><div class="eyebrow">DESIGN DOSSIER / 07.11.2026</div><h1>04 • World Bible</h1>
+<h2>1. Ontology — Những gì có thật trong từng tầng</h2>
+<p>Mortal World tuân theo vật chất và khả năng con người trong bối cảnh lịch sử đã chọn. Thế giới được kể từ nền Công giáo nhưng NPC có nhiều căn tính, nghề nghiệp và niềm tin; bản đồ không chia thành phe đạo tốt và phe dân ngoại xấu. Legends trình bày bản văn theo cách chuyển thể; chi tiết game sáng tác không tự trở thành lịch sử. Inner Veil là không gian của giấc mơ, không có tọa độ để NPC tìm đến hoặc bản đồ vũ trụ học để xác định thiên đường/địa ngục.</p>
+<p>Phép lạ được thuật lại trong Kinh Thánh không bị giải thích lại thành công nghệ, ảo giác hoặc năng lực bẩm sinh của nhân vật. Ngược lại, game không gán mọi trùng hợp trong tuyến hư cấu là phép lạ. Người chơi không có khả năng gọi thiên thần, triệu hồi linh hồn hay đọc mức thánh thiện.</p>
+<h2>2. Bản đồ thời đại</h2>
+<p><strong>Khung chính [H/C]: khoảng 58–60 CN.</strong> Dùng như cửa sổ sản xuất để phân biệt phục trang, kiến trúc và thiết chế. Công vụ đặt Phaolô bị giam ở Xêdarê [K; S10], nhưng niên biểu chi tiết của từng chương game chưa suy ra chỉ từ phân đoạn này. Không gắn nhiệm vụ hư cấu vào một ngày xét xử có thật. Sau khi chuyên gia duyệt chronology, art department mới khóa bộ tài sản theo thời điểm.</p>
+<p><strong>Môsê:</strong> thời đại của trình thuật Xuất Hành; niên đại và địa điểm vượt biển không chốt như sự kiện khảo cổ đã định vị. Xh 14 có các địa danh chưa xác định dứt khoát trong chú thích [S05]. Art packet phải có nhãn giả định; không mô tả model Pharaoh là chân dung đã biết của vị vua trong bản văn.</p>
+<p><strong>Đavít:</strong> bối cảnh vương quyền Israel cổ, cảnh được chọn tại En Ghêđi theo 1 Sm 24 [S06]. Không lấy relief Assyria thế kỷ VIII TCN làm bằng chứng trực tiếp về trang phục chính xác của Đavít; có thể dùng so sánh vùng với khoảng cách niên đại ghi rõ.</p>
+<p><strong>Giêrêmia:</strong> hai cửa sổ riêng: cuộn sách bị đốt trong Gr 36 và nhà giam/hố trong Gr 38 [S07/S08]. Không dựng chúng là hai việc xảy ra cùng một đêm. Chương chơi chính chọn Gr 38; Gr 36 là nguồn chủ đề và nội dung codex sau thẩm định.</p>
+<p><strong>Phêrô:</strong> bờ biển Ti-bê-ri-a theo Ga 21, trong mạch các lần hiện ra sau Phục Sinh [S09]. <strong>Phaolô:</strong> Philípphê theo Cv 16 [S11], không đặt chung với thời điểm tuyến chính chỉ vì cùng một nhân vật.</p>
+<h2>3. Ba vùng Mortal World</h2>
+<h3>Xêdarê — Đường người đi, đường hàng đi</h3>
+<p>Hub mở đầu và kết: sân kho, khu sửa thuyền, lối nhà ở, chợ và bến làm việc. Kiến trúc cụ thể là tái dựng [H/C] cho đến khi có packet khảo cổ; không gọi sơ đồ chơi là bản phục dựng chính xác. Trục trải nghiệm: âm thanh dây neo → tiếng cân kho → sân yên có đèn → mặt biển xa. Một tuyến hàng hóa đi qua nhiều tay tạo cơ hội đọc hệ thống mà không cần villain giải thích hết.</p>
+<p>Điểm mốc: khung nâng hàng gãy, cầu thang cạnh tường kho, giếng chung. Landmark phải nhìn được từ ít nhất hai điểm quyết định đường đi. Trở lại sau Q02 sẽ thấy khu chờ nhân chứng đổi chỗ theo lựa chọn; sau Q04 kho có bảng kiểm mới hoặc cổng đóng tùy hậu quả. Không phải mọi thay đổi đều là tăng trang trí.</p>
+<p>Gameplay: điều tra sổ, vận chuyển có tải, đàm phán qua rào, cắt đường phục kích. Thời tiết giông chỉ ở nhiệm vụ đã thiết kế; không biến bến thành đại cảnh hải chiến.</p>
+<h3>Galilê — Đời sống không đứng chờ người hùng</h3>
+<p>Một làng chài hư cấu và các lối đồi liên kết, không tự nhận là một ngôi làng khảo cổ đã xác định. Tham chiếu địa lý phải bổ sung trước art lock. Tông vật liệu: đá, gỗ, dây, vải, bề mặt sửa đi sửa lại; không mọi căn nhà đều bẩn để trông “cổ”. Người dân có lịch vá lưới, phân hàng, chăm người, trao đổi tin. Các nghề tạo tương tác có ích, không là background looping.</p>
+<p>Nút truyện: lượng hàng rời bến khác với lượng người nhận; vải có dấu của người quen nhưng chưa chứng minh họ có mặt khi mất hàng. Một sân phơi lưới thay đổi theo nguồn thực phẩm còn lại; sân không trở thành biểu đồ đạo đức bằng màu sắc.</p>
+<p>Gameplay: tìm tuyến vận chuyển, giải cứu khỏi hẻm đá, lén theo người mang hàng, trả lại dụng cụ mở nhánh thủ công. Vùng yên sau encounter cho phép hội thoại companion mà không bị kẻ địch cắt ngang.</p>
+<h3>Giêrusalem — Những điều người ta chưa sẵn lòng nói</h3>
+<p>Phạm vi chơi v1 giới hạn ở một khu nhà, đường dẫn, sân cộng đồng hư cấu và các góc nhìn đô thị. Khu Đền Thờ không trở thành dungeon chiếm loot. Không xây một bản đồ thành phố qua nhiều thời kỳ chồng vào nhau. Phân biệt Đền Thờ thứ hai với di tích hoặc công trình của các thời đại sau [định hướng bối cảnh từ S13; chi tiết cần nghiên cứu tiếp].</p>
+<p>Nút truyện: nhân chứng từ nhiều nơi có cách nhìn khác nhau về cùng một hàng cứu trợ. Quyền lực địa phương, kinh tế, quan hệ gia đình và tôn giáo đan xen; không quy mọi chống đối cho một cộng đồng. Nostra aetate 4 bác bỏ việc quy trách nhiệm tập thể cho người Do Thái về cuộc Thương Khó [G; S03]. Quy tắc biên tập của dự án rộng hơn: không dùng người Do Thái như phản diện mặc định, và không tước căn tính Do Thái của Đức Giêsu/các Tông đồ.</p>
+<p>Gameplay: bảo vệ cuộc gặp kín, đối chiếu lời chứng có mâu thuẫn, tổ chức di chuyển an toàn. Thiết chế xử lý vụ kho là cấu trúc hư cấu có phạm vi hẹp; cần chuyên gia luật cổ nếu muốn mô tả thủ tục xét xử thật.</p>
+<h2>4. Đời sống thường ngày và quy tắc xã hội</h2>
+<p>Người chơi cần thức ăn, chỗ ngủ và quan hệ để đi đường, nhưng v1 không là survival khắc nghiệt. Nhà ở có chỗ lưu trữ, nơi làm việc và dấu của người sống. Một tấm vải có lịch sử sử dụng; thiếu nguồn không tự thêm biểu tượng tôn giáo rồi gọi là chuẩn xác.</p>
+<p>Tên, âm giọng và trang phục không xác định phẩm chất. Người La Mã có thể cứu người; người trong cộng đồng người chơi có thể nói dối. Không gán giọng Anh chuẩn cho người quyền lực và giọng méo cho người thấp kém. Giao tiếp tiếng Việt là quy ước bản địa hóa, không chứng minh nhân vật lịch sử đã dùng một câu tiếng Việt tương đương.</p>
+<p>Tôn giáo hiện diện qua thời gian, bữa ăn, cầu nguyện, tranh luận và cách giúp nhau. Không biến mọi NPC thành bảng giáo lý. Không dựng các phong tục hiện đại thành cổ đại mà không nguồn. Không gọi mọi khăn trùm là một kiểu phụ kiện với lịch sử giống nhau. Khả năng đọc/viết không mặc định phổ cập; nghề của nhân vật trung tâm tạo lý do hợp lý để đọc sổ, còn người khác có trí nhớ và tri thức nghề riêng.</p>
+<h2>5. Visual Bible</h2>
+<p><strong>Mortal:</strong> bề mặt thực dụng, ánh sáng có nguồn, tỉ lệ người nhất quán; camera gần người nhưng không ép rung. Hình ảnh thể hiện mệt mỏi bằng tư thế và nhịp thở, không chỉ bụi bẩn. Nguồn sáng tương tác như đèn cần âm thanh và silhouette để người chơi đọc đường.</p>
+<p><strong>Legends:</strong> tăng quy mô bố cục và chiều sâu nhưng giữ thể chất của con người. Biển trong Môsê có gió, tiếng người, đường đi và cảm giác mong manh; không phát minh trận đánh với thủy quái. Giêrêmia dùng độ cao và khoảng tối; Phêrô dùng khoảng cách giữa người với người, không bắt mọi cảnh phải có bão hoặc ánh sáng trời mở.</p>
+<p><strong>Veil:</strong> 4 bộ hình có luật: Hố của những cái tên (chữ hóa bụi khi bị ép đọc), Biển không bờ (cầu chỉ hiện khi nhường tải), Mặt nạ của người giữ kho (càng kiểm soát càng mất đường), Chiếc ghế trống (vòng phòng trở về một chỗ ngồi). Các vật là biểu tượng hư cấu, không là mã giải nghĩa mọi câu Kinh Thánh.</p>
+<p>Thiên thần: giáo lý nói tới các hữu thể thiêng liêng [G; S04]; hình thể trong game là lựa chọn biểu đạt, không giải phẫu có thể chứng thực. V1 dùng “hình tượng người dẫn đường có cánh trong giấc mơ”, không đặt tên một thiên thần mới và viết tiểu sử vũ trụ cho nó. Bóng tối không luôn là ma quỷ; có thể là che khuất, sợ hãi hoặc phần ký ức chưa đối diện. Không dùng vẻ dị dạng/khuyết tật làm dấu ác.</p>
+<h2>6. Âm nhạc và thiết kế âm thanh</h2>
+<p>Mortal đặt giọng, dụng cụ và hoạt động đời thường lên trước nhạc nền. Legends dùng leitmotif biến tấu theo hành động; không lấy nhạc phụng vụ đời sau rồi quảng bá là âm nhạc nguyên gốc thế kỷ I. Veil chuyển xử lý của âm thanh đã nghe trong đời sống: tiếng đóng dấu thành nhịp tim, dây cọ thành nhịp thở. Không dùng bản ghi “tiếng Thiên Chúa” cho lời sáng tác mới.</p>
+<p>Ba stem tối thiểu cho slice: bến/nhịp hoạt động, căng thẳng điều tra, lớp nội tâm. Cue âm thanh có caption; puzzle không đòi nghe một cao độ chính xác. Credit và quyền dùng từng bản nhạc tách khỏi nguồn nghiên cứu.</p>
+<h2>7. Hợp đồng asset</h2>
+<p>Mỗi asset cần <code>assetId</code>, vùng/thời kỳ, nguồn nếu có, [K/L/H/C], khoảng sai số hoặc tính suy đoán, người duyệt và quyền tái sử dụng hình ảnh. <code>Lachish_701_relief_reference</code> không được tái gán thành “đồ của Giêrêmia năm 587” mà không giải thích. Quyền xem hình bảo tàng không mặc định cho phép đưa ảnh vào game. Concept art chưa có source packet vẫn được prototype bằng hình khối, nhưng không chuyển thẳng sang marketing như tái dựng khoa học.</p>
+<h2>8. Điều cần bổ sung trước art lock</h2>
+<p>Khảo cổ Xêdarê thế kỷ I; mặt bằng nhà và đường tại vùng Galilê đã chọn; trang phục, chất liệu, đèn, dụng cụ và cách ghi sổ cùng thời; hệ chữ cho từng lớp; niên biểu chuẩn; chuyên gia rà ngôn ngữ/cử chỉ. Bộ hiện tại đặt nguyên tắc và vùng nghiên cứu, không khẳng định đã xác minh mọi chi tiết mỹ thuật.</p></article><article id="chapter-05" data-chapter><div class="eyebrow">DESIGN DOSSIER / 07.11.2026</div><h1>05 • Character Bible</h1>
+<h2>1. Kiến trúc nhân vật</h2>
+<p>Một avatar tùy biến giữ căn tính và save xuyên chiến dịch. Bốn companion có nhu cầu, giới hạn và năng lực riêng. Các nhân vật Kinh Thánh là vai cố định trong Legends, không dùng character creator và không thay thế diện mạo bằng avatar người chơi. NPC chức năng chỉ trở thành nhân vật tái xuất khi có hành vi/quan hệ thay đổi được, không vì thêm một đoạn tiểu sử dài.</p>
+<p>Mỗi hồ sơ sản xuất phải có: mong muốn bên ngoài, nhu cầu bên trong, điều giấu, giới hạn, điều làm đổi thái độ, cách nói, cử chỉ, năng lực chơi, điều kiện xuất hiện và kết cục. Không ghi “bí ẩn, mạnh mẽ, trung thành” mà không có hành động chứng minh.</p>
+<h2>2. Người Chứng — Nhân vật trung tâm [H]</h2>
+<p><strong>Vai:</strong> người chuyển thư kiêm sao sổ; tuổi trưởng thành, khoảng 23–35 là khung diễn xuất, không khóa tuổi chính xác. Giới tính/ngoại hình/giọng tùy biến trong phạm vi art và voice đã dự toán. Tên mặc định trong script không phải tên canon. Không cho người chơi chọn là con ruột của nhân vật Kinh Thánh.</p>
+<p><strong>Muốn:</strong> chứng minh cha bị vu oan. <strong>Cần:</strong> học cách đứng cùng sự thật ngay cả khi nó làm hình ảnh gia đình kém hoàn hảo. <strong>Sợ:</strong> mình chỉ dũng cảm khi người khác chịu rủi ro. <strong>Quá khứ cố định:</strong> từng im lặng trước một ghi chép sai. <strong>Tự do nhập vai:</strong> tự nhận trách nhiệm hay né tránh; giữ hay phá lời hứa; chuộc lỗi hoặc tiếp tục biện hộ.</p>
+<p><strong>Biểu đạt:</strong> tay quen giữ giấy khỏi gió; khi căng thẳng xếp đồ quá ngay ngắn. Animation này không bắt buộc nếu người chơi muốn avatar bình thản; dùng trong cinematic đã chọn thái độ tương ứng. Động cơ gắn với người cha nhưng người chơi không phải chọn tha thứ để kết thúc.</p>
+<p><strong>Khả năng:</strong> đọc, ghi, đi đường, mang dụng cụ; xuất thân mở một lợi thế. <strong>Không có:</strong> trí nhớ xuyên thế kỷ, khả năng xác nhận phép lạ hoặc quyền phán xét linh hồn.</p>
+<h2>3. Miriam — Người chăm sóc [H]</h2>
+<p>Nhân vật nữ trưởng thành, đã sống nhiều năm ở khu bến; không đồng nhất với bất kỳ Maria/Miriam nào trong Kinh Thánh. Codex ghi “nhân vật hư cấu”. Làm việc chăm sóc người bệnh và quản lý bữa ăn, không tự xưng có y thuật hiện đại.</p>
+<p><strong>Muốn:</strong> mọi người qua được đợt thiếu hàng. <strong>Cần:</strong> chấp nhận chia trách nhiệm thay vì ôm hết để bảo vệ người khác. <strong>Điều giấu:</strong> từng đổi một món đồ gia đình lấy thức ăn nhưng nói nó bị mất, khiến em trai tưởng mình bị nghi. <strong>Giới hạn:</strong> từ chối dùng người đang kiệt sức làm mồi nhử dù kế hoạch hiệu quả.</p>
+<p><strong>Giọng:</strong> câu ngắn, cụ thể, hỏi người trước khi chạm vào vết thương. Mẫu: “Tôi cần biết ai còn ở trong đó. Chuyện ai đúng nói sau khi họ ra được.” Bản thoại cuối sẽ chọn hệ xưng hô thống nhất theo quan hệ, không mặc định cả game dùng giọng trò chuyện của chủ dự án.</p>
+<p><strong>Gameplay:</strong> ổn định người bị thương, nhận ra dấu thiếu chăm sóc, mở cách tiếp xúc qua việc giúp. Không hồi sinh hoặc chữa bệnh bằng thanh năng lượng. <strong>Thích:</strong> báo trước rủi ro, giữ đồng thuận. <strong>Bất đồng:</strong> công bố tên người chưa sẵn sàng. <strong>Quest B01:</strong> trả lại món đồ gia đình và nói sự thật với em; người chơi có thể giúp sắp cuộc gặp, không nói thay cô.</p>
+<p><strong>Arc:</strong> từ người luôn ở lại một mình tới người tin người khác có thể tiếp ca. Kết tốt không bắt buộc lãng mạn; v1 không có romance system. Nếu tin cậy rạn nứt, cô vẫn cứu người nhưng không đi tiếp với avatar.</p>
+<h2>4. Damar — Người giữ đường [H]</h2>
+<p>Nhân vật nam trưởng thành, từng hộ tống hàng và dùng bạo lực để giữ công việc. Tên là tên làm việc, cần kiểm tra onomastics trước voice lock. Không gán tên vào một cá nhân lịch sử.</p>
+<p><strong>Muốn:</strong> trả món nợ với gia đình một người từng bị anh đánh. <strong>Cần:</strong> hiểu chuộc lỗi là nghe điều người khác cần, không dựng một hành động anh hùng để tự tha cho mình. <strong>Sợ:</strong> nếu không đánh trước sẽ mất người bên cạnh. <strong>Giới hạn:</strong> không nhận lệnh bỏ người không tự đi được.</p>
+<p><strong>Giọng/cử chỉ:</strong> quan sát cửa ra trước khi ngồi, cắt câu dài bằng câu hỏi đường đi; khi thật sự xấu hổ thì không giễu cợt. Mẫu: “Có lối sau. Nhưng mang ông ấy qua đó sẽ chậm. Chọn đi, tôi sẽ giữ cửa.”</p>
+<p><strong>Gameplay:</strong> nhận diện phục kích và dựng lối rút; combat hỗ trợ đẩy lùi, không tự giết NPC nhiệm vụ. <strong>Quest B02:</strong> gia đình người bị hại chỉ muốn anh sửa chỗ ở và thôi tìm họ; người chơi chọn tôn trọng giới hạn ấy hoặc gây thêm tổn hại bằng ép hòa giải. <strong>Arc:</strong> can đảm chịu không được tha thứ ngay. Có thể rời party nếu người chơi liên tục buộc anh đe dọa nhân chứng.</p>
+<h2>5. Lea — Người học chép [H]</h2>
+<p>Nhân vật nữ trưởng thành trẻ, làm việc đối chiếu hàng và học nhiều hệ ghi. Khả năng đọc các dạng chữ cụ thể là [C] cần chuyên gia, không “biết mọi ngôn ngữ cổ”. <strong>Muốn:</strong> tạo một bản ghi không thể bị sửa. <strong>Cần:</strong> biết không văn bản nào tự bảo vệ người được ghi trong đó. <strong>Điều giấu:</strong> đã tự xóa tên một người để người ấy tránh rắc rối, làm chuỗi chứng cứ đứt một đoạn.</p>
+<p><strong>Giọng:</strong> chính xác về điều đã thấy, dễ cáu khi người khác nói “chắc là”. Khi phát triển, học nói “Tôi chưa biết”. <strong>Gameplay:</strong> đối chiếu dấu sửa và thứ tự bản sao; không tự giải tất cả khi được tuyển. Kỹ năng của avatar vẫn có ích nếu cô vắng mặt, với thời gian/chi phí khác.</p>
+<p><strong>Quest B03:</strong> tái lập nguồn cho trang bị xóa bằng cách gặp người thật. Người ấy có quyền từ chối xuất hiện công khai. <strong>Arc:</strong> từ kiểm soát bản ghi tới chăm sóc cách bản ghi được dùng. Kết thúc bảo mật có thể hợp với cô, nhưng không tự tăng tin cậy nếu người chơi đã lừa cô.</p>
+<h2>6. Titus — Người sửa vật [H]</h2>
+<p>Nhân vật nam trưởng thành, người nói tiếng Hy Lạp trong cộng đồng cảng; <strong>không phải thánh Titô</strong>. Tên tạm cần phân biệt trong UI, có thể đổi sau thẩm định để tránh nhầm. Không dùng căn tính La Mã/Hy Lạp làm ký hiệu phản diện.</p>
+<p><strong>Muốn:</strong> mở lại xưởng không bị chủ kho kiểm soát. <strong>Cần:</strong> từ bỏ niềm tin mọi mâu thuẫn đều sửa được bằng một hợp đồng. <strong>Điều giấu:</strong> công cụ của anh đã được dùng sửa khóa trong đêm mất hàng, nhưng việc đó chưa chứng minh anh biết kế hoạch. <strong>Giới hạn:</strong> không phá một cơ cấu nếu người bên dưới chưa được báo.</p>
+<p><strong>Giọng/cử chỉ:</strong> nói bằng tải trọng, mối nối, cách sửa; biết đùa nhưng ngừng ngay khi có người cần nghe. <strong>Gameplay:</strong> đòn bẩy, neo dây, cách tiếp cận qua công trình; không tạo máy móc vượt thời đại. <strong>Quest B04:</strong> chọn làm lại xưởng một mình hoặc nhận người học việc mà gia đình anh không muốn giao du. <strong>Arc:</strong> công việc là quan hệ trách nhiệm, không chỉ đồ vật hoạt động được.</p>
+<h2>7. Nhân vật đối trọng và tái xuất [H]</h2>
+<p><strong>Hanan, người trung gian kho:</strong> muốn độc quyền phân phối để “không ai làm hỏng kế hoạch”; sợ thiếu hàng khiến chính gia đình đói. Biện hộ không xóa việc sửa sổ và đe dọa. Giọng luôn nói “chúng ta” khi cần người khác trả giá. Có thể tự giao một phần sổ khi thấy mạng lưới tan, nhưng không được chuyển thành người vô tội chỉ qua một câu thú nhận.</p>
+<p><strong>Natan, thợ đóng thuyền:</strong> giữ trang đầu vì hứa với cha người chơi; không phải ngôn sứ Nathan. Đáng tin về những gì thấy ở xưởng, không biết toàn bộ vụ án. Nhu cầu: con trai không bị kéo vào nợ cũ. Gợi ý đặt tên khác ở bản localization nếu dễ nhầm.</p>
+<p><strong>Yosef, người chuyển bao:</strong> một nhân chứng Q02, muốn sống yên, sợ mất việc; không phải bản sao một nhân vật Kinh Thánh. Biết một đường chuyển hàng, không biết ai ra lệnh cuối. Quyền từ chối nêu tên là trung tâm slice.</p>
+<p><strong>Haddai, cha đã mất:</strong> chỉ hiện qua lời nhớ có nguồn, vật ghi và ký ức tự nhận là ký ức. Không có hồn ma xác nhận sự thật. Những người khác nhớ ông khác nhau; game không cho một đoạn flashback toàn tri sửa sạch mâu thuẫn.</p>
+<p><strong>Rina, người giữ bữa chung:</strong> nhận hàng thật và nhớ số người ăn, giúp kiểm chứng sổ bằng đời sống. <strong>Mattai, người canh kho:</strong> thực thi lệnh nhưng có thể cho mở lối khi được giải thích và có bảo đảm. <strong>Sela, em của Miriam:</strong> muốn được đối xử như người có thể gánh việc. <strong>Amon, chủ phương tiện vận chuyển:</strong> có lợi ích riêng, có thể hợp tác bằng thỏa thuận có điều kiện. Cả bốn là nhân vật hư cấu, không đại diện tập thể tôn giáo.</p>
+<h2>8. Năm vai Legends</h2>
+<p><strong>Môsê [K: S05 / phần tương tác H]:</strong> động từ dẫn/đứng/ra hiệu; sức nặng ở việc đi theo lời được trao và ở cùng dân trong sợ hãi. Không build phép thuật, không chọn mở biển vì muốn khoe quyền năng. Lời bản văn dùng sau khi chốt bản dịch. Diện mạo không khẳng định chân dung thật.</p>
+<p><strong>Đavít [K: S06 / H]:</strong> động từ lặng lẽ tiến, dừng, kiềm người đi cùng, bước ra nói. Tập trung việc không giết Saun; không cho lựa chọn giết rồi vẫn coi như canon. Có thể thử sai thao tác nhưng scene reset trước khi gây một kết cục khác bản văn.</p>
+<p><strong>Giêrêmia [K: S07 / H]:</strong> động từ giữ tỉnh, nghe, đặt vải, phối hợp kéo; sự bất lực vẫn có chủ động nhỏ. Ebed-melech không bị xóa vai để avatar “cứu ngôn sứ”. Chương không biến nhà tiên tri thành võ sĩ thoát ngục.</p>
+<p><strong>Phêrô [K: S09 / H]:</strong> động từ chèo, kéo lưới, bước vào tương quan, lắng nghe. Nội tâm là diễn giải nghệ thuật; không thêm cuộc tranh cãi mới với Đức Giêsu như thể được sách kể lại. Người chơi không chọn “từ chối sứ vụ” làm ending canon.</p>
+<p><strong>Phaolô [K: S11 / H]:</strong> động từ chịu đựng, nghe người cùng tù, ở lại, lên tiếng để ngăn tai họa. Động đất không do bấm nút cầu nguyện đúng nhịp. Cảnh người cai ngục định tự hại chỉ biểu đạt tối giản, không điều khiển hành vi đó; có tùy chọn giảm hình ảnh, vẫn giữ ý nghĩa lời ngăn cản.</p>
+<h2>9. Quy trình biểu diễn và continuity</h2>
+<p>Actor brief mỗi cảnh ghi điều nhân vật biết, điều muốn đạt, điều không thể nói và trạng thái cơ thể. Companion không biết kết quả Veil trừ khi avatar chọn kể; lời kể được log là <code>sharedReflection</code>, không là <code>verifiedFact</code>. Quan hệ đổi ở event đã xảy ra, không đổi vì mở lại menu. Mỗi lần spawn kiểm tra người đã rời nhóm/chưa gặp/bị thương.</p>
+<p>V1 chưa quyết định diễn viên, tuổi thật, voice AI hay motion capture. Nếu dùng giọng/mẫu ngoại hình có thật cần quyền sử dụng cụ thể. Không tự gán giọng của một diễn viên nổi tiếng vào nhân vật trong tài liệu đặt hàng.</p></article><article id="chapter-06" data-chapter><div class="eyebrow">DESIGN DOSSIER / 07.11.2026</div><h1>06 • Chiến dịch và nhiệm vụ</h1>
+<h2>1. Hợp đồng nhiệm vụ</h2>
+<p>Mỗi quest có ID bền, tiền điều kiện, trigger, objective, phương án giải, trạng thái kết, hệ quả, nguồn và đường phục hồi. “Người chơi chọn” chỉ có nghĩa khi thay việc có thể làm hoặc việc xảy ra tiếp. Tất cả Q/B là [H]. L/V dùng quy tắc nguồn của hồ sơ 08. Thời lượng là mục tiêu blockout, không phải kết quả playtest.</p>
+<p>Mười hai nhiệm vụ chính là các cụm nhiều scene, không phải 12 cuộc nói chuyện. Mỗi cụm dự kiến 45–80 phút; di chuyển, khám phá giữa cụm và các chương L/V nâng tổng mục tiêu lên 18–24 giờ. Phải đo lại sau slice; nếu nội dung thực ít hơn, giảm lời hứa thời lượng.</p>
+<h2>2. Hồi I</h2>
+<h3>Q01 — Bến không chờ người về</h3>
+<p><strong>Vào:</strong> game mới, hoàn tất tạo nhân vật. <strong>Mục tiêu:</strong> nhận di vật từ Natan, giúp mở lối bị hàng chắn, tìm nơi ngủ. Tutorial đi/nhìn/tương tác trong một nhu cầu thật. <strong>Hai cách:</strong> dùng đòn bẩy theo nghề hoặc nhờ hai người cùng chuyển; không khóa tiến độ theo xuất thân. <strong>Quyết định:</strong> dành tiền cho chỗ ở hay đưa trước cho bữa chung; cả hai có nơi nghỉ cơ bản, nhưng tiện ích và người sẵn lòng giúp khác. <strong>Ra:</strong> <code>ledger.found=true</code>; mở Q02. Natan không đưa lời giải vụ án.</p>
+<h3>Q02 — Những tên không được đọc</h3>
+<p><strong>Vào:</strong> có sổ, đã gặp Miriam. <strong>Mục tiêu:</strong> xác minh một đường chuyển bao và bảo vệ Yosef. Tìm mép sổ bị sửa, xác nhận qua bữa chung và một người chuyển hàng. <strong>Ba phương án kết:</strong> di chuyển Yosef trước và giữ tên kín; nộp chứng cứ ẩn danh qua trung gian; xin Yosef đồng thuận nêu tên sau khi có bảo vệ. Không có lựa chọn tự gọi là “đúng”. <strong>Hệ quả:</strong> chỗ trú, lối vào kho và mức tin Miriam khác nhau. <strong>Tầng:</strong> L03, V01 trong slice. <strong>Ra:</strong> Q03 luôn mở; chất lượng lời chứng và nguồn tiếp cận khác nhau. Kịch bản ở hồ sơ 07.</p>
+<h3>Q03 — Một bao thiếu, ba người nhớ</h3>
+<p><strong>Vào:</strong> Q02 kết. <strong>Mục tiêu:</strong> đi tuyến ngoài thành, đối chiếu lượng xuất/nhận. <strong>Gameplay:</strong> theo dấu vật lý, sửa lối qua rãnh hoặc vòng đồi, gặp Amon. <strong>Twist:</strong> dấu vải cùng loại được dùng ở nhiều kho; không đủ buộc tội. <strong>Chọn:</strong> trả công Amon để xem sổ hoặc giúp sửa phương tiện và đợi. Một bên tốn nguồn, một bên tốn thời gian có báo trước. <strong>Ra:</strong> <code>evidence.route=verified</code>; nguồn người làm chứng có thể chưa chắc.</p>
+<h3>Q04 — Đêm kho đóng cửa</h3>
+<p><strong>Vào:</strong> đã biết tuyến chuyển. <strong>Mục tiêu:</strong> đưa thực phẩm hợp lệ ra khỏi kho trước đợt đóng đã thông báo. <strong>Lối:</strong> đàm phán với Mattai; sửa cổng phụ; chống nhóm cản đường để rút. <strong>Chọn:</strong> ưu tiên hàng hay dụng cụ cho chặng sau, không ép bỏ người bất lực. <strong>Hệ quả:</strong> kho bữa chung có nguồn dự phòng hoặc đội đi đường có dụng cụ; thiếu vẫn có đường thay. <strong>Tầng:</strong> L01, V02. <strong>Ra:</strong> trang ký thật của cha, mở hành trình Galilê; báo rõ đây là mốc thay hồi trước khi đi.</p>
+<h2>3. Hồi II</h2>
+<h3>Q05 — Lưới rách còn người vá</h3>
+<p><strong>Mục tiêu:</strong> tìm người nhận hàng ở làng hư cấu Galilê. <strong>Lối:</strong> giúp vá lưới để được nghe, theo chứng từ hoặc hỏi người giữ bữa. <strong>Chọn:</strong> tố cáo công khai chênh lệch khi chưa đủ nguồn hay kiểm tra riêng; cáo buộc sớm làm người liên quan đóng cửa, mở nhánh sửa lời và trả công cho thiệt hại. <strong>Ra:</strong> biết Hanan chỉ đạo một phần mạng lưới, chưa chứng minh mọi khoản thiếu đều do hắn.</p>
+<h3>Q06 — Chỗ đứng của lưỡi gậy</h3>
+<p><strong>Mục tiêu:</strong> đối diện người từng đánh cha đang giữ một vật đối chiếu. <strong>Lối:</strong> trao đổi, lén lấy vật khi chủ vắng hoặc chiến đấu nếu đối phương chủ động gây hại. <strong>Chọn:</strong> trả đũa sau khi người ấy không còn đe dọa hay ngăn bạo lực; hậu quả đối với Damar và quyền được gặp gia đình nhân chứng. <strong>Tầng:</strong> L02. <strong>Ra:</strong> vật chứng hoặc bản sao từ nguồn thứ hai; nguồn thứ hai tốn một nhiệm vụ phục hồi. Không làm nhánh giết người là lối nhanh không hậu quả.</p>
+<h3>Q07 — Một lời hứa còn thiếu</h3>
+<p><strong>Mục tiêu:</strong> thực hiện một lời hứa với companion trong khi nhóm cần lên đường. <strong>Lối:</strong> chia người có đồng thuận; chờ; nhờ người trong vùng với bảo đảm cụ thể. <strong>Chọn:</strong> tự mình giữ hứa hay thừa nhận không thể và thương lượng lại. <strong>Hệ quả:</strong> không chỉ điểm tin, mà companion có/không tham gia lối tiếp cận Q08. <strong>Tầng:</strong> L04 sau đổ vỡ hoặc cuộc nói thật; không buộc phải làm quan hệ rạn để mở chương.</p>
+<h3>Q08 — Trang sổ trong nước</h3>
+<p><strong>Mục tiêu:</strong> khủng hoảng đường đi khi nước dâng cắt lối và người giữ sổ bị kẹt. <strong>Lối:</strong> neo dây đúng, nhờ hỗ trợ đã gây dựng, lối vòng an toàn. <strong>Chọn trong nhánh xấu:</strong> cứu người làm mất một phần giấy hay liều giữ giấy khiến người bị thương; không trình bày giết người lấy giấy như cách chơi được thưởng. <strong>Hệ quả:</strong> <code>evidence.integrity=partial/full</code>; người bị ảnh hưởng nhớ lựa chọn. <strong>Tầng:</strong> V03. <strong>Ra:</strong> địa chỉ nguồn bản sao ở Giêrusalem, mọi trạng thái đều có đường tiếp tục.</p>
+<h2>4. Hồi III</h2>
+<h3>Q09 — Quyền được im lặng</h3>
+<p><strong>Mục tiêu:</strong> gặp các người có tên trong sổ. <strong>Lối:</strong> xin giới thiệu qua quan hệ, giúp công việc cộng đồng, trình bày bằng chứng đã ẩn tên. <strong>Chọn:</strong> chấp nhận một người từ chối hay ép bằng áp lực xã hội. <strong>Hệ quả:</strong> <code>consent</code> theo từng người, không có chỉ số đồng thuận chung thay quyền cá nhân. <strong>Ra:</strong> tập lời chứng có phạm vi, không phải danh sách mọi người đều ủng hộ.</p>
+<h3>Q10 — Bản sao không nguyên vẹn</h3>
+<p><strong>Mục tiêu:</strong> lấy bản đối chiếu của cha, xác định phần cha đã ký sai và phần bị vu cáo. <strong>Gameplay:</strong> đọc hai nguồn không trùng nhau, hỏi người giữ bản, bảo vệ cuộc gặp khỏi kẻ đe dọa hư cấu. <strong>Chọn:</strong> nói phần bất lợi về cha ngay với nhóm hay giấu rồi bị đối chiếu phát hiện. <strong>Hệ quả:</strong> độ tin đối với người chơi, phạm vi phát biểu có thể làm ở Q12. <strong>Ra:</strong> không thể dùng kết “cha hoàn toàn vô can”.</p>
+<h3>Q11 — Những người cùng ở lại</h3>
+<p><strong>Mục tiêu:</strong> trở về Xêdarê chuẩn bị lời chứng và bảo vệ người sẽ lên tiếng. <strong>Lối:</strong> phương án công khai, bảo mật hoặc di chuyển người trước; đều cần thực phẩm, nơi trú và nguồn đối chiếu phù hợp. <strong>Tầng:</strong> L05, V04. <strong>Chọn:</strong> đích chuẩn bị, đổi phương án còn được cho tới lúc chốt; UI nêu điều kiện và hậu quả đã biết. <strong>Ra:</strong> snapshot kế hoạch, lưu tay tự động trước point of no return.</p>
+<h3>Q12 — Điều còn lại sau một lời nói</h3>
+<p><strong>Mục tiêu:</strong> thực hiện kế hoạch Q11. <strong>Gameplay:</strong> sắp người, trao bản sao đúng đối tượng, giải tình huống gây áp lực; không thành một menu chọn ending. <strong>Điều kiện:</strong> chỉ nêu tên người đồng thuận và còn an toàn; chứng cứ thiếu thì giảm phạm vi cáo buộc. <strong>Thất bại thao tác:</strong> checkpoint, không âm thầm đổi sang kết “đã bán đứng mọi người”. <strong>Ra:</strong> một trong ba khung kết hồ sơ 03, biến thể bằng chứng và quan hệ; montage chỉ dùng sự kiện đã log.</p>
+<h2>5. Các chương Legends</h2>
+<ul>
+<li><strong>L01 / Môsê / Xh 14,10–31 [S05]:</strong> hướng dòng người, nhận chỉ dẫn, theo hành động giơ tay trong trình thuật; 18–25 phút. Phép lạ không do thanh mana. Cơ chế crowd là sáng tác, không biến số dân thành số liệu nguồn.</li>
+<li><strong>L02 / Đavít / 1 Sm 24 [S06]:</strong> không gian hang, tiếp cận yên lặng, ngăn bạn đi cùng và bước ra đối diện; 15–20 phút. Không ghép lén trại và lấy giáo ở 1 Sm 26 vào cảnh này.</li>
+<li><strong>L03 / Giêrêmia / Gr 38,1–13 [S07]:</strong> bị giới hạn cử động, nghe Ebed-melech, đệm vải và phối hợp kéo; 8–12 phút. Chỉ rút đoạn này làm slice; toàn chương mở rộng 15–20 phút nếu được duyệt.</li>
+<li><strong>L04 / Phêrô / Ga 21,1–19 [S09]:</strong> thao tác ngư cụ đơn giản và đối thoại có khoảng lắng; 15–20 phút. Không cho chấm điểm tình yêu bằng nút trả lời đúng.</li>
+<li><strong>L05 / Phaolô / Cv 16,22–40 [S11]:</strong> nghe người cùng tù, ở lại sau biến cố và lên tiếng ngăn người cai ngục tự hại; 15–20 phút. Không dùng QTE cầu nguyện để kích hoạt động đất.</li>
+</ul>
+<h2>6. Inner Veil</h2>
+<ul>
+<li><strong>V01 — Hố của những cái tên:</strong> sau L03, 5–7 phút. Đặt mảnh ghi xuống để mở lối cho hình người không tên; ép đọc mọi tên làm căn phòng chật hơn. Không có người thật bị giấc mơ quyết định số phận.</li>
+<li><strong>V02 — Biển không bờ:</strong> sau Q04, 7–10 phút. Chia tải giữa các bệ khiến lối hiện; bỏ qua puzzle có tóm tắt, không thưởng thua.</li>
+<li><strong>V03 — Những mặt nạ giữ kho:</strong> sau Q08, 7–10 phút. Chọn bỏ quyền điều khiển một hình nhân để cửa mở; không suy diễn thành giáo lý về tự do.</li>
+<li><strong>V04 — Chiếc ghế trống:</strong> sau chuẩn bị Q11, 5–8 phút. Người chơi tự chọn câu mình sẵn lòng nhận trách nhiệm, hoặc chưa nói. Không phải cuộc gọi với linh hồn cha.</li>
+</ul>
+<h2>7. Sáu nhiệm vụ quan hệ</h2>
+<p><strong>B01</strong> Miriam và món đồ gia đình; <strong>B02</strong> Damar và giới hạn được người bị hại đặt ra; <strong>B03</strong> Lea và tên đã xóa; <strong>B04</strong> Titus và người học việc; <strong>B05</strong> Natan và lời hứa với cha; <strong>B06</strong> Rina và cách phân bữa khi phần ăn thiếu. B01–B04 theo hồ sơ nhân vật. B05 mở một bản nhớ khác về cha, không chứng cứ toàn tri. B06 chọn cách ưu tiên minh bạch và mời cộng đồng cùng chịu trách nhiệm; không puzzle tối ưu giá trị một mạng người.</p>
+<p>Mỗi B có tối thiểu hai cách tiếp cận và một hậu quả ở hub hoặc nhiệm vụ chính. Bỏ qua B không khóa kết thúc tuyến chính, nhưng làm mất nguồn hỗ trợ cụ thể. Không có romance hoặc thu thập quà tăng tin vô hạn trong phạm vi v1.</p>
+<h2>8. Quy tắc QA nhánh</h2>
+<p>Mỗi quest kiểm tra: không companion; chứng cứ thiếu; đã mất tiền; chọn ngược lời khuyên; bỏ qua L/V; load trước/sau quyết định; dùng hỗ trợ tiếp cận. Một thông tin quan trọng không chỉ nằm trong lời thoại có thể bị bỏ lỡ. Khi NPC từ chối, journal ghi việc cần làm tiếp có thể hiểu được. Một nhánh hội tụ phải giữ biến và callback, không reset mọi lựa chọn về cùng trạng thái.</p></article><article id="chapter-07" data-chapter><div class="eyebrow">DESIGN DOSSIER / 07.11.2026</div><h1>07 • Vertical slice — Những tên không được đọc</h1>
+<p><strong>Draft kịch bản có thể blockout v1.0.</strong> Đây là kịch bản mẫu cho một lát cắt, không phải screenplay đầy đủ của toàn chiến dịch. Lời thoại dưới đây do dự án sáng tác [H], kể cả câu diễn ý trong Legends; trước thu âm phải thay các đoạn dùng bản văn bằng bản dịch đã chọn và được phép dùng. Không phát hành các câu diễn ý như nguyên văn Kinh Thánh.</p>
+<h2>1. Mục tiêu và điều kiện đầu</h2>
+<p>55–70 phút lần đầu: 5 phút vào cảnh, 15 phút điều tra, 8 phút tiếp cận, 10 phút Legends, 6 phút Veil, 10 phút quyết định/thực hiện, 5 phút hậu quả. Các phần cộng khoảng 59 phút; thời lượng phụ thuộc tốc độ đọc và khám phá. Cảnh chiến đấu tùy chọn có thể thêm 3–5 phút. Chưa có playtest.</p>
+<p>Không gian: một sân bến và kho 70×90 m; lối sau 25×50 m; phòng yên; hố Legends khoảng 8×8 m có vùng thao tác; Veil dùng 3 buồng tái cấu hình. Kích thước là blockout đề xuất [H], không phục dựng khảo cổ.</p>
+<p>Đầu vào: <code>Q01=complete</code>, <code>ledger.found=true</code>, <code>evidence.patch=false</code>, <code>evidence.meal=false</code>, <code>yosef.met=false</code>, <code>consent.yosef=unknown</code>, <code>route=unset</code>, <code>witness.safety=exposed</code>, Miriam đang có mặt. Yosef là nhân vật hư cấu, không ở trong Gr 38.</p>
+<h2>2. S01 — Cái tên trên mép giấy (0:00–5:00)</h2>
+<p><strong>EXT. SÂN KHO — CHIỀU.</strong> Máy quay sau vai Người Chứng. Một bao rách được vá bằng vải khác màu. Tiếng gỗ kéo trên nền đá, người chờ ở xa. Quyền điều khiển trao trong 8 giây đầu mục tiêu; không chặn bằng đoạn mở dài.</p>
+<p>MIRIAM đang đếm bát, đặt một bát úp xuống.</p>
+<p>MIRIAM: “Hôm nay thiếu hai bao. Sổ lại ghi đủ.”</p>
+<p>NGƯỜI CHỨNG: “Ai đã ký?”</p>
+<p>MIRIAM: “Một người còn phải làm ở đây ngày mai. Trước khi hỏi tên, nghĩ xem anh sẽ giữ họ an toàn thế nào.”</p>
+<p><strong>Prompt:</strong> Xem sổ / Hỏi về bữa chung / Xem chỗ nhận bao. Thứ tự tự do. Camera chỉ quay nhẹ theo ánh nhìn khi người chơi chọn; có thể tắt.</p>
+<p>Nếu người chơi đi thẳng tới cửa kho, MATTAI nói: “Chưa có người xác nhận, ta không mở.” Journal thêm “Tìm dữ kiện về lượt giao hôm nay”, không thất bại quest. Nếu hỏi tên ngay, Miriam đáp: “Tôi sẽ hỏi họ có muốn gặp anh không.” Không phát lộ tên tự động.</p>
+<h2>3. S02 — Hai việc không khớp (5:00–20:00)</h2>
+<p><strong>Nút A: Sổ giao hàng.</strong> Người chơi xoay vật dưới đèn; thấy một mảnh dán che vết mực. Prompt có mô tả văn bản cho người không nhìn rõ. Quan sát II cho biết thứ tự lớp mực nhanh; mức cơ bản có thể hỏi Lea hoặc dùng bản đối chiếu bên cạnh. Không mini-game cào giấy có thể phá vật vĩnh viễn.</p>
+<p>NGƯỜI CHỨNG: “Có một lớp ghi khác ở dưới.”</p>
+<p>LEA nếu có mặt: “Chúng ta biết trang này đã sửa. Chưa biết ai sửa, cũng chưa biết vì sao.”</p>
+<p>Ghi <code>evidence.patch=true</code>; journal: “Vật chứng: trang được sửa. Chưa xác định người sửa.” Không tự ghi Hanan có tội.</p>
+<p><strong>Nút B: Bữa chung.</strong> Rina chỉ hai vệt bao sạch ở góc nơi ba bao thường đặt. Người chơi đếm không bắt bấm từng hạt hay trả lời quiz.</p>
+<p>RINA: “Tôi nhận từng ấy. Không biết bao đã thiếu trước hay sau cổng.”</p>
+<p>Ghi <code>evidence.meal=true</code>; đây là lời chứng về số nhận, không chứng minh toàn tuyến. Cần hai cờ A+B để hỏi đối chiếu chính; nếu chỉ có một, objective nêu nguồn còn thiếu bằng dấu địa vật, không marker mọi lúc.</p>
+<p><strong>Nút C tùy chọn:</strong> sửa dây giữ mái giúp một người chuyển bao nhận ra mình được nghe. Mở đường gặp Yosef sớm, không thay hai nguồn bắt buộc. Nếu không làm, Miriam giới thiệu sau khi hai nguồn đủ.</p>
+<h2>4. S03 — Một người chưa sẵn lòng (20:00–28:00)</h2>
+<p><strong>EXT. LỐI SAU KHO.</strong> Yosef đứng cách cửa một tầm chạy. Không close-up ép vào mặt ngay; khi người chơi hạ dụng cụ mới tiến gần.</p>
+<p>YOSEF: “Tôi mang bao qua cửa kia. Chừng ấy là điều tôi biết.”</p>
+<p><strong>D01 / các ý định hiển thị đúng lời sẽ nói:</strong></p>
+<ul>
+<li>A: “Anh muốn tôi giữ kín điều gì?” → YOSEF: “Tên tôi. Và chỗ mẹ tôi đang ở.” Mở điều kiện bảo vệ; <code>yosef.heard=true</code>.</li>
+<li>B: “Tôi cần anh đứng ra xác nhận.” → YOSEF: “Còn tôi cần trở lại làm việc mà không bị chặn ở cửa.” Không khóa quest; mở yêu cầu bảo đảm.</li>
+<li>C: “Nếu anh không nói, người khác có thể bị đổ lỗi.” → YOSEF: “Đừng đưa nỗi sợ ấy sang tôi rồi gọi là lựa chọn.” Miriam phản đối; <code>pressure.used=true</code>. Có câu sửa: “Anh nói đúng. Tôi đã ép anh.” Việc xin lỗi mở lại đối thoại nhưng không xóa log áp lực.</li>
+</ul>
+<p>Yosef kể đã chuyển bao theo lệnh miệng sang một sân khác. Lời kể không chỉ ra ai ra lệnh cuối. Người chơi ghi tuyến [lời chứng chưa đối chiếu]. Mattai đi ngang; Yosef dừng nói. Không biến Mattai tự động thành kẻ ác vì xuất hiện đúng lúc.</p>
+<p><strong>Đường tiếp cận kho phụ:</strong> thỏa thuận mở cùng người giám sát; hoặc sửa then phụ và xin người dùng lối cho phép; hoặc tránh nhóm đòi phí trái phép. Nếu chọn combat, kẻ đòi phí là nhóm hư cấu không đồng nhất quân đội/tôn giáo. Mục tiêu là mở đường thoát, không hạ mọi người. Cả ba lấy được thẻ dấu lô hàng; không lấy được vũ khí thần bí.</p>
+<h2>5. S04 — Một việc nhỏ đủ để nhớ (28:00–30:00)</h2>
+<p><strong>INT. CHỖ NGHỈ BÊN SÂN.</strong> Miriam giặt một mảnh vải. Người Chứng nói còn chưa biết nên làm gì với tên trong sổ.</p>
+<p>MIRIAM: “Có chuyện người ta cứu một người khỏi hố. Họ không chỉ đem dây. Họ còn đem vải để dây đừng cứa vào người ấy.”</p>
+<p>Đây là lời diễn ý [H] dẫn tới Gr 38, không là trích dẫn. Không khẳng định Miriam sở hữu một bản sách hiện đại.</p>
+<p><strong>Thẻ chuyển cảnh:</strong> “LEGENDS OF SCRIPTURE — Giêrêmia. Chuyển thể Gr 38,1–13. Dàn cảnh và tương tác có yếu tố sáng tác.” Nút Chơi / Xem tóm tắt. Tóm tắt dẫn cùng trạng thái hoàn thành nhưng không gán người chơi đã chọn phản tư.</p>
+<h2>6. S05 — Dây và vải (30:00–40:00)</h2>
+<p><strong>INT. HỐ — ÁNH SÁNG TỪ TRÊN.</strong> Điều khiển Giêrêmia. Không hành trang Mortal. Camera vừa tầm, không nghiêng liên tục. Tay cử động trong phạm vi hẹp; có chế độ camera giảm ngột ngạt.</p>
+<p><strong>Beat 1 / khoảng 2 phút:</strong> nghe bước chân, nhận biết phía ánh sáng. Hành động giữ tư thế và gọi đáp lại; thất bại chỉ lặp ngắn, không để nhà tiên tri chết khác bản văn. Tránh game hóa đau khổ thành thanh điểm chịu đựng để khoe thành tích.</p>
+<p><strong>Beat 2 / 3 phút:</strong> dây và vải được hạ xuống. Tiếng Ebed-melech diễn ý chỉ dẫn đệm vải dưới dây. Nhân vật này giữ vai trò cứu giúp được bản văn nêu [K; S07]. Không đổi thành Miriam hay Người Chứng. Hình ảnh bên trên không đòi số người kéo cụ thể vì bản dịch/chi tiết cần thẩm định.</p>
+<p>Prompt tuần tự: Nhận vải → Đặt vải ở chỗ dây tì → Ra hiệu sẵn sàng. Tương tác một lần hoặc giữ tùy cài đặt; không button mash. Nếu ra hiệu quá sớm: âm thanh dây căng, cảnh dừng trước tổn thương; prompt nhắc vải. Gợi ý cao nhất tự đặt vải mà vẫn cho người chơi ra hiệu.</p>
+<p><strong>Beat 3 / 3 phút:</strong> phối hợp lên khỏi hố, nghe âm thanh đổi từ tù đọng sang sân; phần lớn nâng do người bên trên, người chơi điều chỉnh tư thế. Không có quỷ trong bùn để đánh. Sự trợ giúp không bị lấn át bởi một animation Giêrêmia tự phóng lên.</p>
+<p><strong>Beat 4 / 2 phút:</strong> chân chạm nền, được đỡ ra khỏi miệng hố; không tiếp tục thành vượt ngục. Fade nhẹ. Codex mở hai cột “Nguồn nói gì / Game bổ sung gì”: nguồn có hố, Ebed-melech, dây và vải; game thêm camera, nhịp thao tác và cảm giác không gian. Nội dung tóm tắt giữ ngắn, không sao chép nguyên đoạn Kinh Thánh.</p>
+<p>Ghi <code>legend.jeremiah.completed=true</code>, không ghi <code>virtue+=10</code>.</p>
+<h2>7. S06 — Hố của những cái tên (40:00–46:00)</h2>
+<p><strong>Trước cảnh:</strong> nhân vật chợp mắt tại chỗ nghỉ. Thẻ “THE INNER VEIL — Giấc mơ hư cấu, ẩn dụ nghệ thuật; không thuộc bản văn Kinh Thánh.” Có thể bỏ qua toàn bộ.</p>
+<p>Sàn là những trang lớn. Bốn hình người đứng sau các khe sáng. Tên trên trang không dùng tên thật Yosef hay một NPC để tránh hàm ý giấc mơ tiết lộ nguy cơ có thật. Một hình người có cánh hư cấu chỉ hướng bàn tay, không nói thay Thiên Chúa; không đặt tên hoặc mô tả như thiên thần đã được Kinh Thánh chứng thực.</p>
+<p><strong>Cơ chế:</strong> mang tất cả trang làm lối hẹp hơn; đặt một trang xuống bàn cho hình người có đường đi. Không đốt hay xóa tên để “chiến thắng”. Người chơi có thể thử, reset ngay, không bị phạt. Lối cuối mở khi để trang tại nơi có người giữ, diễn đạt phân chia trách nhiệm.</p>
+<p><strong>Giọng nội tâm của avatar, tùy chọn bật:</strong> “Mình đang giữ điều đã xảy ra… hay đang giữ cả quyền quyết định thay họ?” Đây là tự vấn, không phán quyết siêu nhiên.</p>
+<p><strong>R01:</strong> chọn phản tư “Tôi cần hỏi trước”, “Tôi sợ chậm sẽ hại thêm người” hoặc “Tôi chưa trả lời được”. Ghi <code>reflection</code> tương ứng; không đổi chứng cứ hoặc độ an toàn. Nếu skip, ghi <code>reflection=null</code> và không phát câu khẳng định người chơi đã chọn.</p>
+<h2>8. S07 — Quyết định có người chịu giá (46:00–56:00)</h2>
+<p><strong>Trở lại bến.</strong> Người chơi điều khiển, đi tìm Yosef; sổ vẫn là sổ cũ, giấc mơ không thêm trang. Miriam hỏi: “Giờ anh định làm gì?” Không nhắc một phản tư nếu người chơi chưa chia sẻ.</p>
+<p><strong>D02 có ba kế hoạch, UI nêu chi phí trước khi chốt:</strong></p>
+<p><strong>A / Đưa Yosef và mẹ sang chỗ trú trước.</strong> Cần giúp Rina chuẩn bị lối và dành phần đồ dự trữ. Người chơi tổ chức di chuyển 3 phút. Giữ tên kín; <code>route=shelter</code>, <code>safety=sheltered</code>, <code>consent=withheld</code>, <code>testimony=private</code>. Mất phần đồ dự trữ cho một tuyến tùy chọn Q03, có đường vòng miễn phí. Miriam tin hơn vì đã giữ lời, không vì đã “chọn đáp án đạo”.</p>
+<p><strong>B / Nộp dữ kiện đã ẩn danh qua người trung gian.</strong> Chỉ dùng A+B vật chứng đã xác minh; không ghi lời Yosef như lời công khai. Người chơi chọn bản sao đã bỏ tên và trực tiếp giao; <code>route=anonymous</code>, <code>safety=exposed</code>, <code>consent=withheld</code>, <code>testimony=anonymous</code>. Có giám sát kho sớm nhưng Yosef còn cần được giúp sau; Q03 mở thêm nhiệm vụ bảo vệ thay vì tuyên bố an toàn rồi bỏ quên.</p>
+<p><strong>C / Xin đồng thuận đứng tên với bảo vệ.</strong> Chỉ mở sau đã hỏi nhu cầu, không còn áp lực đang chưa sửa, và đã bố trí chỗ trú + người đưa đi. Yosef được một câu từ chối cuối, không check Giao tiếp để cưỡng ép. Nếu đồng ý: <code>route=consented</code>, <code>safety=escorted</code>, <code>consent=granted</code>, <code>testimony=named</code>. Người chơi đưa tới nơi gặp, bàn giao rồi rời; nguồn hàng đến nhanh hơn nhưng tên được biết trong phạm vi nhóm tiếp nhận. Đây là trạng thái hư cấu, không mẫu thủ tục tòa án lịch sử.</p>
+<p>Nếu thiếu điều kiện C, UI nói thiếu gì và cho quay làm; không giấu phương án sau một chỉ số vô hình. Nếu người chơi cố chọn nêu tên trái ý qua một hành động ở sổ, cảnh cảnh báo nghĩa cụ thể và chuyển nhánh phục hồi, không xem nó là C hợp lệ.</p>
+<h2>9. S08 — Sân kho lúc lên đèn (56:00–61:00)</h2>
+<p><strong>A:</strong> chỗ Yosef đứng trống, có dấu anh đã tới nơi; Rina cho biết đồ trú đã nhận. MIRIAM: “Giờ tôi có thể đi cùng anh một đoạn. Có người nhận ca rồi.”</p>
+<p><strong>B:</strong> có bảng kiểm lô mới; Yosef vẫn ở lối sau, nói “Tôi chưa thể yên tâm.” Companion không mừng như đã cứu xong. Quest Q03 ghi việc cần bố trí cho anh trước khi rời hồi.</p>
+<p><strong>C:</strong> Yosef tự nói tên ở cuộc gặp, không để avatar phát ngôn hộ. Sau đó nơi trú xác nhận đã đón; một lối vào kho mở qua người giám sát. MIRIAM: “Anh đã hỏi, rồi đã làm điều anh hứa. Hãy giữ như vậy.”</p>
+<p><strong>Kết slice:</strong> người chơi cầm trang đối chiếu có chữ ký cha. NGƯỜI CHỨNG, nếu thái độ nhận trách nhiệm: “Chữ của ông ấy. Mình còn chưa biết đủ.” Nếu thái độ phòng thủ: “Một chữ ký chưa kể hết chuyện.” Fade để tiếp tục Q03, không tuyên án Hanan.</p>
+<h2>10. Ghi chú triển khai và kiểm thử</h2>
+<p>Tự lưu trước D02, sau hoàn tất kế hoạch và sau callback; commit route sau hành động, không ngay lúc hover lựa chọn. Đang hộ tống mà quit thì load tại checkpoint có cùng vai trò NPC. Không ghi completion L/V trùng khi xem lại. Không đưa dialogue ID vào text để dịch dễ.</p>
+<p>Cần kiểm tra 3 nhánh D01 × 3 route hợp lệ D02; thêm skip L, skip V, skip cả hai, mất companion, mất nguồn đồ dự trữ và chơi lại sau load. Với các nhánh không đủ điều kiện, kiểm tra thông báo và đường khôi phục thay vì ép cho mọi tổ hợp đều hợp lệ. So sánh lời cuối với trạng thái đã commit; screenshot sân thay đổi là bằng chứng tốt hơn chỉ kiểm tra một cờ.</p></article><article id="chapter-08" data-chapter><div class="eyebrow">DESIGN DOSSIER / 07.11.2026</div><h1>08 • Tài liệu tham chiếu Kinh Thánh và chuyển thể</h1>
+<h2>1. Mục đích và thứ bậc nguồn</h2>
+<p>Bộ này giữ căn tính Công giáo mà không tự nhận có thẩm quyền giải thích thay Hội Thánh. Bản văn Kinh Thánh là nguồn của các biến cố chuyển thể; giáo huấn giúp thiết lập ranh giới; lịch sử và khảo cổ cung cấp bối cảnh; sáng tác làm thành game nhưng phải được nhận diện. Không dùng khảo cổ như bằng chứng tự động của mọi chi tiết trình thuật, cũng không dùng khoảng trống khảo cổ để tuyên bố một khẳng định thần học sai.</p>
+<p><strong>Quy trình nguồn:</strong> xác định pericope → đọc toàn đơn vị và văn cảnh trước/sau → so các bản dịch đã chọn khi cần → chú thích vấn đề thể loại/niên biểu → tách [K/G/L/H/C] → viết quy tắc gameplay → thẩm định → khóa phiên bản. Bản v1 đã xác lập nguồn và thiết kế; các lần đọc đối chiếu ngôn ngữ gốc, bản Việt và thẩm định chuyên gia chưa hoàn tất.</p>
+<p>Dei Verbum 12 là nền cho chú ý tới thể loại, hoàn cảnh và tính thống nhất của Kinh Thánh [S01]. Áp dụng vào game cần thận trọng: nhãn “dựa trên Kinh Thánh” không khiến mọi dàn cảnh do game thêm vào thành dữ kiện đức tin.</p>
+<h2>2. Ma trận chuyển thể chính</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Nguồn chính</th>
+<th>Hạt nhân giữ lại</th>
+<th>Quyền chủ động đề xuất [H]</th>
+<th>Không cho phép</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L01</td>
+<td>Xh 14,10–31; S05</td>
+<td>Thiên Chúa giải thoát dân; Môsê thực hiện hành động được trao trong trình thuật</td>
+<td>Dẫn người, giữ lối, nhận và thực hiện chỉ dẫn</td>
+<td>Mana mở biển; gọi lại phép lạ để farm; cho dân thua như một kết canon</td>
+</tr>
+<tr>
+<td>L02</td>
+<td>1 Sm 24; S06</td>
+<td>Đavít không giết Saun</td>
+<td>Tiếp cận, kiềm đồng hành, bước ra nói</td>
+<td>Tùy chọn giết Saun rồi viết lại vương triều; lẫn với 1 Sm 26</td>
+</tr>
+<tr>
+<td>L03</td>
+<td>Gr 38,1–13; S07</td>
+<td>Giêrêmia được Ebed-melech giúp khỏi hố; vai trò dây/vải được giữ</td>
+<td>Phối hợp nhận trợ giúp</td>
+<td>Avatar hư cấu thay người cứu; tự thoát bằng sức mạnh; quỷ hóa bùn</td>
+</tr>
+<tr>
+<td>L04</td>
+<td>Ga 21,1–19; S09</td>
+<td>Gặp Đức Giêsu Phục Sinh, mạch trao trách nhiệm cho Phêrô</td>
+<td>Ngư cụ, bước đi, lắng nghe</td>
+<td>Chấm điểm tình yêu; đổi lời Đức Giêsu theo quan hệ; kết phủ nhận bản văn</td>
+</tr>
+<tr>
+<td>L05</td>
+<td>Cv 16,22–40; S11</td>
+<td>Phaolô và Xila ở tù; biến cố giải thoát không dẫn tới bỏ mặc cai ngục</td>
+<td>Ở lại, gọi đáp, lên tiếng</td>
+<td>Cầu nguyện đúng nút tạo động đất; điều khiển hành vi tự hại; phép lạ như kỹ năng</td>
+</tr>
+</tbody>
+</table>
+<p>Mỗi dòng là bản tóm tắt giới hạn để định hướng chuyển thể. Không thay thế việc đọc phân đoạn đầy đủ. Chi tiết tương tác là [H] dù xuất phát từ một hành động có trong bản văn.</p>
+<h2>3. Nguồn chủ đề và bối cảnh</h2>
+<p><strong>Gr 31,31–34 [S18]:</strong> tham chiếu cho chủ đề giao ước; không là mật mã mở kho báu. Khi diễn giải cần giữ người nhận lời hứa trong văn cảnh Israel/Giuđa, rồi mới trình bày cách đọc Công giáo. Không dùng phụ đề “Di Sản Giao Ước” để nói người chơi là người kế vị dân Israel hay có nhiệm vụ hoàn thiện điều Đức Kitô chưa hoàn tất.</p>
+<p><strong>Gr 36 [S08]:</strong> tham chiếu cho văn bản, ký ức và sức ép của quyền lực. Không ghép cuộn sách bị đốt với cảnh hố Gr 38 thành một biến cố duy nhất. Chưa có chương chơi Gr 36 trong phạm vi v1.</p>
+<p><strong>Cv 24 [S10]:</strong> nền nhắc đến Xêdarê trong hành trình Phaolô. Tuyến kho cứu trợ là [H]; không cho avatar là người bí mật quyết định kết quả vụ án của Phaolô. Không coi lời nói của một nhân vật trong trình thuật là phán quyết của tác giả về mọi người trong nhóm nhân vật ấy.</p>
+<p><strong>Cv 27 [tham khảo bổ sung S20]:</strong> ứng viên chương hải nạn về sau, <strong>không nằm trong 5 Legends v1</strong>. Chưa thiết kế đầy đủ/khóa phân đoạn; không cộng thêm vào số lượng nội dung đã cam kết.</p>
+<h2>4. Canon lock và freedom envelope</h2>
+<p><strong>Khóa:</strong> nhân vật được bản văn xác định; hành động và kết quả cốt lõi; nguồn gốc quyền năng không bị chuyển sang avatar; lời mang tính giáo huấn không bị chỉnh theo lựa chọn; không “sửa” cuộc Thương Khó/Phục Sinh bằng hệ nhiệm vụ.</p>
+<p><strong>Có thể sáng tác, cần nhãn và kiểm tra:</strong> đường đi, camera, nhịp thao tác, thời tiết không được nguồn xác định, ngoại hình, chi tiết đồ vật bổ trợ, lời gọi ngắn hỗ trợ tương tác. Sáng tác không được mâu thuẫn điều bản văn nêu. Một khoảng trống không có nghĩa muốn thêm gì cũng hợp.</p>
+<p><strong>Mortal World:</strong> quyền chọn mạnh hơn đối với con người và cộng đồng hư cấu. Không ép tất cả kết cục hợp tác, hòa giải hay minh oan đều phải thành công. <strong>Inner Veil:</strong> tự do hình ảnh lớn, giới hạn khẳng định rất chặt: không thêm giáo lý, không dự báo có hiệu lực, không xác nhận tội của NPC, không đặt một linh hồn cụ thể vào án phạt.</p>
+<p>Ví dụ chấp nhận: người chơi trong giấc mơ thấy cái cân không cân được tên mình; codex gọi đó là biểu tượng tội lỗi/sợ hãi của nhân vật. Ví dụ loại bỏ: một thiên thần mới nói một nhóm dân là ác và chỉ vị trí thủ phạm; thức dậy mở marker được coi là sự thật.</p>
+<h2>5. Nguyên tắc Công giáo trong thiết kế</h2>
+<ul>
+<li>Ân sủng không là tài nguyên mua/đổi. Lòng tin NPC có thể đo để lập trình; quan hệ với Thiên Chúa không được biến thành điểm xếp hạng.</li>
+<li>Phép lạ không là vật tư chiến đấu có cooldown. Người chơi thực hiện vai trò con người của cảnh, không điều khiển Thiên Chúa.</li>
+<li>Giáo lý phân biệt mặc khải công khai và tư [G; S02]. Veil là sáng tác nghệ thuật, không tự nâng thành một trong hai loại bằng nhãn trong marketing.</li>
+<li>Thiên thần là hữu thể thiêng liêng theo giáo lý [G; S04]; “hình có cánh” là cách dựng hình, không mẫu giải phẫu đức tin.</li>
+<li>Không quy trách nhiệm tập thể cho người Do Thái; không miêu tả đạo Do Thái chỉ như phông nền tiêu cực để Kitô giáo xuất hiện [G; nền S03]. Vai trò của một nhóm trong một cảnh phải đọc đúng văn cảnh và qua thẩm định.</li>
+<li>Không đồng nhất tổn thương tâm lý, khuyết tật hoặc bệnh tật với quỷ nhập. Cảnh biểu tượng phải tránh ngôn ngữ khiến người chơi hiểu như chẩn đoán đời thật.</li>
+</ul>
+<h2>6. Quyền dịch thuật, trích dẫn và hiển thị</h2>
+<p>Nghiên cứu dùng trang USCCB và Vatican theo các link hồ sơ 10; các trang và bản dịch có điều kiện quyền riêng. Quyền đọc để nghiên cứu không tự cho quyền đưa cả bản dịch vào game. Chưa chọn bản tiếng Việt phát hành. Trước script lock cần chọn bản dịch, xin/kiểm tra quyền sử dụng cụ thể, ghi attribution và giới hạn trích dẫn theo điều khoản thực tế. Đây là đầu việc quản lý nội dung, không phải kết luận pháp lý về quyền đã có.</p>
+<p>V1 không chép dài bản văn. Lời thoại diễn ý do dự án viết phải ghi “diễn ý”, không đặt dưới nhãn “nguyên văn Kinh Thánh”. Mọi câu dự định dùng như trích dẫn cần trường <code>translation</code>, <code>verseRange</code>, <code>exactText</code>, <code>permissionStatus</code>, <code>reviewer</code>, <code>revision</code>. Số chương/câu của một số sách có thể khác giữa truyền thống/bản dịch; hệ thống phải hỗ trợ alias và mã pericope, không chỉ nối chuỗi URL.</p>
+<h2>7. Mẫu hồ sơ scene để duyệt</h2>
+<p><strong>Ví dụ L03-S02:</strong> pericope Gr 38,1–13; focus 38,11–13; thể loại nguồn: trình thuật trong sách ngôn sứ; canon lock: Ebed-melech giữ vai cứu giúp, đệm vải trước kéo; additions: camera thấp, nút đặt vải, thời lượng; anachronism checks: vật liệu, dây, gốm, phục trang; gameplay risk: người chơi tưởng thắng bằng sức mạnh cá nhân; mitigation: action do nhóm bên trên thực hiện, avatar phối hợp; subtitle: diễn ý chưa khóa; review: chưa thẩm định. Không dùng trạng thái “approved” chỉ vì đã có link nguồn.</p>
+<h2>8. Danh sách việc chuyên gia cần trả lời</h2>
+<ol>
+<li>Chọn bản Việt và quy ước tên riêng; lập ánh xạ Môsê/Moses, Giêrêmia/Jeremiah, Xêdarê/Caesarea.</li>
+<li>Duyệt khung thời gian và cách kể Legends để không tạo anachronism về sách Tân Ước hoàn chỉnh.</li>
+<li>Duyệt lời diễn ý, quyền chủ động trong Ga 21 và cách biểu đạt phép lạ.</li>
+<li>Kiểm tra việc nén thời gian/đường đi trong Xh 14 và Gr 38; lựa chọn số người kéo trong bản dịch được dùng.</li>
+<li>Duyệt chủ đề Giao Ước và cách thể hiện Do Thái giáo; mời phản biện nhạy cảm văn hóa phù hợp.</li>
+<li>Duyệt Veil về sự nhầm lẫn mặc khải, thần học và bệnh lý.</li>
+</ol>
+<p>Mỗi vấn đề ghi người chịu trách nhiệm và kết luận trước khi thu âm/marketing. Không ghi “chuẩn Công giáo đã duyệt” khi mới chỉ có nghiên cứu của người viết.</p></article><article id="chapter-09" data-chapter><div class="eyebrow">DESIGN DOSSIER / 07.11.2026</div><h1>09 • Sản xuất và kiến trúc hệ thống</h1>
+<h2>1. Hiện trạng đã quan sát</h2>
+<p>Workspace <code>C:\hanh-trinh-loi-chua</code> chứa bản browser/offline hiện có: <code>story-data.js</code>, các module <code>expedition-*</code>, <code>adventure-3d.js</code>, <code>character-*</code>, <code>ban-choi-ngoai-tuyen.html</code>, tài liệu R&amp;D và nghiên cứu nhân vật. Đọc mẫu <code>expedition-world.js</code> cho thấy cơ chế nối dấu lựa chọn giữa chặng. Chưa audit toàn bộ mã, chưa chạy lại game hoặc test trong đợt tài liệu này; không suy ra chất lượng hiện tại từ tên file.</p>
+<p><code>LOI-TRINH-RD.md</code> đặt nguyên tắc giữ dữ liệu Kinh Thánh riêng và sáng tác ở tầng minh họa. Hướng mới tiếp tục mục tiêu phân biệt ấy, nhưng bổ sung canon lock, scene source và nhãn Veil. Không dùng việc bảo vệ một file như thay thế cho việc duyệt ý nghĩa toàn scene.</p>
+<p>Nghiên cứu tạo hình cũ có phân tầng văn bản/khảo cổ/nghệ thuật, có thể tái sử dụng phương pháp. Những niên đại hoặc phong tục cụ thể trong tài liệu cũ chưa được mặc định là đã xác minh cho THE WITNESS.</p>
+<h2>2. Hai tuyến công nghệ</h2>
+<p><strong>Browser prototype:</strong> giữ nguyên bản cũ như baseline; dựng thử state, dialogue và cách chuyển tầng bằng asset rẻ, đo dễ hiểu và sức nặng lựa chọn. Không bắt prototype web chứng minh chất lượng đồ họa AAA.</p>
+<p><strong>3D production candidate:</strong> Unreal Engine là ứng viên vì có hệ thống quản lý/streaming thế giới như World Partition [S21]. Đây là thông tin tính năng, không chứng minh phù hợp đội hiện tại. Godot/Unity hay công nghệ khác chỉ so sánh khi có ràng buộc nhân sự, thiết bị và pipeline thật; chưa có quyết định chuyển engine hoặc cài đặt.</p>
+<p>Bài spike trước chốt: cùng blockout slice, 1 companion, đối thoại có điều kiện, lưu/khôi phục và một chuyển tầng. So thời gian iteration, độ ổn định save, pipeline nội dung và frame-time trên <strong>một cấu hình tham chiếu được ghi rõ</strong>. Không gọi “chạy 60 FPS” khi chưa có máy, độ phân giải và cảnh thử.</p>
+<h2>3. Kiến trúc dữ liệu</h2>
+<p>Tách 6 miền: <code>sourceRegistry</code>, <code>canonicalScenes</code>, <code>fictionalQuests</code>, <code>worldState</code>, <code>relationships</code>, <code>presentation</code>. Tất cả dùng ID bền, không dùng tên dịch làm khóa. Hệ thống thoại đọc điều kiện nhưng không tự sửa nguồn canon. Renderer không tự suy tội trạng từ màu đèn hoặc metric gameplay.</p>
+<p>Event mẫu: <code>EvidenceObserved</code>, <code>StatementRecorded</code>, <code>ConsentChanged</code>, <code>PromiseMade</code>, <code>PromiseKept</code>, <code>PlanStarted</code>, <code>PlanCompleted</code>, <code>LegendCompleted</code>, <code>VeilCompleted</code>, <code>ReflectionShared</code>. Lưu payload tối thiểu: ID sự kiện, quest, nhân vật, nguồn, revision, thời điểm logic, dữ liệu. Một event “đã nghe nói” không nâng chứng cứ thành “đã thấy”.</p>
+<p>Trạng thái Q02 theo hợp đồng JSON đi kèm. Hoàn thành kế hoạch là transaction: kiểm điều kiện → tạo snapshot → chạy phần chơi → commit kết quả → áp callback → autosave. Nếu quit giữa đoạn, dùng checkpoint kế hoạch với NPC đã spawn đúng vai trò; không commit một nửa đồng thuận.</p>
+<p>Canon scene chạy trong sandbox: nhập <code>sceneId</code>, cài đặt tiếp cận và trạng thái xem lại; xuất completion và lựa chọn giao diện hợp lệ. Không ghi trạng thái kiểu <code>saul.dead=true</code>. Veil chỉ xuất completion/reflection; schema chặn <code>evidence.*</code>, inventory và phán quyết đạo đức. Đây là yêu cầu để triển khai, chưa phải code đã thực hiện.</p>
+<h2>4. Save và di trú</h2>
+<p>Save mới có <code>schemaVersion</code>, <code>contentVersion</code>, <code>campaignId</code>, <code>worldState</code>, <code>questStates</code>, <code>companions</code>, <code>legendProgress</code>, <code>veilProgress</code>, <code>settings</code>. Namespace THE WITNESS tách khỏi save game cũ. Trước di trú đọc phiên bản, sao lưu, cho preview phần mang sang; không ghi đè save cũ khi chỉ mở game mới.</p>
+<p>Không mang XP cũ sang thành điểm năng lực một cách máy móc. Có thể ghi nhận tiến độ đọc/chặng cũ như huy hiệu lưu niệm không tác động cân bằng; cần chốt chính sách sau audit save. Quyết định của một avatar đi qua nhiều thời đại cũ không được đưa nguyên thành tiểu sử của người sống 58–60 CN. Cần lệnh xuất/nhập và bản dự phòng dễ tìm; chưa thực hiện đổi cache/service-worker.</p>
+<h2>5. Pipeline nội dung</h2>
+<p><strong>Quest:</strong> brief → sơ đồ điều kiện → blockout với lời tạm → thử lối cơ bản và lối hỏng → duyệt nguồn → viết thoại → blocking → thu âm → QA nhánh. Không motion capture trước khi khóa điều kiện và nhiệm vụ.</p>
+<p><strong>Nguồn:</strong> biên kịch gắn nguồn → chuyên gia Kinh Thánh duyệt điều bất biến → lịch sử/khảo cổ duyệt phần tái dựng → art ghi diễn giải → production kiểm quyền ảnh/chữ/âm → khóa revision. Quyền tác giả và độ xác thực là hai trường khác nhau.</p>
+<p><strong>Cinematic:</strong> ba mức: hội thoại hệ thống; cảnh có blocking và camera chuẩn bị; set-piece thủ công. Dùng mức cao cho điểm chuyển không thể truyền đạt tốt bằng mức thấp. Bài giới thiệu GDC của Larian chỉ được dùng như tham chiếu về bài toán pipeline, không là dự toán nhân lực [S15].</p>
+<h2>6. Cổng chất lượng</h2>
+<h3>G0 — Hồ sơ thiết kế nền</h3>
+<p>Đầu ra là bộ hiện tại: luận đề, GDD, bible, campaign, script mẫu, nguồn và hợp đồng dữ liệu. <strong>Tình trạng:</strong> đã viết v1, còn các cổng chuyên gia. Tiêu chí qua G0: không mâu thuẫn nội bộ về số lượng/nhánh, mỗi scene Kinh Thánh có nguồn và canon lock, [H] được đánh dấu.</p>
+<h3>G1 — Prototype giấy và narrative greybox</h3>
+<p>Chỉ Q02, L03, V01; asset hình khối, không làm đủ 3 vùng. Mục tiêu vòng 1: 8–12 người chơi trưởng thành tự nguyện, có nhóm biết và chưa biết Kinh Thánh; số này cho phát hiện lỗi định tính, không đại diện thị trường. Ghi cỡ mẫu và số đếm thật, không chỉ phần trăm.</p>
+<p>Ngưỡng thiết kế đề xuất: ít nhất 8/10 người thử khi cỡ mẫu 10 phân biệt Veil/Legends không được gợi đáp án; ít nhất 7/10 nêu được đánh đổi chính; không ai bị khóa tiến độ do thiếu kỹ năng bắt buộc; đa số tìm được hai nguồn trong 15 phút với gợi ý mặc định. Ngưỡng chưa đạt không được đổi câu hỏi để số đẹp; sửa scene và thử lại với người mới.</p>
+<h3>G2 — Vertical slice đạt chất lượng mục tiêu</h3>
+<p>Đủ 3 route Q02, phản hồi hub, một companion, điều tra, encounter tùy chọn, Legends, Veil, phụ đề và lưu/khôi phục. Không lỗi hỏng save/chặn truyện trong ma trận đã định; tất cả ID nguồn/thoại hợp lệ; frame-time đo trên máy được chốt. Thiết lập mục tiêu 60 FPS ở cấu hình tham chiếu sau spike, không tuyên bố hỗ trợ mọi PC. Kiểm tra GPU/CPU trong cảnh đại diện thay vì số FPS ở menu.</p>
+<h3>G3 — Duyệt mở rộng</h3>
+<p>Chỉ xây campaign đầy đủ khi có số giờ làm mỗi phút nội dung hoàn thiện, số lượng sửa trung bình và kế hoạch đội ngũ được tài trợ. G4 production, G5 alpha đủ tuyến, G6 beta/tiếp cận/quyền nội dung, G7 phát hành sau kiểm chứng build và triển khai. Hồ sơ thiết kế không thể thay chứng nhận kết quả các cổng này.</p>
+<h2>7. Backlog ưu tiên</h2>
+<p><strong>P0:</strong> chốt charter ba tầng; khóa source packet Gr 38; thẩm định lời dẫn/nhãn; blockout Q02; state+consent; sổ chứng cứ; ba route; callback; save giữa kế hoạch; cách skip L/V; glossary; ghi log cho QA.</p>
+<p><strong>P1:</strong> companion một người; tactile interactions dây/vải; combat/rút tùy chọn; phụ đề và hỗ trợ điều khiển; greybox âm thanh; prototype nguồn đối chiếu trong codex; đo chi phí nội dung.</p>
+<p><strong>P2 sau G2:</strong> các Legends còn lại, thêm vùng, 3 companion còn lại, cinematic cao cấp, motion capture, bản địa hóa mở rộng. Không ưu tiên logo/đồ họa hào nhoáng trước độ rõ vòng chơi.</p>
+<p>Mỗi item cần owner, estimate khoảng, phụ thuộc và tiêu chí nhận. Chưa có owner hoặc báo giá thật nên không dựng ngân sách AAA bằng con số giả. Lịch làm việc là lịch theo cổng, chưa có ngày ship được cam kết.</p>
+<h2>8. Ước lượng và đội ngũ</h2>
+<p>Công thức dự trù: tổng ngày công theo bộ môn + chi phí outsource/quyền/công cụ + QA/bản địa hóa + quản lý + dự phòng dựa trên rủi ro. Dùng số thực đo ở slice để ngoại suy, ghi kịch bản tối thiểu/cơ sở/mở rộng; không nhân thời lượng game với một đơn giá tưởng tượng rồi coi là ngân sách được xác nhận.</p>
+<p>Vai trò tối thiểu cần có người chịu trách nhiệm: creative/game direction, narrative/quest, engineering/tools/save, level design, environment/character art, animation/cinematic, audio, UX/accessibility, QA/production. Chuyên gia Kinh Thánh và lịch sử là đối tác duyệt nội dung với lịch rõ. Một người có thể kiêm ở prototype nhưng không vì vậy suy ra có thể tự làm AAA đầy đủ.</p>
+<h2>9. Rủi ro chính và cách giảm</h2>
+<table>
+<thead>
+<tr>
+<th>Rủi ro</th>
+<th>Tác động</th>
+<th>Dấu hiệu sớm</th>
+<th>Biện pháp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ba tầng như ba game rời</td>
+<td>Người chơi mất mạch</td>
+<td>Không nhớ vấn đề lúc trở lại</td>
+<td>Dùng cùng câu hỏi, callback có hành động; thử skip</td>
+</tr>
+<tr>
+<td>Veil bị hiểu là mặc khải</td>
+<td>Sai căn tính nội dung</td>
+<td>Người thử tin giấc mơ xác định thủ phạm</td>
+<td>Sửa cơ chế và cách kể, không chỉ nhãn</td>
+</tr>
+<tr>
+<td>Nhánh nổ chi phí</td>
+<td>Không hoàn tất được</td>
+<td>Mỗi lựa chọn cần level/voice mới</td>
+<td>Hội tụ có state, kiểm budget scene</td>
+</tr>
+<tr>
+<td>Nội dung cổ đại đồng nhất</td>
+<td>Sai bối cảnh</td>
+<td>Một costume cho mọi thế kỷ</td>
+<td>Source packet và niên đại từng asset</td>
+</tr>
+<tr>
+<td>Nhầm AAA với mục tiêu đã đạt</td>
+<td>Kỳ vọng sai</td>
+<td>Trailer vượt khả năng build</td>
+<td>Chỉ quảng bá phần đã chứng minh</td>
+</tr>
+<tr>
+<td>Tên trùng game đã tồn tại</td>
+<td>Khó nhận diện thương mại</td>
+<td>Tìm kiếm trả về sản phẩm khác</td>
+<td>Giữ tên làm việc, kiểm tra độc lập trước phát hành [S19]</td>
+</tr>
+<tr>
+<td>Save/canon bị ghi sai</td>
+<td>Mất tiến độ/sai bản văn</td>
+<td>Xem lại L đổi world state</td>
+<td>Sandbox, transaction, test load và replay</td>
+</tr>
+<tr>
+<td>Nhân chứng thành công cụ</td>
+<td>Lệch chủ đề</td>
+<td>Đe dọa luôn là đường hiệu quả nhất</td>
+<td>Đồng thuận từng người, callback tổn hại, đường khôi phục</td>
+</tr>
+</tbody>
+</table>
+<h2>10. Ma trận kiểm chứng cần thực hiện</h2>
+<p>Logic: route hợp lệ/không hợp lệ; sửa lời sau gây áp lực; load trước/sau commit; replay; skip; vắng companion; ẩn danh thật trong mọi UI. Narrative: nguồn/lời diễn ý; ai biết điều gì; ending theo bằng chứng; cảnh mơ không tạo chứng cứ. Accessibility: hoàn tất không mash, không âm thanh, không màu, tăng chữ và tắt rung; test người dùng phù hợp. Kỹ thuật: versioning save, content IDs, hiệu năng cảnh đại diện, controller hot swap.</p>
+<p>Trong đợt này chỉ kiểm cấu trúc tài liệu, link cục bộ và hợp đồng JSON; không báo các kiểm chứng gameplay trên là đã chạy.</p></article><article id="chapter-10" data-chapter><div class="eyebrow">DESIGN DOSSIER / 07.11.2026</div><h1>10 • Nguồn nghiên cứu và sổ luận cứ</h1>
+<p><strong>Tra cứu ngày 07/11/2026.</strong> Các link dưới đây là nguồn đã được tìm/đọc qua công cụ web trong đợt này, với mức truy cập ghi riêng. Không dùng ngày crawl làm ngày xuất bản. Tài liệu chỉ áp dụng các ý nằm trong phần đã đọc; không tự nhận đã xem video GDC đầy đủ, đã khảo cứu tiếng Hebrew/Hy Lạp hoặc đọc hết một chuyên khảo khi mới kiểm tra abstract.</p>
+<h2>1. Phương pháp</h2>
+<p>Ưu tiên nguồn sở hữu nội dung: Vatican cho văn kiện/giáo lý; USCCB cho các phân đoạn Kinh Thánh và chú thích; bảo tàng/đơn vị xuất bản cho hiện vật; nhà phát triển và GDC cho mô tả sản phẩm/phiên chuyên môn; bộ hướng dẫn accessibility từ đơn vị xây dựng nó. Không dùng blog tóm tắt, Reddit hoặc ảnh tìm kiếm làm nguồn xác định canon.</p>
+<p>Ba mức xác minh: <strong>A</strong> trang có nội dung văn bản hoặc phần liên quan đã truy xuất; <strong>B</strong> abstract/giới thiệu của nguồn gốc đã đọc, chưa toàn văn hoặc video; <strong>C</strong> URL có lỗi ở một số lần mở, có kết quả lập chỉ mục xác nhận phần liên quan. A không có nghĩa mọi phát biểu trên trang được chứng thực độc lập. Nguồn lịch sử/khảo cổ không xác nhận một cách tự động tính lịch sử của từng scene game.</p>
+<h2>2. Văn kiện và thần học</h2>
+<p><strong>S01 — Công đồng Vatican II, Dei Verbum, đặc biệt số 12, 18–19.</strong> <a target="_blank" rel="noopener noreferrer" href="https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/vat-ii_const_19651118_dei-verbum_en.html">Văn bản Vatican</a>. Mức A, đã đọc phần nói về thể loại/hoàn cảnh và sự giải thích. Dùng cho quy trình đọc nguồn. Không suy từ đây ra một engine, hình thức camera hoặc quyền thêm thoại cụ thể được Hội Thánh phê chuẩn.</p>
+<p><strong>S02 — Compendium of the Catechism of the Catholic Church, câu 9–10; đối chiếu CCC 65–67.</strong> <a target="_blank" rel="noopener noreferrer" href="https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_en.html">Vatican</a>. Mức A cho đoạn về tính chung cuộc của Mặc Khải và mặc khải tư. Dùng cho giới hạn khẳng định của Veil. Game fiction không phải một mặc khải tư chỉ vì được gắn nhãn “giấc mơ”.</p>
+<p><strong>S03 — Nostra aetate, số 4.</strong> <a target="_blank" rel="noopener noreferrer" href="https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/vat-ii_decl_19651028_nostra-aetate_en.html">Vatican</a>. Mức A. Dùng cho nguyên tắc tránh quy trách nhiệm tập thể và tôn trọng tương quan Do Thái–Kitô giáo. Các quy tắc biên tập rộng hơn trong bộ hồ sơ là ứng dụng của dự án, không trích nguyên câu văn kiện.</p>
+<p><strong>S04 — Catechism of the Catholic Church, 328–336.</strong> <a target="_blank" rel="noopener noreferrer" href="https://www.vatican.va/content/catechism/en/part_one/section_two/chapter_one/article_1/paragraph_5_heaven_and_earth.html">Heaven and Earth</a>. Mức A đối với phần thiên thần. Dùng phân biệt giáo lý với tạo hình. Không cung cấp số đo, chất liệu cánh, danh sách cấp quái hay quyền cho game đặt mặc khải mới.</p>
+<h2>3. Các phân đoạn Kinh Thánh</h2>
+<p><strong>S05 — Xh 14.</strong> <a target="_blank" rel="noopener noreferrer" href="https://bible.usccb.org/bible/exodus/14">USCCB: Exodus 14</a>. Mức A, có trình thuật và chú thích. Phân đoạn game đề xuất 14,10–31. Dùng cho canon lock L01 và lưu ý địa danh chưa xác định; không chốt niên đại Pharaoh hay vị trí bản đồ thật.</p>
+<p><strong>S06 — 1 Sm 24.</strong> <a target="_blank" rel="noopener noreferrer" href="https://bible.usccb.org/bible/1samuel/24">USCCB: 1 Samuel 24</a>. Mức A, bản văn/chú thích. Dùng cho L02. Chú thích có liên hệ với chương 26; game không trộn vật thể/hành động của hai trình thuật vào một cảnh rồi gọi là nguyên bản.</p>
+<p><strong>S07 — Gr 38.</strong> <a target="_blank" rel="noopener noreferrer" href="https://bible.usccb.org/bible/jeremiah/38">USCCB: Jeremiah 38</a>. Mức A, đoạn 1–13 và chú thích. Dùng cho L03. Cần chọn bản dịch và duyệt chi tiết khác biệt trước khi khóa thoại/số người trong dàn cảnh; v1 không tự giải quyết bằng con số tưởng tượng.</p>
+<p><strong>S08 — Gr 36.</strong> <a target="_blank" rel="noopener noreferrer" href="https://bible.usccb.org/bible/jeremiah/36">USCCB: Jeremiah 36</a>. Mức A/C: một lần mở lấy được trang, lần mở sau bị 403. Dùng làm nguồn nhận diện chủ đề văn bản và cuộn sách; chưa hoàn thành đọc đối chiếu đa bản dịch cho chương này. Không nằm trong số chương chơi v1.</p>
+<p><strong>S09 — Ga 21.</strong> <a target="_blank" rel="noopener noreferrer" href="https://bible.usccb.org/bible/john/21">USCCB: John 21</a>. Mức A, phần trình thuật được truy xuất. Phạm vi đề xuất L04: 1–19. Dùng cho cuộc gặp và sứ vụ của Phêrô; nội tâm/camera/nhịp thao tác là sáng tác, không gán cho bản văn.</p>
+<p><strong>S10 — Cv 24.</strong> <a target="_blank" rel="noopener noreferrer" href="https://bible.usccb.org/bible/acts/24">USCCB: Acts 24</a>. Mức A qua bản văn lập chỉ mục, có đoạn bối cảnh Xêdarê. Dùng xác lập sự hiện diện của địa điểm trong hành trình Phaolô; lịch sử chi tiết 58–60 CN và mọi thủ tục kho hư cấu cần nghiên cứu riêng.</p>
+<p><strong>S11 — Cv 16.</strong> <a target="_blank" rel="noopener noreferrer" href="https://bible.usccb.org/bible/acts/16">USCCB: Acts 16</a>. Mức A, đoạn 22–40 và chú thích. Dùng cho L05. Không viết cơ chế kích hoạt phép lạ hoặc bạo lực tùy chọn mâu thuẫn với hạt nhân cảnh.</p>
+<p><strong>S18 — Gr 31,31–34.</strong> <a target="_blank" rel="noopener noreferrer" href="https://www.vatican.va/archive/ENG0839/_PQ9.HTM">Vatican: Jeremiah 31, New American Bible</a>. Mức A; URL USCCB có lỗi 403 nên dùng bản Vatican để tra chủ đề. Nguồn cho phụ đề/chủ đề Giao Ước; không coi đây là bản dịch tiếng Việt đã được phép đưa vào game.</p>
+<p><strong>S20 — Cv 27.</strong> <a target="_blank" rel="noopener noreferrer" href="https://bible.usccb.org/bible/acts/27">USCCB: Acts 27</a>. Mức C: mở trực tiếp có lỗi 403; phần lập chỉ mục xác nhận nội dung hải nạn và chú thích. Chỉ là ứng viên mở rộng; chưa đủ source packet để script lock. Không dùng các con số hoặc tuyến hải hành từ trí nhớ làm thông số sản xuất.</p>
+<h2>4. Lịch sử và vật chất</h2>
+<p><strong>S12 — Pamela Magrill, A Researcher’s Guide to the Lachish Collection in the British Museum (2006).</strong> <a target="_blank" rel="noopener noreferrer" href="https://britishmuseum.iro.bl.uk/entities/publication/9b64b0c6-4d6e-4b08-9b15-b60c77e1d8fc">Kho xuất bản của British Museum</a>. Mức B, đọc metadata/abstract, chưa đọc trọn PDF. Xác định bộ sưu tập nhiều thời kỳ và bối cảnh Lachish; không đủ để xác nhận từng costume/đồ dùng. Dẫn đầu mối hiện vật [L], không gọi nó là nguồn trực tiếp cho khuôn mặt/giọng nhân vật.</p>
+<p><strong>S13 — The Metropolitan Museum of Art, The World between Empires, Exhibition Galleries (2019).</strong> <a target="_blank" rel="noopener noreferrer" href="https://www.metmuseum.org/exhibitions/listings/2019/world-between-empires-art-and-identity-ancient-middle-east/exhibition-galleries">Met: các phòng trưng bày</a>. Mức A cho phần giới thiệu vùng Judaea và đời sống dưới La Mã. Nhiều hiện vật/bối cảnh triển lãm thuộc thời muộn hơn khung chính; không đưa Cave of Letters thẳng sang trang phục năm 58 CN như một chứng minh đồng thời.</p>
+<p><strong>Đầu mối bổ sung, không dùng khóa art:</strong> <a target="_blank" rel="noopener noreferrer" href="https://artsandculture.google.com/asset/lachish-letter-ii/4QFvFeRkdihmAw?hl=en">Lachish Letter II, British Museum xuất bản qua Google Arts &amp; Culture</a>, đã đọc mô tả. Bản gốc collection <a target="_blank" rel="noopener noreferrer" href="https://www.britishmuseum.org/collection/object/W_1959-0711-2">1959,0711.2</a> mở bị 403. Giữ rõ phân biệt thư gốm với relief vây hãm; không dùng ảnh trên trang như asset có sẵn quyền thương mại.</p>
+<h2>5. Thiết kế game và công nghệ</h2>
+<p><strong>S14 — Paweł Sasko, 10 Key Quest Design Lessons from The Witcher 3 and Cyberpunk 2077, GDC.</strong> <a target="_blank" rel="noopener noreferrer" href="https://www.gdcvault.com/play/1028897/10-Key-Quest-Design-LessonsStartup">Trang phiên GDC</a>. Mức B, chỉ đọc giới thiệu và metadata phiên; chưa xem toàn bài/video hoặc xác nhận slide. Các ý nhánh hội tụ, ngân sách cảnh và điều tra trong hồ sơ là đề xuất riêng, không đặt trong dấu ngoặc kép như lời diễn giả.</p>
+<p><strong>S15 — Jason Latino, Larian Cinematics: A Top-Down Look at Our Bottom-Up Approach in Baldur’s Gate 3, GDC.</strong> <a target="_blank" rel="noopener noreferrer" href="https://gdcvault.com/play/1034814/Larian-Cinematics-A-Top-Down">Trang phiên GDC</a>. Mức B, chỉ phần overview. Dùng để nhận diện bài toán công cụ/đội ngũ khi làm cinematics phản ứng; không suy ra chi phí, số nhân sự hoặc pipeline chi tiết của Larian.</p>
+<p><strong>S16 — Larian Studios, Baldur’s Gate 3 — About.</strong> <a target="_blank" rel="noopener noreferrer" href="https://baldursgate3.game/about">Trang chính thức</a>. Mức A. Đây là mô tả tính năng/định vị từ nhà phát triển, không là nghiên cứu độc lập về hiệu quả thiết kế. Chỉ tham chiếu fellowship, lựa chọn và trải nghiệm điện ảnh; không sao chép thế giới, nhân vật, luật hoặc asset.</p>
+<p><strong>S17 — Game Accessibility Guidelines, Full List.</strong> <a target="_blank" rel="noopener noreferrer" href="https://gameaccessibilityguidelines.com/full-list/">Bộ hướng dẫn gốc</a>. Mức A, các mục motor/cognitive/vision/audio. Dùng chọn tập yêu cầu v1; không tuyên bố đã đạt chứng nhận accessibility hoặc mọi mức của bộ hướng dẫn.</p>
+<p><strong>S19 — Thekla, The Witness — About.</strong> <a target="_blank" rel="noopener noreferrer" href="https://the-witness.net/news/about/">Trang chính thức</a>. Mức A. Xác nhận có game tên The Witness, mô tả khám phá và giải đố. Đây là phát hiện nhận diện sản phẩm; không phải kết luận về quyền nhãn hiệu, khả năng đăng ký hay nghĩa vụ đổi tên.</p>
+<p><strong>S21 — Epic Games, World Partition documentation.</strong> <a target="_blank" rel="noopener noreferrer" href="https://dev.epicgames.com/documentation/unreal-engine/world-partition-in-unreal-engine">Tài liệu Epic</a>. Mức A, overview hệ quản lý và streaming theo khoảng cách. Dùng mô tả một ứng viên công nghệ; chưa khóa phiên bản engine, cấu hình máy, license hoặc kết quả benchmark.</p>
+<h2>6. Sổ luận cứ và quyết định</h2>
+<table>
+<thead>
+<tr>
+<th>Claim/decision</th>
+<th>Loại</th>
+<th>Nguồn/căn cứ</th>
+<th>Độ chắc và giới hạn</th>
+<th>Hệ quả sản xuất</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thể văn cần được đọc trong hoàn cảnh</td>
+<td>G</td>
+<td>S01</td>
+<td>Nguyên tắc văn kiện; áp dụng game là diễn giải của dự án</td>
+<td>Mỗi scene ghi loại nguồn</td>
+</tr>
+<tr>
+<td>Veil không là mặc khải mới</td>
+<td>H/G</td>
+<td>Yêu cầu người dùng, S02</td>
+<td>Chủ đích thiết kế; phải thử người chơi có hiểu không</td>
+<td>Nhãn riêng, không sinh bằng chứng</td>
+</tr>
+<tr>
+<td>Địa điểm vượt biển chưa khóa</td>
+<td>K/C</td>
+<td>S05 chú thích</td>
+<td>Không giả vờ có tọa độ chắc chắn</td>
+<td>Map nghệ thuật có nhãn</td>
+</tr>
+<tr>
+<td>Đavít không giết Saun trong cảnh chọn</td>
+<td>K</td>
+<td>S06</td>
+<td>Canon của pericope, không nói về mọi chuyện đời Đavít</td>
+<td>Không alternate history</td>
+</tr>
+<tr>
+<td>Phần chính ở 58–60 CN</td>
+<td>H/C</td>
+<td>Phương án tác giả; S10 làm bối cảnh rộng</td>
+<td>Chưa được chuyên gia khóa chronology</td>
+<td>Không gắn ngày cụ thể</td>
+</tr>
+<tr>
+<td>3 hub, 12 Q, 5 L, 4 V</td>
+<td>H</td>
+<td>Ngân sách thiết kế v1</td>
+<td>Chưa có dự toán đội ngũ và playtest</td>
+<td>Chỉ mở rộng sau slice</td>
+</tr>
+<tr>
+<td>18–24 giờ tuyến chính</td>
+<td>H/C</td>
+<td>Ước tính thiết kế</td>
+<td>Chưa đo, không dùng như cam kết phát hành</td>
+<td>Tính lại sau greybox</td>
+</tr>
+<tr>
+<td>Có sản phẩm khác tên The Witness</td>
+<td>L/thị trường</td>
+<td>S19</td>
+<td>Đã xác nhận tồn tại, không thẩm định pháp lý</td>
+<td>Kiểm tra tên trước marketing</td>
+</tr>
+<tr>
+<td>Engine mới là ứng viên</td>
+<td>H/technical</td>
+<td>S21 và hiện trạng workspace</td>
+<td>Chưa spike/chọn</td>
+<td>Không rewrite repo trong đợt docs</td>
+</tr>
+</tbody>
+</table>
+<h2>7. Khoảng trống nghiên cứu ưu tiên</h2>
+<p><strong>Trước greybox:</strong> bản dịch Việt cho Gr 38, cách đọc scene, quy tắc nhãn và consent. <strong>Trước art lock:</strong> Xêdarê/Galilê/Giêrusalem thế kỷ I với hiện vật có metadata và quyền dùng; phục trang, kiến trúc, dụng cụ, hệ chữ theo từng era; niên biểu và tên hư cấu. <strong>Trước script lock:</strong> thẩm định thần học, bối cảnh Do Thái, đối chiếu bản dịch và tránh anachronism. <strong>Trước marketing:</strong> kiểm tra tên/thương mại độc lập, phân loại tuổi, quyền chữ/ảnh/nhạc/giọng.</p>
+<p>Điểm dừng nghiên cứu không là “đã biết hết”. Một nội dung chỉ được khóa khi những bất định có thể làm đổi cơ chế, ý nghĩa, hình ảnh hoặc quyền phát hành đã có cách xử lý ghi rõ. Các hồ sơ tiếp theo phải bổ sung bằng chứng vào sổ này thay vì xóa dấu chưa chắc để tài liệu trông hoàn thiện hơn.</p></article><footer>Nguồn biên tập: docs/the-witness • 07/11/2026 • Các quyết định thiết kế [H] và khoảng chưa chắc [C] được phân biệt trong hồ sơ.</footer></main><script>
+const chapters=[...document.querySelectorAll('[data-chapter]')];
+const input=document.getElementById('search');
+const normal=s=>s.toLocaleLowerCase('vi').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
+input.addEventListener('input',()=>{const q=normal(input.value.trim());let n=0;chapters.forEach(c=>{const hit=!q||normal(c.textContent).includes(q);c.hidden=!hit;if(hit)n++});document.getElementById('result').textContent=q?n+' / '+chapters.length+' tài liệu chứa từ khóa':'';});
+document.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',event=>{event.preventDefault();input.value='';chapters.forEach(c=>c.hidden=false);document.getElementById('result').textContent='';requestAnimationFrame(()=>{document.getElementById(a.hash.slice(1)).scrollIntoView({behavior:'instant',block:'start'});history.replaceState(null,'',a.hash);});}));
+window.addEventListener('beforeprint',()=>chapters.forEach(c=>c.hidden=false));
+document.getElementById('print').addEventListener('click',()=>window.print());
+</script></body></html>

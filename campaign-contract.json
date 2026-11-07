@@ -1,140 +1,655 @@
 {
-  "documentVersion": "2.0",
+  "documentVersion": "3.0",
   "status": "design-specification-not-playable-runtime",
   "campaignId": "the-witness-legacy",
   "sliceContract": "design-contract.json",
-  "dossiers": "11-chapter-dossiers.md",
+  "dossiers": "14-legends-depth-dossiers.md",
   "continuity": "12-continuity-and-state.md",
-  "budget": {"mainQuests": 12, "relationshipQuests": 6, "legends": 5, "veils": 4, "hubs": 3, "companions": 4},
+  "budget": {
+    "bridgeQuests": 12,
+    "relationshipQuests": 6,
+    "legends": 5,
+    "requiredLegends": 3,
+    "optionalLegends": 2,
+    "veils": 4,
+    "hubs": 3,
+    "companions": 4
+  },
   "truthModel": {
-    "G17": {"dispatched": 24, "receivedGalilee": 18, "documentedDamage": 2, "diverted": 4},
-    "B06": {"location": "caesarea", "shortfall": 2, "distinctFromG17": true},
+    "G17": {
+      "dispatched": 24,
+      "receivedGalilee": 18,
+      "documentedDamage": 2,
+      "diverted": 4
+    },
+    "B06": {
+      "location": "caesarea",
+      "shortfall": 2,
+      "distinctFromG17": true
+    },
     "fatherDeath": "illness-fictional-no-murder-claim"
   },
   "evidence": [
-    {"id": "E01", "firstAvailable": "Q04", "lineage": "g17-original-receipt"},
-    {"id": "E02", "firstAvailable": "Q02", "lineage": "b06-amended-register"},
-    {"id": "E03", "firstAvailable": "Q02", "lineage": "b06-rina-receipt"},
-    {"id": "E04", "firstAvailable": "Q03", "lineage": "g17-carrier-records"},
-    {"id": "E05", "firstAvailable": "Q05", "lineage": "g17-galilee-recipient"},
-    {"id": "E06", "firstAvailable": "Q06", "lineage": "g17-side-yard-token"},
-    {"id": "E07", "firstAvailable": "Q08", "lineage": "g17-transit-working-copy"},
-    {"id": "E08", "firstAvailable": "Q10", "lineage": "haddai-correction-letter"},
-    {"id": "E09", "firstAvailable": "Q09", "lineage": "direct-order-witness"},
-    {"id": "E10", "firstAvailable": "Q11", "lineage": "side-yard-counter-record"}
+    {
+      "id": "E01",
+      "firstAvailable": "Q04",
+      "lineage": "g17-original-receipt"
+    },
+    {
+      "id": "E02",
+      "firstAvailable": "Q02",
+      "lineage": "b06-amended-register"
+    },
+    {
+      "id": "E03",
+      "firstAvailable": "Q02",
+      "lineage": "b06-rina-receipt"
+    },
+    {
+      "id": "E04",
+      "firstAvailable": "Q03",
+      "lineage": "g17-carrier-records"
+    },
+    {
+      "id": "E05",
+      "firstAvailable": "Q05",
+      "lineage": "g17-galilee-recipient"
+    },
+    {
+      "id": "E06",
+      "firstAvailable": "Q06",
+      "lineage": "g17-side-yard-token"
+    },
+    {
+      "id": "E07",
+      "firstAvailable": "Q08",
+      "lineage": "g17-transit-working-copy"
+    },
+    {
+      "id": "E08",
+      "firstAvailable": "Q10",
+      "lineage": "haddai-correction-letter"
+    },
+    {
+      "id": "E09",
+      "firstAvailable": "Q09",
+      "lineage": "direct-order-witness"
+    },
+    {
+      "id": "E10",
+      "firstAvailable": "Q11",
+      "lineage": "side-yard-counter-record"
+    }
   ],
   "claims": [
-    {"id": "P01", "allOf": ["E02", "E03"], "anyOf": [], "meaning": "B06 discrepancy only"},
-    {"id": "P02", "allOf": ["E04", "E05"], "anyOf": [], "meaning": "G17 four sacks unexplained after documented damage"},
-    {"id": "P03", "allOf": ["E01", "E08", "E04", "E05"], "anyOf": [], "meaning": "Haddai signed prematurely; total theft allegation unsupported"},
-    {"id": "P04", "allOf": ["E06", "E04", "E05"], "anyOf": ["E09", "E10"], "meaning": "Hanan directed four-sack diversion"}
+    {
+      "id": "P01",
+      "allOf": [
+        "E02",
+        "E03"
+      ],
+      "anyOf": [],
+      "meaning": "B06 discrepancy only"
+    },
+    {
+      "id": "P02",
+      "allOf": [
+        "E04",
+        "E05"
+      ],
+      "anyOf": [],
+      "meaning": "G17 four sacks unexplained after documented damage"
+    },
+    {
+      "id": "P03",
+      "allOf": [
+        "E01",
+        "E08",
+        "E04",
+        "E05"
+      ],
+      "anyOf": [],
+      "meaning": "Haddai signed prematurely; total theft allegation unsupported"
+    },
+    {
+      "id": "P04",
+      "allOf": [
+        "E06",
+        "E04",
+        "E05"
+      ],
+      "anyOf": [
+        "E09",
+        "E10"
+      ],
+      "meaning": "Hanan directed four-sack diversion"
+    }
   ],
-  "claimUseGuards": ["provenanceVerified", "sourceLineageIndependent", "sourcePermissionForAudience", "claimScopeMatchesEvidence"],
+  "claimUseGuards": [
+    "provenanceVerified",
+    "sourceLineageIndependent",
+    "sourcePermissionForAudience",
+    "claimScopeMatchesEvidence"
+  ],
   "consent": {
-    "scopes": ["private_group", "anonymous_summary", "public_named"],
-    "requiredFields": ["actorId", "statementId", "audience", "identification", "conditions", "revision", "voluntary"],
-    "namedReleaseRequires": ["explicitCurrentScope", "pressureResolved", "safetyPlanConfirmed"],
+    "scopes": [
+      "private_group",
+      "anonymous_summary",
+      "public_named"
+    ],
+    "requiredFields": [
+      "actorId",
+      "statementId",
+      "audience",
+      "identification",
+      "conditions",
+      "revision",
+      "voluntary"
+    ],
+    "namedReleaseRequires": [
+      "explicitCurrentScope",
+      "pressureResolved",
+      "safetyPlanConfirmed"
+    ],
     "withdrawal": "stop future release; retain event history of already delivered copies"
   },
-  "planStates": ["available", "proposed", "prepared", "executing", "interrupted", "completed", "committed"],
+  "planStates": [
+    "available",
+    "proposed",
+    "prepared",
+    "executing",
+    "interrupted",
+    "completed",
+    "committed"
+  ],
   "chapters": [
     {
-      "id": "Q01", "previous": null, "hub": "caesarea",
-      "dominantVerbs": ["carry", "brace", "ask_for_help"],
-      "routes": ["lodging", "meal"], "fallback": "bounded work shift provides basic lodging",
-      "commitEvent": "Q01.COMMITTED", "next": "Q02", "legends": [], "veils": [],
-      "callbacks": [{"target": "Q03", "kind": "copying_workspace"}, {"target": "Q04", "kind": "shift_helper"}, {"target": "Q11", "kind": "workspace_or_meal_memory"}]
+      "id": "Q01",
+      "previous": null,
+      "hub": "caesarea",
+      "dominantVerbs": [
+        "carry",
+        "brace",
+        "ask_for_help"
+      ],
+      "routes": [
+        "lodging",
+        "meal"
+      ],
+      "fallback": "bounded work shift provides basic lodging",
+      "commitEvent": "Q01.COMMITTED",
+      "next": "Q02",
+      "legends": [],
+      "veils": [],
+      "callbacks": [
+        {
+          "target": "Q03",
+          "kind": "copying_workspace"
+        },
+        {
+          "target": "Q04",
+          "kind": "shift_helper"
+        },
+        {
+          "target": "Q11",
+          "kind": "workspace_or_meal_memory"
+        }
+      ],
+      "targetMinutes": 32,
+      "narrativeRole": "mortal_bridge"
     },
     {
-      "id": "Q02", "previous": "Q01", "hub": "caesarea",
-      "dominantVerbs": ["compare", "ask_limits", "escort"],
-      "routes": ["shelter", "anonymous", "consented"], "fallback": "repair pressure or arrange basic shelter; all valid routes continue",
-      "commitEvent": "Q02.COMMITTED", "next": "Q03", "legends": ["L03"], "veils": ["V01"],
-      "callbacks": [{"target": "Q03", "kind": "witness_protection"}, {"target": "Q09", "kind": "scope_reconfirmation"}, {"target": "Q12", "kind": "privacy_and_presence"}]
+      "id": "Q02",
+      "previous": "Q01",
+      "hub": "caesarea",
+      "dominantVerbs": [
+        "compare",
+        "ask_limits",
+        "escort"
+      ],
+      "routes": [
+        "shelter",
+        "anonymous",
+        "consented"
+      ],
+      "fallback": "repair pressure or arrange basic shelter; all valid routes continue",
+      "commitEvent": "Q02.COMMITTED",
+      "next": "Q03",
+      "legends": [
+        "L03"
+      ],
+      "veils": [
+        "V01"
+      ],
+      "callbacks": [
+        {
+          "target": "Q03",
+          "kind": "witness_protection"
+        },
+        {
+          "target": "Q09",
+          "kind": "scope_reconfirmation"
+        },
+        {
+          "target": "Q12",
+          "kind": "privacy_and_presence"
+        }
+      ],
+      "targetMinutes": 40,
+      "narrativeRole": "mortal_bridge"
     },
     {
-      "id": "Q03", "previous": "Q02", "hub": "caesarea_outskirts",
-      "dominantVerbs": ["trace_route", "test_load", "verify_source"],
-      "routes": ["paid", "worked"], "fallback": "free detour and bounded repair work",
-      "commitEvent": "Q03.COMMITTED", "next": "Q04", "legends": [], "veils": [],
-      "callbacks": [{"target": "Q04", "kind": "repaired_exit"}, {"target": "Q08", "kind": "amon_support"}]
+      "id": "Q03",
+      "previous": "Q02",
+      "hub": "caesarea_outskirts",
+      "dominantVerbs": [
+        "trace_route",
+        "test_load",
+        "verify_source"
+      ],
+      "routes": [
+        "paid",
+        "worked"
+      ],
+      "fallback": "free detour and bounded repair work",
+      "commitEvent": "Q03.COMMITTED",
+      "next": "Q04",
+      "legends": [
+        "L01"
+      ],
+      "veils": [],
+      "callbacks": [
+        {
+          "target": "Q04",
+          "kind": "repaired_exit"
+        },
+        {
+          "target": "Q08",
+          "kind": "amon_support"
+        }
+      ],
+      "postCommitGate": "GATE.L01",
+      "targetMinutes": 34,
+      "narrativeRole": "mortal_bridge"
     },
     {
-      "id": "Q04", "previous": "Q03", "hub": "caesarea",
-      "dominantVerbs": ["allocate_load", "open_route", "handoff"],
-      "routes": ["food", "tools"], "fallback": "basic tools and meals exist on both routes",
-      "commitEvent": "Q04.COMMITTED", "next": "Q05", "legends": ["L01"], "veils": ["V02"],
-      "callbacks": [{"target": "Q08", "kind": "rigging_preparation"}, {"target": "Q11", "kind": "provision_work"}]
+      "id": "Q04",
+      "previous": "Q03",
+      "hub": "caesarea",
+      "dominantVerbs": [
+        "allocate_load",
+        "open_route",
+        "handoff"
+      ],
+      "routes": [
+        "food",
+        "tools"
+      ],
+      "fallback": "basic tools and meals exist on both routes",
+      "commitEvent": "Q04.COMMITTED",
+      "next": "Q05",
+      "legends": [],
+      "veils": [
+        "V02"
+      ],
+      "callbacks": [
+        {
+          "target": "Q08",
+          "kind": "rigging_preparation"
+        },
+        {
+          "target": "Q11",
+          "kind": "provision_work"
+        }
+      ],
+      "entryRequiredLegends": [
+        "L01"
+      ],
+      "targetMinutes": 32,
+      "narrativeRole": "mortal_bridge"
     },
     {
-      "id": "Q05", "previous": "Q04", "hub": "galilee",
-      "dominantVerbs": ["work_together", "reconstruct_delivery", "state_limits"],
-      "routes": ["open_audit", "private_check"], "fallback": "correct overclaim and compensate affected work",
-      "commitEvent": "Q05.COMMITTED", "next": "Q06", "legends": [], "veils": [],
-      "callbacks": [{"target": "Q09", "kind": "meeting_access"}, {"target": "Q11", "kind": "distribution_disruption"}, {"target": "Q12", "kind": "correction_history"}]
+      "id": "Q05",
+      "previous": "Q04",
+      "hub": "galilee",
+      "dominantVerbs": [
+        "work_together",
+        "reconstruct_delivery",
+        "state_limits"
+      ],
+      "routes": [
+        "open_audit",
+        "private_check"
+      ],
+      "fallback": "correct overclaim and compensate affected work",
+      "commitEvent": "Q05.COMMITTED",
+      "next": "Q06",
+      "legends": [],
+      "veils": [],
+      "callbacks": [
+        {
+          "target": "Q09",
+          "kind": "meeting_access"
+        },
+        {
+          "target": "Q11",
+          "kind": "distribution_disruption"
+        },
+        {
+          "target": "Q12",
+          "kind": "correction_history"
+        }
+      ],
+      "targetMinutes": 40,
+      "narrativeRole": "mortal_bridge"
     },
     {
-      "id": "Q06", "previous": "Q05", "hub": "galilee",
-      "dominantVerbs": ["approach", "stop_force", "negotiate_custody"],
-      "routes": ["take_original", "witnessed_copy", "reconstruct"], "fallback": "carrier counter-record scene replaces lost access",
-      "commitEvent": "Q06.COMMITTED", "next": "Q07", "legends": ["L02"], "veils": [],
-      "callbacks": [{"target": "Q08", "kind": "damar_assignment"}, {"target": "Q10", "kind": "evidence_custody"}]
+      "id": "Q06",
+      "previous": "Q05",
+      "hub": "galilee",
+      "dominantVerbs": [
+        "approach",
+        "stop_force",
+        "negotiate_custody"
+      ],
+      "routes": [
+        "take_original",
+        "witnessed_copy",
+        "reconstruct"
+      ],
+      "fallback": "carrier counter-record scene replaces lost access",
+      "commitEvent": "Q06.COMMITTED",
+      "next": "Q07",
+      "legends": [
+        "L02"
+      ],
+      "veils": [],
+      "callbacks": [
+        {
+          "target": "Q08",
+          "kind": "damar_assignment"
+        },
+        {
+          "target": "Q10",
+          "kind": "evidence_custody"
+        }
+      ],
+      "postCommitGate": "GATE.L02",
+      "targetMinutes": 34,
+      "narrativeRole": "mortal_bridge"
     },
     {
-      "id": "Q07", "previous": "Q06", "hub": "galilee",
-      "dominantVerbs": ["listen_again", "renegotiate", "handoff"],
-      "routes": ["personally_keep", "renegotiate", "delegated"], "fallback": "local paid handoff if companion absent; never invent an unmade promise",
-      "commitEvent": "Q07.COMMITTED", "next": "Q08", "legends": ["L04"], "veils": [],
-      "callbacks": [{"target": "Q08", "kind": "voluntary_support"}, {"target": "Q11", "kind": "commitment_capacity"}]
+      "id": "Q07",
+      "previous": "Q06",
+      "hub": "galilee",
+      "dominantVerbs": [
+        "listen_again",
+        "renegotiate",
+        "handoff"
+      ],
+      "routes": [
+        "personally_keep",
+        "renegotiate",
+        "delegated"
+      ],
+      "fallback": "local paid handoff if companion absent; never invent an unmade promise",
+      "commitEvent": "Q07.COMMITTED",
+      "next": "Q08",
+      "legends": [],
+      "veils": [],
+      "callbacks": [
+        {
+          "target": "Q08",
+          "kind": "voluntary_support"
+        },
+        {
+          "target": "Q11",
+          "kind": "commitment_capacity"
+        }
+      ],
+      "entryRequiredLegends": [
+        "L02"
+      ],
+      "targetMinutes": 32,
+      "narrativeRole": "mortal_bridge"
     },
     {
-      "id": "Q08", "previous": "Q07", "hub": "galilee_route",
-      "dominantVerbs": ["inspect_water", "test_anchor", "rescue"],
-      "routes": ["prepared_rescue", "person_first", "loaded_rescue"], "fallback": "person-first rescue retains a dry and previously heard Jerusalem lead",
-      "commitEvent": "Q08.COMMITTED", "next": "Q09", "legends": [], "veils": ["V03"],
+      "id": "Q08",
+      "previous": "Q07",
+      "hub": "galilee_route",
+      "dominantVerbs": [
+        "inspect_water",
+        "test_anchor",
+        "rescue"
+      ],
+      "routes": [
+        "prepared_rescue",
+        "person_first",
+        "loaded_rescue"
+      ],
+      "fallback": "person-first rescue retains a dry and previously heard Jerusalem lead",
+      "commitEvent": "Q08.COMMITTED",
+      "next": "Q09",
+      "legends": [],
+      "veils": [
+        "V03"
+      ],
       "routeOutcomes": {
-        "prepared_rescue": {"integrity": "full", "injury": false},
-        "person_first": {"integrity": "partial", "injury": false},
-        "loaded_rescue": {"integrity": "full", "injury": true}
+        "prepared_rescue": {
+          "integrity": "full",
+          "injury": false
+        },
+        "person_first": {
+          "integrity": "partial",
+          "injury": false
+        },
+        "loaded_rescue": {
+          "integrity": "full",
+          "injury": true
+        }
       },
-      "callbacks": [{"target": "Q09", "kind": "care_needed"}, {"target": "Q10", "kind": "counter_sources"}, {"target": "Q11", "kind": "support_capacity"}]
+      "callbacks": [
+        {
+          "target": "Q09",
+          "kind": "care_needed"
+        },
+        {
+          "target": "Q10",
+          "kind": "counter_sources"
+        },
+        {
+          "target": "Q11",
+          "kind": "support_capacity"
+        }
+      ],
+      "targetMinutes": 36,
+      "narrativeRole": "mortal_bridge"
     },
     {
-      "id": "Q09", "previous": "Q08", "hub": "jerusalem",
-      "dominantVerbs": ["request_meeting", "define_scope", "accept_refusal"],
-      "routes": ["respect_limits", "seek_mediator"], "fallback": "physical source lead remains if all witnesses refuse",
-      "commitEvent": "Q09.COMMITTED", "next": "Q10", "legends": [], "veils": [],
-      "callbacks": [{"target": "Q11", "kind": "scope_refresh"}, {"target": "Q12", "kind": "per_statement_release"}]
+      "id": "Q09",
+      "previous": "Q08",
+      "hub": "jerusalem",
+      "dominantVerbs": [
+        "request_meeting",
+        "define_scope",
+        "accept_refusal"
+      ],
+      "routes": [
+        "respect_limits",
+        "seek_mediator"
+      ],
+      "fallback": "physical source lead remains if all witnesses refuse",
+      "commitEvent": "Q09.COMMITTED",
+      "next": "Q10",
+      "legends": [],
+      "veils": [],
+      "callbacks": [
+        {
+          "target": "Q11",
+          "kind": "scope_refresh"
+        },
+        {
+          "target": "Q12",
+          "kind": "per_statement_release"
+        }
+      ],
+      "targetMinutes": 34,
+      "narrativeRole": "mortal_bridge"
     },
     {
-      "id": "Q10", "previous": "Q09", "hub": "jerusalem",
-      "dominantVerbs": ["crosscheck", "verify_custody", "accept_responsibility"],
-      "routes": ["disclose", "conceal", "corrected"], "fallback": "issue corrections to actual recipients; retain original event",
-      "commitEvent": "Q10.COMMITTED", "next": "Q11", "legends": [], "veils": [],
-      "callbacks": [{"target": "Q11", "kind": "assignment_trust"}, {"target": "Q12", "kind": "father_claim_scope"}]
+      "id": "Q10",
+      "previous": "Q09",
+      "hub": "jerusalem",
+      "dominantVerbs": [
+        "crosscheck",
+        "verify_custody",
+        "accept_responsibility"
+      ],
+      "routes": [
+        "disclose",
+        "conceal",
+        "corrected"
+      ],
+      "fallback": "issue corrections to actual recipients; retain original event",
+      "commitEvent": "Q10.COMMITTED",
+      "next": "Q11",
+      "legends": [
+        "L04"
+      ],
+      "veils": [],
+      "callbacks": [
+        {
+          "target": "Q11",
+          "kind": "assignment_trust"
+        },
+        {
+          "target": "Q12",
+          "kind": "father_claim_scope"
+        }
+      ],
+      "postCommitGate": "GATE.L04",
+      "targetMinutes": 32,
+      "narrativeRole": "mortal_bridge"
     },
     {
-      "id": "Q11", "previous": "Q10", "hub": "caesarea",
-      "dominantVerbs": ["return", "assign", "rehearse"],
-      "routes": ["public", "distributed", "relocate"], "fallback": "anonymous public variant or relocation with bounded preparation",
-      "commitEvent": "Q11.COMMITTED", "next": "Q12", "legends": ["L05"], "veils": ["V04"],
-      "callbacks": [{"target": "Q12", "kind": "plan_snapshot"}]
+      "id": "Q11",
+      "previous": "Q10",
+      "hub": "caesarea",
+      "dominantVerbs": [
+        "return",
+        "assign",
+        "rehearse"
+      ],
+      "routes": [
+        "public",
+        "distributed",
+        "relocate"
+      ],
+      "fallback": "anonymous public variant or relocation with bounded preparation",
+      "commitEvent": "Q11.COMMITTED",
+      "next": "Q12",
+      "legends": [
+        "L05"
+      ],
+      "veils": [
+        "V04"
+      ],
+      "callbacks": [
+        {
+          "target": "Q12",
+          "kind": "plan_snapshot"
+        }
+      ],
+      "entryRequiredLegends": [
+        "L04"
+      ],
+      "targetMinutes": 30,
+      "narrativeRole": "mortal_bridge"
     },
     {
-      "id": "Q12", "previous": "Q11", "hub": "caesarea",
-      "dominantVerbs": ["coordinate", "deliver", "account_for_harm"],
-      "routes": ["public", "distributed", "relocate"], "fallback": "checkpoint retries execution; deliberate disclosures remain deliberate events",
-      "commitEvent": "Q12.COMMITTED", "next": null, "legends": [], "veils": [],
-      "callbacks": [{"target": "EPILOGUE", "kind": "logged_events_only"}]
+      "id": "Q12",
+      "previous": "Q11",
+      "hub": "caesarea",
+      "dominantVerbs": [
+        "coordinate",
+        "deliver",
+        "account_for_harm"
+      ],
+      "routes": [
+        "public",
+        "distributed",
+        "relocate"
+      ],
+      "fallback": "checkpoint retries execution; deliberate disclosures remain deliberate events",
+      "commitEvent": "Q12.COMMITTED",
+      "next": null,
+      "legends": [],
+      "veils": [],
+      "callbacks": [
+        {
+          "target": "EPILOGUE",
+          "kind": "logged_events_only"
+        }
+      ],
+      "targetMinutes": 26,
+      "narrativeRole": "mortal_bridge"
     }
   ],
   "relationshipQuests": [
-    {"id": "B01", "actor": "miriam", "approaches": ["speak_first", "trace_object_first"], "callback": "Q07"},
-    {"id": "B02", "actor": "damar", "approaches": ["work_with_representative", "supply_trusted_worker"], "callback": "Q08"},
-    {"id": "B03", "actor": "lea", "approaches": ["private_record", "alternative_source"], "callback": "Q10"},
-    {"id": "B04", "actor": "titus", "approaches": ["share_real_task", "work_alone_with_limits"], "callback": "Q11"},
-    {"id": "B05", "actor": "natan", "approaches": ["two_memories", "repair_and_listen"], "callback": "Q12"},
-    {"id": "B06", "actor": "rina", "approaches": ["discuss_needs", "temporary_rule_and_review"], "callback": "Q12"}
+    {
+      "id": "B01",
+      "actor": "miriam",
+      "approaches": [
+        "speak_first",
+        "trace_object_first"
+      ],
+      "callback": "Q07"
+    },
+    {
+      "id": "B02",
+      "actor": "damar",
+      "approaches": [
+        "work_with_representative",
+        "supply_trusted_worker"
+      ],
+      "callback": "Q08"
+    },
+    {
+      "id": "B03",
+      "actor": "lea",
+      "approaches": [
+        "private_record",
+        "alternative_source"
+      ],
+      "callback": "Q10"
+    },
+    {
+      "id": "B04",
+      "actor": "titus",
+      "approaches": [
+        "share_real_task",
+        "work_alone_with_limits"
+      ],
+      "callback": "Q11"
+    },
+    {
+      "id": "B05",
+      "actor": "natan",
+      "approaches": [
+        "two_memories",
+        "repair_and_listen"
+      ],
+      "callback": "Q12"
+    },
+    {
+      "id": "B06",
+      "actor": "rina",
+      "approaches": [
+        "discuss_needs",
+        "temporary_rule_and_review"
+      ],
+      "callback": "Q12"
+    }
   ],
   "invariants": [
     "All chapter routes retain a path to the next chapter.",
@@ -143,8 +658,1216 @@
     "Consent in a private group does not grant public named release.",
     "Preservation of papers does not determine truth or permitted use by itself.",
     "Copies of one source never count as independent corroboration.",
-    "Skipping Legends and Veils never reduces Mortal ending opportunities.",
-    "No canonical scene or Veil writes guilt, evidence, consent, or salvation scores.",
-    "Corrections append history; they do not erase harm or force forgiveness."
+    "Corrections append history; they do not erase harm or force forgiveness.",
+    "Required L01 L02 L04 must be committed in order before v3 campaign completion.",
+    "Interactive and accessible summary satisfy identical core narrative gates; selecting summary or exiting is not completion.",
+    "Optional Legends and Veils may be omitted without reducing ending opportunities.",
+    "Legends may grant campaign progress and bridge context only; no evidence consent inventory NPC guilt or salvation writes.",
+    "Reflection may remain null; no correct religious answer or dwell-time requirement.",
+    "Legacy v2 completion booleans do not certify v3 core coverage."
+  ],
+  "designProgressionSchemaVersion": 2,
+  "bridgeDossiers": "11-chapter-dossiers.md",
+  "sourceWorldPackets": "15-source-world-packets.md",
+  "reviewRoster": "15-source-world-packets.md",
+  "legacyBudgetFieldMap": {
+    "mainQuests": "bridgeQuests"
+  },
+  "legends": [
+    {
+      "id": "L01",
+      "character": "moses",
+      "sourceId": "S05",
+      "pericope": "Exodus 14:1-31",
+      "reviewStatus": "unassigned-not-approved",
+      "required": true,
+      "packetIds": [
+        "L01.SOURCE",
+        "L01.WORLD"
+      ],
+      "reviewerSlots": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07"
+      ],
+      "act": 1,
+      "gate": {
+        "id": "GATE.L01",
+        "afterBridgeCommit": "Q03",
+        "beforeBridgeEntry": "Q04",
+        "requiresStatus": "committed",
+        "requiresCoreRevision": "3.0.0",
+        "requiresEarlierLegends": []
+      },
+      "coreRevision": "3.0.0",
+      "coreBeats": [
+        {
+          "id": "L01.B01",
+          "reference": "Exodus 14:1-10",
+          "key": "camp_and_pursuit",
+          "claimClass": "K",
+          "receiptAtScene": "L01.S02"
+        },
+        {
+          "id": "L01.B02",
+          "reference": "Exodus 14:10-14",
+          "key": "fear_and_response",
+          "claimClass": "K",
+          "receiptAtScene": "L01.S02"
+        },
+        {
+          "id": "L01.B03",
+          "reference": "Exodus 14:15-20",
+          "key": "divine_initiative",
+          "claimClass": "K",
+          "receiptAtScene": "L01.S04"
+        },
+        {
+          "id": "L01.B04",
+          "reference": "Exodus 14:21-25",
+          "key": "passage",
+          "claimClass": "K",
+          "receiptAtScene": "L01.S05"
+        },
+        {
+          "id": "L01.B05",
+          "reference": "Exodus 14:26-29",
+          "key": "waters_return",
+          "claimClass": "K",
+          "receiptAtScene": "L01.S06"
+        },
+        {
+          "id": "L01.B06",
+          "reference": "Exodus 14:30-31",
+          "key": "recognition",
+          "claimClass": "K",
+          "receiptAtScene": "L01.S07"
+        }
+      ],
+      "formats": [
+        "interactive",
+        "accessible_summary"
+      ],
+      "minutes": {
+        "interactive": 80,
+        "accessible_summary": 8
+      },
+      "sceneMinutes": [
+        6,
+        14,
+        12,
+        8,
+        18,
+        14,
+        8
+      ],
+      "summaryPages": [
+        {
+          "id": "L01.SUMMARY.1",
+          "delivers": [
+            "L01.B01"
+          ]
+        },
+        {
+          "id": "L01.SUMMARY.2",
+          "delivers": [
+            "L01.B02"
+          ]
+        },
+        {
+          "id": "L01.SUMMARY.3",
+          "delivers": [
+            "L01.B03"
+          ]
+        },
+        {
+          "id": "L01.SUMMARY.4",
+          "delivers": [
+            "L01.B04"
+          ]
+        },
+        {
+          "id": "L01.SUMMARY.5",
+          "delivers": [
+            "L01.B05"
+          ]
+        },
+        {
+          "id": "L01.SUMMARY.6",
+          "delivers": [
+            "L01.B06"
+          ]
+        }
+      ],
+      "completionGuards": [
+        "allCoreBeatReceipts",
+        "currentCoreRevision",
+        "finalPresentationAcknowledged",
+        "notReplay"
+      ],
+      "bridge": {
+        "narrator": "natan",
+        "reflectionOptional": true,
+        "reflectionNullAllowed": true,
+        "contextFlag": "L01.bridge_available",
+        "evidenceWrites": false,
+        "defaultContextVisibleInBothFormats": true,
+        "narratorFallback": "in_game_source_card",
+        "overlay": "wind_cloth_to_warehouse_canopy",
+        "reducedMotionAlternative": "static_cards_with_place_and_era",
+        "mortalTravelClaim": false,
+        "reflectionPrivateByDefault": true,
+        "shareEvent": "ReflectionShared"
+      },
+      "scenes": [
+        {
+          "id": "L01.S01",
+          "minutes": 6,
+          "actionId": "orient",
+          "claimClass": "H",
+          "coreBeatsDelivered": [],
+          "checkpoint": true
+        },
+        {
+          "id": "L01.S02",
+          "minutes": 14,
+          "actionId": "trace_camp_route",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L01.B01",
+            "L01.B02"
+          ],
+          "checkpoint": true
+        },
+        {
+          "id": "L01.S03",
+          "minutes": 12,
+          "actionId": "clear_local_path",
+          "claimClass": "H",
+          "coreBeatsDelivered": [],
+          "checkpoint": true
+        },
+        {
+          "id": "L01.S04",
+          "minutes": 8,
+          "actionId": "observe_source",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L01.B03"
+          ],
+          "checkpoint": true
+        },
+        {
+          "id": "L01.S05",
+          "minutes": 18,
+          "actionId": "read_passage_route",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L01.B04"
+          ],
+          "checkpoint": true
+        },
+        {
+          "id": "L01.S06",
+          "minutes": 14,
+          "actionId": "reach_far_bank",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L01.B05"
+          ],
+          "checkpoint": true
+        },
+        {
+          "id": "L01.S07",
+          "minutes": 8,
+          "actionId": "look_back",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L01.B06"
+          ],
+          "checkpoint": true
+        }
+      ],
+      "explorationGraph": {
+        "nodes": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "edges": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "B",
+            "C"
+          ],
+          [
+            "A",
+            "C"
+          ],
+          [
+            "C",
+            "D"
+          ],
+          [
+            "D",
+            "E"
+          ],
+          [
+            "E",
+            "F"
+          ]
+        ],
+        "explorationRoutes": [
+          {
+            "id": "route_1",
+            "nodes": [
+              "A",
+              "C"
+            ]
+          },
+          {
+            "id": "route_2",
+            "nodes": [
+              "A",
+              "B",
+              "C"
+            ]
+          }
+        ],
+        "sourceConvergenceNode": "D",
+        "geometryClass": "H",
+        "historicalScaleClaim": false,
+        "edgesBidirectionalUnlessSourceSequenceLocks": true
+      },
+      "targetActiveExplorationMinutes": 60,
+      "canonLocks": [
+        "source_sequence",
+        "canonical_outcome",
+        "no_mortal_evidence",
+        "no_salvation_score",
+        "divine_initiative",
+        "no_mana",
+        "no_crowd_death_qte",
+        "no_exact_pharaoh_or_crossing_claim"
+      ],
+      "sourcePacket": {
+        "id": "L01.SOURCE",
+        "sourceId": "S05",
+        "pericope": "Exodus 14:1-31",
+        "revision": "3.0.0",
+        "translationEdition": null,
+        "translator": null,
+        "rightsStatus": "pending",
+        "approvedTextRevision": null,
+        "status": "draft-not-reviewed"
+      },
+      "worldPacket": {
+        "id": "L01.WORLD",
+        "assetIds": [
+          "LW01",
+          "LW02",
+          "LW03",
+          "LW04",
+          "LW05"
+        ],
+        "status": "internal-greybox-only",
+        "finalArtApproved": false,
+        "unknownsRemain": true
+      }
+    },
+    {
+      "id": "L02",
+      "character": "david",
+      "sourceId": "S06",
+      "pericope": "1 Samuel 24",
+      "reviewStatus": "unassigned-not-approved",
+      "required": true,
+      "packetIds": [
+        "L02.SOURCE",
+        "L02.WORLD"
+      ],
+      "reviewerSlots": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07"
+      ],
+      "act": 2,
+      "gate": {
+        "id": "GATE.L02",
+        "afterBridgeCommit": "Q06",
+        "beforeBridgeEntry": "Q07",
+        "requiresStatus": "committed",
+        "requiresCoreRevision": "3.0.0",
+        "requiresEarlierLegends": [
+          "L01"
+        ]
+      },
+      "coreRevision": "3.0.0",
+      "coreBeats": [
+        {
+          "id": "L02.B01",
+          "reference": "1 Samuel 24:1-4",
+          "key": "encounter",
+          "claimClass": "K",
+          "receiptAtScene": "L02.S01"
+        },
+        {
+          "id": "L02.B02",
+          "reference": "1 Samuel 24:5-6",
+          "key": "garment_and_remorse",
+          "claimClass": "K",
+          "receiptAtScene": "L02.S03"
+        },
+        {
+          "id": "L02.B03",
+          "reference": "1 Samuel 24:7-8",
+          "key": "restraining_the_men",
+          "claimClass": "K",
+          "receiptAtScene": "L02.S04"
+        },
+        {
+          "id": "L02.B04",
+          "reference": "1 Samuel 24:9-16",
+          "key": "emerging_and_address",
+          "claimClass": "K",
+          "receiptAtScene": "L02.S06"
+        },
+        {
+          "id": "L02.B05",
+          "reference": "1 Samuel 24:17-23",
+          "key": "response_oath_departure",
+          "claimClass": "K",
+          "receiptAtScene": "L02.S07"
+        }
+      ],
+      "formats": [
+        "interactive",
+        "accessible_summary"
+      ],
+      "minutes": {
+        "interactive": 70,
+        "accessible_summary": 7
+      },
+      "sceneMinutes": [
+        6,
+        14,
+        12,
+        12,
+        8,
+        12,
+        6
+      ],
+      "summaryPages": [
+        {
+          "id": "L02.SUMMARY.1",
+          "delivers": [
+            "L02.B01"
+          ]
+        },
+        {
+          "id": "L02.SUMMARY.2",
+          "delivers": [
+            "L02.B02"
+          ]
+        },
+        {
+          "id": "L02.SUMMARY.3",
+          "delivers": [
+            "L02.B03"
+          ]
+        },
+        {
+          "id": "L02.SUMMARY.4",
+          "delivers": [
+            "L02.B04"
+          ]
+        },
+        {
+          "id": "L02.SUMMARY.5",
+          "delivers": [
+            "L02.B05"
+          ]
+        }
+      ],
+      "completionGuards": [
+        "allCoreBeatReceipts",
+        "currentCoreRevision",
+        "finalPresentationAcknowledged",
+        "notReplay"
+      ],
+      "bridge": {
+        "narrator": "damar",
+        "reflectionOptional": true,
+        "reflectionNullAllowed": true,
+        "contextFlag": "L02.bridge_available",
+        "evidenceWrites": false,
+        "defaultContextVisibleInBothFormats": true,
+        "narratorFallback": "in_game_source_card",
+        "overlay": "cave_light_to_workshop_door",
+        "reducedMotionAlternative": "static_cards_with_place_and_era",
+        "mortalTravelClaim": false,
+        "reflectionPrivateByDefault": true,
+        "shareEvent": "ReflectionShared"
+      },
+      "scenes": [
+        {
+          "id": "L02.S01",
+          "minutes": 6,
+          "actionId": "read_ravine",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L02.B01"
+          ],
+          "checkpoint": true
+        },
+        {
+          "id": "L02.S02",
+          "minutes": 14,
+          "actionId": "choose_approach",
+          "claimClass": "H",
+          "coreBeatsDelivered": [],
+          "checkpoint": true
+        },
+        {
+          "id": "L02.S03",
+          "minutes": 12,
+          "actionId": "source_blocking",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L02.B02"
+          ],
+          "checkpoint": true
+        },
+        {
+          "id": "L02.S04",
+          "minutes": 12,
+          "actionId": "return_and_signal",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L02.B03"
+          ],
+          "checkpoint": true
+        },
+        {
+          "id": "L02.S05",
+          "minutes": 8,
+          "actionId": "find_exit",
+          "claimClass": "H",
+          "coreBeatsDelivered": [],
+          "checkpoint": true
+        },
+        {
+          "id": "L02.S06",
+          "minutes": 12,
+          "actionId": "observe_address",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L02.B04"
+          ],
+          "checkpoint": true
+        },
+        {
+          "id": "L02.S07",
+          "minutes": 6,
+          "actionId": "leave",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L02.B05"
+          ],
+          "checkpoint": true
+        }
+      ],
+      "explorationGraph": {
+        "nodes": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G"
+        ],
+        "edges": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "B",
+            "C"
+          ],
+          [
+            "C",
+            "D"
+          ],
+          [
+            "D",
+            "B"
+          ],
+          [
+            "C",
+            "E"
+          ],
+          [
+            "E",
+            "F"
+          ],
+          [
+            "F",
+            "G"
+          ]
+        ],
+        "explorationRoutes": [
+          {
+            "id": "route_1",
+            "nodes": [
+              "B",
+              "C"
+            ]
+          },
+          {
+            "id": "route_2",
+            "nodes": [
+              "B",
+              "D",
+              "C"
+            ]
+          }
+        ],
+        "sourceConvergenceNode": "E",
+        "geometryClass": "H",
+        "historicalScaleClaim": false,
+        "edgesBidirectionalUnlessSourceSequenceLocks": true
+      },
+      "targetActiveExplorationMinutes": 48,
+      "canonLocks": [
+        "source_sequence",
+        "canonical_outcome",
+        "no_mortal_evidence",
+        "no_salvation_score",
+        "garment_and_remorse_retained",
+        "restraining_men_retained",
+        "oath_and_departure_retained",
+        "no_kill_saul_branch",
+        "no_chapter_26_merge"
+      ],
+      "sourcePacket": {
+        "id": "L02.SOURCE",
+        "sourceId": "S06",
+        "pericope": "1 Samuel 24",
+        "revision": "3.0.0",
+        "translationEdition": null,
+        "translator": null,
+        "rightsStatus": "pending",
+        "approvedTextRevision": null,
+        "status": "draft-not-reviewed"
+      },
+      "worldPacket": {
+        "id": "L02.WORLD",
+        "assetIds": [
+          "LW06",
+          "LW07",
+          "LW08",
+          "LW09",
+          "LW10"
+        ],
+        "status": "internal-greybox-only",
+        "finalArtApproved": false,
+        "unknownsRemain": true
+      }
+    },
+    {
+      "id": "L03",
+      "character": "jeremiah",
+      "sourceId": "S07",
+      "pericope": "Jeremiah 38:1-13",
+      "reviewStatus": "unassigned-not-approved",
+      "required": false,
+      "packetIds": [
+        "L03.SOURCE",
+        "L03.WORLD"
+      ],
+      "reviewerSlots": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07"
+      ],
+      "act": 1,
+      "gate": null,
+      "coreRevision": null,
+      "coreBeats": [],
+      "formats": [
+        "interactive",
+        "accessible_summary",
+        "omit"
+      ],
+      "minutes": {
+        "interactive": 18,
+        "accessible_summary": 4
+      }
+    },
+    {
+      "id": "L04",
+      "character": "peter",
+      "sourceId": "S09",
+      "pericope": "John 21:1-19",
+      "reviewStatus": "unassigned-not-approved",
+      "required": true,
+      "packetIds": [
+        "L04.SOURCE",
+        "L04.WORLD"
+      ],
+      "reviewerSlots": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07"
+      ],
+      "act": 3,
+      "gate": {
+        "id": "GATE.L04",
+        "afterBridgeCommit": "Q10",
+        "beforeBridgeEntry": "Q11",
+        "requiresStatus": "committed",
+        "requiresCoreRevision": "3.0.0",
+        "requiresEarlierLegends": [
+          "L01",
+          "L02"
+        ]
+      },
+      "coreRevision": "3.0.0",
+      "coreBeats": [
+        {
+          "id": "L04.B01",
+          "reference": "John 21:1-3",
+          "key": "night",
+          "claimClass": "K",
+          "receiptAtScene": "L04.S02"
+        },
+        {
+          "id": "L04.B02",
+          "reference": "John 21:4-8",
+          "key": "recognition",
+          "claimClass": "K",
+          "receiptAtScene": "L04.S03"
+        },
+        {
+          "id": "L04.B03",
+          "reference": "John 21:9-14",
+          "key": "meal",
+          "claimClass": "K",
+          "receiptAtScene": "L04.S04"
+        },
+        {
+          "id": "L04.B04",
+          "reference": "John 21:15-17",
+          "key": "commission",
+          "claimClass": "K",
+          "receiptAtScene": "L04.S06"
+        },
+        {
+          "id": "L04.B05",
+          "reference": "John 21:18-19",
+          "key": "following",
+          "claimClass": "K",
+          "receiptAtScene": "L04.S07"
+        }
+      ],
+      "formats": [
+        "interactive",
+        "accessible_summary"
+      ],
+      "minutes": {
+        "interactive": 66,
+        "accessible_summary": 8
+      },
+      "sceneMinutes": [
+        6,
+        14,
+        10,
+        12,
+        12,
+        8,
+        4
+      ],
+      "summaryPages": [
+        {
+          "id": "L04.SUMMARY.1",
+          "delivers": [
+            "L04.B01"
+          ]
+        },
+        {
+          "id": "L04.SUMMARY.2",
+          "delivers": [
+            "L04.B02"
+          ]
+        },
+        {
+          "id": "L04.SUMMARY.3",
+          "delivers": [
+            "L04.B03"
+          ]
+        },
+        {
+          "id": "L04.SUMMARY.4",
+          "delivers": [
+            "L04.B04"
+          ]
+        },
+        {
+          "id": "L04.SUMMARY.5",
+          "delivers": [
+            "L04.B05"
+          ]
+        }
+      ],
+      "completionGuards": [
+        "allCoreBeatReceipts",
+        "currentCoreRevision",
+        "finalPresentationAcknowledged",
+        "notReplay"
+      ],
+      "bridge": {
+        "narrator": "miriam",
+        "reflectionOptional": true,
+        "reflectionNullAllowed": true,
+        "contextFlag": "L04.bridge_available",
+        "evidenceWrites": false,
+        "defaultContextVisibleInBothFormats": true,
+        "narratorFallback": "in_game_source_card",
+        "overlay": "wood_sound_to_shared_meal",
+        "reducedMotionAlternative": "static_cards_with_place_and_era",
+        "mortalTravelClaim": false,
+        "reflectionPrivateByDefault": true,
+        "shareEvent": "ReflectionShared"
+      },
+      "scenes": [
+        {
+          "id": "L04.S01",
+          "minutes": 6,
+          "actionId": "orient",
+          "claimClass": "H",
+          "coreBeatsDelivered": [],
+          "checkpoint": true
+        },
+        {
+          "id": "L04.S02",
+          "minutes": 14,
+          "actionId": "inspect_net_and_rope",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L04.B01"
+          ],
+          "checkpoint": true
+        },
+        {
+          "id": "L04.S03",
+          "minutes": 10,
+          "actionId": "observe_recognition",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L04.B02"
+          ],
+          "checkpoint": true
+        },
+        {
+          "id": "L04.S04",
+          "minutes": 12,
+          "actionId": "land_and_work_together",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L04.B03"
+          ],
+          "checkpoint": true
+        },
+        {
+          "id": "L04.S05",
+          "minutes": 12,
+          "actionId": "explore_shore",
+          "claimClass": "H",
+          "coreBeatsDelivered": [],
+          "checkpoint": true
+        },
+        {
+          "id": "L04.S06",
+          "minutes": 8,
+          "actionId": "observe_commission",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L04.B04"
+          ],
+          "checkpoint": true
+        },
+        {
+          "id": "L04.S07",
+          "minutes": 4,
+          "actionId": "follow",
+          "claimClass": "H",
+          "coreBeatsDelivered": [
+            "L04.B05"
+          ],
+          "checkpoint": true
+        }
+      ],
+      "explorationGraph": {
+        "nodes": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F"
+        ],
+        "edges": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "B",
+            "C"
+          ],
+          [
+            "C",
+            "D"
+          ],
+          [
+            "D",
+            "E"
+          ],
+          [
+            "E",
+            "F"
+          ]
+        ],
+        "explorationRoutes": [
+          {
+            "id": "firm_ground",
+            "nodes": [
+              "E",
+              "F",
+              "E"
+            ],
+            "edgeVariant": "firm_ground",
+            "action": "read_rope_marks"
+          },
+          {
+            "id": "rocky_margin",
+            "nodes": [
+              "E",
+              "F",
+              "E"
+            ],
+            "edgeVariant": "rocky_margin",
+            "action": "inspect_shore_gear"
+          }
+        ],
+        "routeDifference": "firm-ground versus rocky-margin approach within E-F; represented as distinct edge variants",
+        "edgeVariants": {
+          "E-F": [
+            "firm_ground",
+            "rocky_margin"
+          ]
+        },
+        "sourceConvergenceNode": "E",
+        "geometryClass": "H",
+        "historicalScaleClaim": false,
+        "edgesBidirectionalUnlessSourceSequenceLocks": true
+      },
+      "targetActiveExplorationMinutes": 44,
+      "canonLocks": [
+        "source_sequence",
+        "canonical_outcome",
+        "no_mortal_evidence",
+        "no_salvation_score",
+        "resurrection_and_commission_retained",
+        "no_pre_source_fish_reward",
+        "no_love_levels",
+        "no_153_collectibles",
+        "no_invented_words_of_jesus"
+      ],
+      "sourcePacket": {
+        "id": "L04.SOURCE",
+        "sourceId": "S09",
+        "pericope": "John 21:1-19",
+        "revision": "3.0.0",
+        "translationEdition": null,
+        "translator": null,
+        "rightsStatus": "pending",
+        "approvedTextRevision": null,
+        "status": "draft-not-reviewed"
+      },
+      "worldPacket": {
+        "id": "L04.WORLD",
+        "assetIds": [
+          "LW11",
+          "LW12",
+          "LW13",
+          "LW14",
+          "LW15"
+        ],
+        "status": "internal-greybox-only",
+        "finalArtApproved": false,
+        "unknownsRemain": true
+      }
+    },
+    {
+      "id": "L05",
+      "character": "paul",
+      "sourceId": "S11",
+      "pericope": "Acts 16:22-40",
+      "reviewStatus": "unassigned-not-approved",
+      "required": false,
+      "packetIds": [
+        "L05.SOURCE",
+        "L05.WORLD"
+      ],
+      "reviewerSlots": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07"
+      ],
+      "act": 3,
+      "gate": null,
+      "coreRevision": null,
+      "coreBeats": [],
+      "formats": [
+        "interactive",
+        "accessible_summary",
+        "omit"
+      ],
+      "minutes": {
+        "interactive": 24,
+        "accessible_summary": 4
+      }
+    }
+  ],
+  "narrativeSpine": {
+    "primaryLayer": "legend",
+    "requiredOrder": [
+      "L01",
+      "L02",
+      "L04"
+    ],
+    "acts": [
+      {
+        "id": 1,
+        "bridges": [
+          "Q01",
+          "Q02",
+          "Q03",
+          "Q04"
+        ],
+        "required": [
+          "L01"
+        ],
+        "optional": [
+          "L03"
+        ],
+        "travelMinutes": 22
+      },
+      {
+        "id": 2,
+        "bridges": [
+          "Q05",
+          "Q06",
+          "Q07",
+          "Q08"
+        ],
+        "required": [
+          "L02"
+        ],
+        "optional": [],
+        "travelMinutes": 24
+      },
+      {
+        "id": 3,
+        "bridges": [
+          "Q09",
+          "Q10",
+          "Q11",
+          "Q12"
+        ],
+        "required": [
+          "L04"
+        ],
+        "optional": [
+          "L05"
+        ],
+        "travelMinutes": 20
+      }
+    ],
+    "finaleRequires": [
+      "L01",
+      "L02",
+      "L04"
+    ],
+    "mainObjectivePriority": [
+      "required_legend",
+      "bridge_preparation",
+      "optional_legend",
+      "veil"
+    ],
+    "fictionalGrainPlotRole": "supporting-human-thread",
+    "canonResolution": "locked-by-source; not selected by player",
+    "campaignCompletionEvent": "CAMPAIGN.V3.COMMITTED"
+  },
+  "timeBudget": {
+    "status": "unmeasured-blockout-target",
+    "baselineFormat": "interactive",
+    "baselineMinutes": 720,
+    "requiredLegendMinutes": 216,
+    "mortalBridgeMinutes": 468,
+    "bridgeQuestMinutes": 402,
+    "bridgeTravelMinutes": 66,
+    "optionalVeilMinutesInSampleRoute": 36,
+    "veilMinutes": {
+      "V01": 8,
+      "V02": 10,
+      "V03": 8,
+      "V04": 10
+    },
+    "requiredLegendShare": 0.3,
+    "withoutVeilMinutes": 684,
+    "summaryRouteMinutes": 527,
+    "summaryRouteWithoutVeilMinutes": 491,
+    "optionalLegendsExcluded": true,
+    "relationshipQuestsExcluded": true,
+    "countingRule": "first traversal active play plus delivered narrative; exclude pause, idle, retries, replay, optional detours; report all formats separately",
+    "interactiveLegendActiveExplorationTargetMinutes": 152
+  },
+  "legendCompletionPolicy": {
+    "states": [
+      "unavailable",
+      "available",
+      "in_progress",
+      "core_satisfied",
+      "committed"
+    ],
+    "formats": [
+      "interactive",
+      "accessible_summary"
+    ],
+    "selectingFormatCompletes": false,
+    "exitCompletes": false,
+    "abortEffect": "retain checkpoint and delivered beat receipts; gate remains unsatisfied",
+    "receiptEvidence": "ordered source-tagged scene delivery or corresponding summary page rendered with transcript available; no quiz or minimum reading time",
+    "switchFormat": "resume at first undelivered core beat; retain receipt order and format per beat",
+    "terminalAction": "acknowledge end after final core beat is presented",
+    "reflectionRequired": false,
+    "canonicalOutcomeChoice": false,
+    "replayWritesCampaign": false,
+    "formatParity": [
+      "gateEligibility",
+      "endingOpportunities",
+      "baseResources",
+      "safetySupport",
+      "bridgeContext"
+    ],
+    "optionalContentMayBeOmitted": [
+      "L03",
+      "L05",
+      "V01",
+      "V02",
+      "V03",
+      "V04"
+    ],
+    "gateBypassAllowed": false
+  },
+  "gateTransaction": {
+    "order": [
+      "validateBridgeCommitted",
+      "validateOrderedCoreReceipts",
+      "validateCoreRevision",
+      "validateEndAcknowledgment",
+      "appendIdempotentLegendCommitted",
+      "unlockNextBridge",
+      "autosave"
+    ],
+    "idempotencyKey": [
+      "campaignId",
+      "legendId",
+      "coreRevision"
+    ],
+    "onInterrupted": "resume last durable checkpoint; no gate grant",
+    "missingSourceReview": "allow internal labeled greybox only; block final voice/text/art lock and release",
+    "finalePolicy": "all required legends committed at current core revision"
+  },
+  "reviewerRoster": [
+    {
+      "id": "R01",
+      "role": "Biblical exegesis",
+      "assignee": null,
+      "status": "unassigned",
+      "approval": null
+    },
+    {
+      "id": "R02",
+      "role": "Catholic theology",
+      "assignee": null,
+      "status": "unassigned",
+      "approval": null
+    },
+    {
+      "id": "R03",
+      "role": "Historical archaeology with period-specific expertise",
+      "assignee": null,
+      "status": "unassigned",
+      "approval": null
+    },
+    {
+      "id": "R04",
+      "role": "Hebrew Greek and Vietnamese translation",
+      "assignee": null,
+      "status": "unassigned",
+      "approval": null
+    },
+    {
+      "id": "R05",
+      "role": "Text image audio rights and production",
+      "assignee": null,
+      "status": "unassigned",
+      "approval": null
+    },
+    {
+      "id": "R06",
+      "role": "Exploration UX and accessibility",
+      "assignee": null,
+      "status": "unassigned",
+      "approval": null
+    },
+    {
+      "id": "R07",
+      "role": "Continuity and state QA",
+      "assignee": null,
+      "status": "unassigned",
+      "approval": null
+    }
   ]
 }

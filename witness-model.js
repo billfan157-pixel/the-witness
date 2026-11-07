@@ -1,16 +1,17 @@
 (function(root){
   'use strict';
   const D=root.WitnessContent||(typeof require!=='undefined'?require('./witness-content.js'):null);
-  const STORE='the-witness.campaign.v2', BACKUP=STORE+'.backup';
+  if(typeof require!=='undefined')require('./witness-spine.js');
+  const STORE='the-witness.spine.v3', BACKUP=STORE+'.backup',LEGACY='the-witness.campaign.v2';
   const clone=x=>JSON.parse(JSON.stringify(x));
   const error=message=>{throw new Error(message);};
   const unique=a=>[...new Set(a)];
   function fresh(profile={}){
-    return {schema:1,contentVersion:'2.0',campaignId:'the-witness-legacy',chapter:0,
+    return {schema:2,contentVersion:'3.0',campaignId:'the-witness-spine-v3',chapter:0,
       profile:{name:String(profile.name||'Người Chứng').trim().slice(0,28)||'Người Chứng',gender:['male','female'].includes(profile.gender)?profile.gender:'male',origin:['port','scribe','road'].includes(profile.origin)?profile.origin:'scribe',attire:['sand','green','blue'].includes(profile.attire)?profile.attire:'sand'},
       quests:Object.fromEntries(D.chapters.map(q=>[q.id,{done:[],plan:null,route:null,decisions:{}}])),evidence:[],consent:{},flags:{},resources:{money:3,food:3,tools:1},
       relationships:{miriam:0,damar:0,lea:0,titus:0},bonds:{},legends:{},veils:{},events:[],layer:null,positions:{},pendingEscort:null,finished:false,
-      pendingBond:null,settings:{text:1,motion:'calm',sound:false,guide:true,comfort:true},lastSaved:null};
+      pendingBond:null,campaignProgress:{requiredLegends:{}},unlockedBridgeContext:[],migration:null,settings:{text:1,motion:'calm',sound:false,guide:true,comfort:true},lastSaved:null};
   }
   const chapter=s=>D.chapters[Math.min(s.chapter,D.chapters.length-1)];
   const quest=s=>s.quests[chapter(s).id];
@@ -18,10 +19,10 @@
   function relation(s,who,amount){s.relationships[who]=Math.max(-2,Math.min(2,(s.relationships[who]||0)+amount));}
   function condition(s,key){const q=quest(s);return key==='pressure'?!!s.flags.pressure:key==='needs'?!s.flags.needsHeard&&!s.flags.pressure:key==='anonymous-unprotected'?s.quests.Q02.route==='anonymous'&&!s.flags.yosefSafe:true;}
   function actions(s){
-    if(s.finished)return [];
-    if(s.layer){const l=s.layer;const src=l.kind==='legend'?D.legends[l.id]:D.veils[l.id];return l.step<src.steps.length?[{id:src.steps[l.step][0],target:'layer-'+l.step,title:src.steps[l.step][1],text:src.steps[l.step][2],at:layerAt(l.step),layer:true}]:[{id:'return',target:'layer-return',title:'Trở về',text:'Trở lại với người đang sống',at:[13,-10],layer:true}];}
+    if(s.finished&&!s.layer)return [];
+    if(s.layer){const l=s.layer,src=l.kind==='legend'?D.legends[l.id]:D.veils[l.id];if(l.format==='accessible_summary')return [{id:'read-summary',target:'layer-summary',title:'Tiếp tục bản tóm tắt',text:src.ref,at:src.start||[-7,4],layer:true}];const step=src.steps[l.step];const main=step?{id:step[0],target:'layer-'+l.step,title:step[1],text:step[2],at:layerAt(l.step,s),layer:true,kind:step.kind||'observe',choices:step.choices,order:step.order,orderLabels:step.orderLabels,beat:step.beat,reference:step.reference}:{id:'return',target:'layer-return',title:'Khép chương và trở về',text:src.bridge||'Trở lại với người đang sống',at:src.returnAt||[13,-10],layer:true};return [main,...(src.discoveries||[]).filter(d=>!(l.discovered||[]).includes(d.id)).map(d=>({id:'discover:'+d.id,target:'discovery-'+d.id,title:d.title,text:d.text,at:d.at,layer:true,kind:'discovery'}))];}
     const ch=chapter(s),q=quest(s);
-    if(q.route)return [...(s.chapter===2&&condition(s,'anonymous-unprotected')?[ch.tasks[0]]:[]),{id:'advance',target:'gate',title:s.chapter===11?'Nhìn lại bến sau cuộc nói':'Tiếp tục hành trình',text:ch.ending[q.route]||ch.quiet,needs:[]},...bondAction(s)];
+    if(q.route){const due=dueLegend(s);return [...(s.chapter===2&&condition(s,'anonymous-unprotected')?[ch.tasks[0]]:[]),due?{id:'legend-gate',target:'gate',legend:due,title:D.legends[due].name+' — '+D.legends[due].title,text:'Chương chính · Chơi hoặc xem tóm tắt đủ nội dung để tiếp tục.',needs:[]}:{id:'advance',target:'gate',title:s.chapter===11?'Nhìn lại bến sau cuộc nói':'Tiếp tục hành trình',text:ch.ending[q.route]||ch.quiet,needs:[]},...bondAction(s)];}
     const source=q.plan?(ch.execution[q.plan]||[]):ch.tasks;
     let result=source.filter(a=>!q.done.includes(a.id)&&(a.needs||[]).every(id=>q.done.includes(id))&&(!a.when||condition(s,a.when)));
     if(q.plan){
@@ -32,7 +33,10 @@
     return [...result,...bondAction(s)];
   }
   function bondAction(s){const pending=s.pendingBond;if(!pending)return [];const b=D.bonds.find(b=>b.id===pending.id);if(!b||s.bonds[b.id])return [];return [{id:'bond-work',target:'bond-work',title:'Cùng thực hiện: '+b.title,text:b.choices.find(c=>c[0]===pending.choice)?.[2]||b.text,puzzle:['natan','titus','damar'].includes(b.person)?'brace':b.person==='rina'?'supplies':b.person==='lea'?'copy':'claims',bond:b.id,success:b.callback,needs:[]}];}
-  const layerAt=i=>[[-7,4],[0,-3],[9,-8]][i]||[13,-10];
+  function layerAt(i,s){const l=s?.layer,src=l&&(l.kind==='legend'?D.legends[l.id]:D.veils[l.id]),step=src?.steps[i];return step?.routeAt?.[l.route||'near']||(Array.isArray(step?.at)?step.at:null)||[[-7,4],[0,-3],[9,-8]][i]||src?.returnAt||[13,-10];}
+  function legendComplete(s,id){const src=D.legends[id],r=s.legends[id];return !!(src?.required&&r?.status==='committed'&&r.revision===src.revision&&r.finalAcknowledged&&r.receipts?.length===src.beats.length&&r.receipts.every((b,i)=>b.beat===src.beats[i].id&&b.revision===src.revision&&['interactive','accessible_summary'].includes(b.format)));}
+  function dueLegend(s){return D.spine.find(id=>{const l=D.legends[id];return !legendComplete(s,id)&&(s.chapter>l.after||s.chapter===l.after&&!!s.quests[D.chapters[l.after].id].route);})||null;}
+  const allLegends=s=>D.spine.every(id=>legendComplete(s,id));
   function planAllowed(s,route){
     const q=quest(s),ch=chapter(s),a=ch.tasks.find(a=>a.plan);
     if(!a||!a.choices.some(c=>c[0]===route))return false;
@@ -90,14 +94,16 @@
     if(ch.id==='Q08'){s.flags.paperIntegrity=q.route==='person_first'?'partial':'full';s.flags.amonInjured=q.route==='loaded_rescue';}
     if(ch.id==='Q10'){s.flags.fatherConcealment=q.route==='conceal';s.flags.fatherCorrected=q.route==='corrected';if(q.route==='conceal')relation(s,'lea',-1);if(q.route==='corrected')log(s,'CorrectionDelivered',{subject:'haddai',previousHarmRetained:true});}
     if(ch.id==='Q11'){s.flags.finalPlan=q.route;s.flags.planSnapshot={method:q.route,claims:allowedClaims(s,q.route==='distributed'?'private_group':'public'),consent:clone(s.consent)};}
-    if(ch.id==='Q12'){s.finished=true;s.flags.ending=q.route;}
+    if(ch.id==='Q12'){if(!allLegends(s))error('Cần khép đủ ba chương Kinh Thánh chính trước đoạn kết.');s.finished=true;s.flags.ending=q.route;}
     s.pendingEscort=null;log(s,ch.id+'.COMMITTED',{route:q.route});
   }
   function act(state,id,options={}){
     if(state.layer)error('Hãy hoàn tất hoặc rời trải nghiệm hiện tại trước.');
     const s=clone(state),ch=chapter(s),q=quest(s);const a=actions(s).find(x=>x.id===id);if(!a)error('Việc này chưa sẵn sàng hoặc đã hoàn tất.');
+    if(a.legend)error('Hãy mở chương chính bằng phần chơi hoặc bản tóm tắt.');
     if(a.bond){if(!checkPuzzle(s,a,options.puzzle))error('Hãy hoàn tất phần cùng làm trước khi ghi nhận.');return bond(s,a.bond,s.pendingBond.choice,{completedWork:true});}
     if(id==='advance'){
+      if(dueLegend(s))error('Chương Kinh Thánh chính còn dở. Hãy tiếp tục hoặc xem tóm tắt đủ nội dung.');
       if(ch.id==='Q03'&&condition(s,'anonymous-unprotected'))error('Cần bố trí bảo vệ đã hứa trước khi rời vùng.');
       s.chapter++;s.pendingEscort=null;log(s,'ChapterEntered',{chapter:chapter(s).id});
       if(chapter(s).id==='Q12')quest(s).plan=s.flags.finalPlan||'relocate';
@@ -114,13 +120,34 @@
   }
   function chooseAgain(state){const s=clone(state),ch=chapter(s),q=quest(s);if(q.route||s.pendingEscort)error('Hãy hoàn tất đoạn đang thực hiện trước.');const original=new Set(ch.tasks.map(a=>a.id));q.done=q.done.filter(id=>original.has(id));q.plan=null;log(s,'PlanRevised');return s;}
   function escort(state,id){const s=clone(state),a=actions(s).find(a=>a.id===id&&a.escort);if(!a)error('Đoạn đi cùng chưa sẵn sàng.');s.pendingEscort={id,chapter:chapter(s).id,target:a.target,destination:a.destination};log(s,'EscortStarted',{action:id});return s;}
-  function openLayer(state,kind,id){
-    const s=clone(state),ch=chapter(s),source=kind==='legend'?D.legends:D.veils;if(s.layer||!source[id]||(kind==='legend'?ch.legend:ch.veil)!==id)error('Trải nghiệm này chưa mở trong hành trình.');
-    s.layer={kind,id,step:0,reflection:null};return s;
+  function rememberLayer(s){const l=s.layer;if(!l||l.kind!=='legend'||!D.legends[l.id].required||l.replay)return;s.legends[l.id]={...s.legends[l.id],status:'in_progress',completed:false,revision:D.legends[l.id].revision,receipts:clone(l.receipts||[]),discovered:clone(l.discovered||[]),checkpoint:clone(l)};}
+  function openLayer(state,kind,id,format=null){
+    const s=clone(state),ch=chapter(s),source=kind==='legend'?D.legends:D.veils,src=source[id];
+    if(s.layer||!src||!['legend','veil'].includes(kind))error('Trải nghiệm này chưa mở trong hành trình.');
+    const required=kind==='legend'&&src.required,replay=required?legendComplete(s,id):!!s[kind==='legend'?'legends':'veils'][id]?.completed;
+    if(required){const earlier=D.spine.slice(0,D.spine.indexOf(id));if(!replay&&(dueLegend(s)!==id||!s.quests[D.chapters[src.after].id].route||!earlier.every(k=>legendComplete(s,k))))error('Chương này mở sau phần chuẩn bị và chương nguồn trước nó.');}else if((kind==='legend'?ch.legend:ch.veil)!==id)error('Trải nghiệm này chưa mở trong hành trình.');
+    if(format&&(!['interactive','accessible_summary'].includes(format)||format==='accessible_summary'&&!required))error('Định dạng không hợp lệ.');
+    const checkpoint=required&&!replay?s.legends[id]?.checkpoint:null;
+    s.layer=checkpoint?clone(checkpoint):{kind,id,step:0,reflection:null,format:'interactive',summaryIndex:0,receipts:[],discovered:[],route:'near'};s.layer.replay=replay;
+    if(format&&format!==s.layer.format)return switchLayer(s,format);
+    rememberLayer(s);return s;
   }
-  function layerStep(state,id){const s=clone(state);if(!s.layer)error('Chưa có trải nghiệm đang mở.');if(actions(s)[0]?.id!==id||id==='return')error('Cần đi theo mạch của cảnh.');s.layer.step++;return s;}
+  function addReceipt(s,beat){const l=s.layer,src=D.legends[l.id];if(l.receipts.some(r=>r.beat===beat))return;const expected=src.beats[l.receipts.length];if(expected?.id!==beat)error('Nội dung nguồn cần được tiếp nhận theo thứ tự.');l.receipts.push({beat,revision:src.revision,format:l.format});if(!l.replay)log(s,'CoreBeatPresented',{legend:l.id,beat,format:l.format,revision:src.revision});}
+  function layerStep(state,id,options={}){
+    const s=clone(state),l=s.layer;if(!l||l.format==='accessible_summary')error('Hãy tiếp tục phần trình bày đang mở.');const src=l.kind==='legend'?D.legends[l.id]:D.veils[l.id],a=actions(s).find(a=>a.id===id);if(!a||id==='return')error('Cần đi theo mạch của cảnh.');
+    if(src.required){const at=options.position;if(!Array.isArray(at)||at.length!==2||!at.every(Number.isFinite)||Math.hypot(at[0]-a.at[0],at[1]-a.at[1])>4)error('Hãy tới địa vật trước khi thực hiện.');}
+    if(a.kind==='discovery'){l.discovered=unique([...(l.discovered||[]),id.slice(9)]);rememberLayer(s);return s;}
+    if(a.kind==='route'){if(!a.choices.some(c=>c[0]===options.choice))error('Hãy chọn một lối để khảo sát.');l.route=options.choice;}
+    if(a.kind==='order'&&JSON.stringify(options.order)!==JSON.stringify(a.order))error('Cần chuẩn bị, giữ vật rồi kiểm lại. Có thể dùng hướng dẫn từng bước.');
+    if(a.kind==='source'){if(!options.acknowledged)error('Hãy tiếp nhận phần nguồn rồi chọn tiếp tục.');addReceipt(s,a.beat);}
+    l.step++;rememberLayer(s);return s;
+  }
+  function switchLayer(state,format){const s=clone(state),l=s.layer,src=l&&D.legends[l.id];if(!l||l.kind!=='legend'||!src.required||!['interactive','accessible_summary'].includes(format))error('Không thể đổi định dạng ở đây.');l.format=format;if(format==='accessible_summary')l.summaryIndex=l.receipts.length;else{const next=src.beats[l.receipts.length]?.id;l.step=next?src.steps.findIndex(a=>a.beat===next):src.steps.length;}rememberLayer(s);return s;}
+  function summaryStep(state,direction=1){const s=clone(state),l=s.layer,src=l&&D.legends[l.id];if(!src?.required||l.format!=='accessible_summary')error('Chưa mở bản tóm tắt.');if(direction===-1){l.summaryIndex=Math.max(0,l.summaryIndex-1);}else if(direction===1&&l.summaryIndex<src.summaryPages.length){addReceipt(s,src.summaryPages[l.summaryIndex].id);l.summaryIndex++;}else error('Trang tóm tắt không hợp lệ.');rememberLayer(s);return s;}
   function closeLayer(state,{skip=false,reflection=null}={}){
-    const s=clone(state),l=s.layer;if(!l)error('Không có trải nghiệm đang mở.');const source=l.kind==='legend'?D.legends[l.id]:D.veils[l.id];if(!skip&&l.step<source.steps.length)error('Cảnh còn phần chưa hoàn tất.');
+    const s=clone(state),l=s.layer;if(!l)error('Không có trải nghiệm đang mở.');const source=l.kind==='legend'?D.legends[l.id]:D.veils[l.id];
+    if(l.kind==='legend'&&source.required){if(skip){rememberLayer(s);s.layer=null;return s;}const ended=l.format==='accessible_summary'?l.summaryIndex===source.summaryPages.length:l.step===source.steps.length;if(!ended||l.receipts.length!==source.beats.length||!l.receipts.every((r,i)=>r.beat===source.beats[i].id&&r.revision===source.revision))error('Chương còn nội dung chính chưa tới phần kết.');if(!l.replay){s.legends[l.id]={status:'committed',completed:true,revision:source.revision,receipts:clone(l.receipts),discovered:clone(l.discovered),finalAcknowledged:true,format:l.receipts.every(r=>r.format===l.format)?l.format:'mixed',reflection:typeof reflection==='string'?reflection.slice(0,180):null};s.campaignProgress.requiredLegends[l.id]=source.revision;s.unlockedBridgeContext=unique([...s.unlockedBridgeContext,l.id]);log(s,'LegendCommitted',{legend:l.id,revision:source.revision,format:s.legends[l.id].format});}s.layer=null;if(s.migration?.wasFinished&&s.quests.Q12.route&&allLegends(s)){s.finished=true;log(s,'CAMPAIGN.V3.COMMITTED',{migrated:true});}return s;}
+    if(!skip&&l.step<source.steps.length)error('Cảnh còn phần chưa hoàn tất.');
     if(l.kind==='legend')s.legends[l.id]={completed:true,skipped:skip};else s.veils[l.id]={completed:true,skipped:skip,reflection:!skip&&source.answers.includes(reflection)?reflection:null};
     s.layer=null;return s;
   }
@@ -150,20 +177,26 @@
   }
   function restore(raw){
     if(typeof raw==='string'){if(raw.length>2000000)error('Bản lưu vượt dung lượng cho phép.');try{raw=JSON.parse(raw);}catch{error('Không đọc được bản lưu JSON.');}}
-    if(!raw||raw.schema!==1||raw.campaignId!=='the-witness-legacy'||raw.contentVersion!=='2.0')error('Bản lưu này không thuộc chiến dịch Chứng Nhân v2.');
+    const legacy=raw?.schema===1&&raw.campaignId==='the-witness-legacy'&&raw.contentVersion==='2.0';
+    if(!raw||!legacy&&(raw.schema!==2||raw.campaignId!=='the-witness-spine-v3'||raw.contentVersion!=='3.0'))error('Bản lưu không thuộc chiến dịch Chứng Nhân được hỗ trợ.');
     if(!Number.isInteger(raw.chapter)||raw.chapter<0||raw.chapter>11)error('Mốc chương trong bản lưu không hợp lệ.');
     const s=fresh(raw.profile);s.chapter=raw.chapter;
     for(const ch of D.chapters){const q=raw.quests?.[ch.id];if(!q||!Array.isArray(q.done)||q.done.length>80)error('Thiếu tiến độ chương trong bản lưu.');const routes=[...Object.keys(ch.execution),'corrected'];if(q.plan&&!Object.keys(ch.execution).includes(q.plan)||q.route&&!routes.includes(q.route))error('Phương án trong bản lưu không hợp lệ.');s.quests[ch.id]={done:unique(q.done.filter(x=>typeof x==='string'&&x.length<80)),plan:q.plan||null,route:q.route||null,decisions:q.decisions&&typeof q.decisions==='object'?clone(q.decisions):{}};}
     s.evidence=unique((raw.evidence||[]).filter(id=>Object.hasOwn(D.evidence,id)));
     for(const key of ['consent','flags','resources','relationships','bonds','legends','veils','positions','settings'])if(raw[key]&&typeof raw[key]==='object'&&!Array.isArray(raw[key]))s[key]={...s[key],...clone(raw[key])};
     for(const id of Object.keys(s.consent)){const c=s.consent[id];if(!c||!['private_group','anonymous_summary','public_named','withheld'].includes(c.scope))delete s.consent[id];}
-    if(raw.layer&&['legend','veil'].includes(raw.layer.kind)){const src=raw.layer.kind==='legend'?D.legends:D.veils;if(!src[raw.layer.id]||!Number.isInteger(raw.layer.step)||raw.layer.step<0||raw.layer.step>src[raw.layer.id].steps.length)error('Cảnh trải nghiệm trong bản lưu không hợp lệ.');s.layer=clone(raw.layer);}
+    const validReceipts=(id,list)=>Array.isArray(list)&&list.length<=D.legends[id].beats.length&&list.every((r,i)=>r?.beat===D.legends[id].beats[i].id&&r.revision===D.legends[id].revision&&['interactive','accessible_summary'].includes(r.format));
+    s.legends=Object.fromEntries(Object.entries(s.legends).filter(([id])=>Object.hasOwn(D.legends,id)));
+    s.veils=Object.fromEntries(Object.entries(s.veils).filter(([id])=>Object.hasOwn(D.veils,id)));
+    for(const id of D.spine){const r=s.legends[id];if(legacy){s.legends[id]={status:'needs_revisit',completed:false,receipts:[],revision:D.coreRevision};continue;}if(r&&!validReceipts(id,r.receipts))error('Tiến độ bản văn trong bản lưu không hợp lệ.');const cp=r?.checkpoint;if(cp&&(cp.kind!=='legend'||cp.id!==id||!Number.isInteger(cp.step)||cp.step<0||cp.step>D.legends[id].steps.length||!validReceipts(id,cp.receipts)||!['interactive','accessible_summary'].includes(cp.format)||!Number.isInteger(cp.summaryIndex)||cp.summaryIndex<0||cp.summaryIndex>D.legends[id].beats.length))error('Điểm dừng chương trong bản lưu không hợp lệ.');if(r?.status==='committed'&&!legendComplete(s,id))error('Chương được đánh dấu xong nhưng chưa đủ nội dung.');if(legendComplete(s,id)){s.campaignProgress.requiredLegends[id]=D.coreRevision;s.unlockedBridgeContext.push(id);}}
+    if(raw.layer&&['legend','veil'].includes(raw.layer.kind)){const src=raw.layer.kind==='legend'?D.legends:D.veils,l=raw.layer;if(!src[l.id]||!Number.isInteger(l.step)||l.step<0||l.step>src[l.id].steps.length)error('Cảnh trải nghiệm trong bản lưu không hợp lệ.');if(!(legacy&&src[l.id].required)){if(src[l.id].required&&(!validReceipts(l.id,l.receipts)||!['interactive','accessible_summary'].includes(l.format)||!Number.isInteger(l.summaryIndex)||l.summaryIndex<0||l.summaryIndex>src[l.id].beats.length))error('Trang nguồn trong bản lưu không hợp lệ.');s.layer=clone(l);}}
     for(const key of ['money','food','tools'])if(!Number.isFinite(s.resources[key])||s.resources[key]<0||s.resources[key]>100)error('Tài nguyên trong bản lưu không hợp lệ.');
-    s.events=Array.isArray(raw.events)?raw.events.filter(e=>e&&typeof e.type==='string').slice(-4000):[];s.finished=!!raw.finished&&!!s.quests.Q12.route;s.pendingEscort=raw.pendingEscort&&raw.pendingEscort.chapter===chapter(s).id?clone(raw.pendingEscort):null;
+    s.events=Array.isArray(raw.events)?raw.events.filter(e=>e&&typeof e.type==='string').slice(-4000):[];s.finished=!!raw.finished&&!!s.quests.Q12.route&&allLegends(s);s.pendingEscort=raw.pendingEscort&&raw.pendingEscort.chapter===chapter(s).id?clone(raw.pendingEscort):null;
+    s.migration=legacy?{from:'2.0',wasFinished:!!raw.finished,legacyLegends:clone(raw.legends||{}),message:'Tiến độ đời thường được giữ. Ba chương chính cần được tiếp nhận theo nội dung mới.'}:raw.migration||null;
     s.pendingBond=raw.pendingBond&&D.bonds.some(b=>b.id===raw.pendingBond.id&&b.choices.some(c=>c[0]===raw.pendingBond.choice))?clone(raw.pendingBond):null;s.lastSaved=typeof raw.lastSaved==='string'?raw.lastSaved:null;return s;
   }
   function save(state,storage=root.localStorage){const s=clone(state);s.lastSaved=new Date().toISOString();try{const previous=storage.getItem(STORE);if(previous){try{restore(previous);storage.setItem(BACKUP,previous);}catch{}}storage.setItem(STORE,JSON.stringify(s));return {state:s,persisted:true};}catch{return {state:s,persisted:false};}}
-  function load(storage=root.localStorage){try{const text=storage.getItem(STORE);if(!text)return {state:null,recovered:false};try{return {state:restore(text),recovered:false};}catch{const b=storage.getItem(BACKUP);if(b)return {state:restore(b),recovered:true};return {state:null,recovered:false,corrupt:true};}}catch{return {state:null,recovered:false,unavailable:true};}}
-  const Model={fresh,chapter,quest,actions,planAllowed,checkPuzzle,act,chooseAgain,escort,openLayer,layerStep,closeLayer,startBond,bond,hasClaim,allowedClaims,release,callbacks,restore,save,load,layerAt,STORE,BACKUP};
+  function load(storage=root.localStorage){try{const text=storage.getItem(STORE);if(!text){const old=storage.getItem(LEGACY);return old?{state:restore(old),recovered:false,migrated:true}:{state:null,recovered:false};}try{return {state:restore(text),recovered:false};}catch{const b=storage.getItem(BACKUP);if(b)return {state:restore(b),recovered:true};return {state:null,recovered:false,corrupt:true};}}catch{return {state:null,recovered:false,unavailable:true};}}
+  const Model={fresh,chapter,quest,actions,planAllowed,checkPuzzle,act,chooseAgain,escort,openLayer,layerStep,closeLayer,switchLayer,summaryStep,legendComplete,dueLegend,allLegends,startBond,bond,hasClaim,allowedClaims,release,callbacks,restore,save,load,layerAt,STORE,BACKUP,LEGACY};
   root.WitnessModel=Model;if(typeof module!=='undefined')module.exports=Model;
 })(globalThis);

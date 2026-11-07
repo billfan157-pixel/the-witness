@@ -1,0 +1,15 @@
+{
+  "release": "0.1.0",
+  "designVersion": "2.0",
+  "status": "published",
+  "url": "https://chung-nhan-di-san-giao-uoc.hh8873851.chatgpt.site",
+  "projectId": "appgprj_6aef3449e4008191bbe1a03326a7967e",
+  "deploymentId": "appgdep_6aef3f885a2881919ec05e8ed3cc834c",
+  "commit": "6576b0cae0fa1f281bd56e1132c0883abccde64f",
+  "logicChecks": 20,
+  "browserChecks": 17,
+  "targetedSceneCheck": "L03 passed after camera adjustment",
+  "scope": "First playable browser campaign, not complete AAA production.",
+  "sourceFolder": "C:\\hanh-trinh-loi-chua\\the-witness",
+  "offline": "C:\\hanh-trinh-loi-chua\\the-witness\\dist\\ban-choi-ngoai-tuyen.html"
+}

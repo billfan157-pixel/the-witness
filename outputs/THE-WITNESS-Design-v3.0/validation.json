@@ -1,0 +1,43 @@
+{
+  "version": "3.0",
+  "date": "2026-11-07",
+  "markdownDocuments": 16,
+  "sourceIds": 32,
+  "charactersIncludingSpaces": 234510,
+  "whitespaceSeparatedTokens": 47960,
+  "runtimeFilesWrittenByBuilder": false,
+  "checks": [
+    "local markdown links resolve",
+    "source IDs S01-S32 present and references resolve",
+    "both JSON contracts parse and budgets agree",
+    "12 linked bridges have fallback and forward callbacks",
+    "Q02 routes agree with retained consent example",
+    "Q11 and Q12 plan methods agree",
+    "three required/two optional Legends and four optional Veils scheduled",
+    "G17 quantity conservation and B06 separation",
+    "claim evidence IDs resolve",
+    "six relationship quests have approaches and callbacks",
+    "all 12 bridge dossiers match route IDs",
+    "527 v3 design assertions; see contract-qa.json"
+  ],
+  "sourceSha256": {
+    "README.md": "e8c3ae7621f2aec6b5425953f8eaf997febd240510b8c84e7f407162b84cc759",
+    "01-vision-research.md": "e6c8cbc171e9b46c75862c94b508ce467cdc82f59609b690397ce1f14b9d8c7c",
+    "02-game-design-document.md": "bbb5808c8cc479039f9794a5845e69ef3f76d47e74ee4cdb99a6798e209976ab",
+    "03-narrative-bible.md": "ea153fd97bc41b83e43d7478935aca1bcd1960980167daa45c469cb7fcb54879",
+    "04-world-bible.md": "768d8aa6784d9f07cb11b72209dd3f49b0dd21112d6663a025e13fec04af40eb",
+    "05-character-bible.md": "145c13de17b88c1e859ded74e0ee6a5467c9092fc3b32dba9bb9217be30b7bdc",
+    "06-campaign-quest-bible.md": "02f4c0d614f0ad5d02a17d65fd68717689572417527aec2116553148a0258914",
+    "07-vertical-slice-screenplay.md": "51f8625aba15e3ffe1eee268264f15b504f436c726894f240351bb222a300992",
+    "08-scripture-reference.md": "e9e516503ccc91b04cabc010777511104d47a897c04e4a7c4a3010e48c0094d5",
+    "09-production-technical-plan.md": "509991657cb9c7a3dc6937bcbe524ed13dc11e756aa4451527352c97e1b2ba76",
+    "10-source-register.md": "6ae8df1d8a37b161ed32772f32e1a11b4c0f5b508d51f323721b45a1a6d043fc",
+    "11-chapter-dossiers.md": "5a4e48e5f6722056738d7c3137bf1a7545c4cfed67d5a85a755094be324fa006",
+    "12-continuity-and-state.md": "d2c0ed759337aca555d827ad61eda422b9e8a1b205fefe727d7f24e0c4adbd0e",
+    "13-legends-spine-charter.md": "34dc7154f5fc606aec225e6ff6375be581b47a1c67c6007d6ce74ed0b3f3ae6b",
+    "14-legends-depth-dossiers.md": "9fd0b4d1c4097b8efaa3df220ae0c5ffe3107b103455f32a9b36200f401e1ba5",
+    "15-source-world-packets.md": "f9bcd00aad495598756a5019ff4990bff9643e142ee4c15886657945a3ff5c1d",
+    "design-contract.json": "d8db5b90849662d1b23583bbab42973b691a4650b93975c2e329467dbca93e12",
+    "campaign-contract.json": "584a70eff59ab38c3ce7142c30fa362862736bb855b81adbf2809f93b14a29cb"
+  }
+}
