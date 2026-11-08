@@ -1,7 +1,7 @@
 {
   "documentVersion": "3.0",
   "status": "design-specification-not-playable-runtime",
-  "campaignId": "the-witness-legacy",
+  "campaignId": "the-witness-spine-v3",
   "campaignCatalog": "campaign-contract.json",
   "saveSchemaVersion": 2,
   "contentBudget": {
@@ -184,7 +184,7 @@
   ],
   "designProgressionSchemaVersion": 2,
   "runtimeCompatibility": {
-    "implementedInRuntime": false,
+    "implementedInRuntime": true,
     "legacyRuntimeVersion": "0.1.0",
     "legacyDocumentVersion": "2.0",
     "legacySaveSchemaVersion": 1,
@@ -203,7 +203,19 @@
       "veil.completed",
       "campaign.finished"
     ],
-    "advancedSavePolicy": "review each missing core in act order at safe checkpoint; no rollback of Mortal actions; no v3 finale until all three are committed"
+    "advancedSavePolicy": "review each missing core in act order at safe checkpoint; no rollback of Mortal actions; no v3 finale until all three are committed",
+    "implementationRelease": "0.2.0",
+    "fullProductionScopeImplemented": false,
+    "productionDurationTargetsMet": false,
+    "browserValidation": "passed-core-and-campaign-suites",
+    "implementedScope": [
+      "required-core-gates",
+      "16-source-beats",
+      "interactive-and-summary",
+      "format-switch-and-resume",
+      "legacy-save-migration",
+      "exploration-prototype"
+    ]
   },
   "narrativeSpine": {
     "catalog": "campaign-contract.json",
@@ -286,6 +298,19 @@
     "12-continuity-and-state.md",
     "13-legends-spine-charter.md",
     "14-legends-depth-dossiers.md",
-    "15-source-world-packets.md"
-  ]
+    "15-source-world-packets.md",
+    "16-depth-research.md",
+    "17-encounter-atlas.md",
+    "18-scene-craft-and-dialogue.md",
+    "19-depth-playtest.md"
+  ],
+  "depthExpansion": {
+    "revision": "3.2",
+    "runtimeRelease": "0.4.0",
+    "catalog": "depth-contract.json",
+    "encounters": 25,
+    "ownerScenes": 21,
+    "mechanicFamilies": 7,
+    "humanPlaytest": "not-yet-run"
+  }
 }

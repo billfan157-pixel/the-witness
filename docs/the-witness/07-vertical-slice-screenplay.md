@@ -45,18 +45,18 @@ Natan giới thiệu bằng lời hư cấu hồ sơ 14. Thẻ: **“L01 — Mô
 
 Người kể không đưa Kinh Thánh hoàn chỉnh cho avatar; chương game dành cho player có thẻ thời đại riêng. Phân biệt đọc được khi tắt âm.
 
-### S04 — Legend trục
+### S04 — Legend trục (L01: Bờ trước mặt — Vai: Người Hộ Vệ Khóa Đuôi)
 
-| Nhịp / phút | Nội dung nguồn | Phần chủ động [H] |
+Người chơi nhập vai **Người Hộ Vệ Khóa Đuôi** (chi tộc Giuđa), vận dụng trọn vẹn 4 kỹ năng RPG để bọc hậu cho đoàn người Xuất Hành giữa cuồng phong và rẽ biển. Môsê hiện diện tôn nghiêm ở tiền phương theo Canon Lock 100%.
+
+| Nhịp / phút | Nội dung nguồn [K] | Kịch bản thao tác của Người Hộ Vệ Khóa Đuôi [H] |
 |---|---|---|
-| A / 3 | B01: Xh 14,1–10 | Chọn điểm nhìn và địa vật trại |
-| B / 5 | B02: 14,10–14 | Hai tuyến trại, dời vật vướng lối |
-| C / 4 | B03: 14,15–20 | Quan sát/pause, không nạp phép |
-| D / 8 | B04: 14,21–25 | Theo dấu người trước, đi/ra hiệu trong hành lang |
-| E / 4 | B05: 14,26–29 | Tới điểm an toàn, giảm hình ảnh vẫn đủ ý |
-| F / 3 | B06: 14,30–31 | Nhìn lại, mở nguồn, xác nhận kết |
+| **Beat A–B / 8 phút** | **B01–B02:** Xh 14,1–14.<br>Chiến xa Ai Cập đuổi bén gót; dân kêu khóc; Môsê trấn an: "Đừng sợ, hãy đứng vững..." | Người chơi chạy dọc rìa trại A trong gió lớn; dùng kỹ năng *Quan sát* phát hiện 1 xe thồ gia đình bị gãy chốt trục bánh, lún sâu vào bùn cát. Dùng *Thủ công* (hoặc gọi 2 NPC phụ việc cùng ghé vai) dựng đòn bẩy kích trục xe, chèn ván gỗ và chằng dây neo trước khi bão cát che khuất hoàn toàn tầm nhìn. |
+| **Beat C / 4 phút** | **B03:** Xh 14,15–20.<br>Sứ giả Thiên Chúa và cột mây dời ra phía sau che chắn giữa hai trại; đêm tối cho người này nhưng rực sáng cho người kia. | Cột lửa và cột mây hạ xuống chắn ngang tầm nhìn hậu phương. Tiếng vó ngựa và tiếng gầm rú của chiến xa Ai Cập bị chặn lại ngoài màn khói. Người chơi dùng *Tự vệ* dùng khiên chắn chặn đàn cừu hoảng loạn chen lấn và dùng *Giao tiếp* hô hiệu lệnh giữ trật tự cho các cụm gia đình đang sợ hãi muốn bỏ chạy tán loạn. |
+| **Beat D–E / 12 phút** | **B04–B05:** Xh 14,21–29.<br>Gió đông dữ dội thổi suốt đêm rẽ biển; dân bước ráo chân giữa lòng biển; nước thành tường hai bên; chiến xa Ai Cập bị lún bánh và nước ập lại. | Bước xuống hành lang lòng biển rẽ đôi. Không chỉ đi bộ ngắm cảnh — người chơi phải cầm đèn bão soi đường dẫn cụm xe khóa đuôi đi đúng dải đá khô; dùng kỹ năng kịp thời kéo một người già trượt chân ở mép bùn trơn; hợp lực cùng thanh niên đẩy chiếc xe thồ cuối cùng vượt lên bờ dốc F khi mặt nước hai bên bắt đầu chuyển động dữ dội. |
+| **Beat F / 3 phút** | **B06:** Xh 14,30–31.<br>Đức Chúa cứu Israel; dân thấy việc uy nghiêm và tin kính Đức Chúa cùng tôi tớ Môsê. | Lên tới gờ đá cao an toàn trên bờ F; đứng cùng cộng đoàn nhìn lại biển lặng vùi lấp chiến xa Pharaô; tiếp nhận bài ca tạ ơn và mở đối chiếu nguồn Kinh Thánh; commit hoàn tất L01 và nhận **Nguyên lý Lối Đi Chưa Thấy** (The Path Unseen). |
 
-Không đo độ tin/thanh phép/QTE chết dân. Hai đường có góc nhìn/thao tác khác và hội tụ theo canon. Hụt thao tác quay checkpoint, không alternate history. Lời nguồn dùng placeholder `[S05:14:…]` tới khi có bản Việt được phép; không thu giọng cuối từ lời tự chế.
+Hệ thống theo dõi thanh **Độ gắn kết đoàn (Caravan Cohesion)**: nếu để xe kẹt quá lâu hoặc không trấn an kịp cụm gia đình, màn hình mờ dần trong bão cát và hồi về checkpoint gần nhất (tuyệt đối không tạo cảnh dân chết trái bản văn Kinh Thánh).
 
 **Tóm tắt:** sáu trang A–F, chữ/ảnh tĩnh/nguồn, khoảng 8 phút dự kiến. Không nút “Hoàn thành ngay”. Trang cuối hiện rồi mới có “Trở lại”, không tối thiểu giây/quiz. Đổi định dạng giữ beat đã trình bày; thoát giữa trang giữ mốc chưa hết. Cả hai chỉ tạo `LegendExcerptEnded` trong namespace slice.
 

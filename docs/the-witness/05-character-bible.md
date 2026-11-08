@@ -1,12 +1,26 @@
 # 05 • Character Bible
 
-## 1. Kiến trúc nhân vật
+## 1. Kiến trúc nhân vật và Nguyên lý Hai Tầng (Dual-Tier Persona)
 
-Một avatar tùy biến giữ căn tính và save xuyên chiến dịch. Bốn companion có nhu cầu, giới hạn và năng lực riêng. Các nhân vật Kinh Thánh là vai cố định trong Legends, không dùng character creator và không thay thế diện mạo bằng avatar người chơi. NPC chức năng chỉ trở thành nhân vật tái xuất khi có hành vi/quan hệ thay đổi được, không vì thêm một đoạn tiểu sử dài.
+Kiến trúc nhân vật của dự án giải quyết trọn vẹn nghịch lý giữa *Bảo toàn bản văn Kinh Thánh (Canon Lock 100%)* và *Quyền chủ động thám hiểm RPG (Player Agency)* thông qua hệ thống **Hai Tầng Nhân Vật**:
 
-**V3:** Môsê, Đavít và Phêrô là ba vai điều khiển của tuyến truyện chính; Người Chứng nối các chương trong Mortal World. Không lấy arc gia đình avatar làm lời giải cho nội tâm nhân vật nguồn. Giêrêmia/Phaolô là vai của hai chương mở rộng. Brief biểu diễn ba vai trục ở mục 16, scene ở hồ sơ 14; chưa có diễn viên, chân dung hoặc giọng đã được duyệt.
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ TẦNG THÁNH (Canon Lock 100% - Nhân vật Lịch sử & Linh thánh)           │
+│ Môsê giơ gậy rẽ biển | Đavít kiềm chế & cắt vạt áo | Chúa Giêsu phục sinh│
+│ Lời thoại, hành động và kết cục bất biến theo nguồn Kinh Thánh.       │
+└──────────────────────────────────▲─────────────────────────────────────┘
+                                   │ (Quan sát trực tiếp / Tương tác ngoại vi)
+┌──────────────────────────────────┴─────────────────────────────────────┐
+│ TẦNG NGƯỜI (Player Agency - Nhân Chứng Vô Danh Nhập Vai)               │
+│ L01: Người Hộ Vệ Khóa Đuôi | L02: Trinh Sát Hang | L04: Người Phụ Lưới │
+│ Mở khóa trọn vẹn 4 kỹ năng: Quan sát, Thủ công, Giao tiếp, Tự vệ.     │
+└────────────────────────────────────────────────────────────────────────┘
+```
 
-Mỗi hồ sơ sản xuất phải có: mong muốn bên ngoài, nhu cầu bên trong, điều giấu, giới hạn, điều làm đổi thái độ, cách nói, cử chỉ, năng lực chơi, điều kiện xuất hiện và kết cục. Không ghi “bí ẩn, mạnh mẽ, trung thành” mà không có hành động chứng minh.
+1. **Ở Mortal World (65% thời lượng):** Người chơi điều khiển **Người Chứng** — người chuyển thư kiêm sao chép bản thảo thế kỷ I tại Xêdarê, cùng 4 bạn đồng hành điều tra sự thật về chữ ký của cha và bảo vệ các nhân chứng đời thường.
+2. **Ở Legends (30% thời lượng — Tuyến trục chính):** Người chơi nhập vai một **Nhân Chứng Vô Danh** có mặt ngay tại tâm điểm biến cố. Môsê, Đavít, Phêrô và Chúa Giêsu hiện diện với sự uy nghiêm và hành động chuẩn mực theo Kinh Thánh, trong khi người chơi dùng toàn bộ hệ thống kỹ năng RPG để khảo sát địa hình, gia cố phương tiện, kiềm chế xung đột nội bộ và hỗ trợ cộng đồng.
+3. **Inner Veil (5% thời lượng — Giấc mơ ẩn dụ):** Giấc mơ nội tâm phản chiếu suy tư của Người Chứng, hoàn toàn tự chọn.
 
 ## 2. Người Chứng — Vai cầu nối Mortal [H]
 
@@ -68,17 +82,45 @@ Nhân vật nam trưởng thành, người nói tiếng Hy Lạp trong cộng đ
 
 **Rina, người giữ bữa chung:** nhận hàng thật và nhớ số người ăn, giúp kiểm chứng sổ bằng đời sống. **Mattai, người canh kho:** thực thi lệnh nhưng có thể cho mở lối khi được giải thích và có bảo đảm. **Sela, em của Miriam:** muốn được đối xử như người có thể gánh việc. **Amon, chủ phương tiện vận chuyển:** có lợi ích riêng, có thể hợp tác bằng thỏa thuận có điều kiện. Cả bốn là nhân vật hư cấu, không đại diện tập thể tôn giáo.
 
-## 8. Năm vai Legends
+## 8. Các vai Legends: Nhân vật Thánh [K] và Nhân Chứng Nhập Vai [H]
 
-**Môsê [K: S05 / phần tương tác H]:** động từ dẫn/đứng/ra hiệu; sức nặng ở việc đi theo lời được trao và ở cùng dân trong sợ hãi. Không build phép thuật, không chọn mở biển vì muốn khoe quyền năng. Lời bản văn dùng sau khi chốt bản dịch. Diện mạo không khẳng định chân dung thật.
+Hệ thống nhân vật trong Legends được phân định rõ ràng giữa hai vai trò:
 
-**Đavít [K: S06 / H]:** động từ lặng lẽ tiến, dừng, kiềm người đi cùng, bước ra nói. Tập trung việc không giết Saun; không cho lựa chọn giết rồi vẫn coi như canon. Có thể thử sai thao tác nhưng scene reset trước khi gây một kết cục khác bản văn.
+### A. Các Nhân vật Thánh (Canon Lock 100% - Nhân vật bất biến)
+- **Môsê [K: S05]:** Vị thủ lĩnh đứng trước dân, giơ gậy trên biển theo lệnh Đức Chúa. Lời nói và cử chỉ khóa chặt theo Xh 14. Không có thanh mana, không nâng chỉ số phép thuật.
+- **Đavít [K: S06]:** Người được xức dầu lánh nạn trong hang En Ghêđi, vượt qua cơn cám dỗ giết Saun, chỉ cắt vạt áo rồi hối hận vì xúc phạm đấng được xức dầu. Lời nói và kết cục khóa theo 1 Sm 24.
+- **Phêrô & Các Môn Đệ [K: S09]:** Những người chài lưới Galilê đối diện sự phục sinh của Thầy tại bờ hồ Ti-bê-ri-a. Lời thoại và việc trao sứ vụ "Hãy chăn dắt chiên của Thầy" khóa theo Ga 21.
+- **Đức Giêsu Kitô [K: S09]:** Đấng Phục Sinh hiện diện bên bếp than hồng lúc rạng đông. Lời thoại khóa tuyệt đối theo bản văn Phúc Âm, không ứng tác lời mới.
 
-**Giêrêmia [K: S07 / H]:** động từ giữ tỉnh, nghe, đặt vải, phối hợp kéo; sự bất lực vẫn có chủ động nhỏ. Ebed-melech không bị xóa vai để avatar “cứu ngôn sứ”. Chương không biến nhà tiên tri thành võ sĩ thoát ngục.
+### B. Ba Nhân Chứng Nhập Vai (Player-Controlled Anonymous Witnesses)
+Người chơi điều khiển nhân vật này để trải nghiệm biến cố lịch sử từ cự ly gần và vận dụng trọn vẹn 4 năng lực RPG:
 
-**Phêrô [K: S09 / H]:** động từ chèo, kéo lưới, bước vào tương quan, lắng nghe. Nội tâm là diễn giải nghệ thuật; không thêm cuộc tranh cãi mới với Đức Giêsu như thể được sách kể lại. Người chơi không chọn “từ chối sứ vụ” làm ending canon.
+1. **L01: Người Hộ Vệ Khóa Đuôi (Rearguard Guide / Defender):**
+   - **Thân phận:** Một người trẻ tuổi có sức khỏe trong chi tộc Giuđa, chịu trách nhiệm bọc hậu cho đoàn người Xuất Hành.
+   - **Xung đột tâm lý:** Nỗi kinh hãi trước tiếng xe mã đuổi bén gót của quân Pharaô và tiếng kêu khóc của các gia đình kiệt sức.
+   - **Bộ kỹ năng sử dụng:**
+     * *Thủ công:* Sửa trục bánh xe thồ, chằng buộc gia tài, lát ván và xếp đá qua các vũng bùn lầy.
+     * *Quan sát:* Nhận diện hướng gió đông, đọc địa hình bãi triều, phát hiện tín hiệu đèn/đuốc từ xa.
+     * *Giao tiếp:* Giữ bình tĩnh cho các cụm gia đình, hướng dẫn trẻ em và người già theo sát đội hình.
+     * *Tự vệ:* Dùng gậy và khiên đẩy lùi sự hỗn loạn của súc vật hoảng loạn, bảo vệ các khe hẹp bọc hậu.
 
-**Phaolô [K: S11 / H]:** động từ chịu đựng, nghe người cùng tù, ở lại, lên tiếng để ngăn tai họa. Động đất không do bấm nút cầu nguyện đúng nhịp. Cảnh người cai ngục định tự hại chỉ biểu đạt tối giản, không điều khiển hành vi đó; có tùy chọn giảm hình ảnh, vẫn giữ ý nghĩa lời ngăn cản.
+2. **L02: Người Trinh Sát Đội Đavít (Cave Scout / Retinue Companion):**
+   - **Thân phận:** Một chiến binh trinh sát trung thành đi theo Đavít trong những năm tháng bị Saun lùng bắt ở hoang địa En Ghêđi.
+   - **Xung đột tâm lý:** Mối thù gia đình với triều đình Saun và sự thôi thúc mãnh liệt muốn giải quyết mọi đau khổ bằng một nhát kiếm; giằng xé khi Đavít kiên quyết không tra tay.
+   - **Bộ kỹ năng sử dụng:**
+     * *Quan sát:* Thính giác định vị tiếng bước chân và tiếng kim khí vang vọng trong hang vôi; nhìn trong bóng tối mờ.
+     * *Thủ công:* Bám vách đá dốc, tìm các đường luồn trên cao, dùng dây đưa đồng đội qua vực hang.
+     * *Giao tiếp:* Kiềm chế cơn phẫn nộ của các đồng đội nóng nảy; truyền khẩu lệnh thì thầm trong bóng tối.
+     * *Tự vệ:* Di chuyển không tiếng động (Acoustic Stealth), tước vũ khí trong im lặng nếu lính tuần Saun tới gần.
+
+3. **L04: Người Phụ Lưới Hồ Galilê (Galilean Boat-hand / Net Assistant):**
+   - **Thân phận:** Một thợ phụ trẻ tuổi trên chiếc thuyền đánh cá cổ kiểu Ginosar, cùng các Tông đồ ra khơi trong đêm.
+   - **Xung đột tâm lý:** Nỗi bàng hoàng và trống rỗng sau khi Thầy chịu đóng đinh tại Giêrusalem; sự mệt mỏi thể xác sau cả đêm quăng lưới trắng tay.
+   - **Bộ kỹ năng sử dụng:**
+     * *Thủ công:* Phối hợp nhịp chèo đôi, căng buồm đón gió đêm, gỡ lưới rê ba lớp bị vướng rong đá, vá mắt lưới rách.
+     * *Quan sát:* Đọc luồng nước, dòng chảy tầng sâu và ánh rạng đông trên mặt hồ Ti-bê-ri-a.
+     * *Giao tiếp:* Chia sẻ sự thinh lặng đầy tâm trạng với Gioan và Phêrô; đón nhận lời chỉ dẫn từ người lạ trên bờ.
+     * *Tự vệ / Sức bền:* Hợp lực kéo mẻ lưới nặng 153 con cá lớn mà không làm rách lưới; nhóm bếp than hỗ trợ bữa ăn.
 
 ## 9. Quy trình biểu diễn và continuity
 
@@ -152,27 +194,28 @@ Tình trạng diễn xuất gồm `available`, `active`, `atHub`, `unavailableFo
 
 Trước một lần rời nhóm vì bị buộc gây hại, nhân vật nói rõ việc mình sẽ không làm; người chơi có thể đổi kế hoạch. Nếu vẫn cố tiếp tục, sự rời đi được dàn cảnh và có địa điểm sau đó. Gặp lại không tự hồi quan hệ; việc sửa có thể mở lại trao đổi nhưng người ấy vẫn được không đi tiếp. Các cầu nối có người địa phương/kỹ năng cơ bản thay công năng; bản sắc và quan hệ của companion không được thay bằng một NPC đọc cùng lời.
 
-## 16. Brief chiều sâu cho ba vai trục v3
+## 16. Brief chiều sâu cho ba chương trục Legends: Tương tác giữa Nhân vật Thánh và Nhân chứng Nhập vai
 
-Các brief sau tách căn cứ [K] khỏi lựa chọn diễn xuất [H]. Không suy tư tưởng kín/tuổi/ngoại hình từ khoảng trống bản văn. Người chơi được điều khiển một vai có căn tính, không tự tạo mọi động cơ cho họ. Khung diễn xuất cần R01/R02/R04 duyệt trước thu âm/capture; hiện chưa phân công.
+### L01 — Môsê [K] & Người Hộ Vệ Khóa Đuôi [H / Nhân vật điều khiển]
+- **Môsê [K: S05, Xh 14,1–31]:** Hiện diện ở tiền phương và trên mỏm đá bờ biển. Thân thể mang sức nặng của sự vâng phục; cử chỉ trang nghiêm giơ gậy trên biển; lời nói và lời cầu nguyện khóa theo bản văn Kinh Thánh.
+- **Người Hộ Vệ Khóa Đuôi [H / Nhân vật người chơi điều khiển]:**
+  * *Mục tiêu cảnh:* Khảo sát lối thoát bọc hậu, gia cố các xe thồ lún bùn, giữ các cụm gia đình không bị tách rời giữa gió đông dữ dội.
+  * *Động từ thao tác:* Khảo sát gờ đá nông (Quan sát), chằng dây trục bánh xe (Thủ công), tập hợp các gia đình hoảng loạn (Giao tiếp), chặn gia súc xô đẩy (Tự vệ).
+  * *Góc nhìn máy quay:* Đứng từ vị trí người thường nhìn thấy cột mây, gió đông thổi dạt sóng và con đường rẽ ra giữa lòng biển trong sự kinh ngạc khôn xiết.
 
-### Môsê / L01
+### L02 — Đavít [K] & Người Trinh Sát Hang [H / Nhân vật điều khiển]
+- **Đavít [K: S06, 1 Sm 24]:** Vị thủ lĩnh mang nỗi đau bị săn đuổi nhưng tôn kính Đấng được xức dầu; cử chỉ dừng lại, cắt vạt áo, day dứt lương tâm và bước ra gọi Saun. Khóa 100% bản văn.
+- **Người Trinh Sát Hang [H / Nhân vật người chơi điều khiển]:**
+  * *Mục tiêu cảnh:* Dẫn đường trong bóng tối của hang En Ghêđi, phát hiện bước chân quân lính Saun, và kiềm chế những đồng đội đang muốn giết Saun.
+  * *Động từ thao tác:* Bám vách đá định vị đường luồn trên cao (Thủ công), lắng nghe tiếng bước chân và tiếng kim khí vọng trong hang (Quan sát), can thiệp thì thầm và giữ tay kiếm của đồng đội (Giao tiếp / Kiềm chế).
+  * *Góc nhìn máy quay:* Cận cảnh sự căng thẳng tột cùng trong bóng tối khi Saun bước vào một mình; chứng kiến hành động cao thượng của Đavít từ khoảng cách vài mét.
 
-**Căn cứ:** S05, Xh 14,1–31; vai và hành động theo beat hồ sơ 14. **Xung đột biểu diễn [H]:** thân thể phải hiện diện với đoàn trong lúc tầm nhìn không đem lại quyền kiểm soát. **Cử chỉ đề xuất:** nhìn về cụm người đang chờ trước khi bước, tay ra hiệu có trọng lượng lao động; không tư thế chiến binh nạp năng lượng. Giữ khoảng cách camera đủ thấy người khác, tránh chỉ cận mặt “người hùng làm phép”.
-
-**Quyền điều khiển:** đường khảo sát, tốc độ đi, góc nhìn và thao tác trong khung. **Giới hạn:** không chọn giọng chế giễu dân để tăng uy; không ép nhận lỗi/tự diễn giải lời Thiên Chúa; không đổi kết cục vì lượt người bị chậm. **Sau chương:** vai nguồn kết ở phần nguồn; Natan/Người Chứng tiếp tục công việc riêng. Câu Natan nói không thành câu Môsê nói trong bản văn.
-
-### Đavít / L02
-
-**Căn cứ:** S06, 1 Sm 24, giữ cả nhịp hối hận và rời đi. **Xung đột biểu diễn [H]:** người có thể tiến gần phải chủ động quay về rồi bước ra trong thế dễ tổn thương. **Cử chỉ:** thay hướng thân thể, thu tay, dừng người cùng nhóm; không nhạc/animation thưởng sau chi tiết tấm áo. Sự im lặng có nội dung nguồn bên cạnh, không tự viết độc thoại mới thay chú giải.
-
-**Quyền điều khiển:** lối tiếp cận/đường về và điểm nhìn. **Giới hạn:** không nhánh sát hại, không coi Saun chỉ là mục tiêu stealth; không làm cuộc đối diện thành thuyết phục bằng chỉ số. **Sau chương:** Damar có thể vẫn bất đồng và còn trách nhiệm riêng. Không cho anh được miễn sửa tổn hại vì kể chuyện Đavít hay.
-
-### Phêrô / L04
-
-**Căn cứ:** S09, Ga 21,1–19, trong văn cảnh Phục Sinh/trao việc. **Xung đột biểu diễn [H]:** từ chú ý công việc sang hiện diện trong tương quan; không diễn thành tự chữa lành nhờ thành tích lao động. **Cử chỉ:** thao tác cùng người khác, đổi hướng nhìn, ngồi/nghe có khoảng lắng; tránh cúi đầu liên tục như một tín hiệu tâm lý duy nhất. Phần nguồn quyết định lời, không để diễn viên tự ứng tác lời Đức Giêsu.
-
-**Quyền điều khiển:** việc dây/lưới, khám phá bờ, pause/xem lại. **Giới hạn:** không tình yêu cấp bậc, không câu chọn tối ưu được giao quyền; không tuyên bố diễn viên giống chân dung xác thực. Tạo hình/giọng Đức Giêsu là phạm vi duyệt riêng ở packet L04, không vai tùy biến. **Sau chương:** Miriam nhận/đặt giới hạn công việc hữu hạn; không được viết như người mang thẩm quyền tương đương Tông đồ.
+### L04 — Phêrô [K] & Người Phụ Lưới Hồ Galilê [H / Nhân vật điều khiển]
+- **Phêrô & Đức Kitô Phục Sinh [K: S09, Ga 21,1–19]:** Đêm đánh cá trắng tay, tiếng gọi từ bờ hồ lúc bình minh, Phêrô nhảy xuống nước bơi vào bờ; Chúa Giêsu trao sứ vụ "Hãy chăn dắt chiên của Thầy" bên bếp than hồng. Khóa 100% bản văn.
+- **Người Phụ Lưới Hồ Galilê [H / Nhân vật người chơi điều khiển]:**
+  * *Mục tiêu cảnh:* Phối hợp điều khiển thuyền cổ Ginosar, quản lý dây lưới trong đêm, chia sẻ nỗi trĩu nặng của các Tông đồ và hợp lực kéo mẻ lưới 153 con cá lớn.
+  * *Động từ thao tác:* Giữ nhịp chèo đôi (Sức bền), gỡ mắt lưới mắc kẹt và đọc dòng chảy đêm (Quan sát / Thủ công), cùng kéo mẻ cá lớn vào bãi cát (Hợp lực), phụ việc nhóm lửa bên bờ hồ.
+  * *Góc nhìn máy quay:* Từ sàn thuyền dập dềnh nhìn thấy bóng người lạ đứng trên bờ trong ánh sương mai; cảm nhận sự chuyển biến từ tuyệt vọng sang niềm vui khôn tả của Phục Sinh.
 
 ### Người kể, người nghe và điều họ biết
 

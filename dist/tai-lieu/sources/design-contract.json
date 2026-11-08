@@ -1,0 +1,316 @@
+{
+  "documentVersion": "3.0",
+  "status": "design-specification-not-playable-runtime",
+  "campaignId": "the-witness-spine-v3",
+  "campaignCatalog": "campaign-contract.json",
+  "saveSchemaVersion": 2,
+  "contentBudget": {
+    "bridgeQuests": 12,
+    "relationshipQuests": 6,
+    "legends": 5,
+    "requiredLegends": 3,
+    "optionalLegends": 2,
+    "veils": 4,
+    "hubs": 3,
+    "companions": 4
+  },
+  "layers": {
+    "mortal": {
+      "mayWrite": [
+        "world",
+        "evidence",
+        "relationships",
+        "inventory",
+        "consent",
+        "quests",
+        "reflectionShared"
+      ]
+    },
+    "legend": {
+      "mayWrite": [
+        "legendProgress",
+        "campaignProgress.requiredLegends",
+        "unlockedBridgeContext"
+      ],
+      "forbidden": [
+        "canonicalOutcome",
+        "mortalInventory",
+        "evidence",
+        "consent",
+        "npcGuilt",
+        "salvationScore",
+        "relationships"
+      ],
+      "commitAuthority": "campaign gate reducer validates core receipts; presentation cannot grant gates directly"
+    },
+    "veil": {
+      "mayWrite": [
+        "veilProgress",
+        "reflection"
+      ],
+      "forbidden": [
+        "evidence",
+        "inventory",
+        "consent",
+        "npcGuilt",
+        "salvationScore"
+      ]
+    }
+  },
+  "Q02": {
+    "entry": {
+      "Q01": "complete",
+      "ledgerFound": true
+    },
+    "initial": {
+      "route": "unset",
+      "witnessSafety": "exposed",
+      "yosefConsent": "unknown",
+      "testimony": "none",
+      "pressureUnresolved": false,
+      "reflection": null
+    },
+    "evidenceKinds": [
+      "physical",
+      "statement",
+      "inference",
+      "rumor"
+    ],
+    "commonPrerequisites": [
+      "evidence.patch",
+      "evidence.meal",
+      "yosef.met"
+    ],
+    "routes": {
+      "shelter": {
+        "requires": [
+          "shelter.arranged",
+          "supplies.allocated",
+          "escort.completed"
+        ],
+        "onCommit": {
+          "route": "shelter",
+          "witnessSafety": "sheltered",
+          "yosefConsent": "withheld",
+          "testimony": "private"
+        },
+        "callback": "Q02.END.SHELTER",
+        "nextQuest": "Q03"
+      },
+      "anonymous": {
+        "requires": [
+          "evidence.redactedCopy",
+          "intermediary.deliveryCompleted"
+        ],
+        "onCommit": {
+          "route": "anonymous",
+          "witnessSafety": "exposed",
+          "yosefConsent": "withheld",
+          "testimony": "anonymous"
+        },
+        "callback": "Q02.END.ANONYMOUS",
+        "followUp": "Q03.PROTECT_YOSEF",
+        "nextQuest": "Q03"
+      },
+      "consented": {
+        "requires": [
+          "yosef.needsHeard",
+          "pressure.resolved",
+          "shelter.arranged",
+          "escort.arranged",
+          "yosef.explicitConsent",
+          "escort.handoffCompleted"
+        ],
+        "onCommit": {
+          "route": "consented",
+          "witnessSafety": "escorted",
+          "yosefConsent": "granted",
+          "testimony": "named"
+        },
+        "callback": "Q02.END.CONSENTED",
+        "nextQuest": "Q03"
+      }
+    },
+    "invariants": [
+      "A named testimony requires explicit consent from that named witness.",
+      "Veil completion cannot modify evidence or witness safety.",
+      "Plan selection is not plan completion; commit follows completed action.",
+      "All valid routes preserve a path to Q03.",
+      "Anonymous testimony omits witness identifiers in all presentation channels.",
+      "Optional L03 and V01 may be omitted; Q02 completion never satisfies required L01."
+    ]
+  },
+  "canonicalScenes": [
+    {
+      "id": "L01",
+      "character": "moses",
+      "sourceId": "S05",
+      "pericope": "Exodus 14:1-31",
+      "reviewStatus": "unassigned-not-approved",
+      "required": true
+    },
+    {
+      "id": "L02",
+      "character": "david",
+      "sourceId": "S06",
+      "pericope": "1 Samuel 24",
+      "reviewStatus": "unassigned-not-approved",
+      "required": true
+    },
+    {
+      "id": "L03",
+      "character": "jeremiah",
+      "sourceId": "S07",
+      "pericope": "Jeremiah 38:1-13",
+      "reviewStatus": "unassigned-not-approved",
+      "required": false
+    },
+    {
+      "id": "L04",
+      "character": "peter",
+      "sourceId": "S09",
+      "pericope": "John 21:1-19",
+      "reviewStatus": "unassigned-not-approved",
+      "required": true
+    },
+    {
+      "id": "L05",
+      "character": "paul",
+      "sourceId": "S11",
+      "pericope": "Acts 16:22-40",
+      "reviewStatus": "unassigned-not-approved",
+      "required": false
+    }
+  ],
+  "designProgressionSchemaVersion": 2,
+  "runtimeCompatibility": {
+    "implementedInRuntime": true,
+    "legacyRuntimeVersion": "0.1.0",
+    "legacyDocumentVersion": "2.0",
+    "legacySaveSchemaVersion": 1,
+    "migration": "copy-to-new-namespace; never infer core coverage from old completed boolean; retain legacy save",
+    "newCampaignNamespace": "the-witness-spine-v3",
+    "legacyGateStatus": "needs_revisit",
+    "preserve": [
+      "settings",
+      "mortalChoices",
+      "resources",
+      "consentScopes",
+      "legacyCompletionHistory"
+    ],
+    "doNotImportAsV3Completion": [
+      "legend.completed",
+      "veil.completed",
+      "campaign.finished"
+    ],
+    "advancedSavePolicy": "review each missing core in act order at safe checkpoint; no rollback of Mortal actions; no v3 finale until all three are committed",
+    "implementationRelease": "0.2.0",
+    "fullProductionScopeImplemented": false,
+    "productionDurationTargetsMet": false,
+    "browserValidation": "passed-core-and-campaign-suites",
+    "implementedScope": [
+      "required-core-gates",
+      "16-source-beats",
+      "interactive-and-summary",
+      "format-switch-and-resume",
+      "legacy-save-migration",
+      "exploration-prototype"
+    ]
+  },
+  "narrativeSpine": {
+    "catalog": "campaign-contract.json",
+    "requiredOrder": [
+      "L01",
+      "L02",
+      "L04"
+    ],
+    "coreRevision": "3.0.0",
+    "timeBudgetRef": "campaign-contract.json#/timeBudget",
+    "charter": "13-legends-spine-charter.md",
+    "invariant": "mandatory narrative; equivalent accessible presentation; no empty skip for required chapters"
+  },
+  "verticalSlice": {
+    "id": "SLICE.L01.SPINE",
+    "screenplay": "07-vertical-slice-screenplay.md",
+    "requiredLegend": "L01",
+    "bridgeEpisodes": [
+      "Q03",
+      "Q04"
+    ],
+    "entryPreset": "Q03 committed; L01 available; no L01 receipts",
+    "targetMinutes": 90,
+    "legendExcerptMinutes": 27,
+    "coverageLabel": "excerpt-not-full-L01",
+    "coreBeatsInExcerpt": [
+      "L01.B01",
+      "L01.B02",
+      "L01.B03",
+      "L01.B04",
+      "L01.B05",
+      "L01.B06"
+    ],
+    "excerptCompletionWritesCampaign": false,
+    "exitTarget": "slice evaluation only; no canonical v3 campaign save",
+    "probe": "unprompted core attribution before direct core-or-side question",
+    "humanPlaytestStatus": "not-run",
+    "stageMinutes": [
+      8,
+      14,
+      4,
+      27,
+      5,
+      20,
+      9,
+      3
+    ],
+    "summaryRouteMinutes": 71,
+    "study": {
+      "plannedParticipants": 12,
+      "interactive": 8,
+      "accessibleSummary": 4,
+      "status": "not-run",
+      "thresholdCounts": {
+        "C1": 9,
+        "C2": 8,
+        "C3": 9,
+        "E1_interactive": 6,
+        "G1": 10,
+        "F1_summary": 3,
+        "S1": 10
+      },
+      "askOpenRecallBeforeCoreQuestion": true,
+      "publishSeparateFormats": true
+    }
+  },
+  "documentFiles": [
+    "README.md",
+    "01-vision-research.md",
+    "02-game-design-document.md",
+    "03-narrative-bible.md",
+    "04-world-bible.md",
+    "05-character-bible.md",
+    "06-campaign-quest-bible.md",
+    "07-vertical-slice-screenplay.md",
+    "08-scripture-reference.md",
+    "09-production-technical-plan.md",
+    "10-source-register.md",
+    "11-chapter-dossiers.md",
+    "12-continuity-and-state.md",
+    "13-legends-spine-charter.md",
+    "14-legends-depth-dossiers.md",
+    "15-source-world-packets.md",
+    "16-depth-research.md",
+    "17-encounter-atlas.md",
+    "18-scene-craft-and-dialogue.md",
+    "19-depth-playtest.md"
+  ],
+  "depthExpansion": {
+    "revision": "3.2",
+    "runtimeRelease": "0.4.0",
+    "catalog": "depth-contract.json",
+    "encounters": 25,
+    "ownerScenes": 21,
+    "mechanicFamilies": 7,
+    "humanPlaytest": "not-yet-run"
+  }
+}

@@ -4,7 +4,7 @@ function test(name,fn){fn();checks++;console.log('PASS '+name);}
 const copy=s=>JSON.parse(JSON.stringify(s));
 function summary(s,id){s=M.openLayer(s,'legend',id,'accessible_summary');while(s.layer.summaryIndex<D.legends[id].beats.length)s=M.summaryStep(s);return M.closeLayer(s);}
 function ready(id){let s=M.fresh();const target=D.legends[id];for(let i=0;i<=target.after;i++){s.chapter=i;s.quests[D.chapters[i].id].route=Object.keys(D.chapters[i].execution)[0];const earlier=D.spine.find(k=>D.legends[k].after===i&&k!==id);if(earlier)s=summary(s,earlier);}return s;}
-function next(s,choice='near'){const a=M.actions(s)[0];return M.layerStep(s,a.id,{position:a.at,choice,order:a.order,acknowledged:true});}
+function next(s,choice='near'){const a=M.actions(s)[0],X=require('../witness-depth.js'),d=X.encounter(s,a);return M.layerStep(s,a.id,{position:a.at,choice,order:a.order,acknowledged:true,work:d?X.guided(s,d):undefined});}
 function play(s,id,choice='near'){s=M.openLayer(s,'legend',id,'interactive');while(s.layer.step<D.legends[id].steps.length)s=next(s,choice);return M.closeLayer(s);}
 const physical=s=>({quests:s.quests,evidence:s.evidence,resources:s.resources,consent:s.consent,relationships:s.relationships,flags:s.flags});
 test('Runtime implements all 16 core beats in the v3 contract',()=>{const c=JSON.parse(fs.readFileSync(path.join(__dirname,'../campaign-contract.json')));assert.equal(D.version,c.documentVersion);assert.deepEqual(D.spine,c.narrativeSpine.requiredOrder);for(const l of c.legends.filter(l=>l.required)){assert.deepEqual(D.legends[l.id].beats.map(b=>b.id),l.coreBeats.map(b=>b.id));assert.equal(D.chapters[D.legends[l.id].after].id,l.gate.afterBridgeCommit);assert.equal(D.chapters[D.legends[l.id].before].id,l.gate.beforeBridgeEntry);}});

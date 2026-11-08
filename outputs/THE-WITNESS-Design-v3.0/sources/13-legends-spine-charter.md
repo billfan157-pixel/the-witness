@@ -16,6 +16,6 @@
 
 **5 — Hệ quả.** Legends được ghi tiến độ chiến dịch và mở ngữ cảnh cầu nối. Chúng không tự tạo vật chứng, tiền, quyền tiết lộ tên hay kết tội NPC. Dùng bản tóm tắt giữ cùng cơ hội kết thúc, tài nguyên cơ bản và hỗ trợ an toàn như chơi chương; tiếp tục cần làm các hành động Mortal tương ứng.
 
-**6 — Chuẩn chứng minh.** Slice phải cho thấy người chơi tự nhớ Legends như lõi truyện, thực sự khám phá trong đó và hiểu vì sao cần trở lại đời thường. Hồ sơ nguồn, thế giới và người duyệt phải truy được từng quyết định. Các vị trí duyệt hiện **chưa phân công**; không có phê chuẩn chuyên môn được mặc định. V3 là thiết kế mới; bản chơi 0.1.0 vẫn theo cấu trúc v2.
+**6 — Chuẩn chứng minh.** Slice phải cho thấy người chơi tự nhớ Legends như lõi truyện, thực sự khám phá trong đó và hiểu vì sao cần trở lại đời thường. Hồ sơ nguồn, thế giới và người duyệt phải truy được từng quyết định. Các vị trí duyệt hiện **chưa phân công**; không có phê chuẩn chuyên môn được mặc định. Prototype 0.2.0 đã triển khai cấu trúc/core v3; chưa đạt thời lượng và mức sản xuất mục tiêu.
 
 Chi tiết triển khai: [GDD](02-game-design-document.md), [hồ sơ Legends](14-legends-depth-dossiers.md), [packet nguồn và thế giới](15-source-world-packets.md), [hợp đồng campaign](campaign-contract.json).

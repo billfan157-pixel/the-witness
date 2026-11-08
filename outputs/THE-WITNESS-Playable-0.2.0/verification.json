@@ -1,0 +1,22 @@
+{
+  "release": "0.2.0",
+  "design": "3.0",
+  "buildRevision": "f589fd843c31",
+  "runtimeModelChecksPassed": 37,
+  "browserChecks": {
+    "campaignBrowser": 17,
+    "spineBrowser": 9,
+    "visualBrowser": 5
+  },
+  "browserErrors": [],
+  "requiredLegends": [
+    "L01",
+    "L02",
+    "L04"
+  ],
+  "coreBeats": 16,
+  "humanPlaytest": "not-run",
+  "expertReview": "unassigned",
+  "productionDurationTargetsMet": false,
+  "scope": "browser prototype with core narrative and gates; not full production GDD"
+}

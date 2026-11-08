@@ -2,9 +2,9 @@
 
 ## 1. Premise và câu hỏi xuyên suốt
 
-**Trục chính v3:** ba trình thuật Kinh Thánh đi theo thứ tự **L01 Môsê / Xh 14 → L02 Đavít / 1 Sm 24 → L04 Phêrô / Ga 21**. Mỗi hồi có một chương bắt buộc, không khóa bằng điểm đức tin. Người chơi khám phá và hành động trong giới hạn nguồn, rồi trở lại một đời sống hư cấu có trách nhiệm riêng. Ba chương giữ văn cảnh thần học khác nhau; không ghép thành một lời tiên tri rằng avatar là người hùng kế tiếp.
+**Trục chính v3.1:** ba trình thuật Kinh Thánh đi theo thứ tự **L01 Môsê / Xh 14 → L02 Đavít / 1 Sm 24 → L04 Phêrô / Ga 21**. Mỗi hồi có một chương bắt buộc. Ở các chương này, người chơi nhập vai **Nhân Chứng Vô Danh** có mặt tại hiện trường (Hộ vệ khóa đuôi ở Biển Đỏ, Trinh sát hang ở En Ghêđi, Phụ việc thuyền ở hồ Galilê), sử dụng trọn vẹn kỹ năng để thám hiểm, cứu hộ và đồng hành, trong khi các nhân vật linh thánh (Môsê, Đavít, Phêrô, Đức Giêsu) được khóa chuẩn mực 100% theo bản văn Kinh Thánh (Canon Lock).
 
-**Cầu nối [H]:** khoảng 58–60 CN, một người chuyển thư trở lại Xêdarê sau khi cha mất. Vụ hàng và chữ ký của cha đưa nhóm đi qua các cộng đồng, nơi các câu chuyện được kể và được đáp lại. Mối quan hệ, việc chăm sóc và điều tra tạo lý do lên đường/ở lại; chúng không tiết lộ bí mật sửa nghĩa Kinh Thánh. Người Chứng là vai nối và nhập vai đời thường, không chiếm vai của ba chứng nhân nguồn.
+**Cầu nối [H]:** khoảng 58–60 CN, một người chuyển thư trở lại Xêdarê sau khi cha mất. Vụ hàng và chữ ký của cha đưa nhóm đi qua các cộng đồng, nơi các câu chuyện được kể và được đáp lại. Mối quan hệ, việc chăm sóc và điều tra tạo lý do lên đường/ở lại; chúng không tiết lộ bí mật sửa nghĩa Kinh Thánh. Người Chứng là vai nối và nhập vai đời thường, mang tinh thần chứng nhân từ lịch sử thánh trở về với đời sống thường nhật.
 
 Đây là tuyến truyện hư cấu, không tự nhận một biến cố đã được lịch sử ghi nhận. Sổ không phải bản Kinh Thánh thất lạc, mật mã của Giao Ước, gia phả bí mật của Đức Giêsu hay vật có phép. Tên phụ đề nói đến trách nhiệm được trao truyền, không nói người chơi sở hữu hay hoàn tất Giao Ước.
 
@@ -137,19 +137,19 @@ Các đoạn sau là lời thoại gốc [H], không trích Kinh Thánh. Đây l
 
 Sau khi bàn giao kho, trước chuyển vùng. Natan trải phần giấy đã phơi từ Q01 lên mặt gỗ. Ông dùng một mảnh gỗ chặn gió, tránh đè lên chữ.
 
-NATAN: “Chỗ này là nét ông ấy. Tôi từng ngồi bên cạnh khi ông chép sổ.”
+NATAN: “Chỗ này là nét cha con. Chú từng ngồi bên cạnh khi ông ấy chép sổ.”
 
-AVATAR: “Ông biết từ trước?”
+AVATAR: “Chú đã biết từ trước?”
 
-NATAN: “Tôi biết nét chữ. Tôi không biết hàng đã tới chưa.”
+NATAN: “Chú biết nét chữ. Nhưng chú không biết hàng thực sự đã tới đâu.”
 
-Người chơi được nhìn lại tờ giấy hoặc bước ra phía cửa. Natan đợi, không gọi họ quay vào.
+Người chơi được nhìn lại tờ giấy hoặc bước ra phía cửa. Natan đợi, không giục giã.
 
-Lựa chọn A: “Tôi muốn ông nói mình đã nhìn nhầm.” Natan: “Tôi cũng muốn có một điều dễ hơn để đưa anh.”
+Lựa chọn A: “Con muốn chú nói mình đã nhìn nhầm.” Natan: “Chú cũng muốn có một điều dễ thở hơn để đưa cho con.”
 
-Lựa chọn B: “Vậy chúng ta kiểm phần còn lại.” Natan kéo mảnh gỗ sang để avatar tự cầm giấy: “Anh muốn mang nó thế nào?”
+Lựa chọn B: “Vậy chú cháu mình kiểm phần còn lại.” Natan kéo mảnh gỗ sang để avatar tự cầm giấy: “Con muốn mang nó thế nào?”
 
-Lựa chọn C: “Để tôi yên một lúc.” Natan đặt túi khô bên cạnh rồi đi thu dụng cụ. Gameplay tiếp tục khi người chơi sẵn sàng. Scene kết bằng một việc cần làm với vật thật, không câu kết về danh dự gia đình.
+Lựa chọn C: “Để con yên một lúc.” Natan đặt túi khô bên cạnh rồi đi thu dụng cụ. Gameplay tiếp tục khi người chơi sẵn sàng. Scene kết bằng một việc cần làm với vật thật, không giáo điều danh dự gia đình.
 
 ### N-Q07-01 — Người nhận ca
 
@@ -202,3 +202,33 @@ Lựa chọn B: “Chúng tôi nhận hàng. Kế hoạch đối chiếu vẫn t
 Lựa chọn C: “Tôi sẽ dời cuộc gặp cho tới khi người cần đi đã có chỗ.” Kế hoạch chuyển sang xem lại việc bảo vệ, không tự xóa claim hoặc lời chứng.
 
 Hanan đưa ra một hậu quả có thật—việc phân phối không được bỏ mặc—nhưng nó không hợp thức hóa điều kiện ép người. Scene kết khi Rina nhờ người nhận lượt, đưa quyền chủ động trở lại công việc đã hứa.
+
+## 8. Hướng dẫn Phong cách Thoại & Quy tắc Xưng hô Tiếng Việt (Dialogue Style Guide)
+
+Nhằm phục vụ bản phát hành tiếng Việt chuẩn mực, không mang dấu vết "văn dịch máy", toàn bộ hệ thống hội thoại trong game được phân hóa theo **Ba Tầng Ngữ Vực (Register)** rõ rệt:
+
+### 8.1. Tầng Thánh (Scripture Register — Khóa bản văn)
+- **Chuẩn văn học:** Tham chiếu theo bản dịch của Nhóm Phiên Dịch Các Giờ Kinh Phụng Vụ (CGKPV) hoặc bản diễn ý trang nghiêm có nhịp điệu phụng vụ tương đương.
+- **Hệ thống xưng hô:**
+  * Thiên Chúa với con người: *Đức Chúa – Ngươi / Các ngươi / Dân Ta / Tôi tớ Ta*.
+  * Môsê với dân chúng: *Tôi – Đồng bào / Anh em*.
+  * Đavít với vua Saun: *Tôi tớ ngài / Con – Chúa thượng tôi / Vua*.
+  * Saun với Đavít: *Ta – Con*.
+  * Đức Giêsu với các Tông đồ: *Thầy – Anh / Các anh / Con* (ví dụ: *"Này anh Simôn, con ông Gioan, anh có mến Thầy hơn các anh này không?"*).
+  * Các Tông đồ với Đức Giêsu: *Thầy – Chúng con*.
+- **Nguyên tắc cấm kỵ:** Tuyệt đối không dùng khẩu ngữ hiện đại, từ lóng, hoặc cấu trúc câu lai căng phương Tây.
+
+### 8.2. Tầng Người trong Legends (Biblical Witness Register — Khẩn cấp & Mộc mạc)
+- **Văn phong:** Cổ xưa, mộc mạc, cô đọng, phản ánh tình thế căng thẳng sống còn của các nhân vật thường dân bên lề biến cố thánh.
+- **Hệ thống xưng hô:**
+  * Trong đoàn vượt biển (L01): *Tôi – Mọi người / Bà con / Anh em / Các cháu*. Khẩu lệnh dứt khoát: *"Giữ chặt dây neo!", "Kích trục bánh xe lên!", "Đừng buông tay đèn!"*.
+  * Trong hang En Ghêđi (L02): Xưng hô nghĩa khí quân doanh: *Tôi – Huynh đệ / Các anh*. Khẩu lệnh thì thầm nín thở: *"Hạ kiếm xuống!", "Người của Đavít truyền lệnh giữ im lặng tuyệt đối!"*.
+  * Trên thuyền hồ Galilê (L04): Xưng hô nghề chài lưới: *Tôi – Các anh*. Bắt nhịp lao động: *"Đều tay chèo!", "Căng mép lưới bên mạn phải!"*.
+
+### 8.3. Tầng Mortal World (Caesarea AD 58 Register — Tự nhiên & Đậm đà bản sắc)
+- **Văn phong:** Ngôn ngữ đời sống thế kỷ I tại một đô thị cảng La Mã - Do Thái, mạch lạc, giàu cảm xúc, sử dụng linh hoạt đại từ nhân xưng tiếng Việt để phản ánh chiều sâu quan hệ:
+  * **Quan hệ công việc & Xã hội tại bến/kho:** Xưng hô lịch thiệp, giữ ranh giới: *Tôi – Anh / Chị / Ông / Bà* (giữa Người Chứng với Mattai, Yosef, Hanan, Amon).
+  * **Quan hệ bạn bè thân tình của cha (Natan & Avatar):** Xưng hô **"Chú / Bác – Con"** (Natan là bạn đồng nghiệp chí cốt của người cha Haddai quá cố; cách xưng hô này thể hiện lòng hiếu kính và sự thân tình của người đi trước che chở cho hậu bối).
+  * **Quan hệ ruột thịt (Miriam & Sela):** Xưng hô **"Chị – Em"** (tình cảm ruột thịt vừa thương yêu bao bọc vừa có những mâu thuẫn cần ranh giới tự lập).
+  * **Hồi ức về người cha (Haddai & Avatar):** Xưng hô **"Cha – Con"**.
+  * **Quan hệ bạn đồng hành thân tín:** Khởi đầu từ *Tôi – Anh/Chị*, dần chuyển sang xưng hô thân mật theo mức độ tin cậy và sự gắn kết qua các thử thách chung.

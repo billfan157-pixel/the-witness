@@ -1,0 +1,13 @@
+{
+  "release": "0.2.0",
+  "status": "passed",
+  "checks": [
+    "L01 source world renders with WebGL",
+    "L02 source world renders with WebGL",
+    "L04 source world renders with WebGL",
+    "Mobile summary fits screen and reload resumes exact page",
+    "Format switch resumes first missing source beat"
+  ],
+  "errors": [],
+  "scope": "Browser UI and WebGL with scripted input; no human playtest"
+}

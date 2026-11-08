@@ -1,7 +1,7 @@
 {
   "documentVersion": "3.0",
   "status": "design-specification-not-playable-runtime",
-  "campaignId": "the-witness-legacy",
+  "campaignId": "the-witness-spine-v3",
   "sliceContract": "design-contract.json",
   "dossiers": "14-legends-depth-dossiers.md",
   "continuity": "12-continuity-and-state.md",

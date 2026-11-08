@@ -8,7 +8,7 @@ Qua các thời đại, mỗi cuộc đời đều để lại một lời chứ
 
 **Legends là xương sống; nội dung Kinh Thánh là cốt truyện chính; thám hiểm là lối chơi chủ đạo.** V3 sửa hướng v2 theo quyết định của chủ dự án: ba hồi có L01 Môsê, L02 Đavít, L04 Phêrô bắt buộc, khoảng 30% thời lượng tuyến chuẩn. Mortal World nối các chương qua người kể, phản tư và hành động đời thường; Veil và hai Legend mở rộng vẫn tự chọn. Đọc [pitch/bất biến một trang](13-legends-spine-charter.md) trước các bible.
 
-**Tầm nhìn AAA là đích chất lượng dài hạn.** Bộ hồ sơ không chứng minh đã có đội ngũ/ngân sách/chất lượng ấy. Bản chơi THE WITNESS 0.1.0 hiện theo cấu trúc v2; v3 ở đây là thiết kế để dựng tiếp, chưa được đưa vào bản chơi hay triển khai. Bộ v1/v2 và dữ liệu chơi cũ được giữ riêng.
+**Tầm nhìn AAA là đích chất lượng dài hạn.** Bộ hồ sơ không chứng minh đã có đội ngũ/ngân sách/chất lượng ấy. 0.1.0 là baseline v2; prototype 0.2.0 đã triển khai core/cổng v3, đã qua kiểm model/UI trước đóng gói. Chưa hoàn thành thời lượng, level art/cinematic và thẩm định của hồ sơ. Bộ v1/v2 và dữ liệu chơi cũ được giữ riêng.
 
 ## Đọc theo nhu cầu
 

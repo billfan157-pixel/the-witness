@@ -21,7 +21,7 @@ def validate_contracts(source):
 
     check(campaign['documentVersion'] == design['documentVersion'] == '3.0', 'v3 document versions')
     check(len(design['documentFiles']) == len(set(design['documentFiles'])) == 16, 'explicit v3 document manifest')
-    check(design['runtimeCompatibility']['implementedInRuntime'] is False, 'design-only status')
+    check(design['runtimeCompatibility']['fullProductionScopeImplemented'] is False, 'prototype does not claim full production scope')
     check(design['saveSchemaVersion'] == campaign['designProgressionSchemaVersion'] == 2, 'proposed schema')
     budget = campaign['budget']
     check(budget == design['contentBudget'], 'matching content budgets')

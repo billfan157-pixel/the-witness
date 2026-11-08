@@ -151,4 +151,4 @@ Ngân sách cinematic ưu tiên ba level Legends. Kho/cứu hộ/công bố dùn
 
 Trong vòng thử định tính, hỏi mở trước, chỉ sau đó mới hỏi cụ thể. Ghi số người và câu trả lời thực, không chấm bằng việc họ chọn route tác giả thích. Thất bại D3 cần sửa nhu cầu/cảnh sống; thất bại D4 cần sửa callback; không giải quyết cả hai bằng thêm một đoạn codex. Dùng tám tình huống continuity ở hồ sơ 12 làm ca kiểm khi có build. Chưa tuyên bố các cổng này đã qua bằng kiểm tra văn bản.
 
-**D6 — Legends là lõi:** người thử tự nhận diện mốc bản văn là trung tâm, kể được hoạt động khám phá và hiểu cổng truyện. **D7 — Định dạng tương đương:** tóm tắt giữ đủ beat/cơ hội, thoát giữa chừng không mở cổng. Các cổng D1–D7 là yêu cầu dựng tiếp, không tính năng đã được bản chơi 0.1.0 chứng minh.
+**D6 — Legends là lõi:** người thử tự nhận diện mốc bản văn là trung tâm, kể được hoạt động khám phá và hiểu cổng truyện. **D7 — Định dạng tương đương:** tóm tắt giữ đủ beat/cơ hội, thoát giữa chừng không mở cổng. D1–D7 còn cần dựng/đo. Prototype 0.2.0 có core/gate/hai định dạng; kiểm tự động không chứng minh cảm giác lõi hoặc thời lượng mục tiêu.

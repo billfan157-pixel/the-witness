@@ -2,7 +2,7 @@
 
 ## 1. Thiết kế và bản chơi
 
-V3 đổi cấu trúc theo quyết định Legends làm trục. Bản THE WITNESS 0.1.0 trong thư mục dự án này vẫn theo v2, gồm cơ chế Legends cũ; game Hành Trình Lời Chúa là sản phẩm riêng ở thư mục anh em `../hanh-trinh-loi-chua/`. Đợt hồ sơ này không sửa save, cache, runtime hoặc triển khai website. Kiểm 0.1.0 không chứng minh gate/level/thời lượng v3 đã chạy.
+V3 đổi cấu trúc theo quyết định Legends làm trục. Bản THE WITNESS 0.1.0 trong thư mục dự án này vẫn theo v2, gồm cơ chế Legends cũ; game Hành Trình Lời Chúa là sản phẩm riêng ở thư mục anh em `../hanh-trinh-loi-chua/`. Khi soạn hồ sơ runtime chưa đổi; đợt dựng tiếp 0.2.0 đã thêm core/cổng/hai định dạng và di trú giữ nguồn cũ, đã qua kiểm core/model/UI; chưa là bản sản xuất đủ thời lượng. Kiểm 0.1.0 không chứng minh gate/level/thời lượng v3 đã chạy.
 
 Browser phù hợp thử truyện/state; ứng viên 3D sản xuất chỉ chốt sau cùng blockout, máy tham chiếu và thời gian iteration được đo. S21 mô tả World Partition của Unreal, không chứng minh đội hiện tại nên chọn engine ấy. Chưa cài/chuyển engine hay cam kết chất lượng AAA.
 
@@ -39,7 +39,7 @@ Receipt có legend/beat/revision/format/scene hoặc summaryPage và thứ tự 
 
 ## 4. Save và di trú
 
-Đề xuất save/progression schema **2**, document v3.0, core revision 3.0.0, namespace `the-witness-spine-v3`. Bản 0.1.0 vẫn schema 1; chưa có migration thực thi. Xuất/sao lưu trước, đọc version rồi sao sang namespace mới, giữ nguồn cũ.
+Đề xuất save/progression schema **2**, document v3.0, core revision 3.0.0, namespace `the-witness-spine-v3`. 0.1.0 dùng schema 1; prototype 0.2.0 đã có migration thực thi giữ nguồn v2. Xuất/sao lưu trước, đọc version rồi sao sang namespace mới, giữ nguồn cũ.
 
 Giữ settings, lựa chọn Mortal, tài nguyên, consent và lịch sử cũ. Boolean `legend.completed` không có core receipt nên vào lịch sử legacy, mốc v3 là `needs_revisit`. Save đã đi xa tiếp nhận chương thiếu theo thứ tự tại điểm an toàn, không lùi/xóa hành động Mortal. Chặn xác nhận kết campaign v3 đến khi đủ ba mốc. Không bắt bỏ save chỉ vì đổi thiết kế.
 
@@ -86,4 +86,4 @@ Giữ 3 hub/4 companion/12 Q/6 B/5 L/4 V. Set-piece ưu tiên ba Legends. Nếu 
 
 Ước tính bằng ngày công bộ môn + quyền/công cụ/outsource + QA/bản địa hóa + quản lý/dự phòng từ đo thật. Chưa owner/quote nên chưa ghi tiền hay ngày ship giả. Tên THE WITNESS là tên làm việc có rủi ro nhận diện S19, chưa có kết luận pháp lý/thương mại.
 
-**Đầu ra v3:** Markdown, hai contract, pitch một trang, reader HTML, ZIP và báo cáo kiểm tài liệu. Các đầu ra làm thiết kế review được; chưa đưa cơ chế mới vào game đang chơi.
+**Đầu ra v3:** Markdown, hai contract, pitch một trang, reader HTML, ZIP và báo cáo kiểm tài liệu. Các đầu ra làm thiết kế review được; 0.2.0 đã triển khai core/cổng riêng. Chưa hoàn thành mức sản xuất hoặc thời lượng mục tiêu.

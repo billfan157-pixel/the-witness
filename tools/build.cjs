@@ -1,8 +1,15 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'dist');fs.mkdirSync(out,{recursive:true});
-const files=['index.html','witness.css','witness-content.js','witness-spine.js','witness-model.js','witness-world.js','witness-compass.js','witness-app.js'];
+const files=['index.html','witness.css','witness-content.js','witness-spine.js','witness-depth.js','witness-workshop-ui.js','witness-model.js','witness-world.js','witness-compass.js','witness-app.js'];
 for(const f of files)fs.copyFileSync(path.join(root,f),path.join(out,f));
 for(const dir of ['assets','vendor'])fs.cpSync(path.join(root,dir),path.join(out,dir),{recursive:true});
+const dossier=path.join(root,'outputs','THE-WITNESS-Design-v3.2');
+if(fs.existsSync(path.join(dossier,'THE-WITNESS-Design-Compendium.html'))){
+  const docsOut=path.join(out,'tai-lieu');fs.mkdirSync(docsOut,{recursive:true});
+  for(const f of ['THE-WITNESS-Design-Compendium.html','THE-WITNESS-v3-Pitch.html'])fs.copyFileSync(path.join(dossier,f),path.join(docsOut,f));
+  fs.copyFileSync(path.join(dossier,'THE-WITNESS-Design-Compendium.html'),path.join(docsOut,'index.html'));
+  fs.cpSync(path.join(dossier,'sources'),path.join(docsOut,'sources'),{recursive:true});
+}
 const all=[...files,...['assets','vendor'].flatMap(dir=>fs.readdirSync(path.join(root,dir)).map(f=>dir+'/'+f))];
 const revision=crypto.createHash('sha256').update(all.map(f=>f+':'+crypto.createHash('sha256').update(fs.readFileSync(path.join(root,f))).digest('hex')).join('|')).digest('hex').slice(0,12);
 const sw=`const CACHE='witness-${revision}',FILES=${JSON.stringify(all.map(f=>'./'+f))};self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('witness-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==location.origin)return;e.respondWith(caches.open(CACHE).then(async c=>(await c.match(e.request,{ignoreSearch:true}))||fetch(e.request).catch(()=>e.request.mode==='navigate'?c.match('./index.html'):Response.error())));});`;
@@ -17,5 +24,5 @@ const scripts=[...html.matchAll(/<script src="\.\/([^\"]+)"[^>]*><\/script>/g)].
 let js='globalThis.AdventureAssets='+JSON.stringify(assets)+';\n'+scripts.map(f=>fs.readFileSync(path.join(root,f),'utf8')).join('\n');
 html=html.replace(/<script src="[^\"]+"[^>]*><\/script>/g,'').replace('</body>',()=>'<script>'+js.replace(/<\/script/gi,'<\\/script')+'</script></body>');
 fs.writeFileSync(path.join(out,'ban-choi-ngoai-tuyen.html'),html);
-fs.writeFileSync(path.join(out,'build-info.json'),JSON.stringify({release:'0.2.0',design:'3.0',revision,bridgeQuests:12,requiredLegends:['L01','L02','L04'],legends:5,coreBeats:16,veils:4,relationshipQuests:6,productionDurationTargetMet:false,expertReview:'unassigned'},null,2));
+fs.writeFileSync(path.join(out,'build-info.json'),JSON.stringify({release:'0.4.0',design:'3.2',contractVersion:'3.0',revision,bridgeQuests:12,requiredLegends:['L01','L02','L04'],legends:5,coreBeats:16,veils:4,relationshipQuests:6,rpgSkills:4,witnessTenets:3,dualTierPersona:true,depthEncounters:25,depthOwners:21,depthMechanicFamilies:7,productionDurationTargetMet:false,expertReview:'unassigned'},null,2));
 console.log(JSON.stringify({output:out,revision,standaloneBytes:Buffer.byteLength(html),scripts:scripts.length}));

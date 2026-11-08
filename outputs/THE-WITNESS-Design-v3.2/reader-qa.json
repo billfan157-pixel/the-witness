@@ -1,0 +1,41 @@
+{
+  "version": "3.2",
+  "status": "passed",
+  "scope": "document-reader-and-pitch-only; not gameplay",
+  "checks": [
+    "20 documents render",
+    "all internal anchors resolve",
+    "no desktop page overflow",
+    "accent-insensitive search filters documents",
+    "navigation resets search and scrolls to correct document",
+    "three required-Legend selector targets open correctly",
+    "six source/world packet anchors resolve",
+    "12-bridge selector opens correct dossier",
+    "all three packaged JSON links resolve",
+    "no mobile page overflow on cover, bridge, Legend and four depth chapters",
+    "navigation recovers from no-match search",
+    "pitch fits one A4 CSS page and all links resolve",
+    "pitch fits mobile",
+    "no JavaScript exceptions"
+  ],
+  "pitchA4": {
+    "width": 793.6875,
+    "height": 1122.515625,
+    "scroll": 1123,
+    "client": 1123,
+    "contentBottom": 976.234375,
+    "links": [
+      "THE-WITNESS-Design-Compendium.html#chapter-02",
+      "THE-WITNESS-Design-Compendium.html#chapter-14",
+      "THE-WITNESS-Design-Compendium.html#chapter-06"
+    ]
+  },
+  "viewportDesktop": [
+    1440,
+    1000
+  ],
+  "viewportMobile": [
+    390,
+    844
+  ]
+}

@@ -1,5 +1,7 @@
 # 10 • Nguồn nghiên cứu và sổ luận cứ
 
+**Đối chiếu chiều sâu 08/11/2026:** đã mở lại S06/S07/S09/S17/S23/S26/S30/S31; phạm vi đọc và quyết định cụ thể ở [hồ sơ 16](16-depth-research.md). S05/S10 tại USCCB bị 403 trong đợt này; đã đối chiếu chương 14 của [Exodus, Nova Vulgata](https://www.vatican.va/archive/bible/nova_vulgata/documents/nova-vulgata_vt_exodus_lt.html) và chương 16 của [Acts, Nova Vulgata](https://www.vatican.va/archive/bible/nova_vulgata/documents/nova-vulgata_nt_actus-apostolorum_lt.html) trên Vatican. Đây là đối chiếu mạch trình thuật, chưa là khảo sát ngữ văn hoặc bản Việt ngữ được chọn để phát hành. S31 không xác nhận cấu tạo lưới; các chỗ khẳng định lưới ba lớp được thay bằng mô hình ngư cụ [H].
+
 **Sổ nguồn v3.0 • 07/11/2026.** Giữ mức truy cập S01–S29 đã ghi; v3 mở lại S05/S06/S09 và bổ sung S30–S32. Lỗi truy cập v2 giữ dưới dạng lịch sử, không là trạng thái hiện tại của ba nguồn trục đã đọc. Không dùng ngày crawl làm ngày xuất bản; không tự nhận khảo cứu ngôn ngữ gốc, xem hết GDC hoặc đọc chuyên khảo từ abstract.
 
 ## 1. Phương pháp

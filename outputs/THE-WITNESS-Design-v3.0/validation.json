@@ -3,8 +3,8 @@
   "date": "2026-11-07",
   "markdownDocuments": 16,
   "sourceIds": 32,
-  "charactersIncludingSpaces": 234510,
-  "whitespaceSeparatedTokens": 47960,
+  "charactersIncludingSpaces": 234993,
+  "whitespaceSeparatedTokens": 48039,
   "runtimeFilesWrittenByBuilder": false,
   "checks": [
     "local markdown links resolve",
@@ -21,23 +21,23 @@
     "527 v3 design assertions; see contract-qa.json"
   ],
   "sourceSha256": {
-    "README.md": "e8c3ae7621f2aec6b5425953f8eaf997febd240510b8c84e7f407162b84cc759",
+    "README.md": "5873afe4f388fabe6993b07ba697896618ce7eb76c97050cf2f4d1ca8c873c13",
     "01-vision-research.md": "e6c8cbc171e9b46c75862c94b508ce467cdc82f59609b690397ce1f14b9d8c7c",
-    "02-game-design-document.md": "bbb5808c8cc479039f9794a5845e69ef3f76d47e74ee4cdb99a6798e209976ab",
+    "02-game-design-document.md": "89c0726a8d58dff26fe4b84c73553419d5890e6c2c6dc3f8b902c8c0370f2629",
     "03-narrative-bible.md": "ea153fd97bc41b83e43d7478935aca1bcd1960980167daa45c469cb7fcb54879",
     "04-world-bible.md": "768d8aa6784d9f07cb11b72209dd3f49b0dd21112d6663a025e13fec04af40eb",
     "05-character-bible.md": "145c13de17b88c1e859ded74e0ee6a5467c9092fc3b32dba9bb9217be30b7bdc",
     "06-campaign-quest-bible.md": "02f4c0d614f0ad5d02a17d65fd68717689572417527aec2116553148a0258914",
     "07-vertical-slice-screenplay.md": "51f8625aba15e3ffe1eee268264f15b504f436c726894f240351bb222a300992",
     "08-scripture-reference.md": "e9e516503ccc91b04cabc010777511104d47a897c04e4a7c4a3010e48c0094d5",
-    "09-production-technical-plan.md": "509991657cb9c7a3dc6937bcbe524ed13dc11e756aa4451527352c97e1b2ba76",
+    "09-production-technical-plan.md": "12a75933883df40a796aede0f30b9445361819042d15d9378184eaeb01396300",
     "10-source-register.md": "6ae8df1d8a37b161ed32772f32e1a11b4c0f5b508d51f323721b45a1a6d043fc",
-    "11-chapter-dossiers.md": "5a4e48e5f6722056738d7c3137bf1a7545c4cfed67d5a85a755094be324fa006",
-    "12-continuity-and-state.md": "d2c0ed759337aca555d827ad61eda422b9e8a1b205fefe727d7f24e0c4adbd0e",
-    "13-legends-spine-charter.md": "34dc7154f5fc606aec225e6ff6375be581b47a1c67c6007d6ce74ed0b3f3ae6b",
+    "11-chapter-dossiers.md": "0dc67a5044645213fffba8a0812ceca900d851a1f8bdfb81844a9ed58e18c0ef",
+    "12-continuity-and-state.md": "b74c6f7c2023e5f4f968d9cbdd404ce253160a7f6c7e871e6e15fe41c3affb95",
+    "13-legends-spine-charter.md": "94b255888b1d4ebafe9e62f5bde03f11f4d9edc0cefdb4634209ef926719c052",
     "14-legends-depth-dossiers.md": "9fd0b4d1c4097b8efaa3df220ae0c5ffe3107b103455f32a9b36200f401e1ba5",
     "15-source-world-packets.md": "f9bcd00aad495598756a5019ff4990bff9643e142ee4c15886657945a3ff5c1d",
-    "design-contract.json": "d8db5b90849662d1b23583bbab42973b691a4650b93975c2e329467dbca93e12",
-    "campaign-contract.json": "584a70eff59ab38c3ce7142c30fa362862736bb855b81adbf2809f93b14a29cb"
+    "design-contract.json": "a6e5f1c4abf48f23af186279af38d556b44b933d391c318f86e54bbcc30cdb5b",
+    "campaign-contract.json": "8f3ff41d5ee354cbf51df3ba4ebd4e13553a634f4a37dc0e9121569c845a2f3f"
   }
 }

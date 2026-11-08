@@ -4,11 +4,15 @@
 “Across the ages, every life bears witness.”  
 Qua các thời đại, mỗi cuộc đời đều để lại một lời chứng.
 
-**Bộ hồ sơ tiền sản xuất v3.0 • 07/11/2026 • Ngôn ngữ gốc: tiếng Việt**
+**Bộ hồ sơ trục v3.0 + phụ lục chiều sâu v3.2 • 08/11/2026 • Ngôn ngữ gốc: tiếng Việt**
 
 **Legends là xương sống; nội dung Kinh Thánh là cốt truyện chính; thám hiểm là lối chơi chủ đạo.** V3 sửa hướng v2 theo quyết định của chủ dự án: ba hồi có L01 Môsê, L02 Đavít, L04 Phêrô bắt buộc, khoảng 30% thời lượng tuyến chuẩn. Mortal World nối các chương qua người kể, phản tư và hành động đời thường; Veil và hai Legend mở rộng vẫn tự chọn. Đọc [pitch/bất biến một trang](13-legends-spine-charter.md) trước các bible.
 
-**Tầm nhìn AAA là đích chất lượng dài hạn.** Bộ hồ sơ không chứng minh đã có đội ngũ/ngân sách/chất lượng ấy. Bản chơi THE WITNESS 0.1.0 hiện theo cấu trúc v2; v3 ở đây là thiết kế để dựng tiếp, chưa được đưa vào bản chơi hay triển khai. Bộ v1/v2 và dữ liệu chơi cũ được giữ riêng.
+**Tầm nhìn AAA là đích chất lượng dài hạn.** Bộ hồ sơ không chứng minh đã có đội ngũ/ngân sách/chất lượng ấy. 0.1.0 là baseline v2; prototype 0.2.0 đã triển khai core/cổng v3, đã qua kiểm model/UI trước đóng gói. Chưa hoàn thành thời lượng, level art/cinematic và thẩm định của hồ sơ. Bộ v1/v2 và dữ liệu chơi cũ được giữ riêng.
+
+## Chiều sâu 3.2 đang triển khai
+
+Bản chơi 0.4.0 có 25 tình huống tại 21 chương/cảnh, với luật thử/sửa, bản nháp được giữ và sổ ghi phương án thực sự đã làm. Phụ lục không thay mã nguồn truyện hoặc nhận đã đạt ngân sách thời lượng. Đọc [16 • Nghiên cứu](16-depth-research.md), [17 • Atlas luật thực thi](17-encounter-atlas.md), [18 • Chi tiết cảnh và thoại](18-scene-craft-and-dialogue.md), [19 • Protocol người chơi thật](19-depth-playtest.md). [Hợp đồng chiều sâu](depth-contract.json) liệt kê những tình huống thực sự có trong runtime. Kịch bản 18 tách phần chạy được với hoạt cảnh cần dựng tiếp.
 
 ## Đọc theo nhu cầu
 
@@ -30,7 +34,7 @@ Qua các thời đại, mỗi cuộc đời đều để lại một lời chứ
 16. [Hồ sơ chiều sâu Legends](14-legends-depth-dossiers.md): ba chương, đồ thị thám hiểm, chuỗi cảnh, canon lock, hai định dạng và cầu nối.
 17. [Packet nguồn, thế giới và duyệt](15-source-world-packets.md): sáu packet, 15 nhóm asset và bảy vị trí duyệt chưa phân công.
 
-**Bản đọc liền mạch:** `THE-WITNESS-Design-Compendium.html` trong thư mục đầu ra; có mục lục, tìm kiếm và chế độ in. Markdown là nguồn biên tập chính. Số phiên bản này áp dụng cho cả bộ.
+**Bản đọc liền mạch:** `THE-WITNESS-Design-Compendium.html` trong thư mục đầu ra; có mục lục, tìm kiếm và chế độ in. Markdown là nguồn biên tập chính. Bản đọc mới ở `outputs/THE-WITNESS-Design-v3.2/`; hợp đồng trục vẫn revision 3.0 để giữ tương thích, phụ lục có revision 3.2.
 
 ## Quy tắc dùng hồ sơ
 

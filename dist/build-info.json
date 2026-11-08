@@ -1,7 +1,8 @@
 {
-  "release": "0.2.0",
-  "design": "3.0",
-  "revision": "3286f7c8b6cc",
+  "release": "0.4.0",
+  "design": "3.2",
+  "contractVersion": "3.0",
+  "revision": "fff2638731d8",
   "bridgeQuests": 12,
   "requiredLegends": [
     "L01",
@@ -12,6 +13,12 @@
   "coreBeats": 16,
   "veils": 4,
   "relationshipQuests": 6,
+  "rpgSkills": 4,
+  "witnessTenets": 3,
+  "dualTierPersona": true,
+  "depthEncounters": 25,
+  "depthOwners": 21,
+  "depthMechanicFamilies": 7,
   "productionDurationTargetMet": false,
   "expertReview": "unassigned"
 }

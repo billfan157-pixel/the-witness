@@ -85,7 +85,7 @@ Các callback là nghĩa vụ viết/dựng, chưa phải báo cáo chúng đã 
 
 ## 7. Mẫu state và giao dịch
 
-[campaign-contract.json](campaign-contract.json) v3 ghi ba Legend trục, core beat, định dạng, gate, 12 cầu nối và callback. [design-contract.json](design-contract.json) đề xuất progression/save schema 2 cho bản triển khai tương lai; bản chơi 0.1.0 vẫn schema 1/nội dung v2. Không được nạp contract thiết kế như save hay coi boolean cũ chứng minh đủ core mới. Sao lưu và namespace mới; giữ lựa chọn/tài nguyên/consent cũ nhưng đánh dấu Legend thiếu chứng nhận là `needs_revisit`. Save đã đi xa dùng điểm an toàn để tiếp nhận các chương thiếu theo thứ tự, không lùi/xóa hành động Mortal. Chưa thực hiện di trú.
+[campaign-contract.json](campaign-contract.json) v3 ghi ba Legend trục, core beat, định dạng, gate, 12 cầu nối và callback. [design-contract.json](design-contract.json) đề xuất progression/save schema 2 cho bản triển khai tương lai; 0.1.0 là baseline schema 1/nội dung v2; 0.2.0 dùng schema 2/nội dung v3. Không được nạp contract thiết kế như save hay coi boolean cũ chứng minh đủ core mới. Sao lưu và namespace mới; giữ lựa chọn/tài nguyên/consent cũ nhưng đánh dấu Legend thiếu chứng nhận là `needs_revisit`. Save đã đi xa dùng điểm an toàn để tiếp nhận các chương thiếu theo thứ tự, không lùi/xóa hành động Mortal. Di trú giữ nguồn v2 đã có trong prototype 0.2.0, được kiểm bằng fixture.
 
 Vòng của một kế hoạch: `available → proposed → prepared → executing → completed → committed`. Có thể `interrupted` khi thoát giữa cảnh; khôi phục ở checkpoint cùng actor/vai đã nhận. Chỉ `committed` tạo callback dài hạn. `PromiseMade` không là `PromiseKept`; `PlanSelected` không là `PlanCompleted`. Replay dùng state tách biệt, không cộng quan hệ/nguồn hỗ trợ.
 

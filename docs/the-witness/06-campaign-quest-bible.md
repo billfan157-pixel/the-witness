@@ -68,27 +68,72 @@ Mỗi quest có ID bền, tiền điều kiện, trigger, objective, phương á
 
 **Mục tiêu:** thực hiện kế hoạch Q11. **Gameplay:** sắp người, trao bản sao đúng đối tượng, giải tình huống gây áp lực; không thành một menu chọn ending. **Điều kiện:** chỉ nêu tên người đồng thuận và còn an toàn; chứng cứ thiếu thì giảm phạm vi cáo buộc. **Thất bại thao tác:** checkpoint, không âm thầm đổi sang kết “đã bán đứng mọi người”. **Ra:** một trong ba khung kết hồ sơ 03, biến thể bằng chứng và quan hệ; montage chỉ dùng sự kiện đã log.
 
-## 5. Các chương Legends
+## 5. Các chương Legends: Nhân vật Thánh và Cơ chế Thám hiểm
 
-- **L01 / Môsê / Xh 14,1–31 [S05] / bắt buộc hồi I:** 80 phút tương tác hoặc khoảng 8 phút tóm tắt; trại, bờ, tuyến vượt. Cổng Q03→Q04; sáu core beat.
-- **L02 / Đavít / 1 Sm 24 [S06] / bắt buộc hồi II:** 70 hoặc khoảng 7 phút; khe đá, hang, quay về và bước ra. Cổng Q06→Q07; năm core beat, không ghép 1 Sm 26.
-- **L03 / Giêrêmia / Gr 38,1–13 [S07] / tự chọn hồi I:** mục tiêu 18 phút, khoảng 4 phút tóm tắt hoặc bỏ hẳn. Giữ Ebed-melech và công việc nhận trợ giúp; không còn là chương lõi của slice v3.
-- **L04 / Phêrô / Ga 21,1–19 [S09] / bắt buộc hồi III:** 66 hoặc khoảng 8 phút; thuyền, bờ, bữa ăn, trao việc. Cổng Q10→Q11; năm core beat, không chấm điểm tình yêu.
-- **L05 / Phaolô / Cv 16,22–40 [S11] / tự chọn hồi III:** mục tiêu 24 phút, khoảng 4 phút tóm tắt hoặc bỏ hẳn. Giữ người cùng ở đó, phần sau biến cố và việc lên tiếng; không QTE tạo phép lạ.
+Mỗi chương Legends là một không gian thám hiểm cô đọng, mật độ cao (40–60 phút tương tác), nơi người chơi nhập vai một **Nhân Chứng Vô Danh** đồng hành sát cánh bên các bậc thánh nhân mà không làm xáo trộn bản văn Kinh Thánh (Canon Lock 100%):
+
+- **L01 / Môsê / Xuất Hành 14,1–31 [S05] (Trục bắt buộc Hồi I):**
+  * *Thời lượng:* 50–60 phút tương tác hoặc khoảng 8 phút tóm tắt. Cổng Q03 $\rightarrow$ Q04. Sáu nhịp cốt lõi B01–B06.
+  * *Vai điều khiển:* **Người Hộ Vệ Khóa Đuôi** (Caravan Rearguard Defender). Môsê đứng ở tiền phương theo lệnh Chúa giơ gậy rẽ biển.
+  * *Cơ chế đặc thù (Caravan Cohesion & Terrain Reading):* Đọc hướng gió đông và dấu chân bãi triều; dùng kỹ năng *Thủ công* kích bánh xe lún bùn và lát ván qua sình lầy; dùng đèn bão duy trì liên lạc; dùng *Tự vệ* ngăn gia súc hoảng loạn dẫm đạp người già/trẻ nhỏ.
+- **L02 / Đavít / 1 Samuel 24 [S06] (Trục bắt buộc Hồi II):**
+  * *Thời lượng:* 45–50 phút tương tác hoặc khoảng 7 phút tóm tắt. Cổng Q06 $\rightarrow$ Q07. Năm nhịp cốt lõi B01–B05.
+  * *Vai điều khiển:* **Người Trinh Sát Đội Đavít** (En Gedi Cave Scout). Đavít ở trung tâm biến cố cắt vạt áo Saun và kiềm chế không hại vua.
+  * *Cơ chế đặc thù (Acoustic Stealth & Group Restraint):* Khảo sát vách đá hiểm trở [En Gedi](https://static.parks.org.il/wp-content/uploads/2022/12/engedi-eng.pdf); đọc tiếng bước chân vọng trong hang tối; di chuyển lén lút tiếp cận thì thầm và giữ chặt tay kiếm của đồng đội nóng giận; hộ tống Đavít bước ra ánh sáng đối thoại công chính với Saun.
+- **L03 / Giêrêmia / Gr 38,1–13 [S07] (Tự chọn Hồi I):**
+  * *Thời lượng:* 18 phút tương tác hoặc khoảng 4 phút tóm tắt. Độc lập, không chặn cổng chính. Giữ Ebed-melech và hành động đặt giẻ rách lót nách kéo ngôn sứ khỏi bùn lầy giếng cạn.
+- **L04 / Phêrô / Gioan 21,1–19 [S09] (Trục bắt buộc Hồi III):**
+  * *Thời lượng:* 40–45 phút tương tác hoặc khoảng 8 phút tóm tắt. Cổng Q10 $\rightarrow$ Q11. Năm nhịp cốt lõi B01–B05.
+  * *Vai điều khiển:* **Người Phụ Lưới Hồ Galilê** (Galilean Boat-hand). Chúa Giêsu Phục Sinh và Phêrô hiện diện chuẩn mực theo Phúc Âm.
+  * *Cơ chế đặc thù (Seamanship & Relational Observation):* Thao tác trên thuyền hư cấu có tham chiếu vật thể [Ginosar](https://yigal-allon-centre.org.il/en/the-museum/the-ancient-boat/); điều phối nhịp chèo đôi; gỡ mép lưới và giữ dây khỏi lối chân trong đêm lạnh [H]; bản văn không xác định cấu tạo lưới; trải nghiệm khoảng lặng tâm lý sau cuộc khổ nạn; phối hợp kéo mẻ lưới 153 con cá lớn rạng đông và phụ việc bên bếp than hồng.
+- **L05 / Phaolô / Cv 16,22–40 [S11] (Tự chọn Hồi III):**
+  * *Thời lượng:* 24 phút tương tác hoặc khoảng 4 phút tóm tắt. Giữ trọn bối cảnh ngục Philipphê, động đất lúc nửa đêm, ngăn viên cai ngục tự sát và lời công bố tin mừng.
 
 ## 6. Inner Veil
 
 - **V01 — Hố của những cái tên:** sau Q02, mục tiêu 8 phút, độc lập với việc có vào L03. Đặt trang để mở lối; không quyết định số phận người thật.
 - **V02 — Biển không bờ:** sau Q04, 10 phút. Chia tải, có thể bỏ hẳn; không thay L01.
 - **V03 — Những mặt nạ giữ kho:** sau Q08, 8 phút. Thay cách điều khiển hình nhân, không xác định thủ phạm.
-- **V04 — Chiếc ghế trống:** sau chuẩn bị Q11, 10 phút. Câu hỏi tự chọn/để trống, không gọi linh hồn cha. Cả bốn V đều là giấc mơ hư cấu tự chọn, chưa đo phút thực.
+- **V04 — Chiếc ghế trống:** sau chuẩn bị Q11, 10 phút. Câu hỏi tự chọn/để trống, không gọi linh hồn cha. Cả bốn V đều là giấc mơ hư cấu tự chọn, phản ánh nội tâm nhân vật Người Chứng.
 
 ## 7. Sáu nhiệm vụ quan hệ
 
 **B01** Miriam và món đồ gia đình; **B02** Damar và giới hạn được người bị hại đặt ra; **B03** Lea và tên đã xóa; **B04** Titus và người học việc; **B05** Natan và lời hứa với cha; **B06** Rina và cách phân bữa khi phần ăn thiếu. B01–B04 theo hồ sơ nhân vật. B05 mở một bản nhớ khác về cha, không chứng cứ toàn tri. B06 chọn cách ưu tiên minh bạch và mời cộng đồng cùng chịu trách nhiệm; không puzzle tối ưu giá trị một mạng người.
 
-Mỗi B có tối thiểu hai cách tiếp cận và một hậu quả ở hub hoặc nhiệm vụ chính. Bỏ qua B không khóa kết thúc tuyến chính, nhưng làm mất nguồn hỗ trợ cụ thể. Không có romance hoặc thu thập quà tăng tin vô hạn trong phạm vi v1.
+Mỗi B có tối thiểu hai cách tiếp cận và một hậu quả ở hub hoặc nhiệm vụ chính. Bỏ qua B không khóa kết thúc tuyến chính, nhưng làm mất nguồn hỗ trợ cụ thể.
 
 ## 8. Quy tắc QA nhánh
 
 Mỗi quest kiểm tra vắng companion, thiếu tiền/chứng cứ, chọn ngược lời khuyên, load/replay và hỗ trợ. Kiểm riêng **tóm tắt đủ chương bắt buộc**, **thoát giữa chương giữ cổng**, **bỏ L/V tự chọn không phạt ending**. Không có ca bỏ trắng tất cả L vẫn kết campaign. Khi NPC từ chối, journal ghi bước tiếp làm được. Hội tụ giữ biến/callback, không reset lịch sử.
+
+## 9. Phụ lục tích hợp — Sự thật nền (T01–T08) và Sổ chứng cứ (E01–E10 / P01–P04)
+
+### 9.1. Tám sự thật nền (Ground Truths T01–T08)
+- **T01:** Lô hàng `G17` rời kho Xêdarê với 24 bao. 2 bao bị hỏng trên đường Amon vận chuyển (có biên bản riêng); 18 bao đến điểm chia bữa tại Galilê; 4 bao còn lại bị chuyển vào sân phụ do Hanan kiểm soát ($24 = 2 + 18 + 4$).
+- **T02:** Haddai (cha của nhân vật chính) đã ký trước biên nhận "đã nhận đủ tại điểm chia" khi hàng chưa tới nơi nhằm giữ lời cam kết cung cấp bữa ăn không bị gián đoạn. Đây là lỗi nghiệp vụ thực tế của ông.
+- **T03:** Hanan là người trực tiếp chỉ dẫn chuyển 4 bao vào sân phụ để tích trữ và kiểm soát nguồn cung, đồng thời lợi dụng chữ ký trước của Haddai để đổ toàn bộ trách nhiệm mất 6 bao lên ông.
+- **T04:** Khi phát hiện sai lệch, Haddai đã soạn bản sửa tự nhận lỗi ký trước và gửi tới một người giữ giấy ở Giêrusalem, nhưng bản sửa chưa kịp đến tay những người có trách nhiệm thì ông lâm bệnh mất.
+- **T05:** Nhân vật chính (Người Chứng) từng chứng kiến việc chưa kiểm đủ hàng nhưng đã giữ im lặng vì sợ mất việc làm.
+- **T06:** Natan (thợ đóng thuyền) giữ sổ hộ gia đình và bìa có biên nhận gốc, giao sổ ở Q01 và giao bản gốc ở Q04.
+- **T07:** Sự cố thiếu 2 bao bữa chung tại Xêdarê (`B06` trong Q02) là sự việc xảy ra ở hiện tại, cho thấy quy trình sửa sổ để trục lợi vẫn đang tiếp diễn.
+- **T08:** Điểm lưu giữ bản sửa là Giêrusalem; người giữ sân Galilê chỉ nhận 18 bao; Rina ở Xêdarê chỉ làm chứng cho đợt B06 mà bà trực tiếp trải qua.
+
+### 9.2. Mười nguồn chứng cứ độc lập (Evidences E01–E10)
+| Mã | Nguồn thu thập | Dữ kiện xác nhận được | Giới hạn chứng minh |
+|---|---|---|---|
+| **E01** | Biên nhận gốc G17 (Natan/Q04) | Haddai thực sự đã ký nhận đủ 24 bao | Chưa chứng minh ông chiếm đoạt hay cất giấu 4 bao |
+| **E02** | Mép sổ sửa B06 (Q02) | Tồn tại lớp cạo mực sửa số lượng | Chưa xác định ai là người sửa và động cơ |
+| **E03** | Lời chứng của Rina (Q02) | Lượng thực nhận tại bến Xêdarê không khớp sổ | Chưa chứng minh ai ra lệnh chuyển hàng |
+| **E04** | Ghi chép xuất/hỏng của Amon (Q03) | 24 bao rời bến; 2 bao hỏng trên đường | Không biết các điểm dừng rẽ nhánh sau đó |
+| **E05** | Biên nhận tại điểm chia Galilê (Q05) | 18 bao thực phẩm đã đến điểm chia | Chưa biết ai đứng sau sân phụ |
+| **E06** | Thẻ kho 4 bao tại sân phụ (Q06) | 4 bao G17 thực tế được đưa vào sân phụ | Dấu niêm phong chung chưa đủ quy kết Hanan |
+| **E07** | Bản phụ phục hồi từ nước (Q08) | Các chi tiết giao nhận còn đọc được | Chỗ nhòe mực không được suy diễn chủ quan |
+| **E08** | Bản sửa của Haddai tại Giêrusalem (Q10) | Haddai tự nhận lỗi ký trước và đề nghị đối chiếu | Lời tự thuật cần đối chiếu với các nguồn khác |
+| **E09** | Lời chứng người trực tiếp nhận lệnh (Q09) | Lệnh chuyển hàng họ nghe thấy (tùy scope) | Điều họ không trực tiếp chứng kiến |
+| **E10** | Sổ bàn giao ca của Mattai (Q11) | Chỉ dẫn mở kho của Hanan trong ca trực | Cần kết hợp đối chiếu với E06/E09 |
+
+### 9.3. Bốn mệnh đề kết luận (Claims P01–P04)
+- **P01 — B06 không khớp:** Yêu cầu `E02` + `E03`. Kết luận số lượng bữa chung bị hụt do can thiệp sổ sách; không quy chụp cho vụ G17.
+- **P02 — G17 thiếu 4 bao chưa được giải trình tại điểm chia:** Yêu cầu `E04` + `E05`. Tách riêng 2 bao hỏng do vận chuyển khỏi 4 bao bị chuyển lệch.
+- **P03 — Haddai chịu trách nhiệm việc ký trước, không có căn cứ nói ông lấy 4 bao:** Yêu cầu `E01` + `E08` đối chiếu với `E04`/`E05`.
+- **P04 — Hanan chỉ dẫn chuyển 4 bao ngoài danh sách phân phối:** Yêu cầu `E06` kết hợp nguồn độc lập `E09` hoặc `E10`, trên nền tảng `E04`/`E05`. Nếu chưa đủ nguồn độc lập thứ hai, chỉ được nêu nghi vấn, không được khẳng định tuyệt đối.

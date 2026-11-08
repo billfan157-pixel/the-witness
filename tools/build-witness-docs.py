@@ -27,9 +27,10 @@ campaign = json.loads((source / 'campaign-contract.json').read_text(encoding='ut
 version = contract['documentVersion']
 assert re.fullmatch(r'\d+\.\d+', version)
 assert version == campaign['documentVersion']
-out = root / 'outputs' / f'THE-WITNESS-Design-v{version}'
+edition = contract.get('depthExpansion', {}).get('revision', version)
+out = root / 'outputs' / f'THE-WITNESS-Design-v{edition}'
 out.mkdir(parents=True, exist_ok=True)
-assert len(files) == 16
+assert len(files) == 20
 assert contract['contentBudget'] == dict(bridgeQuests=12, relationshipQuests=6, legends=5, requiredLegends=3, optionalLegends=2, veils=4, hubs=3, companions=4)
 assert campaign['budget'] == contract['contentBudget']
 assert len(contract['canonicalScenes']) == 5
@@ -86,11 +87,11 @@ for p in files:
         body = re.sub(r'<h2>(L\d{2})\.(SOURCE|WORLD)(.*?)</h2>', lambda m:f'<h2 id="chapter-15-{m[1].lower()}-{m[2].lower()}">{m[1]}.{m[2]}{m[3]}</h2>',body)
     for filename, target in ids.items():
         body = body.replace(f'href="{filename}"', f'href="#{target}"')
-    for catalog in ['design-contract.json','campaign-contract.json']:
+    for catalog in ['design-contract.json','campaign-contract.json','depth-contract.json']:
         body = body.replace(f'href="{catalog}"', f'href="sources/{catalog}"')
     body = re.sub(r'<a href="(https?://[^\"]+)"', r'<a target="_blank" rel="noopener noreferrer" href="\1"', body)
     nav.append(f'<a href="#{ids[p.name]}">{html.escape(title)}</a>')
-    sections.append(f'<article id="{ids[p.name]}" data-chapter><div class="eyebrow">DESIGN DOSSIER / 07.11.2026</div>{body}</article>')
+    sections.append(f'<article id="{ids[p.name]}" data-chapter><div class="eyebrow">DESIGN DOSSIER / 08.11.2026</div>{body}</article>')
 
 css = '''
 :root{--ink:#1e292b;--paper:#f6f3ed;--muted:#596365;--accent:#785328;--line:#d8d1c6}
@@ -134,9 +135,9 @@ document.getElementById('print').addEventListener('click',()=>window.print());
 quest_options=''.join(f'<option value="#chapter-11-{q["id"].lower()}">{q["id"]} — '+html.escape(re.search(r'^## '+q['id']+r' — (.+)$',dossier,re.M)[1])+'</option>' for q in chapters)
 legend_dossier=(source/'14-legends-depth-dossiers.md').read_text(encoding='utf-8')
 legend_options=''.join(f'<option value="#chapter-14-{lid.lower()}">'+html.escape(re.search(r'^## '+lid+r' — (.+)$',legend_dossier,re.M)[1])+'</option>' for lid in campaign['narrativeSpine']['requiredOrder'])
-page = f'''<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>THE WITNESS — Design Compendium v{version}</title><style>{css}</style></head><body>
-<aside><div class="brand">THE WITNESS</div><div class="subtitle">Legacy of the Covenant<br>HỒ SƠ TIỀN SẢN XUẤT / v{version}</div><label for="search" class="no-print">Tìm trong bộ tài liệu (có thể gõ không dấu)</label><input id="search" type="search" placeholder="Ví dụ: Môsê, cổng truyện"><div id="result" role="status" aria-live="polite"></div><label for="legend-jump" class="no-print">Ba chương cốt truyện</label><select id="legend-jump"><option value="">Chọn Legend bắt buộc</option>{legend_options}</select><label for="quest-jump" class="no-print">Các cầu nối đời thường</label><select id="quest-jump"><option value="">Chọn cầu nối Q01–Q12</option>{quest_options}</select><nav>{''.join(nav)}</nav><button id="print">In / Lưu thành PDF</button></aside>
-<main><header class="cover"><div class="eyebrow">BIBLE • EXPLORATION • LIVING BRIDGES</div><h1>THE WITNESS</h1><h2>Legacy of the Covenant</h2><p><strong>Chứng Nhân: Di Sản Giao Ước</strong></p><p>“Across the ages, every life bears witness.”<br>Qua các thời đại, mỗi cuộc đời đều để lại một lời chứng.</p><p><strong>Kinh Thánh là cốt truyện chính. Thám hiểm là lối chơi chủ đạo.</strong><br>Môsê — Đavít — Phêrô: ba Legends bắt buộc nối bằng đời sống của người thường. Chơi hoặc xem tóm tắt đủ nội dung; thoát giữa chương giữ cổng chưa mở.</p><p class="no-print"><a href="THE-WITNESS-v3-Pitch.html">Đọc pitch và bất biến một trang</a> · <a href="#chapter-14-l01">Bắt đầu hồ sơ Môsê</a><br>{len(files)} tài liệu • {len(source_ids)} nguồn • 3 hồ sơ Legends • 6 packet nguồn/thế giới • 2 hợp đồng<br>Ngân sách thử: Legends 216/720 phút = 30%; chưa đo.<br>Thiết kế v3 chưa thẩm định chuyên gia, chưa playtest; bản chơi 0.1.0 vẫn theo v2.</p></header>{''.join(sections)}<footer>Nguồn biên tập: docs/the-witness • 07/11/2026 • [H] sáng tác / [C] chưa xác định • Bảy vị trí duyệt chưa phân công.</footer></main><script>{script}</script></body></html>'''
+page = f'''<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>THE WITNESS — Design Compendium v{edition}</title><style>{css}</style></head><body>
+<aside><div class="brand">THE WITNESS</div><div class="subtitle">Legacy of the Covenant<br>HỒ SƠ THIẾT KẾ / v{edition}</div><label for="search" class="no-print">Tìm trong bộ tài liệu (có thể gõ không dấu)</label><input id="search" type="search" placeholder="Ví dụ: Môsê, cổng truyện"><div id="result" role="status" aria-live="polite"></div><label for="legend-jump" class="no-print">Ba chương cốt truyện</label><select id="legend-jump"><option value="">Chọn Legend bắt buộc</option>{legend_options}</select><label for="quest-jump" class="no-print">Các cầu nối đời thường</label><select id="quest-jump"><option value="">Chọn cầu nối Q01–Q12</option>{quest_options}</select><nav>{''.join(nav)}</nav><button id="print">In / Lưu thành PDF</button></aside>
+<main><header class="cover"><div class="eyebrow">BIBLE • EXPLORATION • LIVING BRIDGES</div><h1>THE WITNESS</h1><h2>Legacy of the Covenant</h2><p><strong>Chứng Nhân: Di Sản Giao Ước</strong></p><p>“Across the ages, every life bears witness.”<br>Qua các thời đại, mỗi cuộc đời đều để lại một lời chứng.</p><p><strong>Kinh Thánh là cốt truyện chính. Thám hiểm là lối chơi chủ đạo.</strong><br>Môsê — Đavít — Phêrô: ba Legends bắt buộc nối bằng đời sống của người thường. Chơi hoặc xem tóm tắt đủ nội dung; thoát giữa chương giữ cổng chưa mở.</p><p class="no-print"><a href="THE-WITNESS-v3-Pitch.html">Đọc pitch và bất biến một trang</a> · <a href="#chapter-14-l01">Bắt đầu hồ sơ Môsê</a><br>{len(files)} tài liệu • {len(source_ids)} nguồn • 3 hồ sơ Legends • 6 packet nguồn/thế giới • 2 hợp đồng<br>Ngân sách thử: Legends 216/720 phút = 30%; chưa đo.<br>Bản chơi 0.4.0 có 25 tình huống theo luật tại 21 chương/cảnh; chưa có playtest người thật hoặc duyệt chuyên môn.</p></header>{''.join(sections)}<footer>Nguồn biên tập: docs/the-witness • 08/11/2026 • [H] sáng tác / [C] chưa xác định • Bảy vị trí duyệt chưa phân công.</footer></main><script>{script}</script></body></html>'''
 reader=out / 'THE-WITNESS-Design-Compendium.html'
 reader.write_text(page,encoding='utf-8')
 pitch_markdown=(source/'13-legends-spine-charter.md').read_text(encoding='utf-8')
@@ -148,14 +149,14 @@ pitch_css='''*{box-sizing:border-box}body{margin:0;background:#e8e3da;color:#202
 (out/'THE-WITNESS-v3-Pitch.html').write_text(f'<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>THE WITNESS — Pitch v3 một trang</title><style>{pitch_css}</style></head><body><main class="pitch-page">{pitch_body}</main></body></html>',encoding='utf-8')
 source_out=out / 'sources'
 source_out.mkdir(exist_ok=True)
-for p in files+[source/'design-contract.json',source/'campaign-contract.json']:
+for p in files+[source/'design-contract.json',source/'campaign-contract.json',source/'depth-contract.json']:
     (source_out/p.name).write_bytes(p.read_bytes())
 tool_out=out/'tools'
 tool_out.mkdir(exist_ok=True)
 (tool_out/'validate-witness-contracts.py').write_bytes((root/'tools'/'validate-witness-contracts.py').read_bytes())
-summary={'version':version,'date':'2026-11-07','markdownDocuments':len(files),'sourceIds':len(source_ids),'charactersIncludingSpaces':len(all_text),'whitespaceSeparatedTokens':len(all_text.split()),'runtimeFilesWrittenByBuilder':False,'checks':['local markdown links resolve','source IDs S01-S32 present and references resolve','both JSON contracts parse and budgets agree','12 linked bridges have fallback and forward callbacks','Q02 routes agree with retained consent example','Q11 and Q12 plan methods agree','three required/two optional Legends and four optional Veils scheduled','G17 quantity conservation and B06 separation','claim evidence IDs resolve','six relationship quests have approaches and callbacks','all 12 bridge dossiers match route IDs',f'{contract_report["assertions"]} v3 design assertions; see contract-qa.json'],'sourceSha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in files+[source/'design-contract.json',source/'campaign-contract.json']}}
+summary={'version':edition,'spineContractVersion':version,'date':'2026-11-08','markdownDocuments':len(files),'sourceIds':len(source_ids),'charactersIncludingSpaces':len(all_text),'whitespaceSeparatedTokens':len(all_text.split()),'runtimeFilesWrittenByBuilder':False,'checks':['local markdown links resolve','source IDs S01-S32 present and references resolve','three JSON contracts parse and budgets agree','12 linked bridges have fallback and forward callbacks','Q02 routes agree with retained consent example','Q11 and Q12 plan methods agree','three required/two optional Legends and four optional Veils scheduled','G17 quantity conservation and B06 separation','claim evidence IDs resolve','six relationship quests have approaches and callbacks','all 12 bridge dossiers match route IDs',f'{contract_report["assertions"]} design assertions; see contract-qa.json'],'sourceSha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in files+[source/'design-contract.json',source/'campaign-contract.json',source/'depth-contract.json']}}
 (out/'validation.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding='utf-8')
-archive=root/'outputs'/f'THE-WITNESS-Design-v{version}.zip'
+archive=root/'outputs'/f'THE-WITNESS-Design-v{edition}.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
     for p in sorted(out.rglob('*')):
         if p.is_file(): z.write(p,Path(out.name)/p.relative_to(out))

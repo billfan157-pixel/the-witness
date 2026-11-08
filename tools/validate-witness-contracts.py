@@ -20,8 +20,16 @@ def validate_contracts(source):
             raise AssertionError(message)
 
     check(campaign['documentVersion'] == design['documentVersion'] == '3.0', 'v3 document versions')
-    check(len(design['documentFiles']) == len(set(design['documentFiles'])) == 16, 'explicit v3 document manifest')
-    check(design['runtimeCompatibility']['implementedInRuntime'] is False, 'design-only status')
+    check(len(design['documentFiles']) == len(set(design['documentFiles'])) == 20, 'explicit v3 spine and depth document manifest')
+    depth = json.loads((source / 'depth-contract.json').read_text(encoding='utf-8'))
+    check(depth['revision'] == design['depthExpansion']['revision'] == '3.2', 'depth revision')
+    check(depth['runtimeRelease'] == design['depthExpansion']['runtimeRelease'] == '0.4.0', 'depth release')
+    check(not depth['schemaChange'], 'depth preserves save schema')
+    check(len(depth['encounters']) == len({e['id'] for e in depth['encounters']}) == 25, '25 unique runtime encounters')
+    check(len({e['owner'] for e in depth['encounters']}) == 21, '21 existing scene owners')
+    check(len({e['type'] for e in depth['encounters']}) == 7, 'seven mechanic families')
+    check(all(e['actions'] and e['revision'] == 1 for e in depth['encounters']), 'encounters bind actions and revisions')
+    check(design['runtimeCompatibility']['fullProductionScopeImplemented'] is False, 'prototype does not claim full production scope')
     check(design['saveSchemaVersion'] == campaign['designProgressionSchemaVersion'] == 2, 'proposed schema')
     budget = campaign['budget']
     check(budget == design['contentBudget'], 'matching content budgets')

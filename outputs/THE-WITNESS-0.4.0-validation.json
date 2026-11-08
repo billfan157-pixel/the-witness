@@ -1,0 +1,162 @@
+{
+  "release": "0.4.0",
+  "designEdition": "3.2",
+  "date": "2026-11-08",
+  "build": {
+    "release": "0.4.0",
+    "design": "3.2",
+    "contractVersion": "3.0",
+    "revision": "fff2638731d8",
+    "bridgeQuests": 12,
+    "requiredLegends": [
+      "L01",
+      "L02",
+      "L04"
+    ],
+    "legends": 5,
+    "coreBeats": 16,
+    "veils": 4,
+    "relationshipQuests": 6,
+    "rpgSkills": 4,
+    "witnessTenets": 3,
+    "dualTierPersona": true,
+    "depthEncounters": 25,
+    "depthOwners": 21,
+    "depthMechanicFamilies": 7,
+    "productionDurationTargetMet": false,
+    "expertReview": "unassigned"
+  },
+  "modelChecks": 85,
+  "designAssertions": 534,
+  "reports": {
+    "baselineBrowser": {
+      "status": "passed",
+      "errors": [],
+      "checks": [
+        "WebGL 2 boot",
+        "desktop title layout",
+        "new character and chapter entry",
+        "keyboard movement",
+        "objective compass points at the current task",
+        "walk to physical target",
+        "interactive preparation puzzle with three-step hints",
+        "persistent checkpoint reload",
+        "mobile title/dialog/game layout",
+        "Q02 redaction rejects identifiers then accepts safe copy",
+        "Q02 physical escort arrives before handoff commit",
+        "left-behind trace is readable in the world",
+        "sense reveals a nearby trace",
+        "Jeremiah scene loads and skip preserves evidence",
+        "Jerusalem region loads",
+        "final chapter loads",
+        "all three practice profiles start and stop without evidence rewards",
+        "touch joystick moves player",
+        "service-worker offline reload resumes campaign",
+        "self-contained file opens with embedded assets"
+      ]
+    },
+    "spineBrowser": {
+      "release": "0.4.0",
+      "status": "passed",
+      "checks": [
+        "Exit from summary keeps the required gate closed",
+        "L01 summary delivers all core beats before ending commit",
+        "L02 summary delivers all core beats before ending commit",
+        "L04 summary delivers all core beats before ending commit",
+        "L01 physical alternative route, work and source beats complete",
+        "L02 physical alternative route, work and source beats complete",
+        "L04 physical alternative route, work and source beats complete",
+        "Mobile summary fits screen and reload resumes exact page",
+        "Format switch resumes first missing source beat"
+      ],
+      "errors": [],
+      "scope": "Browser UI and WebGL with scripted input; no human playtest"
+    },
+    "depthBrowser": {
+      "status": "passed",
+      "checks": [
+        "Preparation accepts a non-template order, rejects empty work and restores a closed draft",
+        "Connected alternative cart route records its actual branch",
+        "Allocation selects persist through rerender and satisfy distinct roles",
+        "Mobile ledger rejects a conserved but misclassified total then accepts the distinct amounts",
+        "Mobile inference uses labelled status and source controls without conflating B06 with G17",
+        "Low reserve stock changes the live allocation and hands off exactly one actual portion",
+        "Release UI refuses a public name under private consent and keeps facts and father responsibility",
+        "An interpretive dream accepts an empty arrangement without granting evidence",
+        "Third hint prepares an assisted plan but completion remains an explicit action",
+        "Standalone HTML embeds all depth rules and workshop renderer"
+      ],
+      "errors": []
+    },
+    "documentReader": {
+      "version": "3.2",
+      "status": "passed",
+      "scope": "document-reader-and-pitch-only; not gameplay",
+      "checks": [
+        "20 documents render",
+        "all internal anchors resolve",
+        "no desktop page overflow",
+        "accent-insensitive search filters documents",
+        "navigation resets search and scrolls to correct document",
+        "three required-Legend selector targets open correctly",
+        "six source/world packet anchors resolve",
+        "12-bridge selector opens correct dossier",
+        "all three packaged JSON links resolve",
+        "no mobile page overflow on cover, bridge, Legend and four depth chapters",
+        "navigation recovers from no-match search",
+        "pitch fits one A4 CSS page and all links resolve",
+        "pitch fits mobile",
+        "no JavaScript exceptions"
+      ],
+      "pitchA4": {
+        "width": 793.6875,
+        "height": 1122.515625,
+        "scroll": 1123,
+        "client": 1123,
+        "contentBottom": 976.234375,
+        "links": [
+          "THE-WITNESS-Design-Compendium.html#chapter-02",
+          "THE-WITNESS-Design-Compendium.html#chapter-14",
+          "THE-WITNESS-Design-Compendium.html#chapter-06"
+        ]
+      },
+      "viewportDesktop": [
+        1440,
+        1000
+      ],
+      "viewportMobile": [
+        390,
+        844
+      ]
+    },
+    "designContracts": {
+      "version": "3.0",
+      "status": "passed",
+      "scope": "design-data-and-policy-model-only; not runtime, expert review or human playtest",
+      "assertions": 534,
+      "completeMixedFormatBridgePaths": 320,
+      "requiredLegends": [
+        "L01",
+        "L02",
+        "L04"
+      ],
+      "coreBeats": 16,
+      "sourceWorldPackets": 6,
+      "reviewerSlots": 7,
+      "assignedReviewers": 0,
+      "checks": [
+        "three required Legends, one per act, stable Q/L IDs and scope",
+        "summary parity, unfinished exits, null reflection and cross-layer write constraints",
+        "16 core beats mapped in order to scenes and summary pages; level routes, packets and gates resolve",
+        "all duration sums: 216/720=30%, optional-free and summary routes reported separately",
+        "design model: all 320 bridge-route/mixed-format complete paths; partial, out-of-order, replay, revision and prerequisite failures",
+        "finale requires all current cores; legacy status cannot bypass; seven reviewer slots explicitly unassigned",
+        "90-minute slice/71-minute summary targets, excerpt isolation and planned unrun study",
+        "active docs remove blanket skip and include all three depth dossiers and six packets"
+      ]
+    }
+  },
+  "humanPlaytest": "not yet run",
+  "expertReview": "unassigned",
+  "publication": "tracked separately through native Sites deployment result"
+}

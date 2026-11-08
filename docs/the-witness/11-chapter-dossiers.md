@@ -1,6 +1,6 @@
 # 11 • Hồ sơ chiều sâu 12 cầu nối Mortal
 
-**V3:** các Q dưới đây là cầu nối; ngân sách 26–40 phút/Q theo campaign-contract thay dự toán v2. Giữ route/callback, rút độ dài thao tác và dùng cảnh chung. Ba Legend trục có hồ sơ tương đương riêng ở [hồ sơ 14](14-legends-depth-dossiers.md). Cổng nguồn sau Q03/Q06/Q10 là điều kiện trước Q04/Q07/Q11, không thể bỏ trắng; chơi hoặc tóm tắt đủ beat đều hợp lệ. Các scene dưới đây là thiết kế, chưa triển khai v3.
+**V3:** các Q dưới đây là cầu nối; ngân sách 26–40 phút/Q theo campaign-contract thay dự toán v2. Giữ route/callback, rút độ dài thao tác và dùng cảnh chung. Ba Legend trục có hồ sơ tương đương riêng ở [hồ sơ 14](14-legends-depth-dossiers.md). Cổng nguồn sau Q03/Q06/Q10 là điều kiện trước Q04/Q07/Q11, không thể bỏ trắng; chơi hoặc tóm tắt đủ beat đều hợp lệ. Scene đầy đủ vẫn là thiết kế; prototype 0.2.0 đã nối core/gate v3, chưa đạt toàn bộ dàn cảnh và phút mục tiêu.
 
 **Revision 3.0 • 07/11/2026 • Thiết kế để dựng thử, chưa phải nội dung đã chơi được.** Toàn bộ Q01–Q12, địa điểm nhỏ và lời thoại ở đây là sáng tác [H]. Những chương L/V dùng ranh giới ở hồ sơ 08. Đây là nguồn chi tiết cho cấu trúc cảnh của các Q; hồ sơ 06 giữ vai trò chỉ mục. Sự thật vụ hàng và quy tắc truyền tin ở [hồ sơ continuity](12-continuity-and-state.md) kiểm soát điều một cảnh được phép tiết lộ.
 

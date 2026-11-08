@@ -1,7 +1,7 @@
 {
   "documentVersion": "3.0",
   "status": "design-specification-not-playable-runtime",
-  "campaignId": "the-witness-legacy",
+  "campaignId": "the-witness-spine-v3",
   "campaignCatalog": "campaign-contract.json",
   "saveSchemaVersion": 2,
   "contentBudget": {
@@ -184,7 +184,7 @@
   ],
   "designProgressionSchemaVersion": 2,
   "runtimeCompatibility": {
-    "implementedInRuntime": false,
+    "implementedInRuntime": true,
     "legacyRuntimeVersion": "0.1.0",
     "legacyDocumentVersion": "2.0",
     "legacySaveSchemaVersion": 1,
@@ -203,7 +203,19 @@
       "veil.completed",
       "campaign.finished"
     ],
-    "advancedSavePolicy": "review each missing core in act order at safe checkpoint; no rollback of Mortal actions; no v3 finale until all three are committed"
+    "advancedSavePolicy": "review each missing core in act order at safe checkpoint; no rollback of Mortal actions; no v3 finale until all three are committed",
+    "implementationRelease": "0.2.0",
+    "fullProductionScopeImplemented": false,
+    "productionDurationTargetsMet": false,
+    "browserValidation": "passed-core-and-campaign-suites",
+    "implementedScope": [
+      "required-core-gates",
+      "16-source-beats",
+      "interactive-and-summary",
+      "format-switch-and-resume",
+      "legacy-save-migration",
+      "exploration-prototype"
+    ]
   },
   "narrativeSpine": {
     "catalog": "campaign-contract.json",

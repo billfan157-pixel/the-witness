@@ -49,11 +49,14 @@ Ví dụ chấp nhận: người chơi trong giấc mơ thấy cái cân không 
 - Không quy trách nhiệm tập thể cho người Do Thái; không miêu tả đạo Do Thái chỉ như phông nền tiêu cực để Kitô giáo xuất hiện [G; nền S03]. Vai trò của một nhóm trong một cảnh phải đọc đúng văn cảnh và qua thẩm định.
 - Không đồng nhất tổn thương tâm lý, khuyết tật hoặc bệnh tật với quỷ nhập. Cảnh biểu tượng phải tránh ngôn ngữ khiến người chơi hiểu như chẩn đoán đời thật.
 
-## 6. Quyền dịch thuật, trích dẫn và hiển thị
+## 6. Quyền dịch thuật, trích dẫn và Chuẩn văn phong tiếng Việt
 
-Nghiên cứu dùng trang USCCB và Vatican theo các link hồ sơ 10; các trang và bản dịch có điều kiện quyền riêng. Quyền đọc để nghiên cứu không tự cho quyền đưa cả bản dịch vào game. Chưa chọn bản tiếng Việt phát hành. Trước script lock cần chọn bản dịch, xin/kiểm tra quyền sử dụng cụ thể, ghi attribution và giới hạn trích dẫn theo điều khoản thực tế. Đây là đầu việc quản lý nội dung, không phải kết luận pháp lý về quyền đã có.
-
-V1 không chép dài bản văn. Lời thoại diễn ý do dự án viết phải ghi “diễn ý”, không đặt dưới nhãn “nguyên văn Kinh Thánh”. Mọi câu dự định dùng như trích dẫn cần trường `translation`, `verseRange`, `exactText`, `permissionStatus`, `reviewer`, `revision`. Số chương/câu của một số sách có thể khác giữa truyền thống/bản dịch; hệ thống phải hỗ trợ alias và mã pericope, không chỉ nối chuỗi URL.
+Nghiên cứu sử dụng bản văn USCCB (NABRE) và Vatican cho đối chiếu quốc tế; đối với bản phát hành tiếng Việt đầu tiên, dự án định hướng **chọn bản dịch của Nhóm Phiên Dịch Các Giờ Kinh Phụng Vụ (CGKPV)** làm chuẩn mực văn học và phụng vụ chính thức (cần tiến hành thủ tục xin phép bản quyền trước khi khóa kịch bản thu âm / script lock):
+- **Chuẩn văn học CGKPV:** Là bản dịch Kinh Thánh Công giáo phổ biến, chuẩn mực và giàu chất văn học nhất tại Việt Nam hiện nay, sở hữu hệ thống danh xưng trang trọng và chính xác (*Đức Chúa – Tôi tớ; Thầy – Anh/Con*).
+- **Thủ tục pháp lý & Phân định trích dẫn:**
+  * Mọi đoạn trích nguyên văn phải có trường metadata: `translation: "CGKPV"`, `verseRange`, `exactText`, `permissionStatus`, `reviewer: R04`.
+  * Các phân đoạn lời dẫn, đối thoại của nhân vật hư cấu hoặc diễn ý bối cảnh phải được gắn nhãn minh bạch là "Lời diễn ý nghệ thuật [H]", tách bạch hoàn toàn khỏi bản văn trích dẫn [K].
+  * Hệ thống hỗ trợ tra cứu song ngữ và mã hóa pericope bền vững theo chuẩn thần học quốc tế.
 
 ## 7. Mẫu hồ sơ scene để duyệt
 
