@@ -1,0 +1,15 @@
+{
+  "release": "0.6.0",
+  "siteVersion": 4,
+  "status": "succeeded",
+  "projectId": "appgprj_6aef3449e4008191bbe1a03326a7967e",
+  "commit": "3e6791be953f0690c0dfb5fb975f6433c8bb7a36",
+  "buildRevision": "8f5197e4828d",
+  "deploymentId": "appgdep_6af14ff1d5388191ab3543dbf5935223",
+  "deployedAtUTC": "2026-11-09T04:46:01.774053+00:00",
+  "url": "https://chung-nhan-di-san-giao-uoc.hh8873851.chatgpt.site",
+  "releaseCheckout": "C:\\hanh-trinh-loi-chua\\the-witness-release-060-20261109\\.sites-checkout",
+  "included": ["first-person camera and input", "tree and grass detail", "terrain-aligned houses and scene collisions", "build and offline cache updates"],
+  "audio": "Existing production audio preserved byte-for-byte; unfinished sampled audio and voice library excluded. Original development workspace retains that work.",
+  "validation": {"modelTests": "passed", "build": "passed", "firstPersonBrowser": "passed", "mobileLayoutAndResume": "passed", "fieldSpotChecks": "passed: cart distance/preparation/resume/handoff, paper flap and light, alternate walked route, mobile tail-lamp allocation", "fullBrowserSuite": "stalled during Q02; not certified", "supplementalCraftSuite": "stopped after completed spot checks; remaining full gallery not certified"}
+}

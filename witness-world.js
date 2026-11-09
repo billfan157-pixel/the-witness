@@ -1,8 +1,33 @@
 (function(root){
   'use strict';
-  const D=root.WitnessContent,M=root.WitnessModel;
+  const D=root.WitnessContent,M=root.WitnessModel,C=root.WitnessCraft;
   root.ExpeditionCampaign={bounds:{left:-39,right:39,far:-37,near:29}};
-  let context=null,current=null,decor=null,water=null,emberLight=null,reactive=[],animators=[];
+  let context=null,current=null,decor=null,water=null,emberLight=null,reactive=[],animators=[],placeSolids=[];
+
+  // Vết chân nhà theo vùng (khớp các lời gọi house() trong decorate): dùng để né tán cây/cỏ khi rải cảnh.
+  const HOUSES={
+    caesarea:[[-23,-13,9,7,5.2,'#cbb998',true],[-10,-21,8,6,4.5,'#c7b493'],[4,-22,10,5,5.2,'#d1c0a0',true],[27,-10,6,10,5.5,'#c4b292']],
+    galilee:[[-22,-11,7,6,3.6,'#b5ad8f'],[-11,-22,6,5,3.1,'#bfb99c'],[22,-17,8,5,3.4,'#a59e85',true]],
+    jerusalem:[[-24,-5,8,15,6,'#d2c1a1'],[27,-3,8,19,7,'#cbb999',true],[1,-24,22,6,6.8,'#d7c7a7']],
+    road:[[-24,-11,7,5,3,'#cbb795']]
+  };
+  function houseFootprints(region){
+    const pts=[];
+    for(const [x,z,w,d] of (HOUSES[region]||[])){
+      const r=Math.min(w,d)*.34;
+      const nx=Math.max(2,Math.ceil((w-2*r)/r)+1),nz=Math.max(2,Math.ceil((d-2*r)/r)+1);
+      for(let i=0;i<nx;i++)for(let j=0;j<nz;j++)
+        pts.push([x-w/2+r+(w-2*r)*(i/(nx-1)), z-d/2+r+(d-2*r)*(j/(nz-1))]);
+    }
+    return pts;
+  }
+  // Khối chắn cho cảnh dựng không phải điểm tương tác (nhà, cột, cần cẩu, hải đăng, kiện hàng, xe).
+  // Không đặt solids lên nút NPC/prop vì đó là đích đi tới của engine — chắn sẽ kẹt điều hướng.
+  function applySolids(objects){
+    for(const g of placeSolids)if(g.solids.length)
+      objects.push({id:g.id,at:[g.solids[0][0],g.solids[0][1]],kind:'craft-anchor',fixed:true,solids:g.solids});
+    return objects;
+  }
 
   const sky=root.AdventureVisuals.sky;
   root.AdventureVisuals.sky=function(T,scene,biome){
@@ -96,6 +121,11 @@
     L04:{role:'Người Phụ Lưới Hồ Galilê',era:'gospel',tunic:'#a69f84',mantle:'#62716b',item:'net',cloth:'linen',sleeve:.56},
     L05:{role:'Người Bạn Tù Tại Philipphê',era:'gospel',tunic:'#b2a48d',mantle:'#746a5a',item:null,cloth:'linen',sleeve:.66,cloak:'none'}
   };
+  for(const [id,spec]of Object.entries(WITNESS_LEGEND_GEAR))root.CharacterProfiles.profiles['craft-helper-'+id]={
+    ...root.CharacterProfiles.get('traveler'),id:'craft-helper-'+id,name:'Người cùng phần việc',kind:'fictional',era:spec.era,tunic:spec.tunic,mantle:spec.mantle,cloth:spec.cloth,item:null,ornament:'none',age:.31,
+    evidence:'Nhân vật phụ hư cấu, phục trang diễn giải theo packet của cảnh; không là nhân vật Kinh Thánh mới.'
+  };
+  root.CharacterProfiles.profiles['craft-apprentice']={...root.CharacterProfiles.get('traveler'),id:'craft-apprentice',name:'Người học việc',kind:'fictional',age:.19,beard:.006,item:null,tunic:'#aca181',mantle:'#758075',ornament:'none',evidence:'Người học việc hư cấu trong câu chuyện của Titus.'};
 
   root.AdventureCharacter.create=function(T,role,options={}){
     if(!options.appearance){
@@ -173,7 +203,7 @@
       nodes,
       mission:nodes,
       routes:[[start,...nodes],...nodes.map(at=>[[-2,0],at]),...(src?.steps||[]).filter(a=>a.routeAt).map(a=>Object.values(a.routeAt))],
-      decoys:[],
+      decoys:houseFootprints(d.region),
       title:d.name
     };
   }
@@ -245,7 +275,8 @@
       for(const a of active){
         targets.push({id:a.target,at:a.at,actor:a.target,name:a.title,range:3,main:a.kind!=='discovery',elevation:1.5,symbol:a.kind==='discovery'?'○':'◇'});
       }
-      return {objects,targets};
+      const objs=applySolids(objects);
+      return C?C.augment(s,{objects:objs,targets}):{objects:objs,targets};
     }
 
     for(const n of ch.nodes){
@@ -285,11 +316,12 @@
     if(s.pendingBond){objects.push({id:'bond-work',at:[-16,-4],kind:'prop',variant:'table'});targets.push({id:'bond-work',actor:'bond-work',at:[-16,-4],name:'Phần việc riêng đã nhận',range:2.8,elevation:1.2,symbol:'◇'});}
     if(s.flags.trainingSpawned){objects.push({id:'training',at:[-21,16],kind:'npc',variant:'man',appearance:'guard',fixed:true});targets.push({id:'training',actor:'training',at:[-21,16],name:'Người hướng dẫn sân gậy',range:2.9,elevation:2,symbol:'◇'});}
     if(ch.legend||ch.veil){const n=ch.nodes.find(n=>n.id==='rest');if(n){const t=targets.find(t=>t.id==='rest');if(t){t.name='Một khoảng dừng để lắng nghe';t.symbol='◇';}}}
-    return {objects,targets};
+    const objs=applySolids(objects);
+    return C?C.augment(s,{objects:objs,targets}):{objects:objs,targets};
   }
 
   function decorate(s){
-    if(!context)return;current=s;const {T,scene,biome}=context;water=null;emberLight=null;reactive=[];animators=[];
+    if(!context)return;current=s;const {T,scene,biome}=context;water=null;emberLight=null;reactive=[];animators=[];placeSolids=[];
     const AV=root.AdventureVisuals;
     const ground=scene.children.find(c=>c.isMesh&&c.geometry?.parameters?.width===156);
     const keepOutdoorSky=s.layer&&['L01','L04'].includes(s.layer.id);
@@ -313,6 +345,7 @@
     }
     const box=(c,x,y,z,w,h,d,kind='masonry',opts={})=>mesh(new T.BoxGeometry(w,h,d),c,x,y,z,kind,opts);
     const pole=(x,z,h=2,c='#6b5137',r=.09)=>mesh(new T.CylinderGeometry(r*.84,r,h,10),c,x,h/2,z,'wood');
+    const solidGroup=id=>{const g={id:'col-'+id,solids:[]};placeSolids.push(g);return (x,z,r)=>g.solids.push([x,z,r]);};
 
     let sparkTex=null;
     function sparkMap(){
@@ -380,35 +413,43 @@
     }
 
     function house(x,z,w=7,d=5,h=4,c='#cdb996',lit=false){
-      // Stepped ashlar foundation plinth
-      box('#9b8d75',x,.22,z,w+.42,.44,d+.42,'masonry');
-      // Main dressed stone walls & stringcourse cornice
-      box(c,x,h/2+.3,z,w,h,d,'masonry');
-      box('#a79476',x,h+.38,z,w+.42,.30,d+.42,'masonry');
-      box('#b5a385',x,h+.58,z,w+.12,.22,d+.12,'stone');
-      // Corner stone pilasters
-      for(const sx of [-1,1])for(const sz of [-1,1])box('#b2a082',x+sx*(w/2-.06),h/2+.3,z+sz*(d/2-.06),.36,h+.1,.36,'masonry');
-      // Projecting cedar roof beam joists along eaves
+      // Một cao độ nền duy nhất cho cả căn: mọi thành phần bám cùng mặt phẳng,
+      // tránh cửa/cửa sổ/mái lệch nhau khi nhà đặt trên sườn dốc.
+      const y0=height(x,z);
+      const addS=solidGroup('house'+x+','+z);
+      const r=Math.min(w,d)*.34;
+      const nx=Math.max(2,Math.ceil((w-2*r)/r)+1),nz=Math.max(2,Math.ceil((d-2*r)/r)+1);
+      for(let i=0;i<nx;i++)for(let j=0;j<nz;j++)
+        addS(x-w/2+r+(w-2*r)*(i/(nx-1)),z-d/2+r+(d-2*r)*(j/(nz-1)),r);
+      const hb=(col,dx,dy,dz,bw,bh,bd,kind='masonry',opts)=>{
+        const o=box(col,x+dx,dy,z+dz,bw,bh,bd,kind,opts);o.position.y=y0+dy;return o;
+      };
+      // Móng chìm sâu để nhà bám đất cả phía dốc lẫn phía thấp
+      hb('#9b8d75',0,-.31,0,w+.42,1.5,d+.42);
+      hb(c,0,h/2+.3,0,w,h,d);
+      hb('#a79476',0,h+.38,0,w+.42,.30,d+.42);
+      hb('#b5a385',0,h+.58,0,w+.12,.22,d+.12);
+      for(const sx of [-1,1])for(const sz of [-1,1])hb('#b2a082',sx*(w/2-.06),h/2+.3,sz*(d/2-.06),.36,h+.1,.36);
       const beams=Math.max(4,Math.round(w/1.4));
-      for(let i=0;i<beams;i++)box('#614833',x-w*.42+i*(w*.84/(beams-1)),h-.04,z+d/2+.16,.16,.24,.46,'wood');
-      // Recessed cedar door + dressed lintel & threshold steps
-      box('#918167',x,.15,z+d/2+.36,2.1,.28,.64,'stone');
-      box('#5a402a',x,1.16,z+d/2+.04,1.52,2.06,.12,'wood');
-      box('#a89373',x,2.28,z+d/2+.12,1.98,.26,.30,'masonry');
-      box('#9b7a43',x+.42,1.15,z+d/2+.12,.14,.14,.06,'bronze');
-      // Upper lattice windows (warm lantern glow on lit/dusk interiors)
+      for(let i=0;i<beams;i++)hb('#614833',-w*.42+i*(w*.84/(beams-1)),h-.04,d/2+.16,.16,.24,.46,'wood');
+      hb('#918167',0,.15,d/2+.36,2.1,.28,.64,'stone');
+      hb('#5a402a',0,1.16,d/2+.04,1.52,2.06,.12,'wood');
+      hb('#a89373',0,2.28,d/2+.12,1.98,.26,.30);
+      hb('#9b7a43',.42,1.15,d/2+.12,.14,.14,.06,'bronze');
       for(const dx of [-w*.31,w*.31]){
-        if(lit)box('#ffbe6a',x+dx,2.45,z+d/2+.04,.64,.86,.08,'linen',{emissive:'#f59a38',emissiveIntensity:1.55,noSurface:true});
-        else box('#473f35',x+dx,2.45,z+d/2+.04,.64,.86,.08,'wood');
-        box('#73583c',x+dx,2.45,z+d/2+.10,.72,.10,.10,'wood');
-        box('#73583c',x+dx,2.45,z+d/2+.10,.09,.88,.10,'wood');
+        if(lit)hb('#ffbe6a',dx,2.45,d/2+.04,.64,.86,.08,'linen',{emissive:'#f59a38',emissiveIntensity:1.55,noSurface:true});
+        else hb('#473f35',dx,2.45,d/2+.04,.64,.86,.08,'wood');
+        hb('#73583c',dx,2.45,d/2+.10,.72,.10,.10,'wood');
+        hb('#73583c',dx,2.45,d/2+.10,.09,.88,.10,'wood');
       }
     }
 
     function colonnade(x1,x2,z,h=4.6,cols=5,c='#c7b694'){
       const span=x2-x1;
+      const addS=solidGroup('colonnade'+x1+','+z);
       for(let i=0;i<cols;i++){
         const cx=cols===1?x1:x1+span*(i/(cols-1));
+        addS(cx,z,.55);
         box('#a8997c',cx,.16,z,.94,.32,.94,'masonry');
         mesh(new T.CylinderGeometry(.30,.36,h-.6,16),c,cx,h/2+.12,z,'masonry');
         box('#b5a385',cx,h-.05,z,.88,.24,.88,'masonry');
@@ -459,6 +500,7 @@
     }
 
     function cart(x,z,tilted=false){
+      solidGroup('cart'+x+','+z)(x,z,1.3);
       const grp=new T.Group();grp.position.set(x,height(x,z),z);grp.userData.reactive=true;
       const body=new T.Mesh(new T.BoxGeometry(2.4,.42,1.52),mat('#7e6040','wood'));body.position.y=.72;body.castShadow=true;body.receiveShadow=true;grp.add(body);
       for(const dx of [-1.0,.0,1.0])for(const side of [-.8,.8]){
@@ -546,6 +588,7 @@
     }
 
     function caesareaLighthouse(x,z){
+      solidGroup('lighthouse'+x+','+z)(x,z,3.1);
       box('#8c7f67',x,.6,z,6.2,1.2,6.2,'masonry');
       box('#a5977b',x,3.8,z,4.8,5.4,4.8,'masonry');
       mesh(new T.CylinderGeometry(1.75,2.15,5.5,8),'#baab8d',x,9.2,z,'masonry');
@@ -702,11 +745,13 @@
       cloth(6,10,6,'#b69b72');cloth(-6,9,4.5,'#8e9c91');
       for(let i=0;i<6;i++){box('#927554',12+i*2,.25,-24,1.9,.36,8,'wood');pole(12+i*2,-21,1.4);}
       // Roman polyspastos treadwheel harbor crane
+      solidGroup('crane')(9,-19,.45);
       pole(9,-19,5.8,'#5e462f',.13);
       const wheel=mesh(new T.TorusGeometry(1.1,.08,8,20),'#6e5237',9.3,1.8,-19,'wood');wheel.rotation.y=Math.PI/2;
       const jib=box('#73563a',9,5.3,-21.4,.24,.24,5.6,'wood');jib.rotation.x=-.35;jib.userData.reactive=true;
       boat(18,-31,1.15,true);boat(-1,-32,.75,false);
-      for(let i=0;i<5;i++){box('#9c805a',-24+i*1.2,.5,2,1,1,.9,'wood');jar(19+i*.7,-14,.82);}
+      const cargoS=solidGroup('cargo');
+      for(let i=0;i<5;i++){box('#9c805a',-24+i*1.2,.5,2,1,1,.9,'wood');cargoS(-24+i*1.2,2,.7);jar(19+i*.7,-14,.82);}
       caesareaLighthouse(27,-30);
       lamp(-6,7);lamp(16,6);
     }else if(desc.region==='galilee'){
@@ -740,7 +785,7 @@
     if(!s.layer){
       if(s.flags.bridge)box('#8f724d',-2,.14,-1,4,.24,1.9,'wood');
       if(s.quests.Q04.route==='tools'){box('#8c7049',9,.4,10,2,.7,.7,'wood');pole(10,10,1.4);}
-      if(M.chapter(s).id==='Q01'){
+      if(M.chapter(s).id==='Q01'&&!root.WitnessCraftRenderer){
         pole(-11.4,5.5,2.5);pole(-8.6,5.5,2.5);box('#6f5136',-10,2.5,5.5,3,.18,.22,'wood');
         const hanging=box('#9d7954',-10,1.2,5.7,2,.9,1.1,'wood');hanging.userData.reactive=true;
         const apply=next=>{hanging.rotation.z=next.quests.Q01.done.includes('brace')?0:.18;};
@@ -770,12 +815,31 @@
       const m=new T.Mesh(merged,batch.material);m.castShadow=batch.cast;m.receiveShadow=true;decor.add(m);
       for(const g of batch.geometries)g.dispose();
     }
+    if(root.WitnessCraftRenderer){
+      const crafted=root.WitnessCraftRenderer.create({T,scene,height});crafted.update(s);
+      reactive.push(next=>crafted.update(next));animators.push(time=>crafted.tick(time));
+    }
   }
 
   function makeController(engine,callbacks){
-    const held=new Set();let enabled=false,last=0,touch=null,sprintLatched=false,padPrevious=[],frame=0;
+    const held=new Set();let enabled=false,last=0,touch=null,sprintLatched=false,padPrevious=[],frame=0,prevPos=null,lastDir=null;
     const stick=document.getElementById('stick'),world=document.getElementById('world');
     const DEADZONE=10,LEASH=64;
+
+    // Chặn đi thủ công xuyên người/đồ vật nhỏ: chỉ dự báo bước kế tiếp từ hướng di chuyển
+    // thực tế, không đụng engine.walk tự động (input=0 khi đang dẫn đường).
+    function manualBlocked(nx,nz){
+      if(!current)return false;
+      const ch=M.chapter(current);
+      for(const nd of ch.nodes){
+        if(nd.model==='gate')continue;
+        const r=nd.person?.45:.6;
+        const at=nd.person?(engine.locate?.(nd.id)||nd.at):nd.at;
+        if((nx-at[0])**2+(nz-at[1])**2<r*r)return true;
+      }
+      if(ch.companion&&!ch.nodes.some(nd=>nd.person===ch.companion)&& (nx+23)**2+(nz-4)**2<.45*.45)return true;
+      return false;
+    }
 
     function motion(time){
       frame=requestAnimationFrame(motion);
@@ -804,6 +868,9 @@
         x=x||dpadX||dz(p.axes[0]||0);
         y=y||dpadY||-dz(p.axes[1]||0);
         turn+=dz(p.axes[2]||0);
+        const lookY=dz(p.axes[3]||0);
+        if(lookY)engine.pitch(-lookY*dt*1.6);
+        if(btn[11]&&!padPrevious[11])callbacks.view?.();
         if(btn[0]&&!padPrevious[0])callbacks.interact();
         if(btn[3]&&!padPrevious[3])callbacks.journal();
         if(btn[5]&&!padPrevious[5])callbacks.guide();
@@ -816,6 +883,20 @@
       }
       const n=Math.hypot(x,y);if(n>1){x/=n;y/=n;}
       if(n===0&&current?.settings?.sprintToggle)sprintLatched=false;
+      const pos=engine.at?.();
+      if(pos){
+        if(prevPos){
+          const mx=pos[0]-prevPos[0],mz=pos[1]-prevPos[1],ml=Math.hypot(mx,mz);
+          if(ml>1e-5)lastDir=[mx/ml,mz/ml];
+        }
+        if(prevPos&&(x||y)&&lastDir&&manualBlocked(pos[0]+lastDir[0]*.16,pos[1]+lastDir[1]*.16)){
+          const tx=-lastDir[1],tz=lastDir[0];
+          if(!manualBlocked(pos[0]+tx*.16,pos[1]+tz*.16)){const dot=x*tx+y*tz;x=tx*dot;y=tz*dot;}
+          else if(!manualBlocked(pos[0]-tx*.16,pos[1]-tz*.16)){const dot=x*(-tx)+y*(-tz);x=-tx*dot;y=-tz*dot;}
+          else{x=0;y=0;}
+        }
+        prevPos=pos;
+      }
       engine.controls(x,y,run);
       if(turn)engine.rotate(turn*dt*1.75);
     }
@@ -833,6 +914,7 @@
       if(key==='f')callbacks.guide();
       if(key==='z'&&callbacks.focus)callbacks.focus();
       if(key==='c')engine.recenter();
+      if(key==='v')callbacks.view?.();
       if(key==='Escape')callbacks.pause();
       if(key===' ')engine.action('dodge');
       if(key==='k')engine.action('strike');

@@ -267,18 +267,23 @@
   const surfaceColor = {
     earth: `
       vec2 p = vSurface.xz;
-      float macro = fbmNoise(p * .22);
+      float macro = fbmNoise(p * .16);
+      float micro = grainNoise(p * 3.6);
+      float detail = fbmNoise(p * 1.1 + vec2(macro * 1.4, -macro * 1.1));
+      float surfRelief = macro * .38 + detail * .45 + micro * .17;
       float damp = 1. - smoothstep(-.25, .45, vSurface.y);
-      float surfRelief = macro * .45;
-      diffuseColor.rgb *= mix(.82, 1.14, macro);
+      diffuseColor.rgb *= mix(.84, 1.16, surfRelief);
       diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * .72, damp * .35);`,
     stone: `
       vec2 p = vSurface.xz + vec2(vSurface.y * .73, vSurface.y * 1.48);
       float strata = fbmNoise(p * 1.8);
-      float groundAO = smoothstep(-.05, .42, vSurface.y);
+      float groundAO = smoothstep(-.15, .52, vSurface.y);
+      float dustNoise = grainNoise(vSurface.xz * 2.2);
+      float groundDust = (1. - smoothstep(0., .42 + dustNoise * .15, vSurface.y)) * .52;
+      vec3 dustColor = vec3(.76, .69, .55);
       float surfRelief = strata * .60;
       diffuseColor.rgb *= mix(.82, 1.15, strata);
-      diffuseColor.rgb *= mix(.82, 1., groundAO);`,
+      diffuseColor.rgb = mix(diffuseColor.rgb * mix(.78, 1., groundAO), dustColor, groundDust);`,
     masonry: `
       vec3 gdx = dFdx(vSurface);
       vec3 gdy = dFdy(vSurface);
@@ -291,16 +296,24 @@
       float mortar = max(smoothstep(.43, .498, seam.x), smoothstep(.41, .498, seam.y));
       float chisel = fbmNoise(p * 2.8);
       float blockVar = grainHash(floor(block));
-      float aoBase = smoothstep(0., .58, vSurface.y);
+      float aoBase = smoothstep(-.12, .56, vSurface.y);
+      float dustNoiseM = grainNoise(vSurface.xz * 2.4);
+      float groundDustM = (1. - smoothstep(0., .38 + dustNoiseM * .12, vSurface.y)) * .48;
+      vec3 dustColorM = vec3(.77, .71, .58);
       float surfRelief = (1. - mortar) * (.50 + chisel * .50);
       diffuseColor.rgb *= mix(.82 + chisel * .18 + blockVar * .14, .64 + chisel * .12, mortar * .65);
-      diffuseColor.rgb *= mix(.82, 1., aoBase);`,
+      diffuseColor.rgb = mix(diffuseColor.rgb * mix(.78, 1., aoBase), dustColorM, groundDustM);`,
     bark: `
       vec2 p = vec2(vSurface.x + vSurface.z * 1.35, vSurface.y);
-      float furrows = fbmNoise(p * vec2(16., 1.8));
+      float furrows = fbmNoise(p * vec2(15., 1.7));
+      float ridge = smoothstep(.40, .80, fbmNoise(p * vec2(26., 2.4)));
+      float crack = smoothstep(.60, .72, fbmNoise(p * vec2(34., 3.2)));
       float rings = grainNoise(p * vec2(8., 4.5));
-      float surfRelief = furrows * .70 + rings * .30;
-      diffuseColor.rgb *= mix(.72, 1.18, furrows);`,
+      float surfRelief = furrows * .50 + ridge * .35 + rings * .15 - crack * .30;
+      diffuseColor.rgb *= mix(.60, 1.24, furrows);
+      diffuseColor.rgb *= mix(1., .66, crack * .55);
+      float moss = smoothstep(.55, .85, furrows) * smoothstep(.40, .70, grainNoise(p * vec2(5., 2.5)));
+      diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(.70, .84, .60), moss * .45);`,
     wood: `
       vec3 wdx = dFdx(vSurface);
       vec3 wdy = dFdy(vSurface);
@@ -351,13 +364,19 @@
 
   const surfaceRim = {
     linen: `
-      vec3 cV = normalize(vEyeDir);
-      float cRim = 1. - max(0., dot(normal, cV));
-      diffuseColor.rgb += diffuseColor.rgb * pow(cRim, 3.2) * .12;`,
+      vec3 lV = normalize(vEyeDir);
+      float lNdotV = clamp(dot(normal, lV), 0.001, 1.0);
+      float lSinTheta = sqrt(max(0.0, 1.0 - lNdotV * lNdotV));
+      float charlieLinen = pow(lSinTheta, 3.4) * 0.159;
+      vec3 sheenTintLinen = mix(diffuseColor.rgb, vec3(0.96, 0.92, 0.85), 0.45);
+      diffuseColor.rgb += sheenTintLinen * charlieLinen * 0.52;`,
     wool: `
       vec3 wV = normalize(vEyeDir);
-      float wRim = 1. - max(0., dot(normal, wV));
-      diffuseColor.rgb += vec3(.14, .13, .11) * pow(wRim, 2.6) * .20;`,
+      float wNdotV = clamp(dot(normal, wV), 0.001, 1.0);
+      float wSinTheta = sqrt(max(0.0, 1.0 - wNdotV * wNdotV));
+      float charlieWool = pow(wSinTheta, 2.6) * 0.159;
+      vec3 sheenTintWool = mix(diffuseColor.rgb, vec3(0.88, 0.84, 0.78), 0.55);
+      diffuseColor.rgb += sheenTintWool * charlieWool * 0.68;`,
     skin: `
       vec3 sV = normalize(vEyeDir);
       float sRim = 1. - max(0., dot(normal, sV));
@@ -365,7 +384,7 @@
   };
 
   const bumpStrength = {
-    earth: .006, stone: .012, masonry: .016, bark: .018, wood: .006, terracotta: .006, bronze: .006, linen: .002, wool: .003, skin: 0.0
+    earth: .006, stone: .012, masonry: .016, bark: .030, wood: .006, terracotta: .006, bronze: .006, linen: .002, wool: .003, skin: 0.0
   };
 
   function surface(material, kind, local = false, extra = null) {
@@ -437,52 +456,118 @@
   }
 
   function treeTrunk(T) {
-    const geometry = new T.CylinderGeometry(.27, .60, 1, 12, 8);
+    const geometry = new T.CylinderGeometry(.24, .62, 1, 14, 10);
     const points = geometry.attributes.position;
     for (let i = 0; i < points.count; i++) {
       const x = points.getX(i), y = points.getY(i), z = points.getZ(i);
       const angle = Math.atan2(z, x);
-      const rootFlare = y < -.2 ? Math.pow((-.2 - y) / .3, 1.5) * (.18 + .14 * Math.cos(angle * 4)) : 0;
-      const twist = Math.sin(y * 3.9 + x * 6.1 + z * 5.2) * .11;
-      points.setXYZ(i, x * (1 + rootFlare) + twist + (y + .5) * .48, y, z * (1 + rootFlare) - y * .22);
+      const rootFlare = y < -.22 ? Math.pow((-.22 - y) / .28, 1.35) * (.26 + .20 * Math.cos(angle * 5)) : 0;
+      const knot = .05 * Math.sin(y * 9 + angle * 3) + .035 * Math.sin(y * 17 + angle * 7);
+      const twist = Math.sin(y * 3.9 + x * 6.1 + z * 5.2) * .09;
+      const leanX = (y + .5) * .44 + .09 * Math.sin(y * 4.5);
+      const leanZ = -y * .20 + .05 * Math.cos(y * 3.7);
+      const girth = 1 + rootFlare + knot;
+      points.setXYZ(i, x * girth + twist + leanX, y, z * girth + leanZ);
     }
     geometry.computeVertexNormals();
     return geometry;
   }
 
+  // Tán lá nhiều tầng: lá thật có gân gấp, cụm lá vỏ ngoài + lõi tối bên trong,
+  // silhouette bất đối xứng và cành tối tạo chiều sâu. Kèm aFlex/aPhase cho gió phân cấp.
   function canopy(T, seed) {
     const random = randomFrom(seed);
-    const vertices = [];
-    const colors = [];
-    const indices = [];
-    const count = 216;
-    for (let i = 0; i < count; i++) {
-      const angle = i * 2.39996;
-      const latitude = 2 * (i + .5) / count - 1;
-      const radius = Math.sqrt(1 - latitude * latitude) * (.48 + random() * .48);
-      const x = Math.sin(angle) * radius;
-      const z = Math.cos(angle) * radius;
-      const y = latitude * (.55 + random() * .43);
-      const ao = .42 + (latitude + 1) * .20 + radius * .18;
-      const shade = ao + random() * .26;
-      for (let leaf = 0; leaf < 2; leaf++) {
-        const direction = angle + leaf * 1.58 + random() * .5;
-        const length = .065 + random() * .155;
-        const dx = Math.cos(direction) * length, dz = Math.sin(direction) * length;
-        const bend = random() * .30 - .15;
-        const start = vertices.length / 3;
-        vertices.push(x - dx, y - bend, z - dz, x + dz * .34, y, z - dx * .34,
-          x + dx, y + bend, z + dz, x - dz * .34, y, z + dx * .34, x, y + .028, z);
-        for (let vertex = 0; vertex < 5; vertex++) colors.push(shade * .89, shade, shade * .78);
-        indices.push(start, start + 1, start + 4, start + 1, start + 2, start + 4,
-          start + 2, start + 3, start + 4, start + 3, start, start + 4);
+    const vertices = [], colors = [], indices = [], flex = [], phase = [];
+    const lobeSeed = random() * 6.283;
+
+    function leaf(cx, cy, cz, ax, ay, az, nx, ny, nz, length, width, cr, cg, cb, ph, fold) {
+      let al = Math.hypot(ax, ay, az) || 1; ax /= al; ay /= al; az /= al;
+      let nl = Math.hypot(nx, ny, nz) || 1; nx /= nl; ny /= nl; nz /= nl;
+      let sx = ny * az - nz * ay, sy = nz * ax - nx * az, sz = nx * ay - ny * ax;
+      const sl = Math.hypot(sx, sy, sz) || 1; sx /= sl; sy /= sl; sz /= sl;
+      const mx = ay * sz - az * sy, my = az * sx - ax * sz, mz = ax * sy - ay * sx;
+      const L = length, W = width, b = vertices.length / 3;
+      vertices.push(
+        cx, cy, cz,
+        cx + ax * L * .42 + sx * W * .5 + mx * fold, cy + ay * L * .42 + sy * W * .5 + my * fold, cz + az * L * .42 + sz * W * .5 + mz * fold,
+        cx + ax * L + mx * fold * .4, cy + ay * L - L * .16 + my * fold * .4, cz + az * L + mz * fold * .4,
+        cx + ax * L * .42 - sx * W * .5 + mx * fold, cy + ay * L * .42 - sy * W * .5 + my * fold, cz + az * L * .42 - sz * W * .5 + mz * fold,
+        cx + ax * L * .45 + mx * fold * 1.6, cy + ay * L * .45 + my * fold * 1.6, cz + az * L * .45 + mz * fold * 1.6);
+      const f = [0, .45, 1, .45, .5];
+      for (let k = 0; k < 5; k++) {
+        const tip = 1 + f[k] * .10;
+        colors.push(cr * tip, cg * tip, cb * tip);
+        flex.push(f[k]); phase.push(ph);
       }
+      indices.push(b, b + 1, b + 4, b + 1, b + 2, b + 4, b + 2, b + 3, b + 4, b + 3, b, b + 4);
+    }
+
+    function tangent(rx, ry, rz) {
+      const tx = ry * (random() - .5) - rz * (random() - .5);
+      const ty = rz * (random() - .5) - rx * (random() - .5);
+      const tz = rx * (random() - .5) - ry * (random() - .5);
+      const tl = Math.hypot(tx, ty, tz) || 1;
+      return [tx / tl, ty / tl, tz / tl];
+    }
+
+    const clusters = 140;
+    for (let i = 0; i < clusters; i++) {
+      const theta = i * 2.39996 + random() * .2;
+      const y = 1 - 2 * (i + .5) / clusters;
+      const shell = Math.sqrt(Math.max(0, 1 - y * y));
+      const lobe = 1 + .14 * Math.sin(theta * 3 + lobeSeed) + .08 * Math.sin(theta * 5 + y * 3);
+      const inward = random() < .18 ? .55 : 1;
+      const cx = Math.cos(theta) * shell * lobe * .95 * inward;
+      const cz = Math.sin(theta) * shell * lobe * .95 * inward;
+      const cy = y * .80 * inward + .06;
+      let rx = cx, ry = cy * 1.15 + .15, rz = cz;
+      const rl = Math.hypot(rx, ry, rz) || 1; rx /= rl; ry /= rl; rz /= rl;
+      const droop = Math.max(0, -y) * .6;
+      const sun = Math.min(1, Math.max(0, .45 + y * .45 + (inward === 1 ? .2 : -.35) + random() * .15));
+      const shade = .55 + sun * .75;
+      const cr = shade * (.85 + sun * .25), cg = shade * (1.0 + sun * .25), cb = shade * (.95 - sun * .25);
+      const ph = random();
+      for (let l = 0; l < 3; l++) {
+        const t = tangent(rx, ry, rz);
+        const ax = t[0] * .8 + rx * .18, ay = t[1] * .8 - droop + ry * .18, az = t[2] * .8 + rz * .18;
+        const length = .16 + random() * .12;
+        leaf(cx, cy, cz, ax, ay, az, rx, ry, rz, length, length * .55, cr, cg, cb, ph, length * .12);
+      }
+    }
+    for (let i = 0; i < 44; i++) {
+      const theta = random() * 6.283;
+      const y = (random() * 2 - 1) * .7;
+      const shell = Math.sqrt(Math.max(0, 1 - y * y)) * .62;
+      const cx = Math.cos(theta) * shell, cy = y * .62, cz = Math.sin(theta) * shell;
+      let rx = cx, ry = cy + .1, rz = cz;
+      const rl = Math.hypot(rx, ry, rz) || 1; rx /= rl; ry /= rl; rz /= rl;
+      const t = tangent(rx, ry, rz);
+      const shade = .34 + random() * .16;
+      leaf(cx, cy, cz, t[0], t[1] - .25, t[2], rx, ry, rz, .34 + random() * .16, .22,
+        shade * .85, shade, shade * .72, random(), .05);
+    }
+    for (let i = 0; i < 5; i++) {
+      const theta = i * 1.256 + lobeSeed;
+      const ex = Math.cos(theta) * .7, ez = Math.sin(theta) * .7, ey = .1 + random() * .4;
+      const b = vertices.length / 3, w = .05;
+      vertices.push(0, -.7, 0, ex * .5 - w, ey * .5, ez * .5, ex, ey, ez, ex * .5 + w, ey * .5, ez * .5);
+      for (let k = 0; k < 4; k++) { colors.push(.20, .18, .15); flex.push(k / 3 * .5); phase.push(random()); }
+      indices.push(b, b + 1, b + 2, b, b + 2, b + 3);
     }
     const geometry = new T.BufferGeometry();
     geometry.setAttribute("position", new T.Float32BufferAttribute(vertices, 3));
     geometry.setAttribute("color", new T.Float32BufferAttribute(colors, 3));
+    geometry.setAttribute("aFlex", new T.Float32BufferAttribute(flex, 1));
+    geometry.setAttribute("aPhase", new T.Float32BufferAttribute(phase, 1));
     geometry.setIndex(indices);
-    geometry.computeVertexNormals();
+    // Dome-normal transfer: shade leaves as one smooth volume, not faceted cards.
+    const normals = [];
+    for (let i = 0; i < vertices.length; i += 3) {
+      const nx = vertices[i], ny = vertices[i + 1], nz = vertices[i + 2];
+      const l = Math.hypot(nx, ny, nz) || 1;
+      normals.push(nx / l, ny / l, nz / l);
+    }
+    geometry.setAttribute("normal", new T.Float32BufferAttribute(normals, 3));
     return geometry;
   }
 
@@ -491,6 +576,8 @@
     const vertices = [];
     const colors = [];
     const indices = [];
+    const flex = [];
+    const phase = [];
     for (let blade = 0; blade < 12; blade++) {
       const direction = blade * 2.39996;
       const lean = .24 + random() * .96;
@@ -498,6 +585,7 @@
       const width = .052 + random() * (dry ? .032 : .085);
       const baseX = Math.cos(direction) * .33;
       const baseZ = Math.sin(direction) * .33;
+      const ph = random();
       const index = vertices.length / 3;
       for (let step = 0; step < 4; step++) {
         const fraction = step / 3;
@@ -508,7 +596,10 @@
         const z = baseZ + Math.sin(direction) * bend;
         vertices.push(x - Math.sin(direction) * half, height * fraction, z + Math.cos(direction) * half,
           x + Math.sin(direction) * half, height * fraction, z - Math.cos(direction) * half);
-        for (let side = 0; side < 2; side++) colors.push(green * (dry ? 1.15 : .88), green, green * .76);
+        for (let side = 0; side < 2; side++) {
+          colors.push(green * (dry ? 1.15 : .88), green, green * .76);
+          flex.push(fraction); phase.push(ph);
+        }
         if (step) {
           const base = index + step * 2 - 2;
           indices.push(base, base + 1, base + 2, base + 1, base + 3, base + 2);
@@ -518,6 +609,8 @@
     const geometry = new T.BufferGeometry();
     geometry.setAttribute("position", new T.Float32BufferAttribute(vertices, 3));
     geometry.setAttribute("color", new T.Float32BufferAttribute(colors, 3));
+    geometry.setAttribute("aFlex", new T.Float32BufferAttribute(flex, 1));
+    geometry.setAttribute("aPhase", new T.Float32BufferAttribute(phase, 1));
     geometry.setIndex(indices);
     geometry.computeVertexNormals();
     return geometry;
@@ -531,17 +624,44 @@
     material.customProgramCacheKey = () => blades ? "journey-grass-2" : "journey-canopy-2";
     material.onBeforeCompile = shader => {
       shader.uniforms.windTime = time;
-      shader.vertexShader = shader.vertexShader.replace("#include <common>", "#include <common>\nuniform float windTime;")
+      shader.vertexShader = shader.vertexShader
+        .replace("#include <common>", `#include <common>
+          uniform float windTime;
+          attribute float aFlex;
+          attribute float aPhase;
+          varying float vTint;`)
         .replace("#include <begin_vertex>", `
           #include <begin_vertex>
           #ifdef USE_INSTANCING
             vec3 base = instanceMatrix[3].xyz;
-            float breeze = sin(windTime * 1.55 + base.x * .31 + base.z * .20);
-            float gust = sin(windTime * .72 + base.z * .37 - base.x * .14);
-            float flex = ${blades ? "position.y * position.y * .42" : "(position.y + 1.) * .048"};
-            transformed.x += (breeze * .62 + gust * .38) * flex;
-            transformed.z += breeze * flex * .32;
-          #endif`);
+          #else
+            vec3 base = vec3(0.);
+          #endif
+          float treePhase = base.x * .37 + base.z * .29;
+          float distFade = 1. - smoothstep(38., 68., length(cameraPosition - base));
+          float gust = sin(windTime * .55 - (base.x + base.z) * .10) * .5 + .5;
+          gust *= gust;
+          float sway = sin(windTime * 1.15 + treePhase) * .6 + sin(windTime * .63 + treePhase * 1.7) * .4;
+          float branch = sin(windTime * 1.21 + treePhase * 2.3) * .5 + sin(windTime * 2.36 + treePhase) * .5;
+          float crownFlex = ${blades ? "position.y * position.y" : "(position.y + 1.) * .5"};
+          transformed.x += (sway * (.04 + gust * .06) + branch * .02) * crownFlex * distFade;
+          transformed.z += (sway * .5 * (.03 + gust * .04) + branch * .012) * crownFlex * distFade;
+          float fl = sin(windTime * 4.98 + aPhase * 6.2831 + treePhase * 2.0);
+          float fl2 = cos(windTime * 12.4 + aPhase * 12.566);
+          transformed.x += fl * aFlex * ${blades ? ".02" : ".012"} * (.5 + gust) * distFade;
+          transformed.y += fl2 * aFlex * ${blades ? ".008" : ".010"} * (.5 + gust) * distFade;
+          transformed.z += fl2 * aFlex * ${blades ? ".016" : ".010"} * (.5 + gust) * distFade;
+          vTint = fract(sin(dot(base.xz, vec2(12.9898, 78.233))) * 43758.5453);`);
+      shader.fragmentShader = shader.fragmentShader
+        .replace("#include <common>", `#include <common>
+          varying float vTint;`)
+        .replace("#include <color_fragment>", `#include <color_fragment>
+          float tintAmt = (vTint - .5) * ${blades ? ".10" : ".16"};
+          diffuseColor.rgb *= vec3(1. + tintAmt * .6, 1. + tintAmt, 1. + tintAmt * .3);`)
+        .replace("#include <normal_fragment_maps>", `#include <normal_fragment_maps>
+          vec3 leafV = normalize(vViewPosition);
+          float leafRim = pow(1. - abs(dot(normal, leafV)), 2.5);
+          diffuseColor.rgb += diffuseColor.rgb * leafRim * ${blades ? ".06" : ".14"};`);
     };
     return { material, animate: elapsed => { time.value = elapsed; } };
   }
@@ -575,8 +695,13 @@
           vec3 pos = position;
           float shoreDamp = smoothstep(0., max(.08, foamEdge * 1.6), uv.x);
           vec3 wPos = (modelMatrix * vec4(pos, 1.)).xyz;
-          float swell = (sin(wPos.x * .9 + time * 1.4) + cos(wPos.z * .75 - time * 1.15)) * .5;
-          pos.z += swell * waveScale * shoreDamp;
+          // Directional Multi-Component Gerstner Waves
+          vec2 dir1 = vec2(0.85, 0.52);
+          vec2 dir2 = vec2(-0.42, 0.91);
+          float w1 = dot(dir1, wPos.xz) * 1.15 - time * 1.55;
+          float w2 = dot(dir2, wPos.xz) * 2.05 - time * 2.25;
+          float gWave = sin(w1) * 0.62 + cos(w1 * 1.8) * 0.18 + sin(w2) * 0.35;
+          pos.z += gWave * waveScale * shoreDamp;
           vWater = (modelMatrix * vec4(pos, 1.)).xyz;
           gl_Position = projectionMatrix * viewMatrix * vec4(vWater, 1.);
         }`,
@@ -600,10 +725,14 @@
           vec3 view = normalize(cameraPosition - vWater);
           float facing = max(.001, dot(view, normal));
           float fresnel = .02 + .98 * pow(1. - facing, 4.2);
-          float shallows = 1. - smoothstep(0., .24, vUv.x);
-          // Beer-Lambert color + subsurface turquoise glow
+          
+          // Beer-Lambert depth absorption (freshwater Lake Galilee & Caesarea harbour)
+          float waterDist = vUv.x;
+          vec3 absorption = exp(-vec3(3.2, 1.15, 0.42) * waterDist * 2.8);
           float caustic = smoothstep(.52, .88, grainNoise(point * 2.8 + vec2(time * .36, -time * .24)));
-          vec3 body = mix(waterColor, shallowColor * (1. + caustic * .24), shallows * .82);
+          vec3 bedColor = shallowColor * (1. + caustic * .28);
+          vec3 body = mix(waterColor, bedColor, absorption);
+
           float sss = pow(max(0., dot(view, -sun + normal * .35)), 3.0) * .25;
           body += shallowColor * sss;
           // Environment sky gradient reflection
@@ -615,12 +744,12 @@
           float specTight = pow(max(0., dot(normal, halfV)), 260.);
           float specSoft = pow(max(0., dot(normal, halfV)), 32.);
           color += sunlight * (specTight * 1.45 + specSoft * .22);
-          // Animated shoreline foam
+          // Animated shoreline foam with fractal turbulent noise
           if (foamEdge > .001) {
             float lap = .5 + .5 * sin(time * 2.1 - vUv.x * 38. + point.y * 1.3);
             float foamNoise = grainNoise(point * 5.5 - vec2(time * .35, time * .2));
-            float foam = smoothstep(foamEdge, 0., vUv.x) * smoothstep(.34, .76, foamNoise + lap * .35);
-            color = mix(color, mix(horizonColor, vec3(.96), .7), clamp(foam * .85, 0., 1.));
+            float foam = smoothstep(foamEdge, 0., vUv.x) * smoothstep(.32, .72, foamNoise + lap * .38);
+            color = mix(color, mix(horizonColor, vec3(.96), .75), clamp(foam * .88, 0., 1.));
           }
           float depth = length(cameraPosition - vWater) * .0055;
           gl_FragColor = vec4(mix(color, fogColor, 1. - exp(-depth * depth)), 1.);
@@ -883,20 +1012,28 @@
           const float e = 0.14;
           return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0., 1.);
         }
+        // Henyey-Greenstein phase function for Levant atmospheric dust (g ≈ 0.65)
+        float hgPhase(float cosTheta, float g) {
+          float g2 = g * g;
+          return (1.0 - g2) / (4.0 * 3.14159265 * pow(max(1e-4, 1.0 + g2 - 2.0 * g * cosTheta), 1.5));
+        }
         void main() {
           vec3 hdr = texture2D(tDiffuse, vUv).rgb;
           vec3 bloom = texture2D(tBloom, vUv).rgb;
           vec3 col = hdr + bloom * bloomIntensity;
           if (sunScatter > .001) {
-            float d = length((vUv - sunScreen) * vec2(1.4, 1.));
-            float shaft = exp(-d * 3.6) * sunScatter;
+            vec2 sunOffset = (vUv - sunScreen) * vec2(1.35, 1.0);
+            float d = length(sunOffset);
+            float cosTheta = clamp(1.0 - d * 0.9, -1.0, 1.0);
+            float dustHG = hgPhase(cosTheta, 0.65) * 12.5;
+            float shaft = exp(-d * 3.2) * dustHG * sunScatter;
             col += sunTint * shaft;
           }
           col *= exposure;
           col = acesFilmic(col);
           // Crisp contrast and vivid Mediterranean vibrance
           float lum = dot(col, vec3(.2126, .7152, .0722));
-          col = mix(vec3(lum), col, 1.14);
+          col = mix(vec3(lum), col, 1.12);
           vec2 vc = vUv - .5;
           col *= 1. - dot(vc, vc) * vignette;
           // Blue-noise style interleaved gradient dither removes 8-bit banding

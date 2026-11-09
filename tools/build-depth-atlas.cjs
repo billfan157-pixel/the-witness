@@ -28,7 +28,8 @@ const questions={
 const esc=s=>String(s).replace(/\|/g,'\\|').replace(/\n/g,' ');
 const table=(heads,rows)=>'| '+heads.join(' | ')+' |\n| '+heads.map(()=>'---').join(' | ')+' |\n'+rows.map(r=>'| '+r.map(esc).join(' | ')+' |').join('\n')+'\n';
 const lines=['# 17 • Atlas 25 tình huống đang chơi được','','**Kết xuất từ luật runtime • Phụ lục 3.2 • 08/11/2026.** Chạy `node tools/build-depth-atlas.cjs` khi sửa catalog. Đây là tài liệu triển khai: tên biến là mã dữ liệu, không cần đưa lên giao diện người chơi. Tất cả bố cục và cơ chế là [H]; các nguồn Sxx chỉ giới hạn dữ kiện và cách chuyển thể.','','25 tình huống gồm 13 bàn ở 12 chương đời thường, 8 bàn ở 5 Legends và 4 tương tác trong Veil. Các biến thể Q07 và phong bì theo phạm vi dùng dữ liệu hiện tại của chiến dịch. Bản mẫu hướng dẫn không phải đáp án duy nhất ở những màn có thể đổi thứ tự, đổi người hoặc đổi tuyến.','','## Danh mục nhanh','',table(['ID','Loại thao tác','Tên'],X.catalog.map(d=>[d.id,types[d.type],d.title]))];
-const contract={revision:'3.2',runtimeRelease:'0.4.0',generatedFrom:'witness-depth.js',canonicalContract:'campaign-contract.json',schemaChange:false,encounters:[]};
+lines.push('','Bản 0.5.0 đưa các luật này vào thao tác trực tiếp tại hiện trường, giữ bảng đối chiếu thay thế. Sáu phần việc quan hệ và 44 chi tiết 3D được ghi riêng ở [20 • Thực thi từng cảnh](20-scene-implementation.md) và [hợp đồng dàn dựng](craft-contract.json).');
+const contract={revision:'3.2',runtimeRelease:'0.5.0',generatedFrom:'witness-depth.js',canonicalContract:'campaign-contract.json',craftCatalog:'craft-contract.json',schemaChange:false,encounters:[]};
 for(const base of X.catalog){
  const s=M.fresh();s.chapter=Math.max(0,D.chapters.findIndex(q=>q.id===base.owner));s.evidence=Object.keys(D.evidence);s.consent.witness1={scope:'private_group',voluntary:true,safe:true};s.flags.finalPlan='public';
  const d=X.materialize(s,base),q=questions[d.owner];

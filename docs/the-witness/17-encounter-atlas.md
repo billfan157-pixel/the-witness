@@ -35,6 +35,8 @@
 | V04.TABLE | Sắp đặt mở, không chấm phản tư | Một bàn còn chỗ trống |
 
 
+Bản 0.5.0 đưa các luật này vào thao tác trực tiếp tại hiện trường, giữ bảng đối chiếu thay thế. Sáu phần việc quan hệ và 44 chi tiết 3D được ghi riêng ở [20 • Thực thi từng cảnh](20-scene-implementation.md) và [hợp đồng dàn dựng](craft-contract.json).
+
 ## Q01.LOAD • Gánh nào đang giữ gánh nào?
 
 **Chủ cảnh:** Q01 · **Bước thay thế:** brace · **Loại:** Thao tác có tiền đề · **Luật:** revision 1.

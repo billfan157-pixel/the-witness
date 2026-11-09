@@ -1,0 +1,492 @@
+{
+  "flow": "DHI3i4R00Z1ZZNuv847Z",
+  "status": "not_generated_free_plan_rate_limit",
+  "jobs": [
+    {
+      "id": "natan--father-hands",
+      "person": "natan",
+      "text": "“Cha con có tật hay nắn lại mối dây neo hai lần trước khi cho thuyền hạ thủy. Bởi vậy khi nghe người ta đồn ông ấy cẩu thả lấy bớt bốn bao lương, chú biết câu chuyện còn chỗ khuất chưa ai chịu kiểm.”",
+      "type": "topic",
+      "node": "j3QpJkU7kII0QyIHMwhc",
+      "voice": "MYaVgRsso3IfQvsaSZSb",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "natan--current-work",
+      "person": "natan",
+      "text": "Chú đang thử một mối nối. Con có thể nhìn mặt gỗ trước khi cầm dụng cụ.",
+      "type": "topic",
+      "node": "A761JHZxwA7HxUwLhKRq",
+      "voice": "MYaVgRsso3IfQvsaSZSb",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "natan--harbor-shift",
+      "person": "natan",
+      "text": "“Bến cảng không dừng vì một đám tang đâu con. Muốn giữ người làm công khỏi bị chèn ép, con phải hiểu sổ ca viết gì và ai là người cầm chìa khóa cổng phụ lúc chạng vạng.”",
+      "type": "topic",
+      "node": "ksCLDmhF4fePq9WA2MFC",
+      "voice": "MYaVgRsso3IfQvsaSZSb",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "miriam--current-work",
+      "person": "miriam",
+      "text": "Tôi đã nhận một phần bữa, đang tìm người đứng nhận phần còn lại.",
+      "type": "topic",
+      "node": "MEVc1bwBkjegg9LzXgTL",
+      "voice": "x4KAhuXs2G8TfK9Zr7Q4",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "miriam--soup-pot",
+      "person": "miriam",
+      "text": "“Một bao hạt trên giấy chỉ là một con số, nhưng ở sân này nó là mười tám bát cháo nóng cho người gác đêm và mấy bà cụ không còn sức ra bến.”",
+      "type": "topic",
+      "node": "1C4MkiitwV0WZV8F6UDT",
+      "voice": "x4KAhuXs2G8TfK9Zr7Q4",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "miriam--sela-worry",
+      "person": "miriam",
+      "text": "“Em ấy cứ bảo: ‘Chị đừng hứa cả tuần thay em.’ Tôi biết Sela nói đúng, nhưng nhìn bàn tay em còn phồng rộp vì kéo dây, tôi lại sợ nói thật sẽ làm em bỏ cuộc.”",
+      "type": "topic",
+      "node": "dQTuD5rHQVBpXTF2XMS1",
+      "voice": "x4KAhuXs2G8TfK9Zr7Q4",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "damar--current-work",
+      "person": "damar",
+      "text": "Tôi để gậy khỏi lối ra. Người tới nói vẫn có thể chọn rời.",
+      "type": "topic",
+      "node": "RYF21SQGVGLK8cFTRZ36",
+      "voice": "IBR7oUYz7WOVTKARVRl6",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "damar--staff-weight",
+      "person": "damar",
+      "text": "“Cây gậy đi đường sinh ra để dò đá sạt và đỡ người trượt chân. Lúc người ta nhìn nó như vũ khí trước tiên, tức là họ đã quên đường rút an toàn rồi.”",
+      "type": "topic",
+      "node": "zKxZeMg1Q6RfdaU9RGcj",
+      "voice": "IBR7oUYz7WOVTKARVRl6",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "damar--old-debt",
+      "person": "damar",
+      "text": "“Có những vết nứt người ta chỉ cần mình góp gỗ sửa lại rồi lặng lẽ bước đi, chứ không cần mình đứng trước cửa bắt họ phải nói lời tha thứ.”",
+      "type": "topic",
+      "node": "6z5MUn61XICsoKmFdXfT",
+      "voice": "IBR7oUYz7WOVTKARVRl6",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "lea--current-work",
+      "person": "lea",
+      "text": "Tôi để hai nguồn tách nhau để người đọc còn thấy chỗ chưa thể ghép.",
+      "type": "topic",
+      "node": "Y1WXEQOPWPin7hciDcsp",
+      "voice": "nXpBQckSqPfSghXiaOwA",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "lea--ink-layers",
+      "person": "lea",
+      "text": "“Mực pha muội đèn mới bao giờ cũng đọng dày ở mép sợi cói đã xước. Nhưng thấy vết sửa chỉ cho biết tờ giấy từng bị chạm vào, chưa cho phép ta điền tên kẻ gian theo ý mình.”",
+      "type": "topic",
+      "node": "u3uhjbhoIhR6uTGsJKIz",
+      "voice": "nXpBQckSqPfSghXiaOwA",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "lea--blank-line",
+      "person": "lea",
+      "text": "“Khi nước cuốn nhòe một dòng chữ, điều trung thực nhất người chép sổ làm được là ghi rõ: ‘Ba chữ không đọc được’. Đừng bao giờ lấy lòng tốt để bịa thêm nét mực.”",
+      "type": "topic",
+      "node": "llKqA2hhXV8URQn4wSg2",
+      "voice": "nXpBQckSqPfSghXiaOwA",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "titus--current-work",
+      "person": "titus",
+      "text": "Tôi đang thử chỗ tựa của then; đừng đứng vào phía nó còn có thể trượt.",
+      "type": "topic",
+      "node": "hAZiPBqKQ7nz6SGsS5d6",
+      "voice": "i4CYqSzvHo9TqdCeE399",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "titus--pulley-load",
+      "person": "titus",
+      "text": "“Một sợi dây đơn dù bện kỹ tới đâu cũng có ngưỡng đứt. Muốn nâng khung gỗ sồi ướt, phải chia tải qua hai con lăn và tin người giữ đầu dây bên kia.”",
+      "type": "topic",
+      "node": "b6xmApqQiChZYmOzV3x4",
+      "voice": "i4CYqSzvHo9TqdCeE399",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "titus--apprentice",
+      "person": "titus",
+      "text": "“Cậu ấy gọt chốt hơi lệch một ly. Tôi cứ muốn giật lấy cái đục làm luôn cho nhanh, nhưng chú Natan bảo ngày xưa tôi cũng làm gãy ba cái nêm trước khi đóng thẳng được một cái.”",
+      "type": "topic",
+      "node": "Bu99FQQuns7wDeK0BiBU",
+      "voice": "i4CYqSzvHo9TqdCeE399",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "yosef--mother-plant",
+      "person": "yosef",
+      "text": "“Mẹ tôi chỉ có chậu bạc hà đặt bên bệ cửa sổ. Nếu phải dọn đi trong đêm mà không ai báo trước, bà sẽ thức trắng vì tưởng tôi vừa gây họa ở bến.”",
+      "type": "topic",
+      "node": "WbF7knuP6l0ZMfbbHITc",
+      "voice": "tdNewKwOSUwMPbmc5cs4",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "rina--measure-bowl",
+      "person": "rina",
+      "text": "“Gáo gỗ của sân bếp mòn vẹt hai mươi năm nay nhưng chưa từng đong gian cho ai. Thiếu hai bao là thiếu đúng hai nồi chiều, không sổ sách nào che được cái bụng đói.”",
+      "type": "topic",
+      "node": "oX9MV8KqYohmDWx045im",
+      "voice": "EMReIZ5lTnliUU7kH10X",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "rina--current-work",
+      "person": "rina",
+      "text": "Tôi đang giữ nồi cho lượt tiếp. Bạn đứng bên này để lối mang bát còn trống.",
+      "type": "topic",
+      "node": "rOQLZeRJtVEpC0N8JktR",
+      "voice": "EMReIZ5lTnliUU7kH10X",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "mattai--current-work",
+      "person": "mattai",
+      "text": "Tôi đang đối lại người nhận ca. Phần tôi ghi là việc ở cửa này.",
+      "type": "topic",
+      "node": "51HkelBryPfMaTCHjbCW",
+      "voice": "1Eq78amaAU40yAkJJN4x",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "mattai--night-latch",
+      "person": "mattai",
+      "text": "“Then sắt chỉ cài khi người cuối cùng trong ca đã ký nhận ra ngoài. Ai bảo tôi mở sân phụ giữa ca đều phải để lại dấu ca trực trong sổ riêng của tôi.”",
+      "type": "topic",
+      "node": "FgfLVF282QEMlxu838Fb",
+      "voice": "1Eq78amaAU40yAkJJN4x",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "amon--current-work",
+      "person": "amon",
+      "text": "Tôi còn kiểm dây của chuyến mình chở; đoạn sau cần hỏi người đã nhận.",
+      "type": "topic",
+      "node": "3mzVOhO92Fk6pNDQBWfQ",
+      "voice": "8vnoQ76hEPzk19VcdqZ7",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "amon--hill-rain",
+      "person": "amon",
+      "text": "“Đoạn dốc đá trơn như đổ mỡ, hai bao ngoài rìa bị cành gai quệt rách lúc ghì phanh. Tôi đã lập biên bản hỏng ngay tại trạm với người làm chứng, không mập mờ một hạt.”",
+      "type": "topic",
+      "node": "96NNvWilD7IchF27b1k0",
+      "voice": "8vnoQ76hEPzk19VcdqZ7",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "hanan--reserve-logic",
+      "person": "hanan",
+      "text": "“Ai cũng đòi minh bạch ngay lập tức, nhưng lúc thuyền ngũ cốc trễ hẹn ba tuần liền thì chính những khoản tôi tự giữ lại mới cứu cái sân này khỏi vỡ trận.”",
+      "type": "topic",
+      "node": "jFFq1YO5NY9KpLKl3hyM",
+      "voice": "TL42ohM8ZRzX24Ys6qbV",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "sela--current-work",
+      "person": "sela",
+      "text": "Tôi chỉ nhận ca đã nói. Những ca còn lại hãy hỏi tôi lại.",
+      "type": "topic",
+      "node": "i2mWxQGLAAJ4xHpehcXD",
+      "voice": "INVEBXRYITvag1Ed3nVO",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "sela--one-shift",
+      "person": "sela",
+      "text": "“Em không gánh nổi cả tuần như chị Miriam, nhưng một ca khuân lưới buổi sớm thì em làm trọn được. Chỉ cần chị ấy đừng giấu em chuyện trong nhà.”",
+      "type": "topic",
+      "node": "lqpixmbPdA8UCNztooq2",
+      "voice": "INVEBXRYITvag1Ed3nVO",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "Q01--ledger",
+      "person": "natan",
+      "text": "Chú đã hứa với cha con sẽ đưa tận tay cuốn sổ này cho người nhà. Tờ bìa còn dính hơi ẩm trong túi vải; để chú hong khô nó cho con.",
+      "type": "action",
+      "node": "uZI4MevCEnrx3cowy5wP",
+      "voice": "MYaVgRsso3IfQvsaSZSb",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "Q01--meal",
+      "person": "rina",
+      "text": "Chỗ nghỉ ở đây có thể đơn sơ, nhưng vẫn có chỗ cho người mới về. Tôi cần thêm dầu thắp cho lượt nấu sau.",
+      "type": "action",
+      "node": "qKa1cwFqfhiZot1rqVIw",
+      "voice": "EMReIZ5lTnliUU7kH10X",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "Q02--opening",
+      "person": "miriam",
+      "text": "Trước khi hỏi tên ai, hãy nghĩ xem sáng mai người ấy còn phải bước qua cánh cổng này để kiếm sống thế nào.",
+      "type": "action",
+      "node": "SPyFmljNvgJupMpfeJGu",
+      "voice": "x4KAhuXs2G8TfK9Zr7Q4",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "Q02--meet",
+      "person": "yosef",
+      "text": "Tôi chỉ vác bao qua cánh cửa kia theo ca. Chừng ấy là điều tôi biết.",
+      "type": "action",
+      "node": "4tCAMaSiFISCpJEVmWtY",
+      "voice": "tdNewKwOSUwMPbmc5cs4",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "Q02--needs",
+      "person": "yosef",
+      "text": "Chỉ nói trong nhóm tiếp nhận đáng tin. Đừng đưa chỗ mẹ tôi ở vào bất kỳ tờ giấy nào.",
+      "type": "action",
+      "node": "sKR8LYRTyfUoEEhC9v5d",
+      "voice": "tdNewKwOSUwMPbmc5cs4",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "Q03--choose",
+      "person": "amon",
+      "text": "Tôi mở sổ ngay nếu có người trả phần công giữ ca. Hoặc giúp tôi thay chốt trục rồi cùng xem.",
+      "type": "action",
+      "node": "BZuwHYV4amHfu7HLrxdQ",
+      "voice": "8vnoQ76hEPzk19VcdqZ7",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "Q04--closure",
+      "person": "mattai",
+      "text": "Cho tôi biết còn ai trong sân. Đã mở lối nào thì phải có người đứng nhận ở đầu lối ấy.",
+      "type": "action",
+      "node": "highHBtqRb8UzvzezsYy",
+      "voice": "1Eq78amaAU40yAkJJN4x",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "Q06--talk",
+      "person": "enforcer",
+      "text": "Thẻ vẫn ở đây. Anh muốn lấy nó để đối chiếu hay muốn đòi lại phần đau của cha mình?",
+      "type": "action",
+      "node": "Zyfsqlw5sRzRduxhEZ0o",
+      "voice": "IBR7oUYz7WOVTKARVRl6",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "Q07--listen",
+      "person": "sela",
+      "text": "Em vẫn lo cho chị ấy. Chỉ là em không muốn bị dỗ bằng chuyện không thật.",
+      "type": "action",
+      "node": "piufi3jX3pPnbfNqt1hj",
+      "voice": "INVEBXRYITvag1Ed3nVO",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "Q09--statement",
+      "person": "witness1",
+      "text": "Tôi đã nghe Hanan bảo mở sân cho bốn bao. Anh muốn dùng lời này ở đâu?",
+      "type": "action",
+      "node": "jOz7Jn1IguGJ0r9VyoG3",
+      "voice": "f756lDGqpNXQiK7vMtbq",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "harbor",
+      "loop": true,
+      "duration": 18,
+      "text": "Naturalistic field recording at an ancient stone Mediterranean harbor, gentle irregular seawater surges against limestone quay, tiny lapping slapback, distant sparse gulls. Open outdoor air, quiet, no voices, no music, no engines, no modern harbor machinery. Continuous seamless ambience, detailed stereo.",
+      "type": "sound",
+      "node": "286TT2IcetULvX3Lqauy",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "lake",
+      "loop": true,
+      "duration": 18,
+      "text": "Quiet freshwater lake shore at dawn, small ripples gently lap pebbles and reeds with delicate intermittent reed rustle. Open spacious outdoor sound, no surf roar, no music, no people, no engines. Intimate realistic detailed seamless stereo ambience.",
+      "type": "sound",
+      "node": "Ya7maKFAlaStBiTiYFIv",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "wind",
+      "loop": true,
+      "duration": 18,
+      "text": "Dry gentle hillside breeze rustling sparse coarse grass and canvas at an ancient travel camp. Gusts rise and fall slowly, open air, natural low sound floor, no music, no voices, no weather drama, no traffic. Seamless natural stereo ambience.",
+      "type": "sound",
+      "node": "gftUpnnGKNZ6o0pM6gaD",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "cave",
+      "loop": true,
+      "duration": 18,
+      "text": "Quiet limestone cave interior with sparse isolated water droplets in a small shallow puddle, soft distant air through a narrow crack, natural short irregular stone reflections. Restrained and realistic, no horror drone, no music, no voices. Seamless ambience.",
+      "type": "sound",
+      "node": "U67KcfOpQhGua5N4Hlhq",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "flood",
+      "loop": true,
+      "duration": 18,
+      "text": "Turbulent stream below a rocky ravine after rain, close rushing freshwater flowing around small rocks, lower resonant water mixed with detailed trickles, natural continuous stereo field recording. No thunder, no music, no voices, no engines. Seamless ambience.",
+      "type": "sound",
+      "node": "cQTy1lI0pq8qGgXH3oRX",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "courtyard",
+      "loop": true,
+      "duration": 18,
+      "text": "Very quiet enclosed limestone courtyard in a preindustrial town at late afternoon, light breeze through narrow stone corridors, sparse distant small bird calls. Soft natural air and early stone reflections, no music, no voices, no traffic, no electricity. Seamless stereo ambience.",
+      "type": "sound",
+      "node": "7I2JRaTTnU4bnzdWHvNy",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "fire",
+      "loop": true,
+      "duration": 12,
+      "text": "Small charcoal cooking embers close up, dry gentle intermittent crackles, subtle tiny coal ticks and barely audible soft combustion. Intimate realistic foley, not a roaring bonfire, no wind, no voices, no music. Seamless clean loop.",
+      "type": "sound",
+      "node": "jaSCAhAtDqfo09aGeOGF",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "wood",
+      "loop": false,
+      "duration": 2.5,
+      "text": "One close detailed dry wooden beam settles under hand pressure: low creak, two small grain clicks, short soft dull wooden knock, then dies away. Real ancient hand carpentry foley, no machinery, no voices, no music, isolated sound and quiet background.",
+      "type": "sound",
+      "node": "ylr2vJvMHudaXD1Xdhqx",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "rope",
+      "loop": false,
+      "duration": 2,
+      "text": "One close detailed hemp rope drawn through a wooden eye and tightened by hand, coarse fibers scrape and briefly creak with tension then settle. Dry realistic restrained foley, no musical tone, no metal, no voices, isolated quiet background.",
+      "type": "sound",
+      "node": "WXVZZGX6ilLdFulrCzfD",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "paper",
+      "loop": false,
+      "duration": 2,
+      "text": "One gentle turn and flattening of a single thick rough papyrus sheet by hand, fine dry fibrous crinkle with soft fingertip rub. Intimate detailed foley, no voices, no music, no other objects, isolated quiet background.",
+      "type": "sound",
+      "node": "jwaP39XziZttnKVxrPmj",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "ceramic",
+      "loop": false,
+      "duration": 2,
+      "text": "One hand sets a small earthenware bowl onto a rough wooden table, soft low ceramic tap with tiny irregular rattle and fingers brushing clay. Realistic unglazed pottery foley, no smashing, no glass, no music, no voices, isolated quiet background.",
+      "type": "sound",
+      "node": "sdB6jYhYfWqZCVJ9PliZ",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "cloth",
+      "loop": false,
+      "duration": 2,
+      "text": "One gentle movement of a coarse linen sleeve as a person bends to tie a knot, soft cloth fibers rub and softly fold close to microphone. Restrained detailed natural foley, no voice, no music, isolated quiet background.",
+      "type": "sound",
+      "node": "oOel4Xh9rmHQbQC4qqgM",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "oar",
+      "loop": false,
+      "duration": 3,
+      "text": "A single wooden oar stroke on a calm freshwater lake: small blade entry plop, low smooth pull, tiny droplets on withdrawal and subtle thole creak. Close realistic rowing foley, no boat motor, no voice, no music, quiet background.",
+      "type": "sound",
+      "node": "fhcYkX4hGgqxuo0Jf9Du",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "splash",
+      "loop": false,
+      "duration": 2.5,
+      "text": "One small realistic splash of shallow freshwater over rounded pebbles, gentle initial slap and delicate short trickle retreat. Close natural detailed foley, no big wave, no voice, no music, isolated quiet background.",
+      "type": "sound",
+      "node": "u3LD2TSV6o7UbeXCjoti",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "metal",
+      "loop": false,
+      "duration": 1.5,
+      "text": "One worn iron door latch is gently lifted and set back by hand, muted short metallic scrape and dull click, no modern lock or keys. Restrained realistic dry foley, no music, no voices, quiet background.",
+      "type": "sound",
+      "node": "hnbbSNEeSxN7bKLeaGzu",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "step-stone",
+      "loop": false,
+      "duration": 1,
+      "text": "A SINGLE isolated footstep in a soft leather sandal onto dry limestone paving, one soft low sole impact followed by a tiny gritty scuff, dry detailed close foley. No heel shoe click, no second footstep, no voices, no music, silent background.",
+      "type": "sound",
+      "node": "RJqNeJ7VL06yKn0RXH09",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "step-gravel",
+      "loop": false,
+      "duration": 1,
+      "text": "A SINGLE isolated leather sandal footstep on coarse dry gravel, soft sole contact then small pebbles compress and briefly scrape, dry close detailed foley. No other footsteps, no music, no voice, silent background.",
+      "type": "sound",
+      "node": "OncSQqSTWkdbUE64pePh",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "step-sand",
+      "loop": false,
+      "duration": 1,
+      "text": "A SINGLE isolated leather sandal footstep into dry compact sand, muted low soft contact and fine brief sand grain scrape, dry close realistic foley. No other footsteps, no music, no voice, silent background.",
+      "type": "sound",
+      "node": "cgLoHX8Setebbb56ilRt",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    },
+    {
+      "id": "step-wood",
+      "loop": false,
+      "duration": 1,
+      "text": "A SINGLE isolated soft leather sandal footstep on an old thick wooden boat deck, short low hollow sole thud with one tiny board creak. No shoe heel click, no other footsteps, no voice, no music, silent background.",
+      "type": "sound",
+      "node": "mdNwvFsSJ5ia0r34FBhc",
+      "flow": "DHI3i4R00Z1ZZNuv847Z"
+    }
+  ]
+}

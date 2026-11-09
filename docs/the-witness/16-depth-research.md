@@ -1,6 +1,8 @@
 # 16 • Nghiên cứu và quyết định phát triển chiều sâu
 
-**Phụ lục thiết kế 3.2 • 08/11/2026 • Bản chơi 0.4.0.** Tài liệu này bổ sung chiều sâu cho chiến dịch hiện hữu. Mã Q/L/V, sự thật nền và cổng Kinh Thánh vẫn có chủ sở hữu tại các hồ sơ 08, 12, 14 và campaign-contract. Luật thao tác thực thi nằm trong `witness-depth.js`; atlas 17 được kết xuất từ đúng dữ liệu ấy. Kịch bản biên tập ở 18 phân biệt rõ phần đã chơi được với phần cần dàn dựng tiếp.
+**Phụ lục thiết kế 3.2 • 08/11/2026 • Mốc luật chơi 0.4.0; tiếp nối thực thi 0.5.0.** Tài liệu này bổ sung chiều sâu cho chiến dịch hiện hữu. Mã Q/L/V, sự thật nền và cổng Kinh Thánh vẫn có chủ sở hữu tại các hồ sơ 08, 12, 14 và campaign-contract. Luật thao tác thực thi nằm trong `witness-depth.js`; atlas 17 được kết xuất từ đúng dữ liệu ấy. Kịch bản biên tập ở 18 phân biệt rõ phần đã chơi được với phần cần dàn dựng tiếp.
+
+**Thực thi tiếp theo:** [Hồ sơ 20](20-scene-implementation.md) ghi phần đã đưa vào cảnh 3D ở 0.5.0; nguồn nghiên cứu và giới hạn chuyển thể trong tài liệu này vẫn được giữ.
 
 ## 1. Vấn đề cần giải quyết
 

@@ -1,0 +1,50 @@
+[
+  {
+    "page": "https://opengameart.org/content/wind1",
+    "status": 200,
+    "cc0": true,
+    "files": [
+      "https://opengameart.org/sites/default/files/wind1.wav",
+      "https://opengameart.org/sites/default/files/wind2.wav",
+      "https://opengameart.org/sites/default/files/wind3.wav",
+      "https://opengameart.org/sites/default/files/wind4.wav",
+      "https://opengameart.org/sites/default/files/wind5.wav"
+    ]
+  },
+  {
+    "page": "https://opengameart.org/content/50-rpg-sound-effects",
+    "status": 200,
+    "cc0": true,
+    "files": [
+      "https://opengameart.org/sites/default/files/RPGsounds_Kenney.zip"
+    ]
+  },
+  {
+    "page": "https://opengameart.org/content/page-turning-sfx-sound-effect",
+    "status": 200,
+    "cc0": false,
+    "files": [
+      "https://opengameart.org/sites/default/files/Page%20Turning%20Sfx.wav"
+    ]
+  },
+  {
+    "page": "https://opengameart.org/content/beach-ocean-waves",
+    "status": 200,
+    "cc0": true,
+    "files": []
+  },
+  {
+    "page": "https://opengameart.org/content/water-stream",
+    "status": 404,
+    "cc0": false,
+    "files": []
+  },
+  {
+    "page": "https://opengameart.org/content/different-steps-on-wood-stone-leaves-gravel-and-mud",
+    "status": 200,
+    "cc0": true,
+    "files": [
+      "https://opengameart.org/sites/default/files/%5Bkdd%5DDifferentSteps_0.zip"
+    ]
+  }
+]

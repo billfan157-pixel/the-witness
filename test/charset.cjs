@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const root=path.join(__dirname,'..');let checks=0;
 function test(name,fn){fn();checks++;console.log('PASS '+name);}
-const SOURCES=['index.html','witness.css','witness-content.js','witness-spine.js','witness-depth.js','witness-workshop-ui.js','witness-model.js','witness-world.js','witness-compass.js','witness-app.js','tools/build.cjs','tools/serve.cjs','test/campaign.cjs','test/spine.cjs','test/charset.cjs','test/scene-plan.cjs','test/v31-systems.cjs'];
+const SOURCES=['index.html','witness.css','witness-content.js','witness-spine.js','witness-depth.js','witness-relationships.js','witness-craft.js','witness-craft-renderer.js','witness-field-ui.js','witness-workshop-ui.js','witness-model.js','witness-world.js','witness-compass.js','witness-app.js','witness-audio.js','witness-audio-library.js','tools/build.cjs','tools/serve.cjs','test/campaign.cjs','test/spine.cjs','test/charset.cjs','test/scene-plan.cjs','test/v31-systems.cjs'];
 // Dấu hiệu UTF-8 bị đọc sai như Latin-1 (mojibake) và ký tự thay thế.
 const MOJIBAKE=[/\u00C3[\u0080-\u00BF]/,/\u00C2[\u0080-\u00BF]/,/\u00E2\u0080[\u0080-\u00BF]/,/\u00E1\u00BA[\u0080-\u00BF]/,/\uEF\uBF\uBD/];
 const COMBINING=/[\u0300\u0301\u0303\u0308\u0309\u0323]/;

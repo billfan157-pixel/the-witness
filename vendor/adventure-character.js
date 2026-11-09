@@ -979,13 +979,41 @@
       hairDynamics.update(-yawRate * .022 + Math.sin(time * 1.6 + phase) * .0014,
         -motion * .008 + Math.sin(time * 2.1 + phase) * .0014, delta);
       clothDynamics.update(-yawRate * .010 + step * .004, -motion * .007, delta);
+
+      // Two-Bone Analytical Foot IK & Terrain Slope Adaptation
+      let dHL = 0, dHR = 0, terrainPitch = 0, terrainRoll = 0;
+      if (typeof root.userData.heightAt === "function" && !crouch && !seated) {
+        const hAt = root.userData.heightAt;
+        const rPos = root.position, headingAngle = root.rotation.y;
+        const cosH = Math.cos(headingAngle), sinH = Math.sin(headingAngle);
+        const stanceW = 0.11;
+        const swingOffset = step * 0.18;
+        const pXL = rPos.x + cosH * stanceW - sinH * swingOffset;
+        const pZL = rPos.z - sinH * stanceW - cosH * swingOffset;
+        const pXR = rPos.x - cosH * stanceW + sinH * swingOffset;
+        const pZR = rPos.z + sinH * stanceW + cosH * swingOffset;
+        const hCenter = hAt(rPos.x, rPos.z);
+        dHL = T.MathUtils.clamp(hAt(pXL, pZL) - hCenter, -0.22, 0.22);
+        dHR = T.MathUtils.clamp(hAt(pXR, pZR) - hCenter, -0.22, 0.22);
+        const hFront = hAt(rPos.x - sinH * 0.24, rPos.z - cosH * 0.24);
+        const hBack = hAt(rPos.x + sinH * 0.24, rPos.z + cosH * 0.24);
+        terrainPitch = T.MathUtils.clamp((hFront - hBack) / 0.48, -0.55, 0.55);
+        terrainRoll = T.MathUtils.clamp((dHL - dHR) / (stanceW * 2), -0.45, 0.45);
+        // Pelvis height drop to accommodate the lowest foot without over-extending
+        const pelvisIKDrop = Math.min(0, Math.min(dHL, dHR));
+        bone("pelvis").position.y += pelvisIKDrop * 0.85;
+      }
+
       const baseCurl = { index: .08, middle: .12, ring: .16, pinky: .20 };
       for (const suffix of ["l", "r"]) {
         const side = suffix === "l" ? 1 : -1;
         const swing = side * step;
-        bone("thigh_" + suffix).rotation.x = swing * .48 - crouch * .25 - seated * 1.35;
-        bone("calf_" + suffix).rotation.x = Math.max(0, swing) * .70 + crouch * 1.88 + seated * 1.42;
-        bone("foot_" + suffix).rotation.x = -swing * .20 - Math.max(0, swing) * .12 - crouch * 1.2;
+        const footDiff = suffix === "l" ? dHL : dHR;
+        const ikFlex = Math.max(0, footDiff);
+        bone("thigh_" + suffix).rotation.x = swing * .48 - crouch * .25 - seated * 1.35 - ikFlex * 1.25;
+        bone("calf_" + suffix).rotation.x = Math.max(0, swing) * .70 + crouch * 1.88 + seated * 1.42 + ikFlex * 2.10;
+        bone("foot_" + suffix).rotation.x = -swing * .20 - Math.max(0, swing) * .12 - crouch * 1.2 - terrainPitch * .82;
+        bone("foot_" + suffix).rotation.z = (suffix === "l" ? 1 : -1) * terrainRoll * .35;
         bone("upperarm_" + suffix).rotation.x = -swing * .35 - crouch * .27;
         bone("upperarm_" + suffix).rotation.z = -side * (.025 + Math.abs(step) * .017);
         bone("lowerarm_" + suffix).rotation.x = -.08 - crouch * .58;

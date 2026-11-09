@@ -2,7 +2,7 @@
   "version": "3.0",
   "status": "passed",
   "scope": "design-data-and-policy-model-only; not runtime, expert review or human playtest",
-  "assertions": 534,
+  "assertions": 545,
   "completeMixedFormatBridgePaths": 320,
   "requiredLegends": [
     "L01",
@@ -14,6 +14,7 @@
   "reviewerSlots": 7,
   "assignedReviewers": 0,
   "checks": [
+    "31 activities, 44 physical details, 27 scene owners, 12 bond variants and field/inspection boundaries",
     "three required Legends, one per act, stable Q/L IDs and scope",
     "summary parity, unfinished exits, null reflection and cross-layer write constraints",
     "16 core beats mapped in order to scenes and summary pages; level routes, packets and gates resolve",

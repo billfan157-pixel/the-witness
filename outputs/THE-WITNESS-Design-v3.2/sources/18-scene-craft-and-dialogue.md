@@ -2,6 +2,8 @@
 
 **Phụ lục biên tập 3.2 • 08/11/2026.** Toàn bộ thoại dưới đây của người hư cấu là [H]. Không có lời mới gán cho nhân vật Kinh Thánh. Mỗi hồ sơ tách **đã chơi được** khỏi **dàn dựng tiếp**; phần sau là đặc tả sản xuất, không là tính năng được tính vào bản 0.4.0. Dữ kiện G17/B06 và ai biết gì tuân hồ sơ 12.
 
+**Cập nhật thực thi 0.5.0:** phần đã dựng tiếp, vật thể cụ thể, sáu việc quan hệ và giới hạn còn lại được ghi ở [20 • Thực thi từng cảnh](20-scene-implementation.md). Các mục dưới giữ mốc biên tập 0.4.0 để đối chiếu, không phải danh sách tính năng còn thiếu của bản mới.
+
 ## 1. Quy tắc viết và dàn dựng
 
 Một NPC không chỉ là người đưa câu trả lời. Họ có việc đang làm, phần biết do trải nghiệm riêng, một giới hạn và một điều không thuộc vụ hàng. Câu nói cần nghe như lời của người có trách nhiệm tại nơi ấy. Natan xưng Chú–Con; Miriam nói Tôi–Bạn với avatar, Chị–Em với Sela; Lea không đổi sự thẳng thắn thành lời phán xét; Rina không biết lượng nhận ở Galilê chỉ vì cũng nấu bữa.

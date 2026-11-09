@@ -1,0 +1,212 @@
+[
+  {
+    "id": "natan--father-hands",
+    "person": "natan",
+    "text": "“Cha con có tật hay nắn lại mối dây neo hai lần trước khi cho thuyền hạ thủy. Bởi vậy khi nghe người ta đồn ông ấy cẩu thả lấy bớt bốn bao lương, chú biết câu chuyện còn chỗ khuất chưa ai chịu kiểm.”",
+    "type": "topic"
+  },
+  {
+    "id": "natan--current-work",
+    "person": "natan",
+    "text": "Chú đang thử một mối nối. Con có thể nhìn mặt gỗ trước khi cầm dụng cụ.",
+    "type": "topic"
+  },
+  {
+    "id": "natan--harbor-shift",
+    "person": "natan",
+    "text": "“Bến cảng không dừng vì một đám tang đâu con. Muốn giữ người làm công khỏi bị chèn ép, con phải hiểu sổ ca viết gì và ai là người cầm chìa khóa cổng phụ lúc chạng vạng.”",
+    "type": "topic"
+  },
+  {
+    "id": "miriam--current-work",
+    "person": "miriam",
+    "text": "Tôi đã nhận một phần bữa, đang tìm người đứng nhận phần còn lại.",
+    "type": "topic"
+  },
+  {
+    "id": "miriam--soup-pot",
+    "person": "miriam",
+    "text": "“Một bao hạt trên giấy chỉ là một con số, nhưng ở sân này nó là mười tám bát cháo nóng cho người gác đêm và mấy bà cụ không còn sức ra bến.”",
+    "type": "topic"
+  },
+  {
+    "id": "miriam--sela-worry",
+    "person": "miriam",
+    "text": "“Em ấy cứ bảo: ‘Chị đừng hứa cả tuần thay em.’ Tôi biết Sela nói đúng, nhưng nhìn bàn tay em còn phồng rộp vì kéo dây, tôi lại sợ nói thật sẽ làm em bỏ cuộc.”",
+    "type": "topic"
+  },
+  {
+    "id": "damar--current-work",
+    "person": "damar",
+    "text": "Tôi để gậy khỏi lối ra. Người tới nói vẫn có thể chọn rời.",
+    "type": "topic"
+  },
+  {
+    "id": "damar--staff-weight",
+    "person": "damar",
+    "text": "“Cây gậy đi đường sinh ra để dò đá sạt và đỡ người trượt chân. Lúc người ta nhìn nó như vũ khí trước tiên, tức là họ đã quên đường rút an toàn rồi.”",
+    "type": "topic"
+  },
+  {
+    "id": "damar--old-debt",
+    "person": "damar",
+    "text": "“Có những vết nứt người ta chỉ cần mình góp gỗ sửa lại rồi lặng lẽ bước đi, chứ không cần mình đứng trước cửa bắt họ phải nói lời tha thứ.”",
+    "type": "topic"
+  },
+  {
+    "id": "lea--current-work",
+    "person": "lea",
+    "text": "Tôi để hai nguồn tách nhau để người đọc còn thấy chỗ chưa thể ghép.",
+    "type": "topic"
+  },
+  {
+    "id": "lea--ink-layers",
+    "person": "lea",
+    "text": "“Mực pha muội đèn mới bao giờ cũng đọng dày ở mép sợi cói đã xước. Nhưng thấy vết sửa chỉ cho biết tờ giấy từng bị chạm vào, chưa cho phép ta điền tên kẻ gian theo ý mình.”",
+    "type": "topic"
+  },
+  {
+    "id": "lea--blank-line",
+    "person": "lea",
+    "text": "“Khi nước cuốn nhòe một dòng chữ, điều trung thực nhất người chép sổ làm được là ghi rõ: ‘Ba chữ không đọc được’. Đừng bao giờ lấy lòng tốt để bịa thêm nét mực.”",
+    "type": "topic"
+  },
+  {
+    "id": "titus--current-work",
+    "person": "titus",
+    "text": "Tôi đang thử chỗ tựa của then; đừng đứng vào phía nó còn có thể trượt.",
+    "type": "topic"
+  },
+  {
+    "id": "titus--pulley-load",
+    "person": "titus",
+    "text": "“Một sợi dây đơn dù bện kỹ tới đâu cũng có ngưỡng đứt. Muốn nâng khung gỗ sồi ướt, phải chia tải qua hai con lăn và tin người giữ đầu dây bên kia.”",
+    "type": "topic"
+  },
+  {
+    "id": "titus--apprentice",
+    "person": "titus",
+    "text": "“Cậu ấy gọt chốt hơi lệch một ly. Tôi cứ muốn giật lấy cái đục làm luôn cho nhanh, nhưng chú Natan bảo ngày xưa tôi cũng làm gãy ba cái nêm trước khi đóng thẳng được một cái.”",
+    "type": "topic"
+  },
+  {
+    "id": "yosef--mother-plant",
+    "person": "yosef",
+    "text": "“Mẹ tôi chỉ có chậu bạc hà đặt bên bệ cửa sổ. Nếu phải dọn đi trong đêm mà không ai báo trước, bà sẽ thức trắng vì tưởng tôi vừa gây họa ở bến.”",
+    "type": "topic"
+  },
+  {
+    "id": "rina--measure-bowl",
+    "person": "rina",
+    "text": "“Gáo gỗ của sân bếp mòn vẹt hai mươi năm nay nhưng chưa từng đong gian cho ai. Thiếu hai bao là thiếu đúng hai nồi chiều, không sổ sách nào che được cái bụng đói.”",
+    "type": "topic"
+  },
+  {
+    "id": "rina--current-work",
+    "person": "rina",
+    "text": "Tôi đang giữ nồi cho lượt tiếp. Bạn đứng bên này để lối mang bát còn trống.",
+    "type": "topic"
+  },
+  {
+    "id": "mattai--current-work",
+    "person": "mattai",
+    "text": "Tôi đang đối lại người nhận ca. Phần tôi ghi là việc ở cửa này.",
+    "type": "topic"
+  },
+  {
+    "id": "mattai--night-latch",
+    "person": "mattai",
+    "text": "“Then sắt chỉ cài khi người cuối cùng trong ca đã ký nhận ra ngoài. Ai bảo tôi mở sân phụ giữa ca đều phải để lại dấu ca trực trong sổ riêng của tôi.”",
+    "type": "topic"
+  },
+  {
+    "id": "amon--current-work",
+    "person": "amon",
+    "text": "Tôi còn kiểm dây của chuyến mình chở; đoạn sau cần hỏi người đã nhận.",
+    "type": "topic"
+  },
+  {
+    "id": "amon--hill-rain",
+    "person": "amon",
+    "text": "“Đoạn dốc đá trơn như đổ mỡ, hai bao ngoài rìa bị cành gai quệt rách lúc ghì phanh. Tôi đã lập biên bản hỏng ngay tại trạm với người làm chứng, không mập mờ một hạt.”",
+    "type": "topic"
+  },
+  {
+    "id": "hanan--reserve-logic",
+    "person": "hanan",
+    "text": "“Ai cũng đòi minh bạch ngay lập tức, nhưng lúc thuyền ngũ cốc trễ hẹn ba tuần liền thì chính những khoản tôi tự giữ lại mới cứu cái sân này khỏi vỡ trận.”",
+    "type": "topic"
+  },
+  {
+    "id": "sela--current-work",
+    "person": "sela",
+    "text": "Tôi chỉ nhận ca đã nói. Những ca còn lại hãy hỏi tôi lại.",
+    "type": "topic"
+  },
+  {
+    "id": "sela--one-shift",
+    "person": "sela",
+    "text": "“Em không gánh nổi cả tuần như chị Miriam, nhưng một ca khuân lưới buổi sớm thì em làm trọn được. Chỉ cần chị ấy đừng giấu em chuyện trong nhà.”",
+    "type": "topic"
+  },
+  {
+    "id": "Q01--ledger",
+    "person": "natan",
+    "text": "Chú đã hứa với cha con sẽ đưa tận tay cuốn sổ này cho người nhà. Tờ bìa còn dính hơi ẩm trong túi vải; để chú hong khô nó cho con.",
+    "type": "action"
+  },
+  {
+    "id": "Q01--meal",
+    "person": "rina",
+    "text": "Chỗ nghỉ ở đây có thể đơn sơ, nhưng vẫn có chỗ cho người mới về. Tôi cần thêm dầu thắp cho lượt nấu sau.",
+    "type": "action"
+  },
+  {
+    "id": "Q02--opening",
+    "person": "miriam",
+    "text": "Trước khi hỏi tên ai, hãy nghĩ xem sáng mai người ấy còn phải bước qua cánh cổng này để kiếm sống thế nào.",
+    "type": "action"
+  },
+  {
+    "id": "Q02--meet",
+    "person": "yosef",
+    "text": "Tôi chỉ vác bao qua cánh cửa kia theo ca. Chừng ấy là điều tôi biết.",
+    "type": "action"
+  },
+  {
+    "id": "Q02--needs",
+    "person": "yosef",
+    "text": "Chỉ nói trong nhóm tiếp nhận đáng tin. Đừng đưa chỗ mẹ tôi ở vào bất kỳ tờ giấy nào.",
+    "type": "action"
+  },
+  {
+    "id": "Q03--choose",
+    "person": "amon",
+    "text": "Tôi mở sổ ngay nếu có người trả phần công giữ ca. Hoặc giúp tôi thay chốt trục rồi cùng xem.",
+    "type": "action"
+  },
+  {
+    "id": "Q04--closure",
+    "person": "mattai",
+    "text": "Cho tôi biết còn ai trong sân. Đã mở lối nào thì phải có người đứng nhận ở đầu lối ấy.",
+    "type": "action"
+  },
+  {
+    "id": "Q06--talk",
+    "person": "enforcer",
+    "text": "Thẻ vẫn ở đây. Anh muốn lấy nó để đối chiếu hay muốn đòi lại phần đau của cha mình?",
+    "type": "action"
+  },
+  {
+    "id": "Q07--listen",
+    "person": "sela",
+    "text": "Em vẫn lo cho chị ấy. Chỉ là em không muốn bị dỗ bằng chuyện không thật.",
+    "type": "action"
+  },
+  {
+    "id": "Q09--statement",
+    "person": "witness1",
+    "text": "Tôi đã nghe Hanan bảo mở sân cho bốn bao. Anh muốn dùng lời này ở đâu?",
+    "type": "action"
+  }
+]

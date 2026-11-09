@@ -12,7 +12,7 @@ Qua các thời đại, mỗi cuộc đời đều để lại một lời chứ
 
 ## Chiều sâu 3.2 đang triển khai
 
-Bản chơi 0.4.0 có 25 tình huống tại 21 chương/cảnh, với luật thử/sửa, bản nháp được giữ và sổ ghi phương án thực sự đã làm. Phụ lục không thay mã nguồn truyện hoặc nhận đã đạt ngân sách thời lượng. Đọc [16 • Nghiên cứu](16-depth-research.md), [17 • Atlas luật thực thi](17-encounter-atlas.md), [18 • Chi tiết cảnh và thoại](18-scene-craft-and-dialogue.md), [19 • Protocol người chơi thật](19-depth-playtest.md). [Hợp đồng chiều sâu](depth-contract.json) liệt kê những tình huống thực sự có trong runtime. Kịch bản 18 tách phần chạy được với hoạt cảnh cần dựng tiếp.
+Bản chơi 0.5.0 có 31 phần việc trực tiếp tại hiện trường, gồm 25 tình huống chương và sáu việc quan hệ; 44 chi tiết 3D tại 27 chủ cảnh. Luật thử/sửa, bản nháp được giữ và sổ ghi đúng phương án đã bàn giao. Bảng đối chiếu là cách chơi thay thế có cùng quyền hoàn tất. Phụ lục không thay mã nguồn truyện hoặc nhận đã đạt ngân sách thời lượng. Đọc [16 • Nghiên cứu](16-depth-research.md), [17 • Atlas luật chương](17-encounter-atlas.md), [18 • Chi tiết cảnh và thoại](18-scene-craft-and-dialogue.md), [19 • Protocol người chơi thật](19-depth-playtest.md), [20 • Thực thi từng cảnh](20-scene-implementation.md). [Hợp đồng chiều sâu](depth-contract.json) và [hợp đồng dàn dựng](craft-contract.json) ghi danh mục runtime. Kịch bản 18 giữ mốc nền 0.4.0; hồ sơ 20 ghi phần đã dựng tiếp và giới hạn còn lại.
 
 ## Đọc theo nhu cầu
 
@@ -33,6 +33,11 @@ Bản chơi 0.4.0 có 25 tình huống tại 21 chương/cảnh, với luật th
 15. [Pitch và bất biến](13-legends-spine-charter.md): một trang quyết định hướng v3.
 16. [Hồ sơ chiều sâu Legends](14-legends-depth-dossiers.md): ba chương, đồ thị thám hiểm, chuỗi cảnh, canon lock, hai định dạng và cầu nối.
 17. [Packet nguồn, thế giới và duyệt](15-source-world-packets.md): sáu packet, 15 nhóm asset và bảy vị trí duyệt chưa phân công.
+18. [Nghiên cứu chiều sâu](16-depth-research.md): căn cứ chuyển thể và bảy họ cơ chế.
+19. [Atlas tình huống chương](17-encounter-atlas.md): 25 bộ luật, đầu vào, tiền đề và phương án.
+20. [Dàn dựng và thoại](18-scene-craft-and-dialogue.md): chi tiết biên tập từ mốc nền 0.4.0.
+21. [Protocol playtest chiều sâu](19-depth-playtest.md): tiêu chí đo bằng người chơi thật, chưa chạy.
+22. [Thực thi từng cảnh](20-scene-implementation.md): hiện trường, 44 vật thể quan sát, sáu việc quan hệ, NPC và giới hạn 0.5.0.
 
 **Bản đọc liền mạch:** `THE-WITNESS-Design-Compendium.html` trong thư mục đầu ra; có mục lục, tìm kiếm và chế độ in. Markdown là nguồn biên tập chính. Bản đọc mới ở `outputs/THE-WITNESS-Design-v3.2/`; hợp đồng trục vẫn revision 3.0 để giữ tương thích, phụ lục có revision 3.2.
 

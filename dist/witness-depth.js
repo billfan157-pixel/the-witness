@@ -174,7 +174,8 @@
   arrangement('V04.TABLE','V04','sit','Một bàn còn chỗ trống','Giấc mơ không gọi người đã khuất trở về để trả lời điều tra. Đặt vài vật quen vào bàn, kệ hoặc túi rồi trở lại với người đang sống.',[item('cup','Chén đất','Một bữa từng có người ngồi.'),item('thread','Cuộn chỉ','Một việc còn có thể làm tiếp.'),item('lamp','Đèn nhỏ','Một khoảng sáng vừa đủ.')],[station('table','Trên bàn','Một chỗ còn để dành.'),station('shelf','Trên kệ','Một điều cất lại.'),station('bag','Trong túi','Một vật muốn mang theo trong ký ức.')],'Bố cục có thể còn dang dở; bạn vẫn được trở về và tiếp tục sống.');
 
   function encounter(s,a){
-    if(!a||a.bond)return null;
+    if(!a)return null;
+    if(a.bond)return root.WitnessRelationships?.resolve(s,a)||null;
     const owner=s.layer?s.layer.id:D.chapters[s.chapter]?.id;
     return catalog.find(x=>x.owner===owner&&x.actions.includes(a.id))||null;
   }
@@ -217,6 +218,7 @@
     L05:['Người cùng buồng · [H]','Tôi còn ở đây. Giữ đèn để người bên cửa nhìn thấy chúng ta.' ]
   };
   function materialize(s,def){
+    if(def.owner.startsWith('B'))return root.WitnessRelationships.materialize(s,def);
     def=catalog.find(x=>x.id===def.id)||def;
     const d={...def,...(def.type==='dispatch'?dispatchData(s,def):{}),voice:voices[def.owner]||null,sourceRef:D.legends[def.owner]?.ref||null};
     if(def.id==='Q07.PROMISE'){
@@ -324,6 +326,7 @@
     const q=D.chapters.find(q=>q.id===def.owner);if(!q)continue;
     for(const a of [...q.tasks,...Object.values(q.execution).flat()])if(def.actions.includes(a.id)){a.depth=def.id;a.puzzle='depth';}
   }
-  const api={catalog,encounter,materialize,dispatchData,empty,guided,evaluate,normalize,describe,context};
+  const all=()=>[...catalog,...(root.WitnessRelationships?.catalog||[])];
+  const api={catalog,all,encounter,materialize,dispatchData,empty,guided,evaluate,normalize,describe,context};
   root.WitnessDepth=api;if(typeof module!=='undefined')module.exports=api;
 })(globalThis);

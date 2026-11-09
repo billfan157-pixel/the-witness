@@ -279,6 +279,6 @@
 
   D.chapters[2].legend='L01';delete D.chapters[3].legend;delete D.chapters[6].legend;D.chapters[9].legend='L04';
   D.chapters.forEach((q,i)=>{q.act=['I · Con đường chưa thấy','II · Khoảng cách phải giữ','III · Buổi sáng và việc được nhận'][Math.floor(i/4)];});
-  D.spine=['L01','L02','L04'];D.version='3.0';D.release='0.4.0';D.coreRevision='3.0.0';
+  D.spine=['L01','L02','L04'];D.version='3.0';D.release='0.5.0';D.coreRevision='3.0.0';
   root.WitnessContent=D;if(typeof module!=='undefined')module.exports=D;
 })(globalThis);

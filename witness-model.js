@@ -3,6 +3,8 @@
   const D=root.WitnessContent||(typeof require!=='undefined'?require('./witness-content.js'):null);
   if(typeof require!=='undefined')require('./witness-spine.js');
   const X=root.WitnessDepth||(typeof require!=='undefined'?require('./witness-depth.js'):null);
+  const R=root.WitnessRelationships||(typeof require!=='undefined'?require('./witness-relationships.js'):null);
+  const C=root.WitnessCraft||(typeof require!=='undefined'?require('./witness-craft.js'):null);
   const STORE='the-witness.spine.v3', BACKUP=STORE+'.backup',LEGACY='the-witness.campaign.v2';
   const clone=x=>JSON.parse(JSON.stringify(x));
   const error=message=>{throw new Error(message);};
@@ -29,7 +31,7 @@
     return {claim:'P01',audience:'private_group',slots:{P01:[],P02:[],P03:[],P04:[]}};
   }
   function defaultSettings(){
-    return {text:1,motion:'calm',sound:false,guide:true,guideMode:'full',comfort:true,sprintToggle:false,stickSide:'left',subtitleBg:true,graphics:'ultra'};
+    return {text:1,motion:'calm',sound:false,masterVolume:.8,ambienceVolume:.55,effectsVolume:.75,voiceVolume:.95,uiVolume:.4,voiceMode:'recorded',autoVoice:true,audioCaptions:true,audioSpatial:true,audioRange:'natural',guide:true,guideMode:'full',comfort:true,sprintToggle:false,stickSide:'left',subtitleBg:true,graphics:'ultra',workMode:'field',cameraMode:'third'};
   }
 
   function fresh(profile={}){
@@ -49,7 +51,7 @@
       relationships:{miriam:0,damar:0,lea:0,titus:0},bonds:{},legends:{},veils:{},events:[],layer:null,positions:{},
       pendingEscort:null,finished:false,pendingBond:null,
       campaignProgress:{requiredLegends:{}},unlockedBridgeContext:[],
-      board:defaultBoard(),talked:{},quietSeen:[],workshop:{drafts:{},records:{}},
+      board:defaultBoard(),talked:{},quietSeen:[],workshop:{drafts:{},records:{}},craft:{looked:[],field:null},
       migration:null,settings:defaultSettings(),lastSaved:null
     };
   }
@@ -106,7 +108,7 @@
   function bondAction(s){
     const pending=s.pendingBond;if(!pending)return [];
     const b=D.bonds.find(b=>b.id===pending.id);if(!b||s.bonds[b.id])return [];
-    return [{id:'bond-work',target:'bond-work',title:'Cùng thực hiện: '+b.title,text:b.choices.find(c=>c[0]===pending.choice)?.[2]||b.text,puzzle:['natan','titus','damar'].includes(b.person)?'brace':b.person==='rina'?'supplies':b.person==='lea'?'copy':'claims',bond:b.id,success:b.callback,needs:[]}];
+    return [{id:'bond-work',target:'bond-work',title:'Cùng thực hiện: '+b.title,text:b.choices.find(c=>c[0]===pending.choice)?.[2]||b.text,puzzle:'depth',depth:R.catalog.find(d=>d.owner===b.id).id,bond:b.id,success:b.callback,needs:[]}];
   }
 
   function layerAt(i,s){
@@ -250,7 +252,7 @@
     if(state.layer)error('Hãy hoàn tất hoặc rời trải nghiệm hiện tại trước.');
     const s=clone(state),ch=chapter(s),q=quest(s);const a=actions(s).find(x=>x.id===id);if(!a)error('Việc này chưa sẵn sàng hoặc đã hoàn tất.');
     if(a.legend)error('Hãy mở chương chính bằng phần chơi hoặc bản tóm tắt.');
-    if(a.bond){if(!checkPuzzle(s,a,options.puzzle))error('Hãy hoàn tất phần cùng làm trước khi ghi nhận.');return bond(s,a.bond,s.pendingBond.choice,{completedWork:true});}
+    if(a.bond){if(!checkPuzzle(s,a,options.puzzle))error('Hãy hoàn tất phần cùng làm trước khi ghi nhận.');recordWorkshop(s,a,options.puzzle?.work);s.craft.lastWork={bond:a.bond,chapter:s.chapter};return bond(s,a.bond,s.pendingBond.choice,{completedWork:true});}
     if(id==='advance'){
       if(dueLegend(s))error('Chương Kinh Thánh chính còn dở. Hãy tiếp tục hoặc xem tóm tắt đủ nội dung.');
       if(ch.id==='Q03'&&condition(s,'anonymous-unprotected'))error('Cần bố trí bảo vệ đã hứa trước khi rời vùng.');
@@ -364,7 +366,7 @@
       if(!l.replay){
         s.legends[l.id]={
           status:'committed',completed:true,revision:source.revision,receipts:clone(l.receipts),discovered:clone(l.discovered),
-          composure:l.composure??84,attunements:clone(l.attunements||[]),workshop:readWorkshop(l.workshop,s),
+          composure:l.composure??84,attunements:clone(l.attunements||[]),workshop:readWorkshop(l.workshop,s),craft:readCraft(l.craft,l.id,false),
           finalAcknowledged:true,format:l.receipts.every(r=>r.format===l.format)?l.format:'mixed',
           reflection:typeof reflection==='string'?reflection.slice(0,180):null
         };
@@ -378,8 +380,8 @@
     }
     if(!skip&&l.step<source.steps.length)error('Cảnh còn phần chưa hoàn tất.');
     if(!l.replay){
-      if(l.kind==='legend')s.legends[l.id]={completed:true,skipped:skip,discovered:clone(l.discovered||[]),workshop:readWorkshop(l.workshop,s)};
-      else s.veils[l.id]={completed:true,skipped:skip,discovered:clone(l.discovered||[]),workshop:readWorkshop(l.workshop,s),reflection:!skip&&source.answers.includes(reflection)?reflection:null};
+      if(l.kind==='legend')s.legends[l.id]={completed:true,skipped:skip,discovered:clone(l.discovered||[]),workshop:readWorkshop(l.workshop,s),craft:readCraft(l.craft,l.id,false)};
+      else s.veils[l.id]={completed:true,skipped:skip,discovered:clone(l.discovered||[]),workshop:readWorkshop(l.workshop,s),craft:readCraft(l.craft,l.id,false),reflection:!skip&&source.answers.includes(reflection)?reflection:null};
     }
     s.layer=null;return s;
   }
@@ -402,7 +404,9 @@
   function talkTopics(s,personId){
     const p=D.people?.[personId];if(!p?.topics||s.layer)return [];
     const seen=new Set(s.talked?.[personId]||[]);
-    return p.topics.filter(t=>(t.minChapter??0)<=s.chapter).map(t=>({...t,heard:seen.has(t.id)}));
+    const after=R.topic(s,personId);
+    const work=C.agendas[personId];
+    return [...p.topics.filter(t=>(t.minChapter??0)<=s.chapter),...(work?[{id:'current-work',label:'Hỏi về phần việc đang làm',line:work.line}]:[]),...(after?[after]:[])].map(t=>({...t,heard:seen.has(t.id)}));
   }
   function recordTalk(state,personId,topicId){
     const s=clone(state);if(s.layer)return s;
@@ -548,7 +552,13 @@
     }
     s.evidence=unique((raw.evidence||[]).filter(id=>Object.hasOwn(D.evidence,id)));
     for(const key of ['consent','flags','resources','relationships','bonds','legends','veils','positions','settings'])if(raw[key]&&typeof raw[key]==='object'&&!Array.isArray(raw[key]))s[key]={...s[key],...clone(raw[key])};
+    for(const k of ['masterVolume','ambienceVolume','effectsVolume','voiceVolume','uiVolume'])s.settings[k]=typeof s.settings[k]==='number'&&Number.isFinite(s.settings[k])?Math.max(0,Math.min(1,s.settings[k])):defaultSettings()[k];
+    for(const k of ['sound','autoVoice','audioCaptions','audioSpatial'])if(typeof s.settings[k]!=='boolean')s.settings[k]=defaultSettings()[k];
+    if(!['recorded','system','off'].includes(s.settings.voiceMode))s.settings.voiceMode='recorded';
+    if(!['natural','night'].includes(s.settings.audioRange))s.settings.audioRange='natural';
     if(!['ultra','high','balanced'].includes(s.settings.graphics))s.settings.graphics='ultra';
+    if(!['third','first'].includes(s.settings.cameraMode))s.settings.cameraMode='third';
+    if(!['field','board'].includes(s.settings.workMode))s.settings.workMode='field';
     if(raw.skills&&typeof raw.skills==='object'&&!Array.isArray(raw.skills)){
       for(const k of SKILL_KEYS)if(Number.isInteger(raw.skills[k])&&raw.skills[k]>=1&&raw.skills[k]<=3)s.skills[k]=raw.skills[k];
     }
@@ -574,6 +584,7 @@
     }
     for(const id of Object.keys(s.consent)){const c=s.consent[id];if(!c||!['private_group','anonymous_summary','public_named','withheld'].includes(c.scope))delete s.consent[id];}
     s.workshop=readWorkshop(raw.workshop,s);
+    s.craft=readCraft(raw.craft,null,true);
     const validReceipts=(id,list)=>Array.isArray(list)&&list.length<=D.legends[id].beats.length&&list.every((r,i)=>r?.beat===D.legends[id].beats[i].id&&r.revision===D.legends[id].revision&&['interactive','accessible_summary'].includes(r.format));
     s.legends=Object.fromEntries(Object.entries(s.legends).filter(([id])=>Object.hasOwn(D.legends,id)));
     s.veils=Object.fromEntries(Object.entries(s.veils).filter(([id])=>Object.hasOwn(D.veils,id)));
@@ -584,6 +595,8 @@
       const cp=r?.checkpoint;
       if(r?.workshop)r.workshop=readWorkshop(r.workshop,s);
       if(cp?.workshop)cp.workshop=readWorkshop(cp.workshop,s);
+      if(r?.craft)r.craft=readCraft(r.craft,id,false);
+      if(cp?.craft)cp.craft=readCraft(cp.craft,id,true);
       if(cp&&(cp.kind!=='legend'||cp.id!==id||!Number.isInteger(cp.step)||cp.step<0||cp.step>D.legends[id].steps.length||!validReceipts(id,cp.receipts)||!['interactive','accessible_summary'].includes(cp.format)||!Number.isInteger(cp.summaryIndex)||cp.summaryIndex<0||cp.summaryIndex>D.legends[id].beats.length))error('Điểm dừng chương trong bản lưu không hợp lệ.');
       if(r?.status==='committed'&&!legendComplete(s,id))error('Chương được đánh dấu xong nhưng chưa đủ nội dung.');
       if(legendComplete(s,id)){s.campaignProgress.requiredLegends[id]=D.coreRevision;s.unlockedBridgeContext.push(id);}
@@ -595,6 +608,7 @@
         if(src[l.id].required&&(!validReceipts(l.id,l.receipts)||!['interactive','accessible_summary'].includes(l.format)||!Number.isInteger(l.summaryIndex)||l.summaryIndex<0||l.summaryIndex>src[l.id].beats.length))error('Trang nguồn trong bản lưu không hợp lệ.');
         s.layer=clone(l);
         if(s.layer.workshop)s.layer.workshop=readWorkshop(s.layer.workshop,s);
+        if(s.layer.craft)s.layer.craft=readCraft(s.layer.craft,s.layer.id,true);
       }
     }
     for(const key of ['money','food','tools'])if(!Number.isFinite(s.resources[key])||s.resources[key]<0||s.resources[key]>100)error('Tài nguyên trong bản lưu không hợp lệ.');
@@ -614,7 +628,7 @@
   function readWorkshop(raw,s){
     const out={drafts:{},records:{}};
     if(!raw||typeof raw!=='object'||Array.isArray(raw))return out;
-    for(const def of X.catalog){
+    for(const def of X.all()){
       const d=X.materialize(s,def),draft=raw.drafts?.[def.id],record=raw.records?.[def.id];
       if(draft&&typeof draft==='object')out.drafts[def.id]={payload:X.normalize(d,draft.payload),assisted:draft.assisted===true};
       if(record&&record.revision===def.revision)out.records[def.id]={revision:def.revision,payload:X.normalize(d,record.payload),summary:d.outcome+' '+X.describe(s,d,record.payload),assisted:record.assisted===true};
@@ -634,10 +648,58 @@
     const next={drafts:{...old.drafts},records:{...old.records,[def.id]:{revision:def.revision,payload:p,summary:X.materialize(s,def).outcome+' '+X.describe(s,def,p),assisted:old.drafts[def.id]?.assisted===true}}};
     delete next.drafts[def.id];
     if(s.layer)s.layer.workshop=next;else s.workshop=next;
+    const scope=s.layer||s;if(scope.craft?.field?.encounter===def.id)scope.craft.field=null;
+  }
+  function readCraft(raw,owner=null,keepField=true){
+    const ids=new Set(C.allDetailIds()),out={looked:[],field:null};if(!raw||typeof raw!=='object'||Array.isArray(raw))return out;
+    out.looked=unique((Array.isArray(raw.looked)?raw.looked:[]).filter(id=>ids.has(id)&&(!owner||id.startsWith('craft:'+owner+'-')))).slice(0,100);
+    const f=raw.field,d=X.all().find(d=>d.id===f?.encounter);
+    if(keepField&&d&&d.actions.includes(f.action)&&(!owner||d.owner===owner)){
+      out.field={encounter:d.id,action:f.action,selected:typeof f.selected==='string'&&/^[a-z0-9-]{1,40}$/.test(f.selected)?f.selected:null};
+    }
+    if(raw.views&&typeof raw.views==='object'&&!Array.isArray(raw.views)){
+      out.views={};for(const [id,v]of Object.entries(raw.views))if(ids.has(id)&&(!owner||id.startsWith('craft:'+owner+'-'))&&v&&typeof v==='object')out.views[id]={lift:v.lift===true,light:[0,1,2].includes(v.light)?v.light:0};
+    }
+    if(!owner&&D.bonds.some(b=>b.id===raw.lastWork?.bond)&&Number.isInteger(raw.lastWork.chapter)&&raw.lastWork.chapter>=0&&raw.lastWork.chapter<12)out.lastWork={bond:raw.lastWork.bond,chapter:raw.lastWork.chapter};
+    return out;
+  }
+  function writeCraft(s,data){if(s.layer){s.layer.craft=data;rememberLayer(s);}else s.craft=data;return s;}
+  function inspectDetail(state,id,position){
+    const detail=C.details(state).find(d=>d.id===id);if(!detail||!Array.isArray(position)||position.length!==2||!position.every(Number.isFinite)||Math.hypot(position[0]-detail.at[0],position[1]-detail.at[1])>3.2)error('Hãy tới gần chi tiết trước khi quan sát.');
+    const s=clone(state),old=C.stores(s);return writeCraft(s,{...old,looked:unique([...(old.looked||[]),id]),field:old.field||null});
+  }
+  function detailView(state,id,position,options={}){
+    const s=inspectDetail(state,id,position),old=C.stores(s),prev=old.views?.[id]||{lift:false,light:0};
+    return writeCraft(s,{...old,views:{...(old.views||{}),[id]:{lift:typeof options.lift==='boolean'?options.lift:prev.lift,light:[0,1,2].includes(options.light)?options.light:prev.light}}});
+  }
+  function fieldStart(state,id){
+    let s=clone(state);const a=actions(s).find(a=>a.id===id),def=X.encounter(s,a);if(!def)error('Phần việc này chưa sẵn sàng tại cảnh.');
+    const old=C.stores(s);s=writeCraft(s,{...old,looked:old.looked||[],field:{encounter:def.id,action:id,selected:null}});
+    const p=workshopState(s).drafts[def.id]?.payload||X.empty(X.materialize(s,def));return workshopDraft(s,id,p);
+  }
+  function fieldSelect(state,item){
+    const f=C.field(state);if(!f||![...(f.def.items||[]),...(f.def.cards||[])].some(x=>x.id===item))error('Người, vật hoặc dấu này không thuộc phần việc hiện tại.');
+    const s=clone(state),c=C.stores(s);return writeCraft(s,{...c,field:{...c.field,selected:item}});
+  }
+  function fieldAct(state,id,options={}){
+    const f=C.field(state),spot=C.fieldSpots(state).find(x=>x.id===id),p=options.position;
+    if(!f||!spot||!Array.isArray(p)||p.length!==2||!p.every(Number.isFinite)||Math.hypot(p[0]-spot.at[0],p[1]-spot.at[1])>2.8)error('Hãy tới đúng điểm thao tác trong cảnh trước.');
+    const result=C.reduceField(state,spot,options);return {ok:result.ok,message:result.message,state:result.ok?workshopDraft(state,f.a.id,result.payload):state};
+  }
+  function fieldReset(state,back=false){
+    const f=C.field(state);if(!f)error('Chưa có phần việc tại cảnh.');let p=clone(f.payload);
+    if(!back)p=X.empty(f.def);else if(f.def.type==='sequence')p.order.pop();else if(f.def.type==='route'){if(p.path.length>1)p.path.pop();}else if(p.assignments&&f.selected)delete p.assignments[f.selected];
+    return workshopDraft(state,f.a.id,p);
+  }
+  function fieldStop(state){const s=clone(state),old=C.stores(s);return writeCraft(s,{...old,looked:old.looked||[],field:null});}
+  function fieldFinish(state,position){
+    const f=C.field(state);if(!f||!Array.isArray(position)||position.length!==2||!position.every(Number.isFinite)||Math.hypot(position[0]-f.origin[0],position[1]-f.origin[1])>3.4)error('Hãy trở lại điểm bàn giao trước khi thực hiện phương án.');
+    const result=X.evaluate(state,f.def,f.payload);if(!result.ok)error(result.issues[0]||'Phương án còn phần cần đối chiếu.');
+    const s=fieldStop(state);return s.layer?layerStep(s,f.a.id,{position,work:f.payload}):act(s,f.a.id,{puzzle:{work:f.payload}});
   }
 
   const Model={
-    fresh,chapter,quest,actions,planAllowed,checkPuzzle,act,chooseAgain,escort,workshopState,workshopDraft,
+    fresh,chapter,quest,actions,planAllowed,checkPuzzle,act,chooseAgain,escort,workshopState,workshopDraft,inspectDetail,detailView,fieldStart,fieldSelect,fieldAct,fieldReset,fieldStop,fieldFinish,
     openLayer,layerStep,closeLayer,switchLayer,summaryStep,adjustComposure,
     legendComplete,dueLegend,allLegends,attunement,kitStatus,tenets,activeTenetForChapter,
     startBond,bond,talkTopics,recordTalk,recordQuiet,

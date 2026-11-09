@@ -302,15 +302,23 @@
     "16-depth-research.md",
     "17-encounter-atlas.md",
     "18-scene-craft-and-dialogue.md",
-    "19-depth-playtest.md"
+    "19-depth-playtest.md",
+    "20-scene-implementation.md"
   ],
   "depthExpansion": {
     "revision": "3.2",
-    "runtimeRelease": "0.4.0",
+    "runtimeRelease": "0.5.0",
     "catalog": "depth-contract.json",
     "encounters": 25,
     "ownerScenes": 21,
     "mechanicFamilies": 7,
-    "humanPlaytest": "not-yet-run"
+    "humanPlaytest": "not-yet-run",
+    "craftCatalog": "craft-contract.json",
+    "relationshipEncounters": 6,
+    "totalActivities": 31,
+    "physicalDetails": 44,
+    "totalSceneOwners": 27,
+    "defaultWorkMode": "field",
+    "boardAlternative": true
   }
 }

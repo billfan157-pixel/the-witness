@@ -3,7 +3,7 @@ import fs from 'node:fs';import path from 'node:path';import os from 'node:os';i
 import {createRequire} from 'node:module';import {pathToFileURL} from 'node:url';
 const require=createRequire(import.meta.url),M=require('../witness-model.js'),D=require('../witness-content.js'),X=require('../witness-depth.js');
 const out=path.resolve(import.meta.dirname,'artifacts/depth');fs.mkdirSync(out,{recursive:true});
-const port=19548,profile=fs.mkdtempSync(path.join(os.tmpdir(),'witness-depth-qa-'));
+const port=Number(process.env.WITNESS_QA_PORT||19548),profile=fs.mkdtempSync(path.join(os.tmpdir(),'witness-depth-qa-'));
 const child=spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',['--headless=new','--enable-unsafe-swiftshader','--no-first-run',`--remote-debugging-port=${port}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
 const delay=ms=>new Promise(r=>setTimeout(r,ms));let socket;
 function seedState(owner,id,plan=null){
@@ -32,7 +32,7 @@ try{
     const hook=await send('Page.addScriptToEvaluateOnNewDocument',{source:`localStorage.setItem('the-witness.spine.v3',${JSON.stringify(JSON.stringify(s))});`});
     await send('Page.reload',{ignoreCache:true});await waitFor('!!document.querySelector("#title-actions [data-act=continue]")');await send('Page.removeScriptToEvaluateOnNewDocument',{identifier:hook.identifier});await click('#title-actions [data-act=continue]');await waitFor('!!document.querySelector("dialog")');await click('dialog [data-act=close]');await delay(500);
   };
-  const open=async id=>{const s=await read(),a=M.actions(s).find(a=>a.id===id);assert(a,id);await waitFor(`!!document.querySelector('[data-world-target="${a.target}"]')`);await click(`[data-world-target="${a.target}"]`);if(!s.layer){await waitFor('!!document.querySelector("dialog [data-act=perform]")');await click('dialog [data-act=perform]');}await waitFor('!!document.querySelector("[data-workshop]")');};
+  const open=async id=>{const s=await read(),a=M.actions(s).find(a=>a.id===id);assert(a,id);await waitFor(`!!document.querySelector('[data-world-target="${a.target}"]')`);await click(`[data-world-target="${a.target}"]`);if(!s.layer){await waitFor('!!document.querySelector("dialog [data-act=perform]")');await click('dialog [data-act=perform]');}if(await evaluate('!document.querySelector("#field-work").hidden'))await click('[data-act=field-board]');await waitFor('!!document.querySelector("[data-workshop]")');};
   const fits=async()=>{assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false);assert.equal(await evaluate('(()=>{const d=document.querySelector("dialog");return d.scrollWidth>d.clientWidth+2})()'),false);};
   await seed(seedState('Q01','brace'));await open('brace');await click('[data-act=depth-commit]');assert.equal((await read()).quests.Q01.done.includes('brace'),false);
   for(const id of ['block','lash'])await click(`[data-act=depth-step][data-value=${id}]`);

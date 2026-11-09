@@ -1,11 +1,12 @@
 {
   "name": "unsealed-witness-legacy-of-the-covenant",
-  "version": "0.4.0",
+  "version": "0.6.0",
   "description": "UNSEALED WITNESS: Legacy of the Covenant (Chứng Nhân: Di Sản Giao Ước) - Biblical Explorer RPG",
   "private": true,
   "scripts": {
-    "test": "node test/campaign.cjs && node test/spine.cjs && node test/charset.cjs && node test/scene-plan.cjs && node test/v31-systems.cjs && node test/depth.cjs",
-    "test:browser": "node test/browser.mjs && node test/scene.mjs && node test/spine-browser.mjs && node test/depth-browser.mjs",
+    "test": "node test/campaign.cjs && node test/spine.cjs && node test/charset.cjs && node test/scene-plan.cjs && node test/v31-systems.cjs && node test/depth.cjs && node test/craft.cjs",
+    "test:browser": "node test/browser.mjs && node test/scene.mjs && node test/spine-browser.mjs && node test/depth-browser.mjs && node test/craft-browser.mjs",
+    "test:craft-details": "node test/craft-details-browser.mjs && node test/field-keyboard-browser.mjs",
     "build": "node tools/build.cjs",
     "dev": "node tools/serve.cjs"
   },

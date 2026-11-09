@@ -25,8 +25,8 @@ button{border:1px solid #8b8174;background:transparent;padding:9px 13px;color:va
 @media(max-width:550px){nav{display:block}table{display:block;overflow:auto;table-layout:auto}th,td{min-width:130px}main{padding:24px 18px}}
 @media print{@page{size:A4;margin:17mm 15mm}body{background:white;font-size:10pt;line-height:1.55}aside,.no-print,button{display:none}main{margin:0;padding:0;max-width:none}.cover{break-after:page;margin:0;padding-top:35mm;border:0}.cover h1{font-size:40pt}article{break-before:page;border:0;margin:0;padding:0}article h1{font-size:25pt}article h2{font-size:16pt;break-after:avoid}article h3{font-size:13pt;break-after:avoid}p,li{orphans:3;widows:3}table{font-size:8pt;table-layout:fixed}tr{break-inside:avoid}a{color:inherit}article[hidden]{display:block!important}}
 </style></head><body>
-<aside><div class="brand">THE WITNESS</div><div class="subtitle">Legacy of the Covenant<br>HỒ SƠ THIẾT KẾ / v3.2</div><label for="search" class="no-print">Tìm trong bộ tài liệu (có thể gõ không dấu)</label><input id="search" type="search" placeholder="Ví dụ: Môsê, cổng truyện"><div id="result" role="status" aria-live="polite"></div><label for="legend-jump" class="no-print">Ba chương cốt truyện</label><select id="legend-jump"><option value="">Chọn Legend bắt buộc</option><option value="#chapter-14-l01">Môsê: Bờ trước mặt &amp; Đêm vượt biển</option><option value="#chapter-14-l02">Đavít: Khoảng cách trong hang &amp; Khe đá En Ghêđi</option><option value="#chapter-14-l04">Phêrô: Một buổi sáng được trao lại &amp; Bờ hồ Ti-bê-ri-a</option></select><label for="quest-jump" class="no-print">Các cầu nối đời thường</label><select id="quest-jump"><option value="">Chọn cầu nối Q01–Q12</option><option value="#chapter-11-q01">Q01 — Bến không chờ người về</option><option value="#chapter-11-q02">Q02 — Những tên không được đọc</option><option value="#chapter-11-q03">Q03 — Một bao thiếu, ba người nhớ</option><option value="#chapter-11-q04">Q04 — Đêm kho đóng cửa</option><option value="#chapter-11-q05">Q05 — Lưới rách còn người vá</option><option value="#chapter-11-q06">Q06 — Chỗ đứng của lưỡi gậy</option><option value="#chapter-11-q07">Q07 — Một lời hứa còn thiếu</option><option value="#chapter-11-q08">Q08 — Trang sổ trong nước</option><option value="#chapter-11-q09">Q09 — Quyền được im lặng</option><option value="#chapter-11-q10">Q10 — Bản sao không nguyên vẹn</option><option value="#chapter-11-q11">Q11 — Những người cùng ở lại</option><option value="#chapter-11-q12">Q12 — Điều còn lại sau một lời nói</option></select><nav><a href="#overview">THE WITNESS — Legacy of the Covenant</a><a href="#chapter-01">01 • Tổng quan sáng tạo và nghiên cứu</a><a href="#chapter-02">02 • Game Design Document</a><a href="#chapter-03">03 • Narrative Bible</a><a href="#chapter-04">04 • World Bible</a><a href="#chapter-05">05 • Character Bible</a><a href="#chapter-06">06 • Chiến dịch và nhiệm vụ</a><a href="#chapter-07">07 • Vertical slice v3 — Bờ trước mặt</a><a href="#chapter-08">08 • Tài liệu tham chiếu Kinh Thánh và chuyển thể</a><a href="#chapter-09">09 • Sản xuất và hợp đồng triển khai v3</a><a href="#chapter-10">10 • Nguồn nghiên cứu và sổ luận cứ</a><a href="#chapter-11">11 • Hồ sơ chiều sâu 12 cầu nối Mortal</a><a href="#chapter-12">12 • Sự thật nền, continuity và hệ quả</a><a href="#chapter-13">13 • Hiến chương Trục truyện — Legends là Xương sống</a><a href="#chapter-14">14 • Hồ sơ chiều sâu Legends — Ba chương trục truyện</a><a href="#chapter-15">15 • Packet nguồn, thế giới và danh sách duyệt</a><a href="#chapter-16">16 • Nghiên cứu và quyết định phát triển chiều sâu</a><a href="#chapter-17">17 • Atlas 25 tình huống đang chơi được</a><a href="#chapter-18">18 • Chi tiết cảnh, thoại và dấu trở lại</a><a href="#chapter-19">19 • Protocol kiểm tra chiều sâu trải nghiệm</a></nav><button id="print">In / Lưu thành PDF</button></aside>
-<main><header class="cover"><div class="eyebrow">BIBLE • EXPLORATION • LIVING BRIDGES</div><h1>THE WITNESS</h1><h2>Legacy of the Covenant</h2><p><strong>Chứng Nhân: Di Sản Giao Ước</strong></p><p>“Across the ages, every life bears witness.”<br>Qua các thời đại, mỗi cuộc đời đều để lại một lời chứng.</p><p><strong>Kinh Thánh là cốt truyện chính. Thám hiểm là lối chơi chủ đạo.</strong><br>Môsê — Đavít — Phêrô: ba Legends bắt buộc nối bằng đời sống của người thường. Chơi hoặc xem tóm tắt đủ nội dung; thoát giữa chương giữ cổng chưa mở.</p><p class="no-print"><a href="THE-WITNESS-v3-Pitch.html">Đọc pitch và bất biến một trang</a> · <a href="#chapter-14-l01">Bắt đầu hồ sơ Môsê</a><br>20 tài liệu • 32 nguồn • 3 hồ sơ Legends • 6 packet nguồn/thế giới • 2 hợp đồng<br>Ngân sách thử: Legends 216/720 phút = 30%; chưa đo.<br>Bản chơi 0.4.0 có 25 tình huống theo luật tại 21 chương/cảnh; chưa có playtest người thật hoặc duyệt chuyên môn.</p></header><article id="overview" data-chapter><div class="eyebrow">DESIGN DOSSIER / 08.11.2026</div><h1>THE WITNESS — Legacy of the Covenant</h1>
+<aside><div class="brand">THE WITNESS</div><div class="subtitle">Legacy of the Covenant<br>HỒ SƠ THIẾT KẾ / v3.2</div><label for="search" class="no-print">Tìm trong bộ tài liệu (có thể gõ không dấu)</label><input id="search" type="search" placeholder="Ví dụ: Môsê, cổng truyện"><div id="result" role="status" aria-live="polite"></div><label for="legend-jump" class="no-print">Ba chương cốt truyện</label><select id="legend-jump"><option value="">Chọn Legend bắt buộc</option><option value="#chapter-14-l01">Môsê: Bờ trước mặt &amp; Đêm vượt biển</option><option value="#chapter-14-l02">Đavít: Khoảng cách trong hang &amp; Khe đá En Ghêđi</option><option value="#chapter-14-l04">Phêrô: Một buổi sáng được trao lại &amp; Bờ hồ Ti-bê-ri-a</option></select><label for="quest-jump" class="no-print">Các cầu nối đời thường</label><select id="quest-jump"><option value="">Chọn cầu nối Q01–Q12</option><option value="#chapter-11-q01">Q01 — Bến không chờ người về</option><option value="#chapter-11-q02">Q02 — Những tên không được đọc</option><option value="#chapter-11-q03">Q03 — Một bao thiếu, ba người nhớ</option><option value="#chapter-11-q04">Q04 — Đêm kho đóng cửa</option><option value="#chapter-11-q05">Q05 — Lưới rách còn người vá</option><option value="#chapter-11-q06">Q06 — Chỗ đứng của lưỡi gậy</option><option value="#chapter-11-q07">Q07 — Một lời hứa còn thiếu</option><option value="#chapter-11-q08">Q08 — Trang sổ trong nước</option><option value="#chapter-11-q09">Q09 — Quyền được im lặng</option><option value="#chapter-11-q10">Q10 — Bản sao không nguyên vẹn</option><option value="#chapter-11-q11">Q11 — Những người cùng ở lại</option><option value="#chapter-11-q12">Q12 — Điều còn lại sau một lời nói</option></select><nav><a href="#overview">THE WITNESS — Legacy of the Covenant</a><a href="#chapter-01">01 • Tổng quan sáng tạo và nghiên cứu</a><a href="#chapter-02">02 • Game Design Document</a><a href="#chapter-03">03 • Narrative Bible</a><a href="#chapter-04">04 • World Bible</a><a href="#chapter-05">05 • Character Bible</a><a href="#chapter-06">06 • Chiến dịch và nhiệm vụ</a><a href="#chapter-07">07 • Vertical slice v3 — Bờ trước mặt</a><a href="#chapter-08">08 • Tài liệu tham chiếu Kinh Thánh và chuyển thể</a><a href="#chapter-09">09 • Sản xuất và hợp đồng triển khai v3</a><a href="#chapter-10">10 • Nguồn nghiên cứu và sổ luận cứ</a><a href="#chapter-11">11 • Hồ sơ chiều sâu 12 cầu nối Mortal</a><a href="#chapter-12">12 • Sự thật nền, continuity và hệ quả</a><a href="#chapter-13">13 • Hiến chương Trục truyện — Legends là Xương sống</a><a href="#chapter-14">14 • Hồ sơ chiều sâu Legends — Ba chương trục truyện</a><a href="#chapter-15">15 • Packet nguồn, thế giới và danh sách duyệt</a><a href="#chapter-16">16 • Nghiên cứu và quyết định phát triển chiều sâu</a><a href="#chapter-17">17 • Atlas 25 tình huống đang chơi được</a><a href="#chapter-18">18 • Chi tiết cảnh, thoại và dấu trở lại</a><a href="#chapter-19">19 • Protocol kiểm tra chiều sâu trải nghiệm</a><a href="#chapter-20">20 • Thực thi từng cảnh theo hồ sơ 3.2</a></nav><button id="print">In / Lưu thành PDF</button></aside>
+<main><header class="cover"><div class="eyebrow">BIBLE • EXPLORATION • LIVING BRIDGES</div><h1>THE WITNESS</h1><h2>Legacy of the Covenant</h2><p><strong>Chứng Nhân: Di Sản Giao Ước</strong></p><p>“Across the ages, every life bears witness.”<br>Qua các thời đại, mỗi cuộc đời đều để lại một lời chứng.</p><p><strong>Kinh Thánh là cốt truyện chính. Thám hiểm là lối chơi chủ đạo.</strong><br>Môsê — Đavít — Phêrô: ba Legends bắt buộc nối bằng đời sống của người thường. Chơi hoặc xem tóm tắt đủ nội dung; thoát giữa chương giữ cổng chưa mở.</p><p class="no-print"><a href="THE-WITNESS-v3-Pitch.html">Đọc pitch và bất biến một trang</a> · <a href="#chapter-14-l01">Bắt đầu hồ sơ Môsê</a><br>21 tài liệu • 32 nguồn • 3 hồ sơ Legends • 6 packet nguồn/thế giới • 4 hợp đồng<br>Ngân sách thử: Legends 216/720 phút = 30%; chưa đo.<br>Bản chơi 0.5.0 có 31 phần việc trực tiếp tại hiện trường, gồm sáu nhiệm vụ quan hệ; 44 chi tiết 3D ở 27 chủ cảnh. Chưa có playtest người thật hoặc duyệt chuyên môn.</p></header><article id="overview" data-chapter><div class="eyebrow">DESIGN DOSSIER / 08.11.2026</div><h1>THE WITNESS — Legacy of the Covenant</h1>
 <h2>Chứng Nhân: Di Sản Giao Ước</h2>
 <p>“Across the ages, every life bears witness.”<br />
 Qua các thời đại, mỗi cuộc đời đều để lại một lời chứng.</p>
@@ -34,7 +34,7 @@ Qua các thời đại, mỗi cuộc đời đều để lại một lời chứ
 <p><strong>Legends là xương sống; nội dung Kinh Thánh là cốt truyện chính; thám hiểm là lối chơi chủ đạo.</strong> V3 sửa hướng v2 theo quyết định của chủ dự án: ba hồi có L01 Môsê, L02 Đavít, L04 Phêrô bắt buộc, khoảng 30% thời lượng tuyến chuẩn. Mortal World nối các chương qua người kể, phản tư và hành động đời thường; Veil và hai Legend mở rộng vẫn tự chọn. Đọc <a href="#chapter-13">pitch/bất biến một trang</a> trước các bible.</p>
 <p><strong>Tầm nhìn AAA là đích chất lượng dài hạn.</strong> Bộ hồ sơ không chứng minh đã có đội ngũ/ngân sách/chất lượng ấy. 0.1.0 là baseline v2; prototype 0.2.0 đã triển khai core/cổng v3, đã qua kiểm model/UI trước đóng gói. Chưa hoàn thành thời lượng, level art/cinematic và thẩm định của hồ sơ. Bộ v1/v2 và dữ liệu chơi cũ được giữ riêng.</p>
 <h2>Chiều sâu 3.2 đang triển khai</h2>
-<p>Bản chơi 0.4.0 có 25 tình huống tại 21 chương/cảnh, với luật thử/sửa, bản nháp được giữ và sổ ghi phương án thực sự đã làm. Phụ lục không thay mã nguồn truyện hoặc nhận đã đạt ngân sách thời lượng. Đọc <a href="#chapter-16">16 • Nghiên cứu</a>, <a href="#chapter-17">17 • Atlas luật thực thi</a>, <a href="#chapter-18">18 • Chi tiết cảnh và thoại</a>, <a href="#chapter-19">19 • Protocol người chơi thật</a>. <a href="sources/depth-contract.json">Hợp đồng chiều sâu</a> liệt kê những tình huống thực sự có trong runtime. Kịch bản 18 tách phần chạy được với hoạt cảnh cần dựng tiếp.</p>
+<p>Bản chơi 0.5.0 có 31 phần việc trực tiếp tại hiện trường, gồm 25 tình huống chương và sáu việc quan hệ; 44 chi tiết 3D tại 27 chủ cảnh. Luật thử/sửa, bản nháp được giữ và sổ ghi đúng phương án đã bàn giao. Bảng đối chiếu là cách chơi thay thế có cùng quyền hoàn tất. Phụ lục không thay mã nguồn truyện hoặc nhận đã đạt ngân sách thời lượng. Đọc <a href="#chapter-16">16 • Nghiên cứu</a>, <a href="#chapter-17">17 • Atlas luật chương</a>, <a href="#chapter-18">18 • Chi tiết cảnh và thoại</a>, <a href="#chapter-19">19 • Protocol người chơi thật</a>, <a href="#chapter-20">20 • Thực thi từng cảnh</a>. <a href="sources/depth-contract.json">Hợp đồng chiều sâu</a> và <a href="sources/craft-contract.json">hợp đồng dàn dựng</a> ghi danh mục runtime. Kịch bản 18 giữ mốc nền 0.4.0; hồ sơ 20 ghi phần đã dựng tiếp và giới hạn còn lại.</p>
 <h2>Đọc theo nhu cầu</h2>
 <ol>
 <li><a href="#chapter-01">Tổng quan sáng tạo và nghiên cứu</a>: luận đề sản phẩm, so sánh tham chiếu, phương pháp và phát hiện.</li>
@@ -54,6 +54,11 @@ Qua các thời đại, mỗi cuộc đời đều để lại một lời chứ
 <li><a href="#chapter-13">Pitch và bất biến</a>: một trang quyết định hướng v3.</li>
 <li><a href="#chapter-14">Hồ sơ chiều sâu Legends</a>: ba chương, đồ thị thám hiểm, chuỗi cảnh, canon lock, hai định dạng và cầu nối.</li>
 <li><a href="#chapter-15">Packet nguồn, thế giới và duyệt</a>: sáu packet, 15 nhóm asset và bảy vị trí duyệt chưa phân công.</li>
+<li><a href="#chapter-16">Nghiên cứu chiều sâu</a>: căn cứ chuyển thể và bảy họ cơ chế.</li>
+<li><a href="#chapter-17">Atlas tình huống chương</a>: 25 bộ luật, đầu vào, tiền đề và phương án.</li>
+<li><a href="#chapter-18">Dàn dựng và thoại</a>: chi tiết biên tập từ mốc nền 0.4.0.</li>
+<li><a href="#chapter-19">Protocol playtest chiều sâu</a>: tiêu chí đo bằng người chơi thật, chưa chạy.</li>
+<li><a href="#chapter-20">Thực thi từng cảnh</a>: hiện trường, 44 vật thể quan sát, sáu việc quan hệ, NPC và giới hạn 0.5.0.</li>
 </ol>
 <p><strong>Bản đọc liền mạch:</strong> <code>THE-WITNESS-Design-Compendium.html</code> trong thư mục đầu ra; có mục lục, tìm kiếm và chế độ in. Markdown là nguồn biên tập chính. Bản đọc mới ở <code>outputs/THE-WITNESS-Design-v3.2/</code>; hợp đồng trục vẫn revision 3.0 để giữ tương thích, phụ lục có revision 3.2.</p>
 <h2>Quy tắc dùng hồ sơ</h2>
@@ -2726,7 +2731,8 @@ Nhờ đó, dù chiếm thời lượng tinh gọn 25–28%, Legends nắm giữ
 <li>Lưu reviewer, ngày, revision, phạm vi, điều kiện còn lại và đường dẫn bằng chứng. Contract hiện giữ <code>assignee:null</code>, <code>approval:null</code>; bộ đọc không được gắn huy hiệu “đã thẩm định”.</li>
 </ol>
 <p><strong>Chưa hoàn thành:</strong> mời người thật, chọn bản dịch Việt/quyền, bổ sung corpus phục trang L02 và đạo cụ nhỏ, dựng/đo greybox, phản biện chuyên môn, thu âm và playtest. <strong>Đã có trong v3:</strong> sáu packet với nguồn sở hữu, khoảng chưa rõ, asset/scene cần duyệt và tiêu chí nhận; có thể giao việc mà không phải đoán ý thiết kế.</p></article><article id="chapter-16" data-chapter><div class="eyebrow">DESIGN DOSSIER / 08.11.2026</div><h1>16 • Nghiên cứu và quyết định phát triển chiều sâu</h1>
-<p><strong>Phụ lục thiết kế 3.2 • 08/11/2026 • Bản chơi 0.4.0.</strong> Tài liệu này bổ sung chiều sâu cho chiến dịch hiện hữu. Mã Q/L/V, sự thật nền và cổng Kinh Thánh vẫn có chủ sở hữu tại các hồ sơ 08, 12, 14 và campaign-contract. Luật thao tác thực thi nằm trong <code>witness-depth.js</code>; atlas 17 được kết xuất từ đúng dữ liệu ấy. Kịch bản biên tập ở 18 phân biệt rõ phần đã chơi được với phần cần dàn dựng tiếp.</p>
+<p><strong>Phụ lục thiết kế 3.2 • 08/11/2026 • Mốc luật chơi 0.4.0; tiếp nối thực thi 0.5.0.</strong> Tài liệu này bổ sung chiều sâu cho chiến dịch hiện hữu. Mã Q/L/V, sự thật nền và cổng Kinh Thánh vẫn có chủ sở hữu tại các hồ sơ 08, 12, 14 và campaign-contract. Luật thao tác thực thi nằm trong <code>witness-depth.js</code>; atlas 17 được kết xuất từ đúng dữ liệu ấy. Kịch bản biên tập ở 18 phân biệt rõ phần đã chơi được với phần cần dàn dựng tiếp.</p>
+<p><strong>Thực thi tiếp theo:</strong> <a href="#chapter-20">Hồ sơ 20</a> ghi phần đã đưa vào cảnh 3D ở 0.5.0; nguồn nghiên cứu và giới hạn chuyển thể trong tài liệu này vẫn được giữ.</p>
 <h2>1. Vấn đề cần giải quyết</h2>
 <p>Một chương có tên, phong cảnh, đoạn kể và lựa chọn cuối vẫn có thể thiếu trải nghiệm. Cần xét người chơi thực sự phải hiểu điều gì, làm gì với hiểu biết ấy và nhận ra hậu quả ở đâu. Thêm lời giải thích mà hành động vẫn chỉ là xác nhận không làm câu hỏi của chương sâu hơn.</p>
 <p>Rà soát bản nền cho thấy ba điểm cụ thể. Nhiều công việc chỉ yêu cầu chọn một câu đúng hiển nhiên. Nhiều thao tác dùng chung một chuỗi ba bước, bất kể tình huống. Hồ sơ mô tả những vòng thám hiểm phong phú hơn những gì luật chơi thực tế kiểm được. Phụ lục chuyển các công việc tại địa vật hiện hữu thành 25 tình huống có dữ liệu đầu vào, giới hạn, phản hồi và phương án có thể sửa.</p>
@@ -2968,6 +2974,7 @@ Nhờ đó, dù chiếm thời lượng tinh gọn 25–28%, Legends nắm giữ
 </tr>
 </tbody>
 </table>
+<p>Bản 0.5.0 đưa các luật này vào thao tác trực tiếp tại hiện trường, giữ bảng đối chiếu thay thế. Sáu phần việc quan hệ và 44 chi tiết 3D được ghi riêng ở <a href="#chapter-20">20 • Thực thi từng cảnh</a> và <a href="sources/craft-contract.json">hợp đồng dàn dựng</a>.</p>
 <h2>Q01.LOAD • Gánh nào đang giữ gánh nào?</h2>
 <p><strong>Chủ cảnh:</strong> Q01 · <strong>Bước thay thế:</strong> brace · <strong>Loại:</strong> Thao tác có tiền đề · <strong>Luật:</strong> revision 1.</p>
 <p>Natan muốn thay chốt xe. Cần tạo một đường chịu lực mới trước khi tháo chốt cũ; dây chằng và phần hàng phía trên đều có vai trò riêng.</p>
@@ -4938,6 +4945,7 @@ Nhờ đó, dù chiếm thời lượng tinh gọn 25–28%, Legends nắm giữ
 <p>Bản xem tóm tắt đủ nhịp của Legends mở cùng cổng như trước; không yêu cầu giải lại bàn thao tác để chứng minh niềm tin. Chuyển định dạng hoặc rời cảnh giữ đúng phạm vi tiến độ.</p>
 <p>Sáu chi tiết được nhắc lại khi vào Q04, Q05, Q09, Q10, Q11, Q12, nếu có phương án nguồn: chốt cũ; lối đã chọn qua giếng/ven tường; gốc bản chép; ba khoản G17; ai đã có mặt ở cuộc hẹn; bữa và bộ đồ cho ca sau. Những ghi chú callback khác trong atlas là ý hướng biên tập trong sổ, không tự khẳng định đã có hoạt cảnh 3D.</p></article><article id="chapter-18" data-chapter><div class="eyebrow">DESIGN DOSSIER / 08.11.2026</div><h1>18 • Chi tiết cảnh, thoại và dấu trở lại</h1>
 <p><strong>Phụ lục biên tập 3.2 • 08/11/2026.</strong> Toàn bộ thoại dưới đây của người hư cấu là [H]. Không có lời mới gán cho nhân vật Kinh Thánh. Mỗi hồ sơ tách <strong>đã chơi được</strong> khỏi <strong>dàn dựng tiếp</strong>; phần sau là đặc tả sản xuất, không là tính năng được tính vào bản 0.4.0. Dữ kiện G17/B06 và ai biết gì tuân hồ sơ 12.</p>
+<p><strong>Cập nhật thực thi 0.5.0:</strong> phần đã dựng tiếp, vật thể cụ thể, sáu việc quan hệ và giới hạn còn lại được ghi ở <a href="#chapter-20">20 • Thực thi từng cảnh</a>. Các mục dưới giữ mốc biên tập 0.4.0 để đối chiếu, không phải danh sách tính năng còn thiếu của bản mới.</p>
 <h2>1. Quy tắc viết và dàn dựng</h2>
 <p>Một NPC không chỉ là người đưa câu trả lời. Họ có việc đang làm, phần biết do trải nghiệm riêng, một giới hạn và một điều không thuộc vụ hàng. Câu nói cần nghe như lời của người có trách nhiệm tại nơi ấy. Natan xưng Chú–Con; Miriam nói Tôi–Bạn với avatar, Chị–Em với Sela; Lea không đổi sự thẳng thắn thành lời phán xét; Rina không biết lượng nhận ở Galilê chỉ vì cũng nấu bữa.</p>
 <p>Không cho lời mở đọc hộ luật từng bước. Luật có thể rõ, nhưng NPC nên đặt cái giá con người: người đang chờ bữa, người chưa nhìn thấy đèn, việc đang có người gánh. Phản hồi cơ chế nêu quan hệ còn thiếu; lời nhân vật giữ cảm giác cùng làm, tránh “bạn đã lựa chọn đạo đức”.</p>
@@ -5120,7 +5128,240 @@ Câu nói nguyên văn được phép giữ:
 <p>Trình duyệt cần kiểm sáu họ cơ chế chính trên desktop và điện thoại, thứ tự bàn phím, nhãn điều khiển, không tràn ngang, vị trí cuộn sau khi sửa và phản hồi đọc được. Ảnh chụp chỉ chứng minh trạng thái nhìn thấy; không thay cho kiểm điều kiện hay playthrough.</p>
 <h2>7. Quy tắc dùng kết quả</h2>
 <p>Sau mỗi bốn phiên, gom theo vấn đề chung thay vì theo người “giải nhanh/chậm”. Mỗi vấn đề có cảnh, dấu gây hiểu nhầm, hành vi quan sát, thay đổi nhỏ nhất cần thử và điều chưa biết. Không đẩy toàn bộ nhận xét thành “cần thêm chiều sâu”.</p>
-<p>Chỉ nhận thêm màn hoặc tài nguyên mỹ thuật khi bản hiện có cho thấy vấn đề tiếp theo thật sự cần chúng. Hồ sơ này chưa có phiên người thật đã ghi. Mọi bảng kết quả sau này cần ngày, số người và phạm vi bản dựng rõ ràng.</p></article><footer>Nguồn biên tập: docs/the-witness • 08/11/2026 • [H] sáng tác / [C] chưa xác định • Bảy vị trí duyệt chưa phân công.</footer></main><script>
+<p>Chỉ nhận thêm màn hoặc tài nguyên mỹ thuật khi bản hiện có cho thấy vấn đề tiếp theo thật sự cần chúng. Hồ sơ này chưa có phiên người thật đã ghi. Mọi bảng kết quả sau này cần ngày, số người và phạm vi bản dựng rõ ràng.</p></article><article id="chapter-20" data-chapter><div class="eyebrow">DESIGN DOSSIER / 08.11.2026</div><h1>20 • Thực thi từng cảnh theo hồ sơ 3.2</h1>
+<p><strong>Trạng thái bản chơi 0.5.0 • Hồ sơ 3.2 • 08/11/2026.</strong> Hồ sơ 18 ghi mốc nền 0.4.0 và hướng dàn dựng. Bảng này ghi phần đã được đưa vào runtime ở vòng tiếp theo. Không coi ảnh, code hoặc kiểm tự động là playtest người thật hay duyệt chuyên môn.</p>
+<h2>1. Chơi trực tiếp tại hiện trường</h2>
+<p>31 phần việc gồm 25 tình huống chương và sáu nhiệm vụ quan hệ. Chế độ hiện trường là mặc định; bảng đối chiếu là phương án thay thế có cùng luật và quyền hoàn tất. Người chơi tới điểm trong 3D, làm phần chuẩn bị, phân người/vật, giữ mốc tuyến, chỉnh khoản hoặc đặt nguồn cạnh nhận định. Model kiểm khoảng cách, nội dung thuộc cảnh và tiền đề thao tác. Bản nháp giữ khi rời hoặc tải lại.</p>
+<p>Hoàn tất các thao tác chưa tự ghi xong truyện. Người chơi phải về điểm bàn giao và tự chọn thực hiện. Trong Legends, điều ấy chỉ tăng tiến độ của chương nguồn. Các nhân vật Kinh Thánh không bị đưa vào hệ phân vai của người chơi. Bản tóm tắt đủ nhịp vẫn mở cùng cổng và phản tư vẫn được để trống.</p>
+<h2>2. Những chi tiết có vật thể và chỗ quan sát</h2>
+<p>44 chi tiết tại 27 chủ cảnh, gồm 21 chương/cảnh chính và sáu nơi cùng làm. Chi tiết có vị trí, hình dạng, phần đọc trước/sau và trạng thái quan sát riêng. Quan sát không tự cấp chứng cứ, kỹ năng hoặc consent.</p>
+<table>
+<thead>
+<tr>
+<th>Chủ cảnh</th>
+<th>Chi tiết có trong 3D</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q01</td>
+<td>Chốt nứt và đường tải — Xe, vò, nêm, dây và chốt; Bàn tay người tới ca sau — Dụng cụ và chỗ nhận ca</td>
+</tr>
+<tr>
+<td>Q02</td>
+<td>Mép dán B06 — Giấy có mép dán và ánh sáng xiên; Nồi bữa ở đầu sân khác — Bát đã dọn, nồi và kệ dự trữ</td>
+</tr>
+<tr>
+<td>Q03</td>
+<td>Vệt bánh bị người qua lại xóa bớt — Vệt bánh / dấu chân và bề mặt; Khoảng ngang để xe đi qua — Ván và khoảng chịu lực</td>
+</tr>
+<tr>
+<td>Q04</td>
+<td>Đèn của người đi cuối — Đèn, ngọn lửa và vùng sáng; Chốt cũ trên mép bàn — Chốt cũ trên vải</td>
+</tr>
+<tr>
+<td>Q05</td>
+<td>Ba khoản có chỗ riêng — Bảng ba khoản và vật đếm; Mép lưới có người đang vá — Mép lưới, quả nặng, phao, dây mạn</td>
+</tr>
+<tr>
+<td>Q06</td>
+<td>Một gốc, những bản được chép — Những bản có đường dẫn gốc; Gậy được đặt khỏi lối rời — Gậy rời khỏi lối ra</td>
+</tr>
+<tr>
+<td>Q07</td>
+<td>Hai chỗ ngồi và một lối ra — Ghế và khoảng rời; Mảnh hẹn chỉ một ca — Giấy gửi có sửa</td>
+</tr>
+<tr>
+<td>Q08</td>
+<td>Chỗ dây tì được bọc — Dây và chỗ tì; Phần bản phụ qua nước — Giấy qua nước còn khoảng không đọc được</td>
+</tr>
+<tr>
+<td>Q09</td>
+<td>Bản giao và bìa giữ riêng — Bìa và nội dung tách riêng; Cánh cửa được phép khép — Ngưỡng cửa có ranh giới</td>
+</tr>
+<tr>
+<td>Q10</td>
+<td>Lá thư còn chỗ sửa — Giấy gửi có sửa; Hai nguồn ở hai phía bàn — Những bản có đường dẫn gốc</td>
+</tr>
+<tr>
+<td>Q11</td>
+<td>Bữa đã hẹn và kệ dự trữ — Bát đã dọn, nồi và kệ dự trữ; Dụng cụ để mở được ca sau — Dụng cụ và chỗ nhận ca</td>
+</tr>
+<tr>
+<td>Q12</td>
+<td>Lối rời không đi qua Hanan — Ghế và khoảng rời; Hai nơi nhận và phần chưa trao — Bìa và nội dung tách riêng</td>
+</tr>
+<tr>
+<td>L01</td>
+<td>Xe ở cuối đoàn — Xe, vò, nêm, dây và chốt; Đốm sáng ở tầm người đi thấp — Đèn, ngọn lửa và vùng sáng</td>
+</tr>
+<tr>
+<td>L02</td>
+<td>Sỏi rời và vách bước êm — Vệt bánh / dấu chân và bề mặt; Nước đặt cạnh chỗ chờ — Dây và chỗ tì</td>
+</tr>
+<tr>
+<td>L03</td>
+<td>Vải cũ ở chỗ dây tì — Vải ở giữa dây và chỗ tì; Phần dây còn được giữ ở miệng hố — Dây và chỗ tì</td>
+</tr>
+<tr>
+<td>L04</td>
+<td>Hai mép lưới và lối chân — Mép lưới, quả nặng, phao, dây mạn; Lối lên bãi sỏi và bữa sáng — Bát đã dọn, nồi và kệ dự trữ</td>
+</tr>
+<tr>
+<td>L05</td>
+<td>Ánh đèn nhìn vào trong — Đèn, ngọn lửa và vùng sáng; Một ngưỡng cửa còn tiếng người — Ngưỡng cửa có ranh giới</td>
+</tr>
+<tr>
+<td>V01</td>
+<td>Trang còn hơi ấm — Trang chưa có tên</td>
+</tr>
+<tr>
+<td>V02</td>
+<td>Những khối bằng nhau — Khối và bệ có tải</td>
+</tr>
+<tr>
+<td>V03</td>
+<td>Những sợi dây có thể nghỉ — Sợi dây trong bố cục mở</td>
+</tr>
+<tr>
+<td>V04</td>
+<td>Bàn còn một chỗ trống — Chỗ ngồi, chén, chỉ và vật nhớ</td>
+</tr>
+<tr>
+<td>B01</td>
+<td>Một chỗ nói còn lối ra — Ghế và khoảng rời</td>
+</tr>
+<tr>
+<td>B02</td>
+<td>Mái hiên và ranh giới cửa nhà — Mái giáp, phần chống và miếng sửa</td>
+</tr>
+<tr>
+<td>B03</td>
+<td>Dòng trống có lý do — Dòng hồ sơ có ghi giới hạn</td>
+</tr>
+<tr>
+<td>B04</td>
+<td>Mối nối do người nhận tự làm — Mối nối, chốt và phần kê</td>
+</tr>
+<tr>
+<td>B05</td>
+<td>Mối ván và hai lát cắt ký ức — Chỗ ngồi, chén, chỉ và vật nhớ</td>
+</tr>
+<tr>
+<td>B06</td>
+<td>Bữa đang phục vụ và người nhận lượt sau — Bát đã dọn, nồi và kệ dự trữ</td>
+</tr>
+</tbody>
+</table>
+<p>Khi một vật có mô hình chi tiết, proxy tổng quát được thay bằng điểm tương tác không vẽ thêm, để hai phiên bản vật không chồng lên nhau. Vật có va chạm đơn giản ở khu vực chiếm chỗ; các tấm mốc thấp để đi qua được. Chế độ nhìn gần đặt camera theo độ cao vật và vẫn có mô tả chữ tương đương.</p>
+<h2>3. Phản ứng nhìn thấy được theo việc đã làm</h2>
+<ul>
+<li>Q01 và L01: hạ vò thay vị trí tải; kê làm thân xe ổn; chằng hiện đường dây; chốt cũ có chỗ riêng sau khi được tháo. Chỉ tiền tố thao tác đáp ứng tiền đề mới đổi mô hình chuẩn bị.</li>
+<li>Q02: mép dán có trục gấp; nâng mép và đổi ánh sáng xiên làm thay đổi vật trong 3D. Mã B06 không bị đổi sang G17. Việc đọc gần chỉ ghi một quan sát.</li>
+<li>Q03 và L02: tuyến đã chọn để lại dấu bước tại các đoạn nối. Vệt sỏi/luồng sáng có mô tả chữ; tiếng dội và lộ sáng vẫn là mô hình rời rạc của tình huống, không phải mô phỏng âm học thực.</li>
+<li>Q04, Q07, L01, L02, L04, L05: người được phân có đường tới điểm nhận; đèn, dây và vật được đưa tới vị trí tương ứng. Người chơi không bị nhân bản thành một avatar khác. Nhân vật nguồn không tham gia phân vai.</li>
+<li>Q05: khoản nhận và hỏng có biểu diễn riêng. Không đặt bốn bao ở Galilê để vô tình nói rằng phần chưa giải trình đã được tìm thấy.</li>
+<li>Q08: phần giấy không đọc được còn lại trong mô hình sau nhánh giấy thiếu; thao tác quan sát không khôi phục chữ bằng phỏng đoán.</li>
+<li>Q09–Q12: nội dung đối chiếu, phần nhận diện và phần chưa được trao có bìa/chỗ riêng. Bản nháp đặt sai có thể sửa trước bàn giao; không ghi nó thành quyền công bố.</li>
+<li>B02/B04: phần chống, miếng giáp và chốt đổi theo chuẩn bị hợp lệ. Người học chỉ xuất hiện khi Titus nhận giao việc; nhánh tự làm không bị ghi thành nhánh hướng dẫn người học.</li>
+<li>V01/V03/V04: vật có thể ở các nơi khác nhau hoặc chưa đặt. V02 có tải cân bằng; kết quả không suy thành đánh giá cảm xúc hay đức tin.</li>
+</ul>
+<p>Đây là hoạt cảnh và chuyển trạng thái có điều kiện. Vật lý dây mềm, chất lỏng, đám đông và âm học không được quảng bá như một hệ mô phỏng liên tục. Chế độ giảm chuyển động giữ các biến đổi cần đọc, tránh buộc người chơi đợi hiệu ứng.</p>
+<h2>4. Sáu công việc quan hệ có ngữ pháp riêng</h2>
+<table>
+<thead>
+<tr>
+<th>Nhiệm vụ</th>
+<th>Luật đang dùng</th>
+<th>Hai cách tiếp cận được giữ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Món đồ không bị mất</td>
+<td>allocation</td>
+<td>Bố trí để Miriam tự nói trước; Tìm người giữ món đồ trước</td>
+</tr>
+<tr>
+<td>Một mái không cần lời xin lỗi nữa</td>
+<td>sequence</td>
+<td>Sửa cùng người đại diện họ chấp nhận; Góp vật và công qua người thợ được tin</td>
+</tr>
+<tr>
+<td>Dòng trống có người sống</td>
+<td>inference</td>
+<td>Xin ghi lại trong hồ sơ kín; Giữ dòng trống và tìm nguồn khác</td>
+</tr>
+<tr>
+<td>Cái chốt người khác đã làm</td>
+<td>sequence</td>
+<td>Giao một việc thật rồi thử tải cùng; Tự sửa và nhận giới hạn nhận việc</td>
+</tr>
+<tr>
+<td>Bìa sổ và một chuyến thuyền</td>
+<td>inference</td>
+<td>Hỏi hai người thợ ở hai thời điểm; Cùng sửa ván thuyền rồi nghe chú Natan kể</td>
+</tr>
+<tr>
+<td>Ai nhận lượt sau</td>
+<td>allocation</td>
+<td>Hỏi nhu cầu thực rồi cùng thống nhất; Dùng quy tắc tạm và hẹn kiểm lại</td>
+</tr>
+</tbody>
+</table>
+<h3>B01 • Một cuộc nói do Miriam đứng nhận</h3>
+<p>Miriam nhận phần nói thật với Sela. Bạn chỉ bố trí người và phần bữa để cuộc nói có thể xảy ra; không nói thay chị hoặc buộc Sela tha thứ.</p>
+<ul>
+<li>Miriam tự đứng nhận lời đã nói sai.</li>
+<li>Giúp bố trí không làm Sela mất quyền chọn phản ứng.</li>
+</ul>
+<p><strong>Ghi nhận:</strong> Miriam tự nói, còn phần bữa có người đứng nhận. Sela chưa bị ghi là đã tha thứ.</p>
+<h3>B02 • Mái hiên được sửa trong phạm vi đã nhận</h3>
+<p>Gia đình chỉ nhận việc sửa mái qua người họ tin, chưa nhận cuộc gặp. Chuẩn bị, giữ kết cấu và bàn giao đúng phạm vi.</p>
+<ul>
+<li>Có thể giao vật liệu và chuẩn bị giữ mái theo hai thứ tự.</li>
+<li>Bàn giao công việc không đổi thành quyền gặp gia đình.</li>
+</ul>
+<p><strong>Ghi nhận:</strong> Phần mái được người đại diện nhận. Lối vào nhà còn đúng ranh giới gia đình đã chọn.</p>
+<h3>B03 • Dòng trống và đường dẫn còn nguyên</h3>
+<p>Lea muốn sửa cách ghi hồ sơ mà vẫn giữ quyền không đứng tên. Ghép điều đã biết với đúng dấu, để điều chưa được trao còn mở.</p>
+<ul>
+<li>Khoảng trống có thể đúng; cần giữ lý do và phạm vi.</li>
+<li>Không thêm một nguồn vào chứng cứ G17 từ việc riêng này.</li>
+</ul>
+<p><strong>Ghi nhận:</strong> Lea giữ được nội dung có giới hạn và lý do dòng trống, không tự điền một danh tính.</p>
+<h3>B04 • Một con chốt thật cho người học việc</h3>
+<p>Titus cùng người học việc chuẩn bị và thử một mối nối. Avatar giữ phần được nhờ, không giành thao tác của người đang học.</p>
+<ul>
+<li>Đặt kê và trao dụng cụ có thể chuẩn bị song song.</li>
+<li>Giữ rõ người thực hiện, không biến học nghề thành xem avatar làm hộ.</li>
+</ul>
+<p><strong>Ghi nhận:</strong> Mối nối được người nhận tự làm và cùng thử. Giới hạn ca sau được nói rõ.</p>
+<h3>B05 • Nhớ cha trong hai lát cắt</h3>
+<p>Giữ các ký ức nghề nghiệp như ký ức có người kể, không biến thương mến thành bằng chứng xóa trách nhiệm trong vụ hàng.</p>
+<ul>
+<li>Ghi ai kể điều gì và phạm vi của lát cắt ấy.</li>
+<li>Không dùng việc riêng để tạo chứng cứ hoặc minh oan trong điều tra.</li>
+</ul>
+<p><strong>Ghi nhận:</strong> Hai lát cắt nghề nghiệp được giữ riêng khỏi vụ hàng. Cha còn được nhớ bằng những việc đời thường.</p>
+<h3>B06 • Bữa này và lượt sau có người nhận</h3>
+<p>Phân người và vật cho bữa đang phục vụ. Người kiệt sức cần chỗ nghỉ; việc giữ bếp và ghi lượt sau vẫn cần người đứng nhận.</p>
+<ul>
+<li>Không xếp giá trị con người thành thứ hạng.</li>
+<li>Rina và bạn có thể đổi vai khi cả bếp và lượt sau đều có người nhận.</li>
+</ul>
+<p><strong>Ghi nhận:</strong> Bữa đã có người nhận, bếp và lượt sau không còn chỉ là lời hẹn.</p>
+<p>B01 giữ Miriam là người tự nói; người giữ món đồ vẫn có quyền sở hữu. B02 bàn giao mái qua người đại diện, không đòi một cuộc gặp. B03 giữ lý do dòng trống và phạm vi tên. B04 phân biệt giao việc với tự làm và nhận giới hạn. B05 giữ các lát cắt ký ức riêng khỏi hồ sơ vụ hàng; nếu cùng Natan kể hai thời điểm thì cùng một gốc kể. B06 giữ bữa đang phục vụ riêng khỏi kho dự trữ.</p>
+<p>Sau khi hoàn tất, nơi vừa làm còn mô hình và nhân vật trong chương hiện tại, có chủ đề nói lại công việc. Sang chương khác, dấu quan hệ hiện hữu tiếp tục giữ callback tại đúng vùng. Save 0.4.0 đã có quan hệ hoàn tất không bị bắt làm lại; hệ thống không tự chế một bản thao tác quá khứ chưa có.</p>
+<h2>5. Lời nói, phục trang và âm thanh</h2>
+<p>NPC có câu về phần việc đang làm, lời khi một chuẩn bị còn thiếu và lời sau khi có người nhận. Các câu bổ sung ở hồ sơ 18 đã được đưa vào những phản hồi tương ứng, đặc biệt Natan, Mattai, Lea, Amon và Rina. Câu chuyện không đổi thành thông báo chấm đạo đức. Không thêm câu mới cho Đức Giêsu hoặc người thuộc trình thuật Kinh Thánh.</p>
+<p>Người phụ hư cấu trong Legends dùng bảng phục trang của đúng cảnh; người học việc có tạo hình riêng. Các tạo hình vẫn là diễn giải nghệ thuật cần chuyên môn duyệt. Người đang làm có tư thế và tuyến ngắn; họ dừng đường đi khi gần người chơi hoặc khi đã tới điểm nhận. Các vai nguồn giữ dàn cảnh độc lập.</p>
+<p>Thao tác có âm gỗ, dây, giấy, bát/vật đếm hoặc nền sỏi được tổng hợp cục bộ khi đã bật tiếng. Dòng mô tả âm thanh giữ thông tin tương đương khi tắt tiếng. Không dùng đồng hồ âm thanh để buộc bỏ người, gây thương tích lúc đang đọc hoặc chấm phản tư bằng tiếng đúng/sai.</p>
+<h2>6. Phần còn cần làm và cách đánh giá</h2>
+<p>Vòng này chưa có diễn viên thu âm, motion capture, mesh/texture độc bản cuối cùng hoặc người thật thử theo protocol 19. Những mối nối bàn tay và dụng cụ còn dùng animation nền, cần một vòng chỉnh diễn xuất trực tiếp khi khóa asset. Cần tiếp tục kiểm mức dễ nhận ra dấu, việc chọn điểm trong 3D, chỗ camera bị che và độ dài các phần cùng làm.</p>
+<p>Kiểm model so cả 31 phần việc giữa hai cách chơi, 12 biến thể quan hệ, khoảng cách, thao tác thiếu tiền đề, lưu/khôi phục và ranh giới nguồn. Kiểm trình duyệt cần đi thực sự qua điểm, xem kết quả trong mô hình, thử mobile và đọc hình sau khi bàn giao; chỉ có code không đủ để nhận hoạt cảnh đã đạt chất lượng.</p>
+<h2>7. Chủ sở hữu dữ liệu</h2>
+<p><code>witness-depth.js</code> giữ 25 luật chương; <code>witness-relationships.js</code> giữ sáu việc quan hệ và biến thể; <code>witness-craft.js</code> giữ chi tiết, vị trí và hành động tại cảnh; <code>witness-craft-renderer.js</code> dựng vật và phản ứng 3D; model giữ tiến độ và ranh giới ghi; app điều khiển giao diện/camera/âm thanh. <a href="sources/craft-contract.json">Hợp đồng cảnh</a> là chỉ mục triển khai. Chạy <code>node tools/build-craft-dossier.cjs</code> để cập nhật tài liệu này và chỉ mục từ các chủ sở hữu ấy.</p></article><footer>Nguồn biên tập: docs/the-witness • 08/11/2026 • [H] sáng tác / [C] chưa xác định • Bảy vị trí duyệt chưa phân công.</footer></main><script>
 const chapters=[...document.querySelectorAll('[data-chapter]')];
 const input=document.getElementById('search');
 const normal=s=>s.toLocaleLowerCase('vi').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');

@@ -1,8 +1,10 @@
 {
-  "release": "0.4.0",
+  "release": "0.6.0",
+  "spatialAudio": true,
+  "offlineVoice": true,
   "design": "3.2",
   "contractVersion": "3.0",
-  "revision": "fff2638731d8",
+  "revision": "31d8c6a56c1b",
   "bridgeQuests": 12,
   "requiredLegends": [
     "L01",
@@ -16,9 +18,13 @@
   "rpgSkills": 4,
   "witnessTenets": 3,
   "dualTierPersona": true,
-  "depthEncounters": 25,
-  "depthOwners": 21,
+  "depthEncounters": 31,
+  "chapterEncounters": 25,
+  "relationshipEncounters": 6,
+  "depthOwners": 27,
   "depthMechanicFamilies": 7,
+  "physicalDetails": 44,
+  "fieldPlay": true,
   "productionDurationTargetMet": false,
   "expertReview": "unassigned"
 }

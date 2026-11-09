@@ -2,15 +2,15 @@
   "version": "3.2",
   "spineContractVersion": "3.0",
   "date": "2026-11-08",
-  "markdownDocuments": 20,
+  "markdownDocuments": 21,
   "sourceIds": 32,
-  "charactersIncludingSpaces": 363741,
-  "whitespaceSeparatedTokens": 75425,
+  "charactersIncludingSpaces": 377012,
+  "whitespaceSeparatedTokens": 78356,
   "runtimeFilesWrittenByBuilder": false,
   "checks": [
     "local markdown links resolve",
     "source IDs S01-S32 present and references resolve",
-    "three JSON contracts parse and budgets agree",
+    "four JSON contracts parse; scope and boundaries agree",
     "12 linked bridges have fallback and forward callbacks",
     "Q02 routes agree with retained consent example",
     "Q11 and Q12 plan methods agree",
@@ -19,10 +19,10 @@
     "claim evidence IDs resolve",
     "six relationship quests have approaches and callbacks",
     "all 12 bridge dossiers match route IDs",
-    "534 design assertions; see contract-qa.json"
+    "545 design assertions; see contract-qa.json"
   ],
   "sourceSha256": {
-    "README.md": "e7a4475797e0937c1c6152a6782d724b382404c5dd373f20dfb62d8fb677249e",
+    "README.md": "51cbbc45fa127dabbc5a4813a51fc29e3a0ec99bb11312ad8f35edf77f2127ef",
     "01-vision-research.md": "e6c8cbc171e9b46c75862c94b508ce467cdc82f59609b690397ce1f14b9d8c7c",
     "02-game-design-document.md": "59331a6c6e9838cde4021a6903ffc1116d258d2c2609a13935471db10fbb96c5",
     "03-narrative-bible.md": "3b42fc78f742d2b6e64b20abb56bd21440d4c675d0a233b4cf947788eab8897b",
@@ -38,12 +38,14 @@
     "13-legends-spine-charter.md": "ff8d427faf475298251de77a5c27e67e2cfc6094389ad46cb13bda959d2128bd",
     "14-legends-depth-dossiers.md": "4e816887604c47bbe0db219a2e4fe54a47f22604040725e0ddcd4138538bc520",
     "15-source-world-packets.md": "1fd40ecb36b57ed4d29b500d4467682a0bcbeea3ab779975892eafa0404e9b3a",
-    "16-depth-research.md": "a0ebf8c9bd5bac7ed14d301aa1546f81f55348a5e7cb4fe92b658fff4c19a81a",
-    "17-encounter-atlas.md": "921cdd7555d7b175a41e9bde1b1d7591a15f0c199b7483d7cabb603e2e2a3b91",
-    "18-scene-craft-and-dialogue.md": "5bc69fb164c4782d89c7b3893ad29f669ddcf17bac5a3dc1b0b2afcd8183dc0d",
+    "16-depth-research.md": "37dd5851f7f155077e10394acb8b40491e60760db4088fb25d12fb914c3960be",
+    "17-encounter-atlas.md": "7f2f586e9646dd2a8eeebc0bbe011942c0a1581333a19c63c181d061d36c52c0",
+    "18-scene-craft-and-dialogue.md": "0b82a928b23228f4f3c86adb630588c0325a30fbd98e13764c31b014a55d9d4b",
     "19-depth-playtest.md": "2d49ebd6308ac0fd85f37d8f2816e68f26dc48d9a56b9dc4397c17bff116d328",
-    "design-contract.json": "77e21a1c28b46af7967e20ee200bf5c9af844c704c6b981b8eabd4b9907ce8f3",
+    "20-scene-implementation.md": "6f252cd281a4e6e6ffb620c9edb696c2d3f75fe31d20f54d7415872259a74bfb",
+    "design-contract.json": "ace09fc1c382b6592ae7e18cbd559ffd534f1387fde85a8e224cb94b4a970f53",
     "campaign-contract.json": "8f3ff41d5ee354cbf51df3ba4ebd4e13553a634f4a37dc0e9121569c845a2f3f",
-    "depth-contract.json": "5ec3c7eac4a546264fce7588ac194c16bc750203fa1c6c28ec36825b9330dfc4"
+    "depth-contract.json": "eba85ef25cc6d7cfd9f0a1a5957f69378e1ad2284c921758f94c7237633a6119",
+    "craft-contract.json": "0ad78dbeed39b1d9311fc80e3d7374b9a6d8a182cb89c6d249afb5d23621971d"
   }
 }

@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const D=WitnessContent,M=WitnessModel,W=WitnessWorld,C=WitnessCompass,X=WitnessDepth,U=WitnessWorkshop,$=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const D=WitnessContent,M=WitnessModel,W=WitnessWorld,C=WitnessCompass,X=WitnessDepth,U=WitnessWorkshop,CRAFT=WitnessCraft,FUI=WitnessFieldUI,$=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   // HUD cập nhật mỗi khung hình: chỉ ghi xuống DOM khi nội dung thật sự đổi.
   const hudCache=new Map(),sessionLog=[];
   function setText(sel,value){const el=$(sel);if(!el)return;const key='t:'+sel;if(hudCache.get(key)===value)return;hudCache.set(key,value);el.textContent=value;}
@@ -17,6 +17,7 @@
   const loaded=M.load();
   let state=loaded.state,engine,controls,title=true,dialog=null,last=null,activePuzzle=null,toastTimer,subTimer,checkpointTime=0,walking=false,escortLive=false,storageWarning=false,currentTarget=null,audioOn=false,legendOrder=[],legendHint=0,attuneChosen=false;
   const initial=()=>state||M.fresh();
+  let fieldMessage='',fieldTested=false,fieldCache='',fieldNearest=null,fieldFocus=null;
   const assetUrl=f=>globalThis.AdventureCast?.asset?.(f)||'./assets/'+f;
   const SKILL_ICONS={
     observe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path d="M12 6v-2M12 20v-2"/></svg>',
@@ -42,83 +43,29 @@
     log:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
   };
 
-  const FeedbackAudio=(function(){
-    let ctx=null;
-    function getCtx(){
-      if(!ctx&&(globalThis.AudioContext||globalThis.webkitAudioContext)){
-        ctx=new (globalThis.AudioContext||globalThis.webkitAudioContext)();
-      }
-      if(ctx&&ctx.state==='suspended')ctx.resume().catch(()=>{});
-      return ctx;
+  let currentVoice=null;
+  const audio=WitnessAudio.create({
+    locate:id=>engine?.locate(id),
+    onCaption(text){const el=$('#audio-caption');if(!el)return;el.textContent=text;el.hidden=false;clearTimeout(el._audioTimer);el._audioTimer=setTimeout(()=>{if(!audio.debug().voice||audio.debug().voice.status!=='playing')el.hidden=true;},6500);},
+    onVoice(info){
+      currentVoice=info;
+      const label=dialog?.querySelector('[data-voice-status]');
+      if(label)label.textContent=!info?'Có thể nghe lại':info.status==='loading'?'Đang mở bản thoại…':info.status==='playing'?(info.kind==='system'?'Giọng máy tiếng Việt · ':'Đang nói · ')+info.name:info.kind==='no-vietnamese'?'Máy chưa có giọng tiếng Việt':'Câu này chưa có bản thu';
+      const stop=dialog?.querySelector('[data-act="audio-stop"]');if(stop)stop.disabled=!info||info.status==='unavailable';
+      if(!info){const el=$('#audio-caption');if(el)el.hidden=true;}
     }
-    const enabled=()=>!!(state?.settings?.sound||audioOn);
-    function click(){
-      if(!enabled())return;
-      try{
-        const c=getCtx();if(!c)return;
-        const o=c.createOscillator(),g=c.createGain();
-        o.type='sine';o.frequency.setValueAtTime(800,c.currentTime);
-        o.frequency.exponentialRampToValueAtTime(360,c.currentTime+0.04);
-        g.gain.setValueAtTime(0.08,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.04);
-        o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+0.04);
-      }catch{}
-    }
-    function choice(){
-      if(!enabled())return;
-      try{
-        const c=getCtx();if(!c)return;
-        const o=c.createOscillator(),g=c.createGain();
-        o.type='triangle';o.frequency.setValueAtTime(523.25,c.currentTime);
-        o.frequency.exponentialRampToValueAtTime(659.25,c.currentTime+0.12);
-        g.gain.setValueAtTime(0.12,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.14);
-        o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+0.14);
-      }catch{}
-    }
-    function page(){
-      if(!enabled())return;
-      try{
-        const c=getCtx();if(!c)return;
-        const buf=c.createBuffer(1,Math.floor(c.sampleRate*0.07),c.sampleRate);
-        const data=buf.getChannelData(0);
-        for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*0.12;
-        const src=c.createBufferSource();src.buffer=buf;
-        const filter=c.createBiquadFilter();filter.type='lowpass';
-        filter.frequency.setValueAtTime(1400,c.currentTime);
-        filter.frequency.exponentialRampToValueAtTime(350,c.currentTime+0.07);
-        const g=c.createGain();g.gain.setValueAtTime(0.08,c.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.07);
-        src.connect(filter);filter.connect(g);g.connect(c.destination);
-        src.start();src.stop(c.currentTime+0.07);
-      }catch{}
-    }
-    function seal(){
-      if(!enabled())return;
-      try{
-        const c=getCtx();if(!c)return;
-        const o=c.createOscillator(),g=c.createGain();
-        o.type='sine';o.frequency.setValueAtTime(180,c.currentTime);
-        o.frequency.exponentialRampToValueAtTime(65,c.currentTime+0.22);
-        g.gain.setValueAtTime(0.2,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.22);
-        o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+0.22);
-      }catch{}
-    }
-    function accomplish(){
-      if(!enabled())return;
-      try{
-        const c=getCtx();if(!c)return;
-        [523.25,783.99,1046.5].forEach((freq,idx)=>{
-          const o=c.createOscillator(),g=c.createGain();
-          o.type='sine';o.frequency.setValueAtTime(freq,c.currentTime+idx*0.06);
-          g.gain.setValueAtTime(0.001,c.currentTime);
-          g.gain.setValueAtTime(0.10,c.currentTime+idx*0.06);
-          g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+idx*0.06+0.42);
-          o.connect(g);g.connect(c.destination);
-          o.start(c.currentTime+idx*0.06);o.stop(c.currentTime+idx*0.06+0.42);
-        });
-      }catch{}
-    }
-    return {click,choice,page,seal,accomplish};
-  })();
+  });
+  globalThis.WitnessAudioSession=audio;
+  const FeedbackAudio={click:()=>audio.ui('click'),choice:()=>audio.ui('choice'),page:()=>audio.ui('page'),seal:()=>audio.ui('seal'),accomplish:()=>audio.ui('accomplish'),material:(kind,at)=>audio.material(kind,at)};
+  const audioCaption=document.createElement('div');audioCaption.id='audio-caption';audioCaption.className='audio-caption';audioCaption.hidden=true;audioCaption.setAttribute('role','status');$('#game').append(audioCaption);
+  function voiced(person,text,label){
+    if(!dialog||!text)return;
+    const strip=document.createElement('div');strip.className='voice-controls';
+    strip.innerHTML='<span data-voice-status>Nhấn để nghe thoại</span><button class="text-link" data-act="audio-repeat">Nghe lại</button><button class="text-link" data-act="audio-stop" disabled>Dừng giọng</button>';
+    dialog.querySelector('.dialog-content').append(strip);
+    strip._voice={person,text,label};
+    if(state?.settings?.autoVoice!==false)audio.speak(person,text,{label});
+  }
 
   function speakerBanner(personId,roleFallback=''){
     if(!personId)return roleFallback?`<span class="speaker">${esc(roleFallback.toUpperCase())}</span>`:'';
@@ -145,8 +92,23 @@
   }
   function update(next){state=next;save();W.setState(state);refresh();}
   function stopMotion(){controls?.enable(false);engine?.controls(0,0);}
-  function close(){if(dialog){dialog.close();dialog.remove();dialog=null;}activePuzzle=null;if(engine){engine.pause(title);if(!title)controls?.enable(true);}}
+  function applyView(){
+    if(!state)return;
+    const mode=state.settings.cameraMode||'third';
+    document.documentElement.dataset.view=mode;
+    engine?.view?.(mode,{bob:state.settings.motion!=='calm'});
+  }
+  function toggleView(){
+    if(!state||title||!engine)return;
+    state.settings.cameraMode=(state.settings.cameraMode==='first')?'third':'first';
+    save();applyView();
+    toast(state.settings.cameraMode==='first'?'Góc nhìn thứ nhất · nhấn V để trở lại. Kéo hoặc bấm chuột để nhìn, WASD để đi.':'Góc nhìn thứ ba.');
+  }
+  function close(){audio.stopVoice();audio.setMode(title?'title':'world');if(dialog){dialog.close();dialog.remove();dialog=null;}document.body.classList.remove('inspect-active');activePuzzle=null;if(engine){engine.pause(title);if(!title)controls?.enable(true);}refreshField();}
   function show(label,content,footer='',wide=false){
+    audio.stopVoice();audio.setMode('dialogue');
+    document.body.classList.remove('inspect-active');
+    $('#field-work').hidden=true;
     if(dialog){dialog.close();dialog.remove();}
     stopMotion();
     engine?.pause(true,currentTarget?engine.locate(currentTarget):null,{actor:currentTarget,aside:true});
@@ -181,15 +143,18 @@
           lost(){stopMotion();toast('Kết nối 3D tạm gián đoạn. Bản lưu vẫn ở trên máy.');},
           restored(){launchWorld();}
         });
-        controls=W.makeController(engine,{interact:()=>interact(),journal:()=>journal(),map:()=>map(),guide:()=>guide(),focus:()=>focusGoal(),pause:()=>pause(),escape:()=>close()});
+        controls=W.makeController(engine,{interact:()=>interact(),journal:()=>journal(),map:()=>map(),guide:()=>guide(),focus:()=>focusGoal(),view:()=>toggleView(),pause:()=>pause(),escape:()=>{if(!dialog&&CRAFT.field(state))pause();else close();}});
       }
+      audio.configure(s.settings);audio.setScene(s);audio.setMode(title?'title':'world');
+      engine.cue=kind=>audio.ui(kind);
+      engine.toggleSound=async()=>{state.settings.sound=!state.settings.sound;audio.configure(state.settings);await audio.unlock();return state.settings.sound;};
       const key=M.chapter(s).id+'.'+(s.layer?.id||'mortal');
       let point=s.positions[key];if(!Array.isArray(point)||point.length!==2||!point.every(Number.isFinite))point=null;
       if(s.pendingEscort){const n=M.chapter(s).nodes.find(n=>n.id===s.pendingEscort.target);point=n?[n.at[0]-1,n.at[1]+1]:null;}
       engine.load(desc.base,point,W.layout(s),true);W.decorate(s);engine.mount($('#world'),$('.adv-markers'));
       const p=W.plan(s);engine.update(p.objects,p.targets,{carrying:!!s.pendingEscort});
-      engine.pause(title);controls.enable(!title);
-      if(s.settings.sound!==audioOn)engine.toggleSound().then(on=>{audioOn=on;}).catch(()=>{});
+      engine.pause(title);controls.enable(!title);applyView();
+      audioOn=!!s.settings.sound;
       refresh();
     }catch(e){
       console.error(e);
@@ -200,14 +165,16 @@
 
   function refresh(){
     if(!engine)return;
-    const s=initial();W.setState(s);const p=W.plan(s);
+    const s=initial();W.setState(s);audio.configure(s.settings);audio.setScene(s);audio.setMode(title?'title':dialog?'dialogue':'world');const p=W.plan(s);
     const activeAction=M.actions(s)[0];
     const carrying=!!(!s.layer&&(s.pendingEscort||['load','give-oil','supplies'].includes(activeAction?.id)));
     engine.update(p.objects,p.targets,{carrying});
+    refreshField();
     document.documentElement.style.setProperty('--scale',s.settings.text);
     document.documentElement.dataset.motion=s.settings.motion;
     document.documentElement.dataset.guide=s.settings.guideMode||'full';
     document.documentElement.dataset.stick=s.settings.stickSide||'left';
+    document.documentElement.dataset.view=s.settings.cameraMode||'third';
     $('#subtitle').classList.toggle('plain-sub',s.settings.subtitleBg===false);
 
     $('#title-screen').hidden=!title;$('#hud-top').hidden=title;$('#hud-bottom').hidden=title;$('#objective').hidden=title;
@@ -260,6 +227,8 @@
   }
 
   function onStatus(next){
+    audio.tick(next,state);
+    refreshField(next);
     last=next;if(title||!state)return;
     walking=!!next.walking;
     const combat=next.combat;const combatHud=$('#combat-hud');
@@ -304,7 +273,7 @@
     const dial=$('#compass');if(!dial||typeof next.yaw!=='number')return;
     if(state.settings?.guideMode==='off'){if(!dial.hidden)dial.hidden=true;return;}
     const action=M.actions(state)[0];
-    const goal=state.layer?action?.at:M.chapter(state).nodes.find(n=>n.id===action?.target)?.at;
+    const goal=CRAFT.field(state)?W.plan(state).targets.find(t=>t.main)?.at:state.layer?action?.at:M.chapter(state).nodes.find(n=>n.id===action?.target)?.at;
     if(!goal||!next.position){if(!dial.hidden)dial.hidden=true;return;}
     if(dial.hidden)dial.hidden=false;
     const needle=dial.querySelector('i');
@@ -369,6 +338,8 @@
     const bondCard=b?`<div class="notice bond-notice"><strong>Việc riêng thâm tình · ${esc(b.title)}</strong><br>Có thể thảo luận để chia sẻ việc và cùng chịu trách nhiệm.</div>`:'';
     show(p?p.role:'ĐỜI SỐNG VẪN TIẾP DIỄN',`${banner}<div class="dialog-prose"><p>${esc(p?p.detail:ch.quiet)}</p></div>${companionCard}${personTopicButtons(personId)}${bondCard}`,b?primary('Hỏi việc còn riêng','bond',`data-id="${b.id}"`):primary('Trở lại','close'));
     heading(p?p.name:titleFallback);
+    const greeting=M.talkTopics(state,personId).find(t=>t.id==='current-work');
+    if(greeting){const line=document.createElement('p');line.className='voice-greeting';line.textContent=greeting.line;dialog.querySelector('.dialog-prose').append(line);voiced(personId,greeting.line);}
   }
 
   function interact(id){
@@ -378,6 +349,8 @@
     if(!target){guide();return;}
     if(!engine.within(target)){guide(target,true);return;}
     currentTarget=target;
+    if(String(target).startsWith('craft:')){inspectSceneDetail(target);return;}
+    if(String(target).startsWith('field:')){operateField(target);return;}
     if(String(target).startsWith('trace-')){readTrace(target);return;}
     if(String(target).startsWith('companion-')){showPersonDialog(target.slice(10));return;}
     if(state.layer){
@@ -419,6 +392,8 @@
     const banner=person?speakerBanner(n.person,person.role):'';
     show(person?.role||'MỖI HÀNH ĐỘNG ĐỂ LẠI DẤU',`${banner}<div class="dialog-prose"><p>${esc(a.text)}</p></div>${tenet?`<div class="notice tenet"><div class="tenet-header"><span class="tenet-glyph" aria-hidden="true">✦</span><strong>Nguyên lý Chứng Nhân · ${esc(tenet.title)}</strong></div><p>${esc(tenet.resonance)}</p></div>`:''}${buttons}`,a.choices?extraTalk:extraTalk+primary(a.escort?'Bắt đầu đi cùng':a.puzzle?'Bắt đầu kiểm tra':'Thực hiện','perform',`data-id="${a.id}"`));
     heading(a.title);
+    const spoken=[...a.text.matchAll(/“([^”]+)”/g)].map(x=>x[1]).join(' ');
+    if(spoken&&n?.person&&a.id!=='repair-pressure')voiced(n.person,spoken);
     if(M.quest(state).plan&&!a.commit)dialog.querySelector('.dialog-content').insertAdjacentHTML('beforeend','<button class="text-link" data-act="revise">Xem lại kế hoạch</button>');
   }
 
@@ -431,7 +406,7 @@
       engine.pose(a.puzzle==='rope'?'offer':'talk');
       engine.cue(a.commit?'finish':'read');
       const depth=X.encounter(state,a);
-      const outcomeText=(depth?X.materialize(state,depth).outcome+' ':'')+(a.commit?(M.chapter(state).ending[M.quest(state).route]||a.success||a.text):a.success||a.choices?.find(c=>c[0]===options.choice)?.[2]||a.text);
+      const outcomeText=(depth?CRAFT.response(state,depth,true)+' '+X.materialize(state,depth).outcome+' ':'')+(a.commit?(M.chapter(state).ending[M.quest(state).route]||a.success||a.text):a.success||a.choices?.find(c=>c[0]===options.choice)?.[2]||a.text);
       pushLog(a.speaker?D.people[a.speaker]?.name:a.title,outcomeText);
       const upgraded=Object.keys(D.skills||{}).find(k=>(state.skills?.[k]||1)>(prevSkills[k]||1));
       if(state.finished){close();ending();return;}
@@ -461,7 +436,7 @@
   // Gợi ý 3 cấp: nhẹ (chỉ nguyên tắc) → nửa (đầu và cuối) → đầy (cả thứ tự).
   const PUZZLE_HINTS={brace:'Đừng tháo phần cũ trước khi phần mới đã chịu tải.',rope:'Một sợi dây chưa buộc chắc thì chưa mang tải.',rescue:'Không ai kéo trước khi người giữ neo và người nhận đã sẵn sàng.'};
   function puzzle(id){
-    const a=actionById(id);if(!a)return;if(X.encounter(state,a)){workshop(a);return;}const type=a.puzzle;activePuzzle={id,order:[],hint:0,type};
+    const a=actionById(id);if(!a)return;if(X.encounter(state,a)){if(state.settings.workMode==='field')startField(a.id);else workshop(a);return;}const type=a.puzzle;activePuzzle={id,order:[],hint:0,type};
     let html=`<p>${esc(a.text)}</p>`,footer=primary('Xác nhận đối chiếu','solve',`data-id="${id}"`);
     if(['brace','rope','rescue'].includes(type)){
       const steps=type==='brace'?[['support','Kê phần đang chịu tải'],['secure','Giữ chốt và thử độ chắc'],['release','Mới tháo phần cũ']]:type==='rope'?[['anchor','Chọn điểm neo chắc'],['bind','Buộc và bọc chỗ tì'],['test','Thử tải trước khi dùng']]:[['anchor','Xác nhận người giữ neo'],['receive','Chờ người nhận sẵn sàng'],['pull','Phối hợp đưa người qua']];
@@ -501,7 +476,7 @@
   function workshop(a){
     const def=X.encounter(state,a);if(!def)return;
     const draft=M.workshopState(state).drafts[def.id];
-    activePuzzle={id:a.id,type:'depth',def,work:draft?.payload||X.empty(def),hint:0,feedback:null};
+    activePuzzle={id:a.id,type:'depth',def,work:draft?.payload||X.empty(X.materialize(state,def)),hint:0,feedback:null};
     renderWorkshop();
   }
   function renderWorkshop(focus=null){
@@ -510,7 +485,7 @@
     if(dialog?.dataset.workshop===d.id)dialog.querySelector('.dialog-content').innerHTML=content;
     else{
       show('QUAN SÁT · THỬ · HIỂU',content,
-        '<button class="text-link" data-act="depth-hint">Gợi ý từng mức</button><button class="secondary" data-act="depth-reset">Làm lại bố cục</button><button class="secondary" data-act="depth-test">Thử phương án</button>'+primary(d.type==='arrangement'?'Giữ bố cục và tiếp tục':'Thực hiện phương án','depth-commit'),true);
+        primary('Thao tác trong cảnh','field-start',`data-id="${keep.id}"`)+'<button class="text-link" data-act="depth-hint">Gợi ý từng mức</button><button class="secondary" data-act="depth-reset">Làm lại bố cục</button><button class="secondary" data-act="depth-test">Thử phương án</button>'+primary(d.type==='arrangement'?'Giữ bố cục và tiếp tục':'Thực hiện phương án','depth-commit'),true);
       dialog.dataset.workshop=d.id;dialog.classList.add('depth-dialog');
     }
     heading(d.title);activePuzzle=keep;dialog.scrollTop=scroll;
@@ -519,14 +494,14 @@
   function editWorkshop(action,key,value,checked=false,focus=null){
     const p=activePuzzle;if(!p||p.type!=='depth')return;
     p.work=U.reduce(p.work,X.materialize(state,p.def),action,key,value,checked);p.feedback=null;
-    state=M.workshopDraft(state,p.id,p.work);save();
+    state=M.workshopDraft(state,p.id,p.work);save();refresh();
     if(action==='number'){const fb=dialog?.querySelector('#depth-feedback');if(fb){fb.classList.remove('ok');fb.textContent='Đã giữ khoản bạn vừa sửa. Chọn thử phương án để đối chiếu.';}return;}
     renderWorkshop(focus);
   }
   function commitWorkshop(){
     const p=activePuzzle;if(!p||p.type!=='depth')return;
     const result=X.evaluate(state,p.def,p.work);p.feedback=result;
-    if(!result.ok){renderWorkshop();dialog.querySelector('#depth-feedback')?.scrollIntoView({block:'nearest'});return;}
+    if(!result.ok){p.feedback={...result,notes:[CRAFT.response(state,p.def,false)]};renderWorkshop();dialog.querySelector('#depth-feedback')?.scrollIntoView({block:'nearest'});return;}
     state=M.workshopDraft(state,p.id,p.work);save();
     if(state.layer){
       checkpointPosition();
@@ -537,10 +512,68 @@
     }else execute(p.id,{puzzle:{work:p.work}});
   }
 
+  function refreshField(snapshot=null){
+    const panel=$('#field-work');if(!panel)return;
+    const f=state&&CRAFT.field(state),visible=!!(f&&!title&&!dialog);
+    panel.hidden=!visible;document.body.classList.toggle('field-active',visible);if(!visible)return;
+    if(snapshot?.position){
+      const spots=CRAFT.fieldSpots(state).map(p=>({p,dist:Math.hypot(p.at[0]-snapshot.position[0],p.at[1]-snapshot.position[1])})).filter(x=>x.dist<2.8).sort((a,b)=>a.dist-b.dist);
+      fieldNearest=spots.find(x=>x.p.id===fieldFocus)?.p.id||spots.find(x=>x.p.id===snapshot.nearest?.id)?.p.id||spots[0]?.p.id||null;
+    }
+    const key=JSON.stringify([f.def.id,f.payload,f.selected,fieldNearest,fieldMessage,fieldTested]);if(key===fieldCache)return;fieldCache=key;
+    const top=panel.scrollTop,active=panel.contains(document.activeElement)?document.activeElement:null;
+    const focus=active?{domId:active.id,button:active.matches('button[data-act]'),summary:active.tagName==='SUMMARY'?active.parentElement.className:null,...active.dataset}:null;
+    const expanded=panel.dataset.encounter===f.def.id?[...panel.querySelectorAll('details[open]')].map(el=>el.className):[];
+    panel.dataset.encounter=f.def.id;panel.innerHTML=FUI.render(state,f,{near:fieldNearest,message:fieldMessage,tested:fieldTested});
+    for(const el of panel.querySelectorAll('details'))el.open=expanded.includes(el.className);
+    panel.scrollTop=top;
+    if(focus){
+      const target=focus.domId?panel.querySelector('#'+CSS.escape(focus.domId)):focus.button?[...panel.querySelectorAll('button[data-act]')].find(el=>['act','id','delta','value'].every(key=>el.dataset[key]===focus[key])):focus.summary?[...panel.querySelectorAll('details')].find(el=>el.className===focus.summary)?.querySelector('summary'):null;
+      target?.focus({preventScroll:true});
+    }
+  }
+  function startField(id){
+    try{
+      checkpointPosition();const next=M.fieldStart(state,id);next.settings.workMode='field';close();
+      fieldMessage='Tới điểm trong cảnh, quan sát rồi nhấn E hoặc nút tương tác. Bạn vẫn có thể mở bảng để đối chiếu.';fieldTested=false;fieldNearest=null;fieldFocus=null;fieldCache='';update(next);engine?.cue?.('read');
+    }catch(err){toast(err.message);}
+  }
+  function operateField(id,extra={}){
+    const f=CRAFT.field(state),spot=CRAFT.fieldSpots(state).find(x=>x.id===id);if(!f||!spot)return;
+    if(spot.op.kind==='handoff'){finishField();return;}
+    if((spot.op.kind==='number'||spot.op.kind==='claim')&&!extra.status&&!extra.delta&&!extra.place){
+      fieldNearest=id;fieldFocus=id;fieldMessage=spot.detail;fieldCache='';refreshField();return;
+    }
+    try{
+      const result=M.fieldAct(state,id,{position:last?.position||engine.at(),...extra});fieldNearest=id;fieldFocus=id;fieldMessage=result.message;fieldTested=!result.ok;fieldCache='';
+      if(result.ok){
+        const kind=spot.op.kind==='route'?'gravel':['inference','dispatch'].includes(f.def.type)?'paper':f.def.type==='ledger'?'ceramic':f.def.id.includes('NET')||f.def.id.includes('RESCUE')||f.def.id.includes('CLOTH')?'rope':'wood';
+        fieldMessage=result.message+' '+({wood:'[Tiếng gỗ chịu tải và chạm khẽ]',rope:'[Tiếng sợi dây tì và được giữ]',paper:'[Tiếng giấy sột soạt]',ceramic:'[Tiếng bát và vật đếm chạm khẽ]',gravel:'[Tiếng bước chân trên nền đang khảo sát]'}[kind]);update(result.state);engine.pose(spot.op.kind==='station'?'offer':'tend');FeedbackAudio.material(kind,spot.at);
+      }
+      else{refreshField();subline(CRAFT.response(state,f.def,false));}
+    }catch(err){fieldMessage=err.message;fieldCache='';refreshField();guide(id,true);}
+  }
+  function finishField(){
+    const f=CRAFT.field(state);if(!f)return;
+    const point=last?.position||engine.at();if(!point||Math.hypot(point[0]-f.origin[0],point[1]-f.origin[1])>3.4){guide('field:handoff-work',true);return;}
+    try{
+      checkpointPosition();const next=M.fieldFinish(state,point),line=CRAFT.response(next,f.def,true);fieldMessage='';fieldCache='';fieldNearest=null;update(next);engine.pose('offer');engine.cue('read');pushLog(f.def.voice?.[0]||f.def.title,line);subline(line);toast('Phần việc đã có người nhận. Bạn có thể quan sát lại nơi vừa làm.');
+      if(state.finished){ending();return;}if(state.layer){const src=state.layer.kind==='legend'?D.legends[state.layer.id]:D.veils[state.layer.id];if(state.layer.step===src.steps.length)layerConclusion();}
+    }catch(err){fieldMessage=err.message;fieldTested=true;fieldCache='';refreshField();subline(CRAFT.response(state,f.def,false));}
+  }
+  function inspectSceneDetail(id){
+    const detail=CRAFT.details(state).find(x=>x.id===id);if(!detail)return;
+    try{
+      update(M.inspectDetail(state,id,last?.position||engine.at()));const view=CRAFT.stores(state).views?.[id]||{lift:false,light:0};
+      show('NHÌN GẦN MỘT CHI TIẾT',`<p>${esc(detail.body)}</p><p class="credits">${detail.owner.startsWith('V')?'Giấc mơ hư cấu; bố cục không cung cấp chứng cứ.':'Quan sát và phần việc được ghi riêng. Chưa tự thêm chứng cứ hoặc quyền dùng lời người khác.'}</p>`,`${detail.kind==='paper'?`<button class="secondary" data-act="detail-lift" data-id="${id}">${view.lift?'Đặt mép dán xuống':'Nâng mép dán'}</button>`:''}<button class="secondary" data-act="detail-light" data-id="${id}">Đổi góc nhìn / ánh sáng</button><button class="primary" data-act="close">Trở lại cảnh</button>`);
+      heading(detail.title);dialog.classList.add('inspection-dialog');document.body.classList.add('inspect-active');engine.inspect(detail.at,{height:({paper:.86,cart:.7,roof:1.6,joinery:1.02,net:.2,tracks:.15,lantern:1.15}[detail.kind]??.8),distance:detail.kind==='paper'?2.15:2.7,bearing:detail.kind==='paper'?[0,.3,-.3][view.light]:.6+view.light*.85});
+    }catch(err){toast(err.message);}
+  }
+
   function guide(target,autoOpen=false){
     if(title||dialog||!state)return;
-    const s=state,a=M.actions(s)[0];const id=target||a?.target;if(!id)return;
-    const at=engine.locate(id)||(s.layer?a?.at:M.chapter(s).nodes.find(n=>n.id===id)?.at);if(!at)return;
+    const s=state,a=M.actions(s)[0],plan=W.plan(s);const id=target||(CRAFT.field(s)?plan.targets.find(t=>t.main)?.id:a?.target);if(!id)return;
+    const at=engine.locate(id)||plan.targets.find(t=>t.id===id)?.at||(s.layer?a?.at:M.chapter(s).nodes.find(n=>n.id===id)?.at);if(!at)return;
     walking=engine.walk(at,()=>{
       walking=false;
       if(autoOpen&&engine.within(id))interact(id);
@@ -562,7 +595,7 @@
     engine?.cue?.('read');
     if(qs?.sound)pushLog('Khoảng yên · '+ch.id,qs.body);
     show('KHOẢNG YÊN CỦA MỘT CUỘC ĐỜI',`${qs?.sound?`<span class="sound-cue">${esc(qs.sound)}</span>`:''}<p>${esc(qs?.body||ch.quiet)}</p>${qs?`<p class="notice">${esc(ch.quiet)}</p>`:''}<div class="choices">${ch.legend?`<button class="choice" data-act="layer-intro" data-kind="legend" data-id="${ch.legend}"><strong>${esc(D.legends[ch.legend].title)}</strong><small>Chuyển thể ${esc(D.legends[ch.legend].ref)} · Vai: ${esc(D.legends[ch.legend].witnessRole||'Chứng nhân')} · ${state.legends[ch.legend]?'Đã trải nghiệm':'Có thể chơi hoặc đọc tóm tắt'}</small></button>`:''}${ch.veil?`<button class="choice" data-act="layer-intro" data-kind="veil" data-id="${ch.veil}"><strong>${esc(D.veils[ch.veil].title)}</strong><small>Giấc mơ hư cấu · không cung cấp bằng chứng</small></button>`:''}</div>`,primary('Trở lại bến','close'));
-    heading('Một việc nhỏ đủ để nhớ');
+    heading('Một việc nhỏ đủ để nhớ');audio.cue(qs?.sound||'');voiced('narrator',qs?.body||ch.quiet,'Người dẫn chuyện');
   }
 
   function layerIntro(kind,id){
@@ -584,7 +617,7 @@
   }
 
   function layerAction(a){
-    if(X.encounter(state,a)){workshop(a);return;}
+    if(X.encounter(state,a)){if(state.settings.workMode==='field')startField(a.id);else workshop(a);return;}
     legendOrder=[];legendHint=0;
     const skillTier=a.attune?(state.skills?.[a.attune.skill]||1):1;
     attuneChosen=skillTier>=2;
@@ -604,7 +637,7 @@
       html+=`<div class="puzzle-stage"><div class="choices">${a.order.map((key,i)=>`<button class="choice" data-act="legend-order" data-value="${key}"><span class="choice-icon" aria-hidden="true">✦</span><div class="choice-text"><strong>${esc(a.orderLabels[i])}</strong></div></button>`).join('')}</div><p id="legend-order-feedback" role="status">Chọn từng thao tác theo thứ tự.</p><button class="text-link" data-act="legend-order-hint">Hướng dẫn thao tác</button></div>`;
     }
     show(a.kind==='source'?'TRÌNH THUẬT KINH THÁNH':a.kind==='discovery'?'KHÁM PHÁ · PHẦN DỰNG CỦA GAME':'CHỨNG NHÂN TRONG CẢNH',html,footer);
-    heading(a.title);
+    heading(a.title);audio.cue(a.sound||'');voiced('narrator',a.text,a.reference?'Diễn ý theo nguồn · '+a.reference:'Người dẫn chuyện');
   }
 
   function summary(){
@@ -613,7 +646,7 @@
     const page=src.summaryPages[l.summaryIndex];
     pushLog(src.name+' · '+page.reference,page.text);
     show('CHƯƠNG CHÍNH · BẢN TÓM TẮT',`<span class="tag">${l.summaryIndex+1} / ${src.summaryPages.length} · ${esc(page.reference)}</span>${src.witnessRole?`<span class="tag ok">${esc(src.witnessRole)}</span>`:''}<p class="source-story">${esc(page.text)}</p><p class="credits">Diễn ý theo phân đoạn nguồn. Không có câu hỏi kiểm tra hoặc thời gian đọc tối thiểu.</p>`,(l.summaryIndex?'<button class="text-link" data-act="summary-prev">Trang trước</button>':'')+primary(l.summaryIndex===src.summaryPages.length-1?'Tới phần kết':'Tiếp tục','summary-next'));
-    heading(src.name+' — '+page.title);
+    heading(src.name+' — '+page.title);voiced('narrator',page.text,'Diễn ý theo nguồn · '+page.reference);
   }
 
   function layerConclusion(){
@@ -681,7 +714,7 @@
       const records={...(state.workshop?.records||{})};
       for(const l of [...Object.values(state.legends),...Object.values(state.veils)])Object.assign(records,l.workshop?.records||{});
       if(state.layer)Object.assign(records,state.layer.workshop?.records||{});
-      const list=X.catalog.filter(d=>records[d.id]);
+      const list=X.all().filter(d=>records[d.id]);
       html+='<p>Những phương án bạn đã thực hiện. Thử và sửa trên bàn không làm mất tài nguyên; dùng gợi ý vẫn có cùng quyền đi tiếp.</p>';
       html+=list.length?list.map(d=>`<div class="entry"><small>${esc(d.owner)} · ${records[d.id].assisted?'ĐÃ DÙNG HƯỚNG DẪN':'ĐÃ TỰ THAO TÁC'}</small><h3>${esc(d.title)}</h3><p>${esc(records[d.id].summary)}</p>${d.callback?`<p class="notice">${esc(d.callback)}</p>`:''}</div>`).join(''):'<p>Chưa có phương án đã thực hiện. Bản nháp ở từng bàn sẽ được giữ khi bạn quay lại.</p>';
     }
@@ -748,8 +781,14 @@
   function settings(){
     if(!state)return;
     const gMode=state.settings.guideMode||'full',gfx=state.settings.graphics||'ultra';
-    show('CHƠI THEO CÁCH PHÙ HỢP VỚI BẠN',`<div class="field-row"><label class="field">Chất lượng đồ họa 3D<select id="setting-graphics"><option value="ultra" ${gfx==='ultra'?'selected':''}>Siêu nét (HDR, Bloom &amp; Tán xạ)</option><option value="high" ${gfx==='high'?'selected':''}>Cao (HDR &amp; Ánh sáng vật lý)</option><option value="balanced" ${gfx==='balanced'?'selected':''}>Cân bằng (Ưu tiên tốc độ)</option></select></label><label class="field">Cỡ chữ<select id="setting-text"><option value="1" ${state.settings.text===1?'selected':''}>Vừa</option><option value="1.15" ${state.settings.text===1.15?'selected':''}>Lớn</option><option value="1.3" ${state.settings.text===1.3?'selected':''}>Rất lớn</option></select></label></div><div class="field-row"><label class="field">Mức chỉ dẫn không gian<select id="setting-guide"><option value="full" ${gMode==='full'?'selected':''}>Đầy đủ (La bàn &amp; mọi mốc)</option><option value="objective" ${gMode==='objective'?'selected':''}>Chỉ mục tiêu chính</option><option value="off" ${gMode==='off'?'selected':''}>Tắt mốc nổi (Tự đọc địa vật)</option></select></label><label class="field">Vị trí cần di chuyển cảm ứng<select id="setting-stick"><option value="left" ${(state.settings.stickSide||'left')==='left'?'selected':''}>Bên trái màn hình</option><option value="right" ${state.settings.stickSide==='right'?'selected':''}>Bên phải màn hình</option></select></label></div><label class="field">Chế độ bước nhanh (Shift)<select id="setting-sprint"><option value="hold" ${!state.settings.sprintToggle?'selected':''}>Giữ phím Shift</option><option value="toggle" ${state.settings.sprintToggle?'selected':''}>Bấm bật / tắt</option></select></label><label class="check"><input id="setting-motion" type="checkbox" ${state.settings.motion==='calm'?'checked':''}>Giảm chuyển động khi đổi cảnh</label><label class="check"><input id="setting-comfort" type="checkbox" ${state.settings.comfort!==false?'checked':''}>Chế độ thư thái (giữ nhịp ổn định cao trong Legends)</label><label class="check"><input id="setting-subbg" type="checkbox" ${state.settings.subtitleBg!==false?'checked':''}>Nền tối rõ chữ cho dòng phụ đề và âm thanh mô tả</label><label class="check"><input id="setting-sound" type="checkbox" ${state.settings.sound?'checked':''}>Âm thanh không gian và tín hiệu</label><p class="notice">Phím WASD để đi, kéo để nhìn, Q/R xoay góc, Z nhìn về mục tiêu, X nhận dấu vết, C đặt lại góc, E tương tác, J mở sổ &amp; bảng đối chiếu. Chạm vào mốc ở xa để tự bước tới.</p>`,primary('Lưu tùy chỉnh','settings-save'));
+    show('CHƠI THEO CÁCH PHÙ HỢP VỚI BẠN',`<div class="field-row"><label class="field">Chất lượng đồ họa 3D<select id="setting-graphics"><option value="ultra" ${gfx==='ultra'?'selected':''}>Siêu nét (HDR, Bloom &amp; Tán xạ)</option><option value="high" ${gfx==='high'?'selected':''}>Cao (HDR &amp; Ánh sáng vật lý)</option><option value="balanced" ${gfx==='balanced'?'selected':''}>Cân bằng (Ưu tiên tốc độ)</option></select></label><label class="field">Góc nhìn<select id="setting-camera"><option value="third" ${(state.settings.cameraMode||'third')==='third'?'selected':''}>Người thứ ba (quan sát đoàn)</option><option value="first" ${state.settings.cameraMode==='first'?'selected':''}>Người thứ nhất (đắm mình · phím V)</option></select></label><label class="field">Cỡ chữ<select id="setting-text"><option value="1" ${state.settings.text===1?'selected':''}>Vừa</option><option value="1.15" ${state.settings.text===1.15?'selected':''}>Lớn</option><option value="1.3" ${state.settings.text===1.3?'selected':''}>Rất lớn</option></select></label></div><div class="field-row"><label class="field">Mức chỉ dẫn không gian<select id="setting-guide"><option value="full" ${gMode==='full'?'selected':''}>Đầy đủ (La bàn &amp; mọi mốc)</option><option value="objective" ${gMode==='objective'?'selected':''}>Chỉ mục tiêu chính</option><option value="off" ${gMode==='off'?'selected':''}>Tắt mốc nổi (Tự đọc địa vật)</option></select></label><label class="field">Vị trí cần di chuyển cảm ứng<select id="setting-stick"><option value="left" ${(state.settings.stickSide||'left')==='left'?'selected':''}>Bên trái màn hình</option><option value="right" ${state.settings.stickSide==='right'?'selected':''}>Bên phải màn hình</option></select></label></div><label class="field">Chế độ bước nhanh (Shift)<select id="setting-sprint"><option value="hold" ${!state.settings.sprintToggle?'selected':''}>Giữ phím Shift</option><option value="toggle" ${state.settings.sprintToggle?'selected':''}>Bấm bật / tắt</option></select></label><label class="check"><input id="setting-motion" type="checkbox" ${state.settings.motion==='calm'?'checked':''}>Giảm chuyển động khi đổi cảnh</label><label class="check"><input id="setting-comfort" type="checkbox" ${state.settings.comfort!==false?'checked':''}>Chế độ thư thái (giữ nhịp ổn định cao trong Legends)</label><label class="check"><input id="setting-subbg" type="checkbox" ${state.settings.subtitleBg!==false?'checked':''}>Nền tối rõ chữ cho dòng phụ đề và âm thanh mô tả</label>${audioSettings()}<p class="notice">Phím WASD để đi, kéo để nhìn, Q/R xoay góc, V đổi góc nhìn thứ nhất/thứ ba, Z nhìn về mục tiêu, X nhận dấu vết, C đặt lại góc, E tương tác, J mở sổ &amp; bảng đối chiếu. Chạm vào mốc ở xa để tự bước tới.</p>`,primary('Lưu tùy chỉnh','settings-save'));
     heading('Tùy chỉnh & Tiếp cận');
+  }
+
+  function audioSettings(){
+    const s=WitnessAudio.settings(state.settings);
+    const sliders=[['masterVolume','Âm lượng chung'],['ambienceVolume','Môi trường'],['effectsVolume','Bước chân & vật liệu'],['voiceVolume','Giọng nhân vật'],['uiVolume','Thao tác giao diện']];
+    return `<fieldset class="audio-settings"><legend>Âm thanh & giọng nói</legend><label class="check"><input id="setting-sound" type="checkbox" ${s.sound?'checked':''}>Bật âm thanh</label><div class="audio-sliders">${sliders.map(([key,label])=>`<label class="audio-slider" for="audio-${key}"><span>${label}</span><input type="range" id="audio-${key}" min="0" max="100" step="1" value="${Math.round(s[key]*100)}"><output for="audio-${key}">${Math.round(s[key]*100)}%</output></label>`).join('')}</div><div class="field-row"><label class="field">Cách đọc thoại<select id="setting-voice-mode"><option value="recorded" ${s.voiceMode==='recorded'?'selected':''}>Giọng thu sẵn theo nhân vật</option><option value="system" ${s.voiceMode==='system'?'selected':''}>Thu sẵn + giọng máy tiếng Việt khi thiếu</option><option value="off" ${s.voiceMode==='off'?'selected':''}>Chỉ đọc phụ đề</option></select></label><label class="field">Khoảng âm lượng<select id="setting-audio-range"><option value="natural" ${s.audioRange==='natural'?'selected':''}>Tự nhiên</option><option value="night" ${s.audioRange==='night'?'selected':''}>Êm cho loa nhỏ / ban đêm</option></select></label></div><label class="check"><input id="setting-auto-voice" type="checkbox" ${s.autoVoice?'checked':''}>Tự đọc khi mở lời thoại</label><label class="check"><input id="setting-audio-spatial" type="checkbox" ${s.audioSpatial?'checked':''}>Âm thanh theo hướng và khoảng cách (nên dùng tai nghe)</label><label class="check"><input id="setting-audio-captions" type="checkbox" ${s.audioCaptions?'checked':''}>Hiện mô tả tiếng động và người đang nói</label><p class="credits">Giọng tạo bằng AI từ lời có sẵn trong game. Phần diễn ý Kinh Thánh dùng người dẫn chuyện. Bạn có thể dừng, nghe lại hoặc đi tiếp bất cứ lúc nào.</p></fieldset>`;
   }
 
   function pause(){
@@ -782,7 +821,7 @@
   }
 
   function about(){
-    show('UNSEALED WITNESS · LEGACY OF THE COVENANT',`<figure class="about-hero"><img src="${esc(assetUrl('journey-cover.webp'))}" alt="Chứng nhân trên hành trình"><figcaption>XÊDARÊ — GALILÊ — GIÊRUSALEM · NĂM 58–60 SCN</figcaption></figure><p>Game phiêu lưu – điều tra – nhập vai lấy Kinh Thánh làm trục xương sống theo hồ sơ kiến trúc v3.1: ba hồi Môsê (Xh 14), Đavít (1 Sm 24), Phêrô (Ga 21); 12 chương cầu nối đời thường năm 58–60 SCN, hai Legend mở rộng (Gr 38, Cv 16), bốn giấc mơ Inner Veil và sáu câu chuyện đồng hành.</p><p><strong>Kiến trúc Nhân vật Hai tầng (Dual-Tier Persona):</strong> Các nhân vật Kinh Thánh được giữ nguyên vẹn trong mạch nguồn trang nghiêm; người chơi hóa thân thành Chứng nhân Vô danh ở tầng con người với 4 kỹ năng đời thường (Quan sát, Thủ công, Giao tiếp, Tự vệ), Bảng Đối Chiếu Chứng Cứ 3 cột và 3 Nguyên lý Chứng Nhân.</p><p class="notice">Tuyến đời thường là hư cấu lịch sử. Legends có nguồn Kinh Thánh riêng; các đường đi và tương tác chứng nhân là chuyển thể nghệ thuật. Inner Veil là giấc mơ ẩn dụ, không phải mặc khải mới. Nội dung chưa qua hội đồng chuyên gia duyệt.</p><p class="credits">Tạo hình sử dụng bộ dựng Three.js PBR, HDR Post-Processing và nền nhân vật từ dự án Hành Trình Lời Chúa; diễn giải nghệ thuật, không khẳng định chân dung lịch sử. Phông Lora và Manrope theo SIL Open Font License. Bản 0.4.0 · 25 tình huống chiều sâu / phụ lục 3.2.</p>`,primary('Trở lại','close'));
+    show('UNSEALED WITNESS · LEGACY OF THE COVENANT',`<figure class="about-hero"><img src="${esc(assetUrl('journey-cover.webp'))}" alt="Chứng nhân trên hành trình"><figcaption>XÊDARÊ — GALILÊ — GIÊRUSALEM · NĂM 58–60 SCN</figcaption></figure><p>Game phiêu lưu – điều tra – nhập vai lấy Kinh Thánh làm trục xương sống theo hồ sơ kiến trúc v3.1: ba hồi Môsê (Xh 14), Đavít (1 Sm 24), Phêrô (Ga 21); 12 chương cầu nối đời thường năm 58–60 SCN, hai Legend mở rộng (Gr 38, Cv 16), bốn giấc mơ Inner Veil và sáu câu chuyện đồng hành.</p><p><strong>Kiến trúc Nhân vật Hai tầng (Dual-Tier Persona):</strong> Các nhân vật Kinh Thánh được giữ nguyên vẹn trong mạch nguồn trang nghiêm; người chơi hóa thân thành Chứng nhân Vô danh ở tầng con người với 4 kỹ năng đời thường (Quan sát, Thủ công, Giao tiếp, Tự vệ), Bảng Đối Chiếu Chứng Cứ 3 cột và 3 Nguyên lý Chứng Nhân.</p><p class="notice">Tuyến đời thường là hư cấu lịch sử. Legends có nguồn Kinh Thánh riêng; các đường đi và tương tác chứng nhân là chuyển thể nghệ thuật. Inner Veil là giấc mơ ẩn dụ, không phải mặc khải mới. Nội dung chưa qua hội đồng chuyên gia duyệt.</p><p class="credits">Tạo hình sử dụng bộ dựng Three.js PBR, HDR Post-Processing và nền nhân vật từ dự án Hành Trình Lời Chúa; diễn giải nghệ thuật, không khẳng định chân dung lịch sử. Phông Lora và Manrope theo SIL Open Font License. Bản 0.5.0 · 31 phần việc trực tiếp / hồ sơ 3.2.</p>`,primary('Trở lại','close'));
     heading('Mỗi cuộc đời đều để lại một lời chứng');
   }
 
@@ -823,6 +862,22 @@
       else if(act==='interact'){FeedbackAudio.choice();interact();}
       else if(act==='action'){FeedbackAudio.choice();showAction(id);}
       else if(act==='perform'){FeedbackAudio.click();perform(id);}
+      else if(act.startsWith('field-')){
+        const f=CRAFT.field(state);
+        if(act==='field-start')startField(id);
+        else if(act==='field-exit'&&f){update(M.fieldStop(state));fieldCache='';subline('Bản nháp được giữ; bạn có thể quay lại điểm cùng làm.');}
+        else if(act==='field-board'&&f){const a=f.a;state=M.fieldStop(state);state.settings.workMode='board';save();refresh();workshop(a);}
+        else if(act==='field-go'){fieldFocus=id;guide(id,true);}
+        else if(act==='field-operate')operateField(id,{place:true});
+        else if(act==='field-number')operateField(id,{delta:Number(button.dataset.delta)});
+        else if(act==='field-verdict')operateField(id,{status:value});
+        else if(act==='field-handoff')finishField();
+        else if(act==='field-test'&&f){fieldMessage=CRAFT.response(state,f.def,X.evaluate(state,f.def,f.payload).ok);fieldTested=true;fieldCache='';refreshField();}
+        else if((act==='field-back'||act==='field-reset')&&f){update(M.fieldReset(state,act==='field-back'));fieldMessage='Bản nháp đã được sửa. Phần việc ngoài truyện chưa được ghi hoàn tất.';fieldTested=false;fieldCache='';refreshField();}
+      }
+      else if(act==='detail-lift'||act==='detail-light'){
+        const view=CRAFT.stores(state).views?.[id]||{lift:false,light:0};update(M.detailView(state,id,last?.position||engine.at(),act==='detail-lift'?{lift:!view.lift}:{light:(view.light+1)%3}));FeedbackAudio.material('paper');inspectSceneDetail(id);
+      }
       else if(act.startsWith('depth-')&&activePuzzle?.type==='depth'){
         FeedbackAudio.click();
         if(act==='depth-commit')commitWorkshop();
@@ -835,6 +890,8 @@
           renderWorkshop();dialog.querySelector('#depth-feedback')?.scrollIntoView({block:'nearest'});
         }else editWorkshop(act,null,value);
       }
+      else if(act==='audio-repeat'){const v=button.closest('.voice-controls')._voice;audio.speak(v.person,v.text,{label:v.label});}
+      else if(act==='audio-stop')audio.stopVoice();
       else if(act==='person-talk'){FeedbackAudio.choice();showPersonDialog(person);}
       else if(act==='talk-topic'){
         const t=M.talkTopics(state,person).find(x=>x.id===topic);
@@ -845,14 +902,14 @@
           pushLog(D.people[person].name,t.line);
           const banner=speakerBanner(person,D.people[person].role);
           show(D.people[person].role,`${banner}<div class="dialog-prose"><p>${esc(t.line)}</p></div>`,primary('Trở lại cuộc trò chuyện','person-talk',`data-person="${person}"`)+'<button class="secondary" data-act="close">Khép lại</button>');
-          heading(t.label);
+          heading(t.label);voiced(person,t.line);
         }
       }
       else if(act==='title-sound'){
         if(!state)state=initial();
         state.settings.sound=!state.settings.sound;
         save();
-        if(engine)engine.toggleSound().then(on=>{audioOn=on;}).catch(()=>{});
+        audioOn=state.settings.sound;audio.configure(state.settings);audio.unlock();
         FeedbackAudio.choice();
         const icon=$('.title-sound-toggle .sound-toggle-icon');
         if(icon)icon.textContent=state.settings.sound?'🔊':'🔇';
@@ -917,8 +974,13 @@
         state.settings.motion=$('#setting-motion').checked?'calm':'full';
         state.settings.comfort=$('#setting-comfort').checked;
         state.settings.subtitleBg=$('#setting-subbg').checked;
-        if(sound!==audioOn)engine.toggleSound().then(on=>{audioOn=on;}).catch(()=>{});
-        state.settings.sound=sound;save();close();refresh();
+        state.settings.cameraMode=$('#setting-camera')?.value==='first'?'first':'third';
+        applyView();
+        audioOn=sound;
+        state.settings.sound=sound;
+        for(const key of ['masterVolume','ambienceVolume','effectsVolume','voiceVolume','uiVolume'])state.settings[key]=Number($('#audio-'+key).value)/100;
+        state.settings.voiceMode=$('#setting-voice-mode').value;state.settings.autoVoice=$('#setting-auto-voice').checked;state.settings.audioCaptions=$('#setting-audio-captions').checked;state.settings.audioSpatial=$('#setting-audio-spatial').checked;state.settings.audioRange=$('#setting-audio-range').value;
+        audio.configure(state.settings);audio.unlock();save();close();refresh();
       }
       else if(act==='layer-intro')layerIntro(kind,id);
       else if(act==='layer-open')openLayer(kind,id);
@@ -990,11 +1052,11 @@
   });
 
   document.addEventListener('change',e=>{
-    const input=e.target;if(!input.matches?.('[data-depth-input]')||activePuzzle?.type!=='depth')return;
+    const input=e.target;if(input.matches?.('[data-field-select]')){try{update(M.fieldSelect(state,input.value));fieldCache='';refreshField();}catch(err){toast(err.message);}return;}if(!input.matches?.('[data-depth-input]')||activePuzzle?.type!=='depth')return;
     editWorkshop(input.dataset.kind,input.dataset.key,input.value,input.checked,input.id||null);
   });
   document.addEventListener('input',e=>{
-    const input=e.target;if(input.matches?.('[data-depth-input][data-kind="number"]')&&activePuzzle?.type==='depth')editWorkshop('number',input.dataset.key,input.value);
+    const input=e.target;if(input.id?.startsWith('audio-')){const out=input.parentElement.querySelector('output');if(out)out.textContent=input.value+'%';return;}if(input.matches?.('[data-depth-input][data-kind="number"]')&&activePuzzle?.type==='depth')editWorkshop('number',input.dataset.key,input.value);
   });
   $('#import-file').addEventListener('change',async e=>{
     const file=e.target.files[0];e.target.value='';if(!file)return;
@@ -1011,12 +1073,15 @@
   document.addEventListener('pointerdown',e=>{if(e.target.closest('[data-act="guard"]')){e.preventDefault();engine?.action('guard',true);}});
   document.addEventListener('pointerup',()=>engine?.action('guard',false));
   document.addEventListener('keydown',e=>{if(e.target.matches?.('input,select,textarea'))return;if(e.repeat||e.metaKey||e.ctrlKey||e.altKey)return;if(e.key==='x'||e.key==='X')sense();});
-  window.addEventListener('pagehide',()=>{checkpointPosition();save();});
-  document.addEventListener('visibilitychange',()=>{if(document.hidden){checkpointPosition();save();stopMotion();}else if(!title&&!dialog)controls?.enable(true);});
+  window.addEventListener('pagehide',()=>{audio.visibility(true);checkpointPosition();save();});
+  window.addEventListener('pageshow',()=>audio.visibility(document.hidden));
+  document.addEventListener('pointerdown',()=>{if(state?.settings.sound)audio.unlock();},{capture:true});
+  document.addEventListener('keydown',()=>{if(state?.settings.sound)audio.unlock();},{capture:true});
+  document.addEventListener('visibilitychange',()=>{audio.visibility(document.hidden);if(document.hidden){checkpointPosition();save();stopMotion();}else if(!title&&!dialog)controls?.enable(true);});
 
   launchWorld();
   if(loaded.migrated)toast('Đã giữ tiến độ đời thường từ v2. Ba chương chính cần tiếp nhận theo nội dung mới; bản lưu cũ vẫn còn.');
   if(loaded.recovered)toast('Đã khôi phục từ bản dự phòng trên máy.');
   if(loaded.corrupt)toast('Bản lưu không đọc được. Tệp cũ được giữ để bạn có thể kiểm tra hoặc nhập lại.');
-  if('serviceWorker' in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('./witness-sw.js').catch(()=>{});
+  if('serviceWorker' in navigator&&location.protocol!=='file:'&&!['127.0.0.1','localhost'].includes(location.hostname))navigator.serviceWorker.register('./witness-sw.js').catch(()=>{});
 })();

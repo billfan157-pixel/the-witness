@@ -35,7 +35,10 @@ try{
   await send('Page.enable');await send('Runtime.enable');
   await send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
   await send('Page.navigate',{url:pathToFileURL(path.join(output,'THE-WITNESS-Design-Compendium.html')).href});
-  await delay(700);
+  for(let i=0;i<80;i++){
+    if(await evaluate(`document.readyState==='complete'&&document.querySelectorAll('[data-chapter]').length===${expectedChapters}`))break;
+    await delay(150);
+  }
   const initial=await evaluate(`({chapters:document.querySelectorAll('[data-chapter]').length,overflow:document.documentElement.scrollWidth>innerWidth,brokenAnchors:[...document.querySelectorAll('a[href^="#"]')].filter(a=>!document.getElementById(a.hash.slice(1))).length})`);
   assert.equal(initial.chapters,expectedChapters);assert.equal(initial.overflow,false);assert.equal(initial.brokenAnchors,0);
   assert.equal(await evaluate(`document.querySelectorAll('#quest-jump option[value]:not([value=""])').length`),12);
@@ -59,7 +62,7 @@ try{
   await screenshot('reader-legend-peter.png');
   assert.equal(await evaluate(`document.querySelectorAll('h2[id^="chapter-15-l"]').length`),6,'Six source/world packet anchors');
   const jsonLinks=await evaluate(`([...document.querySelectorAll('a[href$=".json"]')].map(a=>a.getAttribute('href')))`);
-  assert(jsonLinks.length>=2);for(const link of jsonLinks)assert(fs.existsSync(path.join(output,link)),'Packaged JSON link resolves');
+  assert(new Set(jsonLinks).size===4);for(const link of jsonLinks)assert(fs.existsSync(path.join(output,link)),'Packaged JSON link resolves');
   await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
   await evaluate(`window.scrollTo(0,0)`);await delay(200);
   assert.equal(await evaluate(`document.documentElement.scrollWidth>innerWidth`),false);
@@ -70,7 +73,7 @@ try{
   await evaluate(`(()=>{const s=document.getElementById('legend-jump');s.value='#chapter-14-l01';s.dispatchEvent(new Event('change'));})()`);await delay(150);
   assert.equal(await evaluate(`document.documentElement.scrollWidth>innerWidth`),false,'Legend dossier fits mobile');
   await screenshot('reader-mobile-legend.png');
-  for(const id of ['16','17','18','19']){
+  for(const id of ['16','17','18','19','20']){
     await evaluate(`document.querySelector('nav a[href="#chapter-${id}"]').click()`);await delay(150);
     assert.equal(await evaluate(`document.documentElement.scrollWidth>innerWidth`),false,'Depth chapter '+id+' fits mobile');
   }
@@ -91,6 +94,6 @@ try{
   assert.equal(await evaluate(`document.documentElement.scrollWidth>innerWidth`),false,'Pitch fits mobile');
   await screenshot('pitch-mobile.png');
   assert.equal(errors.length,0);
-  const report={version:contract.depthExpansion?.revision||contract.documentVersion,status:'passed',scope:'document-reader-and-pitch-only; not gameplay',checks:[`${expectedChapters} documents render`,'all internal anchors resolve','no desktop page overflow','accent-insensitive search filters documents','navigation resets search and scrolls to correct document','three required-Legend selector targets open correctly','six source/world packet anchors resolve','12-bridge selector opens correct dossier','all three packaged JSON links resolve','no mobile page overflow on cover, bridge, Legend and four depth chapters','navigation recovers from no-match search','pitch fits one A4 CSS page and all links resolve','pitch fits mobile','no JavaScript exceptions'],pitchA4:pitch,viewportDesktop:[1440,1000],viewportMobile:[390,844]};
+  const report={version:contract.depthExpansion?.revision||contract.documentVersion,status:'passed',scope:'document-reader-and-pitch-only; not gameplay',checks:[`${expectedChapters} documents render`,'all internal anchors resolve','no desktop page overflow','accent-insensitive search filters documents','navigation resets search and scrolls to correct document','three required-Legend selector targets open correctly','six source/world packet anchors resolve','12-bridge selector opens correct dossier','all four packaged JSON links resolve','no mobile page overflow on cover, bridge, Legend and five depth chapters','navigation recovers from no-match search','pitch fits one A4 CSS page and all links resolve','pitch fits mobile','no JavaScript exceptions'],pitchA4:pitch,viewportDesktop:[1440,1000],viewportMobile:[390,844]};
   fs.writeFileSync(path.join(output,'reader-qa.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 }finally{socket?.close();child.kill();}
