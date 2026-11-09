@@ -31,6 +31,17 @@ check('Doorway admits a standing capsule and solid lintel/ceiling reject body pe
  assert.equal(p.collides({x:-23,y:p.base+.65,z:-9.23}),null,'Rounded capsule head should clear the lintel corner');
  assert.equal(p.collides({x:-23,y:p.base+.65,z:-9.5}),'lintel','Capsule head must hit the lintel directly overhead');
 });
+check('Q01 outdoor guide reaches its turn before cutting past a loaded workbench',()=>{
+ const ar=A.create({outdoorAllowed:(x,z)=>Math.hypot(x+25.1,z-3.7)>=1.18}),waypoints=[[-24,6],[-25,6],[-26,6],[-27,6],[-23,-8.6]];
+ let pos={x:-23,y:0,z:5.7,supportId:'world'},i=0;
+ for(let n=0;n<3000&&i<waypoints.length;n++){
+  const [x,z]=waypoints[i],d=Math.hypot(x-pos.x,z-pos.z);
+  if(d<.05){i++;continue;}
+  pos=ar.move(pos,(x-pos.x)/Math.max(1,d)*2.35/60,(z-pos.z)/Math.max(1,d)*2.35/60);
+ }
+ assert.equal(i,waypoints.length,'Guide caught the workbench corner');
+ assert(Math.hypot(pos.x+23,pos.z+8.6)<.06);
+});
 check('Same x,z on floor and roof retain separate support and cannot interact through the slab',()=>{
  const under={x:roof.x,y:p.base,z:roof.z,supportId:'q01-room'},target=A.targets(p)[1];
  assert(!p.reachable(under,target));assert(p.reachable(roof,target));

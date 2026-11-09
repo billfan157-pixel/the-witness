@@ -12,7 +12,7 @@ try{
   await b.seed(s);await b.click(`[data-world-target="${paper.id}"]`);await b.wait('!!document.querySelector("dialog.inspection-dialog")');
   await b.click('[data-act=detail-lift]');await b.click('[data-act=detail-light]');
   assert.equal((await b.read()).evidence.length,0);
-  assert(await b.evaluate('(()=>{const g=WitnessWorld.getContext().scene.getObjectByName("craft:Q02-patch");let readable=false;g.traverse(o=>{if(o.userData.craftTexture&&o.material.isMeshBasicMaterial&&o.material.map.image.width>=768)readable=true});return readable})()'));
+  assert(await b.evaluate('(()=>{const g=WitnessWorld.getContext().scene.getObjectByName("craft:Q02-patch");let readable=false;g.traverse(o=>{if(o.userData.craftTexture&&(o.material.isMeshBasicMaterial||o.material.isMeshStandardMaterial)&&o.material.map.image.width>=2048)readable=true});return readable})()'));
   await b.shot('q02-paper-closeup.png');checks.push('Paper inspection retains readable ink, a lifted flap and zero new evidence');
   for(const [id,choice]of [['B02','work_with_representative'],['B04','share_real_task']]){
     s=M.fresh();s.chapter=10;s=M.startBond(s,id,choice);const a=M.actions(s).find(a=>a.bond===id);

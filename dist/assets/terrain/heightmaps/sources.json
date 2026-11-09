@@ -1,0 +1,33 @@
+{
+  "generator": "tools/prepare-heightmaps.cjs",
+  "algorithm": "gradient-noise macro shape + droplet hydraulic erosion (Lague) + thermal talus weathering",
+  "note": "Procedural stand-in for Gaea/World Machine erosion exports. Drop real 16-bit .r16 exports into assets/terrain/heightmaps/ and rerun with --external.",
+  "size": 257,
+  "extent": [
+    -78,
+    78,
+    -67,
+    67
+  ],
+  "units": "metres",
+  "regions": {
+    "galilee": {
+      "seed": 1187,
+      "droplets": 95000,
+      "talusSlope": 0.78,
+      "thermalPasses": 5
+    },
+    "jerusalem": {
+      "seed": 2941,
+      "droplets": 110000,
+      "talusSlope": 0.66,
+      "thermalPasses": 7
+    },
+    "caesarea": {
+      "seed": 4073,
+      "droplets": 80000,
+      "talusSlope": 0.84,
+      "thermalPasses": 4
+    }
+  }
+}

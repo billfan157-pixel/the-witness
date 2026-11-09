@@ -1,0 +1,158 @@
+{
+  "date": "2026-11-10",
+  "status": "scripted_checks_passed",
+  "scope": "Q01 harbor / west warehouse / Titus production scene candidate",
+  "artAccepted": false,
+  "artApproval": "awaiting user first- and third-person day/evening review",
+  "historicalReconstruction": "H; comparisons are identified individually in q01-gold-materials.md",
+  "build": "f9986840713c",
+  "commands": {
+    "npm test": "passed",
+    "npm run build": "passed",
+    "npm run test:backend": "passed (24 tests; final isolated run)",
+    "node test/architecture-browser.mjs": "passed (7 routes)",
+    "node test/q01-gold-browser.mjs": "passed",
+    "node test/q01-nav-browser.mjs": "passed",
+    "node test/q01-portrait-browser.mjs": "passed",
+    "node test/q01-portrait-browser.mjs --offline": "passed",
+    "node test/q02-inference-browser.mjs": "passed",
+    "node test/q02-inference-browser.mjs --offline": "passed on final standalone SHA256",
+    "npm run test:graphics": "passed",
+    "browser regression components": "browser.mjs, scene.mjs and spine-browser.mjs passed; depth-browser.mjs and craft-browser.mjs rerun after cloud click fix; WITNESS_QA_HARDWARE=1"
+  },
+  "sourceHashes": {
+    "index.html": "7fa7fea205651b89c0e7070acaa0ca439ba738dbc27c7083767f3b1bb718aa49",
+    "witness-q01.js": "2179bb7a1d203197bfdc359119a3c254ddfeff0b5e67053efb0b69b0f806af39",
+    "witness-architecture.js": "2915d0b1da27e362cd11e16968f977d8bc65fbc71fe92fcc89fec3052ae64a45",
+    "witness-world.js": "f576c844e982bc6b5c24c914a546192cc4b0562b9fd1c166390cd64f3369480a",
+    "witness-app.js": "57c1a7bd95c76cfb69b4e080d2a4e0c33c18645ac8672851efa7299ea6bc2799",
+    "witness-model.js": "536e70ff676d5dddccebbf4ee267b231bb951792435f4199b43f689a7fc74743",
+    "witness-ambience.js": "a8aced9dcbdd1bc75824b3de6e030ee76ec5ccb2acbeff0bfb1575dca76292ce",
+    "vendor/adventure-3d.js": "f497ad5cb73932bec258122fb306f0bb1d81a456494430b606564bb950e30bb7",
+    "vendor/adventure-visuals.js": "c63e293bfa6111acdb61e8091fc11fc28722e5b8d95917f2e6eddf3a0780f300",
+    "vendor/witness-graphics.js": "29f93009914911ba6a025d8fc4a420bea3583804f92569f47ed9f9cdf51c3035",
+    "vendor/adventure-character.js": "390f47412b5069c427ac56452dd2fb21e425ea6d7d949671895da188bf30fd9a",
+    "vendor/character-detail.js": "c55682b8bf2463d7b57bea5f4577121663c6013f244bb3bee2cec68e96fa1668",
+    "tools/build.cjs": "aa54db3c5e63ead4d357bca2ecea641f1cbe9186f807ccf34c192734f12a8798"
+  },
+  "architecture": {
+    "runs": 7,
+    "frames": 2030,
+    "cameraCollisions": 0,
+    "bodyCollisions": 0,
+    "independentGeometryErrors": 0,
+    "report": "reports/architecture.json",
+    "navigationSamples": 58,
+    "navigationReport": "reports/navigation.json",
+    "geometryScope": "Independent Box3/raycast checks cover the base playable architecture mesh; the controller trace also checks added prop/beam/door volumes. The entire merged decorative scene is not independently triangle-collision audited."
+  },
+  "materials": {
+    "webPixels": 1024,
+    "offlinePixels": 512,
+    "families": [
+      "stone",
+      "plaster",
+      "wood",
+      "floor"
+    ],
+    "albedo": "sRGB",
+    "normalAndORM": "linear",
+    "offlineEmbedded": true
+  },
+  "hero": {
+    "id": "wt-titus",
+    "fictional": true,
+    "triangles": 63210,
+    "eyeApertureTrianglesRemoved": 950,
+    "pupilRays": "both pupils are first opaque intersection; checked in day and evening",
+    "report": "reports/portrait.json"
+  },
+  "geometry": {
+    "architecture": 11904,
+    "dressingWithInstancedLeaves": 48088
+  },
+  "performance": {
+    "scope": "warmed stationary camera samples on actual Intel Arc, Chrome headless, 1440x900; all shadow/AO/postprocessing passes included in calls/triangles; before final eye-aperture, lamp-scale and navigation-tolerance corrections; draw structure otherwise unchanged",
+    "samples": [
+      {
+        "name": "day balanced hero",
+        "samples": 169,
+        "submitMedianMs": 3.2000000001862645,
+        "submitP95Ms": 4.7000000001862645,
+        "renderIntervalMedianMs": 16.700000000186265,
+        "renderIntervalP95Ms": 18.299999999813735,
+        "callsMedian": 166,
+        "callsP95": 359,
+        "trianglesP95": 1151693
+      },
+      {
+        "name": "day balanced roof",
+        "samples": 169,
+        "submitMedianMs": 3.099999999627471,
+        "submitP95Ms": 4.7999999998137355,
+        "renderIntervalMedianMs": 16.699999999254942,
+        "renderIntervalP95Ms": 18.700000000186265,
+        "callsMedian": 112,
+        "callsP95": 317,
+        "trianglesP95": 1125935
+      },
+      {
+        "name": "evening balanced exterior",
+        "samples": 168,
+        "submitMedianMs": 4.2000000001862645,
+        "submitP95Ms": 6.5,
+        "renderIntervalMedianMs": 16.600000000558794,
+        "renderIntervalP95Ms": 19.299999999813735,
+        "callsMedian": 203,
+        "callsP95": 393,
+        "trianglesP95": 1277796
+      },
+      {
+        "name": "day ultra roof",
+        "samples": 168,
+        "submitMedianMs": 4.7000000001862645,
+        "submitP95Ms": 7.7000000001862645,
+        "renderIntervalMedianMs": 16.600000000558794,
+        "renderIntervalP95Ms": 22,
+        "callsMedian": 196,
+        "callsP95": 417,
+        "trianglesP95": 1282379
+      }
+    ],
+    "gpu": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "fullReport": "reports/tour.json"
+  },
+  "budgets": {
+    "desktopDrawCallTarget": 250,
+    "drawCallP95TargetMet": false,
+    "heroInitialTriangleTarget": 12000,
+    "heroInitialTargetMet": false,
+    "heroCloseupException": 70000,
+    "heroExceptionMet": true,
+    "architectureBudget": 12000,
+    "architectureBudgetMet": true,
+    "physicalMobileMeasured": false
+  },
+  "offline": {
+    "path": "dist/ban-choi-ngoai-tuyen.html",
+    "bytes": 15958350,
+    "sha256": "4964c656c4873f71a4684e4c6fa6f8fba96e8e3df43527705f6e7a8dab66518e",
+    "finalColdLoadReport": "reports/offline-final.json",
+    "portraitReport": "reports/offline-portrait.json",
+    "httpResources": [],
+    "architectureParity": "both camera routes passed with all HTTP blocked"
+  },
+  "regression": {
+    "campaignChecks": 21,
+    "spineChecks": 9,
+    "depthChecks": 10,
+    "craftChecks": 9,
+    "cloudClickFix": "Restrict cloud delegation to button[data-cloud] so the root data-cloud attribute cannot cancel checkbox/link defaults"
+  },
+  "limitations": [
+    "Visual acceptance and human playtesting remain pending",
+    "G3 remains open for user art approval; G4 remains open for device/LOD/draw-call optimization",
+    "No physical phone, total GPU residency, display presentation latency, or cold-start performance certification",
+    "Other chapters retain their existing environment art; other buildings remain closed"
+  ]
+}

@@ -4,7 +4,8 @@ import {createRequire} from 'node:module';import {pathToFileURL} from 'node:url'
 const require=createRequire(import.meta.url),M=require('../witness-model.js'),D=require('../witness-content.js'),X=require('../witness-depth.js');
 const out=path.resolve(import.meta.dirname,'artifacts/depth');fs.mkdirSync(out,{recursive:true});
 const port=Number(process.env.WITNESS_QA_PORT||19548),profile=fs.mkdtempSync(path.join(os.tmpdir(),'witness-depth-qa-'));
-const child=spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',['--headless=new','--enable-unsafe-swiftshader','--no-first-run',`--remote-debugging-port=${port}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
+const gpuArgs=process.env.WITNESS_QA_HARDWARE==='1'?['--use-angle=d3d11','--disable-software-rasterizer']:['--enable-unsafe-swiftshader'];
+const child=spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',['--headless=new',...gpuArgs,'--no-first-run',`--remote-debugging-port=${port}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
 const delay=ms=>new Promise(r=>setTimeout(r,ms));let socket;
 function seedState(owner,id,plan=null){
   const s=M.fresh();s.chapter=D.chapters.findIndex(q=>q.id===owner);s.evidence=Object.keys(D.evidence);s.consent.witness1={scope:'private_group',voluntary:true,safe:true};s.flags.finalPlan='public';
@@ -17,10 +18,13 @@ try{
   socket=new WebSocket(endpoint);await new Promise(r=>socket.addEventListener('open',r,{once:true}));let seq=0;const pending=new Map(),errors=[],checks=[];
   socket.addEventListener('message',e=>{const d=JSON.parse(e.data);if(d.id){const p=pending.get(d.id);pending.delete(d.id);d.error?p?.reject(Error(JSON.stringify(d.error))):p?.resolve(d.result);}else if(d.method==='Runtime.exceptionThrown')errors.push(d.params.exceptionDetails.exception?.description||d.params.exceptionDetails.text);});
   const send=(method,params={})=>new Promise((resolve,reject)=>{const id=++seq;pending.set(id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));});
-  const evaluate=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+  const evaluate=async expression=>{
+    if(expression.includes('.click()')){let ready=false;for(let n=0;n<120;n++){const r=await send('Runtime.evaluate',{expression:'globalThis.WitnessCloudSession?.info().ready!==false',returnByValue:true});if(r.result?.value){ready=true;break;}await delay(100);}if(!ready)throw Error('Save bootstrap did not become ready');}
+    const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;
+  };
   const shot=async name=>{const r=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(out,name),Buffer.from(r.data,'base64'));};
   const waitFor=async(expression,max=18000)=>{for(let t=0;t<max;t+=200){if(await evaluate(expression))return;await delay(200);}await shot('failure.png');throw Error('Timed out: '+expression+'\n'+JSON.stringify(await evaluate('({dialog:document.querySelector("dialog")?.innerText,toast:document.querySelector("#toast")?.textContent})')));};
-  const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
+  const click=async selector=>{for(let n=0;n<120;n++){const clicked=await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});if(!e||e.matches(':disabled')||globalThis.WitnessCloudSession?.info().ready===false)return false;e.click();return true;})()`);if(clicked)return;await delay(150);}throw Error('Click target did not become ready: '+selector);};
   const input=async(selector,value)=>{await evaluate(`(()=>{const n=document.querySelector(${JSON.stringify(selector)});n.value=${JSON.stringify(value)};n.dispatchEvent(new Event('change',{bubbles:true}));})()`);};
   const read=()=>evaluate('JSON.parse(localStorage.getItem(WitnessModel.STORE))');
   const record=id=>waitFor(`!!JSON.parse(localStorage.getItem(WitnessModel.STORE)).workshop.records[${JSON.stringify(id)}]`);
@@ -30,7 +34,7 @@ try{
   const seed=async s=>{
     console.log(JSON.stringify({scene:s.layer?.id||M.chapter(s).id}));
     const hook=await send('Page.addScriptToEvaluateOnNewDocument',{source:`localStorage.setItem('the-witness.spine.v3',${JSON.stringify(JSON.stringify(s))});`});
-    await send('Page.reload',{ignoreCache:true});await waitFor('!!document.querySelector("#title-actions [data-act=continue]")');await send('Page.removeScriptToEvaluateOnNewDocument',{identifier:hook.identifier});await click('#title-actions [data-act=continue]');await waitFor('!!document.querySelector("dialog")');await click('dialog [data-act=close]');await delay(500);
+    await evaluate('globalThis.__depthReload=true');await send('Page.reload',{ignoreCache:true});await waitFor('!globalThis.__depthReload&&!!document.querySelector("#title-actions [data-act=continue]:not(:disabled)")');await send('Page.removeScriptToEvaluateOnNewDocument',{identifier:hook.identifier});await click('#title-actions [data-act=continue]');await waitFor('!!document.querySelector("dialog")');await click('dialog [data-act=close]');await delay(500);
   };
   const open=async id=>{const s=await read(),a=M.actions(s).find(a=>a.id===id);assert(a,id);await waitFor(`!!document.querySelector('[data-world-target="${a.target}"]')`);await click(`[data-world-target="${a.target}"]`);if(!s.layer){await waitFor('!!document.querySelector("dialog [data-act=perform]")');await click('dialog [data-act=perform]');}if(await evaluate('!document.querySelector("#field-work").hidden'))await click('[data-act=field-board]');await waitFor('!!document.querySelector("[data-workshop]")');};
   const fits=async()=>{assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false);assert.equal(await evaluate('(()=>{const d=document.querySelector("dialog");return d.scrollWidth>d.clientWidth+2})()'),false);};

@@ -5,6 +5,7 @@
     "Swept capsule blocks fast wall crossings, parapets, stairwell sides and excessive drops",
     "Controller waypoint tolerance cannot cut across the bottom step on the return route",
     "Doorway admits a standing capsule and solid lintel/ceiling reject body penetration",
+    "Q01 outdoor guide reaches its turn before cutting past a loaded workbench",
     "Same x,z on floor and roof retain separate support and cannot interact through the slab",
     "Camera sweeps its near-plane clearance against walls and opaque ceilings",
     "Spatial snapshots round-trip floor identity and reject malformed/foreign records",

@@ -1,3 +1,10 @@
+# Cảnh mẫu Q01 đang chờ duyệt
+
+Bản cảnh mẫu bến–kho phía tây–Titus đã được sản xuất với hai ánh sáng.
+Đọc [hồ sơ cảnh](q01-gold-scene.md) và [nguồn vật liệu](research/q01-gold-materials.md).
+Trong Q01, Bản đồ dẫn tới cửa và sân mái; V đổi góc nhìn; nút trên thanh công cụ đổi ngày/tối.
+G3 chỉ được đánh dấu đạt sau khi hình ảnh được người dùng chấp thuận.
+
 # Bộ tài nguyên môi trường
 
 Đọc roadmap.md và progress.json trước khi tiếp tục sản xuất. Q01 bắt buộc,
@@ -15,12 +22,12 @@ theo là giai đoạn 4: góc look development Q01 trên công trình đã đi l
 - `environment-references.html` ở gốc dự án: board có sơ đồ [H] và liên kết
   tới ảnh nguồn. Không dùng sơ đồ như bản đo; không chép ảnh hạn chế quyền.
 - `kit-lab.html`: xưởng 3D, so raw/full/lite và 1/200 module.
-- `catalog.csv`: hiện chỉ hai mẫu pipeline; cả hai đều chưa nghiệm thu mỹ thuật.
+- `catalog.csv`: mẫu pipeline, nền kiến trúc và các asset Q01 đang chờ duyệt mỹ thuật.
 
 Không dùng Coral Ground 02 để kết luận đúng bề mặt kurkar Caesarea. Mẫu tường
 có chất liệu rõ nhưng độ đồng đều, lớp trát, mạch và phong hóa cần tác giả
-biên tập ở giai đoạn look development. Kho phía tây Q01 đã là blockout nhiều
-tầng đi lại được (sáng tác [H], chưa nghiệm thu mỹ thuật); các công trình khác
+biên tập ở giai đoạn look development. Kho phía tây Q01 kế thừa nền nhiều
+tầng đi lại được và đã có bản hoàn thiện hình ảnh chờ duyệt (sáng tác [H]); các công trình khác
 vẫn đóng và không được tính là kiến trúc đã nghiệm thu.
 
 ## Sản xuất lại

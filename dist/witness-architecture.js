@@ -120,20 +120,27 @@
    setOutdoorAllowed(fn){outdoorAllowed=fn;},height,
    contains:(x,z)=>inside(x,z,[-29,-17,-18,-7]),snapshot:()=>({id:'Q01-WEST-STORE',base,roof,surfaces:surfaces.length,solids:solids.length})};
  }
- function install({T,scene,height,outdoorAllowed,ground}){
+ function install({T,scene,height,outdoorAllowed,ground,state}){
   const physics=create({height,outdoorAllowed}),group=new T.Group();group.name='q01-playable-store';const materials=new Map();
   if(ground){const p=ground.geometry.attributes.position;for(let i=0;i<p.count;i++){
    const x=p.getX(i),z=p.getZ(i),r=physics.bounds,edge=Math.max(r[0]-x,x-r[1],r[2]-z,z-r[3]),weight=Math.max(0,Math.min(1,(1.5-edge)/1.5));
    if(weight>0)p.setY(i,p.getY(i)*(1-weight)+(physics.base-.06)*weight);
   }p.needsUpdate=true;ground.geometry.computeVertexNormals();ground.geometry.computeBoundingSphere();}
   const material=color=>{if(!materials.has(color))materials.set(color,new T.MeshStandardMaterial({color,roughness:.94}));return materials.get(color);};
-  function mesh(name,x,y,z,w,h,d,color){const m=new T.Mesh(new T.BoxGeometry(w,h,d),material(color));m.name=name;m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;group.add(m);return m;}
-  for(const p of physics.parts)mesh(p.id,(p.min[0]+p.max[0])/2,(p.min[1]+p.max[1])/2,(p.min[2]+p.max[2])/2,p.max[0]-p.min[0],p.max[1]-p.min[1],p.max[2]-p.min[2],p.color);
+  const lite=state?.settings?.graphics==='balanced'||!!root.WitnessKitOfflineQuality;
+  const finish=root.WitnessQ01?.architectureMaterial(T,lite);
+  function mesh(name,x,y,z,w,h,d,color,finishMaterial){const mat=finishMaterial||material(color),g=root.WitnessQ01?root.WitnessQ01.uvBox(T,w,h,d,x,y,z,mat.userData.tileMeters||2):new T.BoxGeometry(w,h,d);const m=new T.Mesh(g,mat);m.name=name;m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;group.add(m);return m;}
+  for(const p of physics.parts){
+   if(root.WitnessModularKit&&['wall','step','ceiling','floor'].includes(p.kind)){
+    group.add(root.WitnessModularKit.partMesh(T,p,lite));
+   }else mesh(p.id,(p.min[0]+p.max[0])/2,(p.min[1]+p.max[1])/2,(p.min[2]+p.max[2])/2,p.max[0]-p.min[0],p.max[1]-p.min[1],p.max[2]-p.min[2],p.color,finish?.(p));
+  }
+  if(root.WitnessModularKit)root.WitnessModularKit.mountGLB({T,scene,group,quality:state?.settings?.graphics}).catch(()=>{});
   // An ordinary drying rack is inspectable upstairs; it grants no evidence or quest credit.
   for(const x of [-25.25,-23.55])for(const z of [-13.75,-12.85])mesh('rack-post',x,physics.roof+.6,z,.07,1.2,.07,'#745d43');
   for(let i=0;i<7;i++)mesh('drying-line',-24.4,physics.roof+1.18,-13.75+i*.15,1.7,.025,.025,'#ac9872');
   mesh('entry-lamp-bracket',-24.15,physics.base+1.8,-9.4,.12,.25,.4,'#745d43');
-  group.userData={assetId:'CAE-STORE-BLOCKOUT-03',evidence:'H',access:['interior','stairs','roof'],artAccepted:false};
+  group.userData={assetId:'CAE-STORE-GOLD-04',evidence:'H',access:['interior','stairs','roof'],artAccepted:false};
   scene.add(group);physics.group=group;scene.userData.architecture=physics;return physics;
  }
  function targets(physics){return [{id:'architecture:store-entry',at:[-23,-8.65],floorY:physics?physics.height(-23,-8.65):0,surfaceId:'world',name:'Kho phía tây · Lối lên mái',range:2.3,elevation:1.1,symbol:'↗'},

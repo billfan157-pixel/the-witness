@@ -164,3 +164,12 @@ Blockout là sáng tác [H], chưa là mỹ thuật cuối; các nhà khác vẫ
 Việc tiếp theo là giai đoạn 4: góc look development trên chính công trình này.
 Xem progress.json, phase-3.md và validation/phase3 để biết bằng chứng, cách
 chạy lại và giới hạn.
+
+
+## Bản cảnh mẫu Q01 để duyệt
+
+Cảnh mẫu bến–kho phía tây–Titus đã vào sản xuất ở giai đoạn 4, có ánh sáng
+ngày và tối cùng bộ vật liệu đối chiếu lịch sử. Hồ sơ ở q01-gold-scene.md;
+trạng thái và số đo ở validation/q01-gold/verification.json. Không mở rộng
+L04 hoặc các chương khác trước khi người dùng duyệt chất lượng cảnh mẫu
+trong cả hai góc nhìn. G3 vẫn chờ duyệt; G4 vẫn mở cho tối ưu và thiết bị.

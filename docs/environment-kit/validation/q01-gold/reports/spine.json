@@ -1,0 +1,17 @@
+{
+  "release": "0.5.0",
+  "status": "passed",
+  "checks": [
+    "Exit from summary keeps the required gate closed",
+    "L01 summary delivers all core beats before ending commit",
+    "L02 summary delivers all core beats before ending commit",
+    "L04 summary delivers all core beats before ending commit",
+    "L01 physical alternative route, work and source beats complete",
+    "L02 physical alternative route, work and source beats complete",
+    "L04 physical alternative route, work and source beats complete",
+    "Mobile summary fits screen and reload resumes exact page",
+    "Format switch resumes first missing source beat"
+  ],
+  "errors": [],
+  "scope": "Browser UI and WebGL with scripted input; no human playtest"
+}

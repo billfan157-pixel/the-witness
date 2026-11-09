@@ -1,0 +1,346 @@
+{
+  "checks": [
+    {
+      "name": "normal map guidance climbs the stairs and roof inspection grants no campaign rewards",
+      "passed": true
+    },
+    {
+      "name": "reload roof-resume",
+      "before": {
+        "x": -23.586567791219036,
+        "y": 3.469000002214713,
+        "z": -15.014093339192994,
+        "supportId": "q01-roof-main"
+      },
+      "after": {
+        "x": -23.586567791219036,
+        "y": 3.469000002214713,
+        "z": -15.014093339192994,
+        "supportId": "q01-roof-main"
+      }
+    },
+    {
+      "name": "reload stairs-resume",
+      "before": {
+        "x": -19.80053265064525,
+        "y": 1.8490000022147128,
+        "z": -13.23966689879606,
+        "supportId": "q01-step-8"
+      },
+      "after": {
+        "x": -19.80053265064525,
+        "y": 1.8490000022147128,
+        "z": -13.23966689879606,
+        "supportId": "q01-step-8"
+      }
+    },
+    {
+      "name": "first-person W movement, stair checkpoint, full descent and doorway return",
+      "passed": true
+    },
+    {
+      "name": "legacy planar save stays downstairs; upstairs target is hidden and cannot be activated through ceiling",
+      "passed": true
+    },
+    {
+      "name": "Q01 mission interaction remains reachable after architecture traversal",
+      "passed": true
+    },
+    {
+      "name": "Q01 offline albedo, normal and ORM are all embedded 512 px",
+      "materials": {
+        "wood": [
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          }
+        ],
+        "stone": [
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          }
+        ],
+        "floor": [
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          }
+        ],
+        "plaster": [
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "cold standalone completes both camera routes with all HTTP blocked",
+      "httpResources": []
+    }
+  ],
+  "runs": [
+    {
+      "name": "third-up",
+      "frames": 476,
+      "supports": [
+        "world",
+        "q01-room",
+        "q01-step-0",
+        "q01-step-1",
+        "q01-step-2",
+        "q01-step-3",
+        "q01-step-4",
+        "q01-step-5",
+        "q01-step-6",
+        "q01-step-7",
+        "q01-step-8",
+        "q01-step-9",
+        "q01-step-10",
+        "q01-step-11",
+        "q01-step-12",
+        "q01-step-13",
+        "q01-step-14",
+        "q01-step-15",
+        "q01-step-16",
+        "q01-step-17",
+        "q01-roof-back",
+        "q01-roof-main"
+      ],
+      "cameraCollisions": 0,
+      "bodyCollisions": 0,
+      "independentGeometryErrors": 0
+    },
+    {
+      "name": "third-down",
+      "frames": 186,
+      "supports": [
+        "q01-roof-main",
+        "q01-roof-back",
+        "q01-step-17",
+        "q01-step-16",
+        "q01-step-15",
+        "q01-step-14",
+        "q01-step-13",
+        "q01-step-12",
+        "q01-step-11",
+        "q01-step-10",
+        "q01-step-9",
+        "q01-step-8",
+        "q01-step-7",
+        "q01-step-6",
+        "q01-step-5",
+        "q01-step-4",
+        "q01-step-3",
+        "q01-step-2",
+        "q01-step-1",
+        "q01-step-0",
+        "q01-room"
+      ],
+      "cameraCollisions": 0,
+      "bodyCollisions": 0,
+      "independentGeometryErrors": 0
+    },
+    {
+      "name": "first-roof-return",
+      "frames": 343,
+      "supports": [
+        "q01-step-8",
+        "q01-step-9",
+        "q01-step-10",
+        "q01-step-11",
+        "q01-step-12",
+        "q01-step-13",
+        "q01-step-14",
+        "q01-step-15",
+        "q01-step-16",
+        "q01-step-17",
+        "q01-roof-back",
+        "q01-roof-main",
+        "q01-step-7",
+        "q01-step-6",
+        "q01-step-5",
+        "q01-step-4",
+        "q01-step-3",
+        "q01-step-2",
+        "q01-step-1",
+        "q01-step-0",
+        "q01-room",
+        "world"
+      ],
+      "cameraCollisions": 0,
+      "bodyCollisions": 0,
+      "independentGeometryErrors": 0
+    },
+    {
+      "name": "offline-third-up",
+      "frames": 475,
+      "supports": [
+        "world",
+        "q01-room",
+        "q01-step-0",
+        "q01-step-1",
+        "q01-step-2",
+        "q01-step-3",
+        "q01-step-4",
+        "q01-step-5",
+        "q01-step-6",
+        "q01-step-7",
+        "q01-step-8",
+        "q01-step-9",
+        "q01-step-10",
+        "q01-step-11",
+        "q01-step-12",
+        "q01-step-13",
+        "q01-step-14",
+        "q01-step-15",
+        "q01-step-16",
+        "q01-step-17",
+        "q01-roof-back",
+        "q01-roof-main"
+      ],
+      "cameraCollisions": 0,
+      "bodyCollisions": 0,
+      "independentGeometryErrors": 0
+    },
+    {
+      "name": "offline-third-down",
+      "frames": 184,
+      "supports": [
+        "q01-roof-main",
+        "q01-roof-back",
+        "q01-step-17",
+        "q01-step-16",
+        "q01-step-15",
+        "q01-step-14",
+        "q01-step-13",
+        "q01-step-12",
+        "q01-step-11",
+        "q01-step-10",
+        "q01-step-9",
+        "q01-step-8",
+        "q01-step-7",
+        "q01-step-6",
+        "q01-step-5",
+        "q01-step-4",
+        "q01-step-3",
+        "q01-step-2",
+        "q01-step-1",
+        "q01-step-0",
+        "q01-room"
+      ],
+      "cameraCollisions": 0,
+      "bodyCollisions": 0,
+      "independentGeometryErrors": 0
+    },
+    {
+      "name": "offline-first-up",
+      "frames": 182,
+      "supports": [
+        "q01-room",
+        "q01-step-0",
+        "q01-step-1",
+        "q01-step-2",
+        "q01-step-3",
+        "q01-step-4",
+        "q01-step-5",
+        "q01-step-6",
+        "q01-step-7",
+        "q01-step-8",
+        "q01-step-9",
+        "q01-step-10",
+        "q01-step-11",
+        "q01-step-12",
+        "q01-step-13",
+        "q01-step-14",
+        "q01-step-15",
+        "q01-step-16",
+        "q01-step-17",
+        "q01-roof-back",
+        "q01-roof-main"
+      ],
+      "cameraCollisions": 0,
+      "bodyCollisions": 0,
+      "independentGeometryErrors": 0
+    },
+    {
+      "name": "offline-first-down",
+      "frames": 184,
+      "supports": [
+        "q01-roof-main",
+        "q01-roof-back",
+        "q01-step-17",
+        "q01-step-16",
+        "q01-step-15",
+        "q01-step-14",
+        "q01-step-13",
+        "q01-step-12",
+        "q01-step-11",
+        "q01-step-10",
+        "q01-step-9",
+        "q01-step-8",
+        "q01-step-7",
+        "q01-step-6",
+        "q01-step-5",
+        "q01-step-4",
+        "q01-step-3",
+        "q01-step-2",
+        "q01-step-1",
+        "q01-step-0",
+        "q01-room"
+      ],
+      "cameraCollisions": 0,
+      "bodyCollisions": 0,
+      "independentGeometryErrors": 0
+    }
+  ],
+  "scope": "Actual Q01 architecture movement and rendered-geometry checks; scripted input, hardware WebGL, not human playtesting",
+  "status": "passed",
+  "architecture": {
+    "id": "Q01-WEST-STORE",
+    "base": 0.22900000221471287,
+    "roof": 3.469000002214713,
+    "surfaces": 22,
+    "solids": 60
+  },
+  "hashes": {
+    "witness-architecture.js": "2915d0b1da27e362cd11e16968f977d8bc65fbc71fe92fcc89fec3052ae64a45",
+    "vendor/adventure-3d.js": "f497ad5cb73932bec258122fb306f0bb1d81a456494430b606564bb950e30bb7",
+    "witness-world.js": "f576c844e982bc6b5c24c914a546192cc4b0562b9fd1c166390cd64f3369480a",
+    "witness-model.js": "536e70ff676d5dddccebbf4ee267b231bb951792435f4199b43f689a7fc74743",
+    "witness-app.js": "ea0d244365d6e208e6ffe6ae34faecd419d31da7c2f7ffd6b86582b48f03a503"
+  }
+}

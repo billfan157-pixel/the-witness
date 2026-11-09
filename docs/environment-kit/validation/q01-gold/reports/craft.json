@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "checks": [
+    "Physical cart work checks distance and preparation, resumes a draft, then commits only at handoff",
+    "Paper close-up changes the 3D flap and raking light while inspection grants no evidence",
+    "A physically walked alternate route leaves footprints and is received at the original handoff",
+    "Mobile field allocation places the lamp in the tail and gives Titus a walking route to his station",
+    "Physical counters reconcile the three amounts on mobile before the record is handed off",
+    "Field inference requires source placement and an explicit bounded conclusion at each claim",
+    "Private consent blocks a public envelope, and field-to-board accessibility keeps the same safe submission",
+    "The memory-room field interaction accepts an empty arrangement without claiming a revelation",
+    "All 21 chapter worlds and six completed relationship sites render finite 3D geometry"
+  ],
+  "errors": []
+}

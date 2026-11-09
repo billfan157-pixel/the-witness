@@ -15,13 +15,18 @@
       },
       "terrain": {
         "splat": true,
-        "range": 9.579062938690186
+        "range": 8.787667512893677
       },
       "shadow": {
         "width": 44,
         "follow": true
       },
-      "messages": []
+      "messages": [
+        {
+          "kind": "warn",
+          "text": "{\"event\":\"cloud_connection_failed\",\"type\":\"SyntaxError\",\"code\":\"CONNECTION_ERROR\"}"
+        }
+      ]
     },
     {
       "name": "road-high",
@@ -38,13 +43,18 @@
       },
       "terrain": {
         "splat": true,
-        "range": 13.614229679107666
+        "range": 7.93782901763916
       },
       "shadow": {
         "width": 44,
         "follow": true
       },
-      "messages": []
+      "messages": [
+        {
+          "kind": "warn",
+          "text": "{\"event\":\"cloud_connection_failed\",\"type\":\"SyntaxError\",\"code\":\"CONNECTION_ERROR\"}"
+        }
+      ]
     },
     {
       "name": "night-ultra",
@@ -67,7 +77,12 @@
         "width": 44,
         "follow": true
       },
-      "messages": []
+      "messages": [
+        {
+          "kind": "warn",
+          "text": "{\"event\":\"cloud_connection_failed\",\"type\":\"SyntaxError\",\"code\":\"CONNECTION_ERROR\"}"
+        }
+      ]
     },
     {
       "name": "mobile-balanced",
@@ -84,13 +99,18 @@
       },
       "terrain": {
         "splat": true,
-        "range": 9.579062938690186
+        "range": 8.787667512893677
       },
       "shadow": {
         "width": 44,
         "follow": true
       },
-      "messages": []
+      "messages": [
+        {
+          "kind": "warn",
+          "text": "{\"event\":\"cloud_connection_failed\",\"type\":\"SyntaxError\",\"code\":\"CONNECTION_ERROR\"}"
+        }
+      ]
     }
   ],
   "checks": [

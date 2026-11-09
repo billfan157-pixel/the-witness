@@ -8,6 +8,7 @@
     "test:browser": "node test/browser.mjs && node test/scene.mjs && node test/spine-browser.mjs && node test/depth-browser.mjs && node test/craft-browser.mjs",
     "test:craft-details": "node test/craft-details-browser.mjs && node test/field-keyboard-browser.mjs",
     "test:graphics": "node test/graphics-browser.mjs",
+    "test:character": "node test/char-fidelity.mjs",
     "test:kit-budget": "node test/kit-budget.cjs",
     "build:kit": "node tools/environment-kit/build-kit.cjs && node tools/environment-kit/build-references.cjs && node tools/environment-kit/build-board.cjs",
     "build": "node tools/environment-kit/build-engine.cjs && node test/architecture.cjs && node test/kit-budget.cjs && node tools/build.cjs && node tools/build-cloud.mjs",

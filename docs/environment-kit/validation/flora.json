@@ -1,0 +1,70 @@
+{
+  "checks": [
+    {
+      "name": "Chunked instanced HLOD pairs with bounding-sphere culling",
+      "grass": {
+        "meshes": 30,
+        "instanced": true,
+        "pairs": true,
+        "culled": true
+      },
+      "flower": {
+        "meshes": 30,
+        "instanced": true,
+        "pairs": true,
+        "culled": true
+      }
+    },
+    {
+      "name": "Distance LOD swap, footfall trail and advancing wind time",
+      "near": [
+        true,
+        false
+      ],
+      "mid": [
+        false,
+        true
+      ],
+      "far": [
+        false,
+        false
+      ],
+      "trail": [
+        {
+          "x": 11,
+          "z": -5,
+          "t": 2.4987000000000004
+        },
+        {
+          "x": 8,
+          "z": -8,
+          "t": 0.7310000000000001
+        },
+        {
+          "x": 48,
+          "z": -8,
+          "t": 1.1722999999999995
+        },
+        {
+          "x": 148,
+          "z": -8,
+          "t": 1.6056999999999995
+        },
+        {
+          "x": 10,
+          "z": -6,
+          "t": 2.030500000000001
+        }
+      ],
+      "wind": [
+        3.3734999999999995,
+        3.7567000000000013
+      ],
+      "chunk": [
+        8,
+        -8
+      ]
+    }
+  ],
+  "status": "passed"
+}

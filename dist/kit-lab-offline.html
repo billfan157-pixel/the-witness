@@ -4338,6 +4338,13 @@ function hS(s) {
   function W(B, q, nt, ft = false) {
     if (b === B && y && !ft) return;
     ae(), y && ig(y), _.clear(), m.clear(), y = new Zs(), T = j0(y, B, !n && i.shadowMap.enabled, nt), AdventureVisuals.environment(bn, i, y, T.layout.biome), Bt?.setBiome(T.layout.biome), g = T.obstacles, b = B, v = B;
+    T.night=!!AdventureVisuals.atmosphere(T.layout.biome).night;
+    if(T.layout.q01Gold&&globalThis.WitnessQ01){
+      const clear=globalThis.WitnessQ01.clearLand,blocked=T.blocked;
+      T.obstacles=T.obstacles.filter(([x,z])=>!clear(x,z)&&z>=-22.4);g=T.obstacles;
+      T.cameraVolumes=T.cameraVolumes.filter(v=>!v.center||(!clear(v.center.x,v.center.z)&&v.center.z>=-22.4));
+      T.blocked=(x,z)=>clear(x,z)?false:blocked(x,z);
+    }
     let Ft = q && Ut(...q) ? q : T.layout.start;
     if (w = S("player", B, Ft), et = ni(Ft, T.layout.nodes[0]), G = -0.26, lt = 0.35, J = 7.7, fpPitch = 0, C = I = _t = mt = null, L = k = Y = z = false, D = 0, U = [0, 0], K = 0, Qt = 0, F = -1, yt = re = null, Vt = null, $t = "", B === "magdalene") {
       let Lt = Lf(bn, "tomb");
@@ -4469,7 +4476,7 @@ function hS(s) {
         let le = Math.hypot(q[0]-C.at[0],q[1]-C.at[1],Number.isFinite(C.at[2])?w.object.position.y-C.at[2]:0);
         if (C.onArrive && le <= C.range && (!C.target||canReach(C.target))) ft = C.onArrive, C = null;
         else {
-          for (; C.path.length && Oe(q,C.path[0])<(architecture()?.contains(C.path[0][0],C.path[0][1]) ? .06 : .16)&&(!Number.isFinite(C.path[0][2])||Math.abs(w.object.position.y-C.path[0][2])<.23); ) C.path.shift();
+          for (; C.path.length && Oe(q,C.path[0])<(T.layout.q01Gold ? .05 : architecture()?.contains(C.path[0][0],C.path[0][1]) ? .06 : .16)&&(!Number.isFinite(C.path[0][2])||Math.abs(w.object.position.y-C.path[0][2])<.23); ) C.path.shift();
           C.path.length ? nt = [C.path[0][0] - q[0], C.path[0][1] - q[1]] : (ft = (!C.target||canReach(C.target))?C.onArrive:null, C = null);
         }
       }
@@ -4802,6 +4809,7 @@ function hS(s) {
     if(!w)return null;
     const ar=architecture();if(ar){const p=ar.restore(saved,spatial());E(w.object,[p.x,p.z,p.y,p.supportId]);C=null;Zt(1);}return spatial();
   }, walkTarget(id,onArrive,range=1.6) {const target=P.find(t=>t.id===id);return target?N(tt(target),onArrive,range,target):false;},
+  navigationState(){return C?{goal:[...C.at],waypoints:C.path.slice(0,8).map(p=>[...p]),range:C.range}:null;},
   cameraState(){return {position:{x:a.position.x,y:a.position.y,z:a.position.z},look:{x:o.x,y:o.y,z:o.z},view:fpMode?'first':'third'};},
   collisionAt(x,z){return !Ut(x,z);},
   load: W, mount: Mt, suspend: Re, update: St, setRole: dt, walk: N, controls: pt, nearest: it, toggleSound: ec, cue: xr, sense: vi, startTrial: jt, stopTrial: ae, action: qe, inTrial() {
@@ -4838,7 +4846,7 @@ function hS(s) {
   }, stop() {
     V = true, Re(), y && ig(y), pp?.dispose(), i.dispose(), kt?.close();
   }, setQuality(q) {
-    QMode = q === "balanced" || q === "high" || q === "ultra" ? q : t ? "high" : "ultra", n = t && QMode === "balanced", i.shadowMap.enabled = !n, pp?.setQuality(QMode), ge(), T?.refreshShadows();
+    QMode = q === "balanced" || q === "high" || q === "ultra" ? q : t ? "high" : "ultra", n = t && QMode === "balanced", i.shadowMap.enabled = !n, pp?.setQuality(QMode), globalThis.WitnessGraphics?.setQuality?.(QMode), ge(), T?.refreshShadows();
   } };
 }
 

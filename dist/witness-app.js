@@ -186,6 +186,8 @@
     $('#subtitle').classList.toggle('plain-sub',s.settings.subtitleBg===false);
 
     $('#title-screen').hidden=!title;$('#hud-top').hidden=title;$('#hud-bottom').hidden=title;$('#objective').hidden=title;
+    const sceneLight=$('#q01-light-toggle');
+    if(sceneLight){sceneLight.hidden=title||!globalThis.WitnessQ01?.active(s);sceneLight.querySelector('.tool-label').textContent=s.settings.q01Lighting==='evening'?'Ban ngày':'Buổi tối';sceneLight.setAttribute('aria-label',s.settings.q01Lighting==='evening'?'Chuyển Q01 sang ban ngày':'Chuyển Q01 sang buổi tối');}
     const coarse=matchMedia('(pointer: coarse)').matches||matchMedia('(any-pointer: coarse)').matches;
     $('#touch-controls').hidden=title||!coarse;
     if(title){
@@ -836,7 +838,7 @@
   }
   let cloudRestoreState=null;
   document.addEventListener('click',async event=>{
-    const button=event.target.closest('[data-cloud]');if(!button||button.disabled)return;event.preventDefault();button.disabled=true;
+    const button=event.target.closest('button[data-cloud]');if(!button||button.disabled)return;event.preventDefault();button.disabled=true;
     try{
       const action=button.dataset.cloud;
       if(action==='profile'){await cloud.api('/api/account',{method:'PUT',body:JSON.stringify({displayName:$('#cloud-name').value})});toast('Đã lưu tên tài khoản.');}
@@ -1037,6 +1039,14 @@
       else if(act==='focus-goal')focusGoal();
       else if(act==='pause')pause();
       else if(act==='settings')settings();
+      else if(act==='q01-light'){
+        if(globalThis.WitnessQ01?.active(state)){
+          const yaw=last?.yaw;checkpointPosition();
+          state.settings.q01Lighting=state.settings.q01Lighting==='evening'?'day':'evening';save();close();launchWorld();
+          if(Number.isFinite(yaw))engine.rotate(yaw+.26);
+          toast(state.settings.q01Lighting==='evening'?'Bến cảng buổi tối · đèn dầu đã thắp.':'Bến cảng ban ngày.');
+        }
+      }
       else if(act==='settings-save'){
         const sound=$('#setting-sound').checked,gfx=$('#setting-graphics')?.value||'ultra';
         state.settings.graphics=['ultra','high','balanced'].includes(gfx)?gfx:'ultra';

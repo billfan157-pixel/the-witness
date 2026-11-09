@@ -8,6 +8,7 @@ dist/.openai/
 tools/environment-kit/bin/
 tools/environment-kit/work/
 outputs/environment-kit/*-site.tar.gz
+outputs/q01-gold/
 .DS_Store
 test/artifacts/
 *.log

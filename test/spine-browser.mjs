@@ -16,7 +16,13 @@ try{
   socket=new WebSocket(endpoint);await new Promise(r=>socket.addEventListener('open',r,{once:true}));let seq=0;const pending=new Map(),errors=[],checks=[];
   socket.addEventListener('message',e=>{const d=JSON.parse(e.data);if(d.id){const p=pending.get(d.id);pending.delete(d.id);d.error?p?.reject(Error(JSON.stringify(d.error))):p?.resolve(d.result);}else if(d.method==='Runtime.exceptionThrown')errors.push(d.params.exceptionDetails.exception?.description||d.params.exceptionDetails.text);});
   const send=(method,params={})=>new Promise((resolve,reject)=>{const id=++seq;pending.set(id,{resolve,reject});socket.send(JSON.stringify({id,method,params}));});
-  const evaluate=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+  const evaluate=async expression=>{
+    // Await cloud/guest bootstrap before synthetic clicks, as the real UI does.
+    if(expression.includes('.click()')){
+      let ready=false;for(let n=0;n<120;n++){const probe=await send('Runtime.evaluate',{expression:'globalThis.WitnessCloudSession?.info().ready!==false',returnByValue:true});if(probe.result?.value){ready=true;break;}await delay(100);}if(!ready)throw Error('Save bootstrap did not become ready');
+    }
+    const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;
+  };
   const shot=async name=>{const r=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(out,name),Buffer.from(r.data,'base64'));};
   const waitFor=async(expression,max=25000)=>{for(let t=0;t<max;t+=200){if(await evaluate(expression))return;await delay(200);}await shot('failure.png');console.log(JSON.stringify(await evaluate('({world:{...document.querySelector("#world").dataset},toast:document.querySelector("#toast").textContent,dialog:document.querySelector("dialog")?.innerText})')));throw Error('Timed out: '+expression);};
   const read=()=>evaluate('JSON.parse(localStorage.getItem(WitnessModel.STORE))');

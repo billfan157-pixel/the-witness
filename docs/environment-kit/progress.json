@@ -1,9 +1,9 @@
 {
-  "documentRevision": 3,
+  "documentRevision": 4,
   "roadmap": "docs/environment-kit/roadmap.md",
   "standards": "docs/environment-kit/standards.md",
   "catalog": "docs/environment-kit/catalog.csv",
-  "updated": "2026-11-09",
+  "updated": "2026-11-10",
   "production": "AI",
   "requiredScene": "Q01",
   "extensionScene": "L04",
@@ -53,22 +53,25 @@
     },
     {
       "id": "G3",
-      "status": "not_started",
-      "passed": [],
+      "status": "awaiting_visual_review",
+      "passed": [
+        "playable Q01 scene candidate implemented; formal results in validation/q01-gold"
+      ],
       "remaining": [
-        "accepted playable Q01 look-development corner"
+        "user approval of first- and third-person day/evening image quality"
       ]
     },
     {
       "id": "G4",
-      "status": "not_started",
-      "passed": [],
+      "status": "in_progress",
+      "passed": [
+        "Q01 candidate and lighter standalone functional parity recorded",
+        "first- and third-person routes, graphics tiers and final cold-open standalone SHA recorded"
+      ],
       "remaining": [
-        "Q01 completion",
-        "lighter offline gameplay parity",
-        "functional and visual regression",
-        "device performance evidence",
-        "L04 extension decision"
+        "Q01 art approval and human playtest",
+        "physical-device performance, LOD and draw-call optimization",
+        "L04 extension decision after Q01 acceptance"
       ]
     }
   ],
@@ -79,14 +82,17 @@
     "docs/environment-kit/research/references.json",
     "docs/environment-kit/validation/phase3/model.json",
     "docs/environment-kit/validation/phase3/browser.json",
-    "docs/environment-kit/validation/phase3/verification.json"
+    "docs/environment-kit/validation/phase3/verification.json",
+    "docs/environment-kit/research/q01-gold-materials.md",
+    "docs/environment-kit/q01-gold-scene.md",
+    "docs/environment-kit/validation/q01-gold/verification.json"
   ],
   "limitations": [
     "pipeline surface study is not accepted final art or exact Caesarea kurkar",
-    "Q01 west-store blockout is functional original reconstruction [H], not accepted final art; other buildings remain closed",
     "headless actual laptop GPU excludes display presentation/input latency",
     "no physical phone measurement or future complete-Q01 performance certification",
     "reference board diagrams are original H illustrations; external photographs are linked only",
-    "release package prepared locally; publication pending owner decision"
+    "Q01 scene art candidate is not yet user-approved; G3 remains open",
+    "historical comparisons do not establish the exact plan, colour or contents of the fictional warehouse"
   ]
 }

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import {pathToFileURL} from 'node:url';
 import {browserDriver,delay} from './browser-driver.mjs';import M from '../witness-model.js';
-const out=path.resolve('outputs/environment-kit/phase3');fs.mkdirSync(out,{recursive:true});
+const out=path.resolve(process.env.WITNESS_ARCH_OUT||'outputs/environment-kit/phase3');fs.mkdirSync(out,{recursive:true});
 const b=await browserDriver(out,19706,{hardware:true,width:1100,height:800});
-const report={checks:[],runs:[],scope:'Actual gameplay movement in the Q01 blockout; scripted input, hardware WebGL, not human playtesting'};
+const report={checks:[],runs:[],scope:'Actual Q01 architecture movement and rendered-geometry checks; scripted input, hardware WebGL, not human playtesting'};
 const hook=`let api;Object.defineProperty(globalThis,'Adventure3D',{configurable:true,get(){return api},set(v){api=v;const make=v.create;v.create=options=>{const e=make({...options,status(next){globalThis.phase3Last=next;const ar=globalThis.WitnessWorld?.getContext()?.scene.userData.architecture,p=next.spatial;if(ar&&p){const cam=e.cameraState(),eye={x:p.x,y:p.y+1.45,z:p.z},clip=ar.camera(eye,cam.position);globalThis.phase3Trace??=[];phase3Trace.push({t:performance.now(),...p,camera:cam.position,view:cam.view,collision:ar.collides(p),cameraError:Math.hypot(clip.x-cam.position.x,clip.y-cam.position.y,clip.z-cam.position.z)});}options.status?.(next);}});globalThis.phase3Engine=e;return e;}}});`;
 async function key(key,code,down){await b.send('Input.dispatchKeyEvent',{type:down?'keyDown':'keyUp',key,code,windowsVirtualKeyCode:key.toUpperCase().charCodeAt(0)});}
 async function go(id){await b.click('[data-act=map]');await b.wait('!!document.querySelector("[data-act=explore-place]")');await b.click(`[data-act=explore-place][data-id="${id}"]`);}
@@ -31,19 +31,22 @@ try{
   const originalHook=AdventureVisuals.createPipeline;
   AdventureVisuals.createPipeline=(T,renderer,quality)=>{
    const pipeline=originalHook(T,renderer,quality),render=pipeline.render.bind(pipeline);let frame=0,lastGroup,boxes=[];
-   const ray=new T.Raycaster(),down=new T.Vector3(0,-1,0),v=new T.Vector3();
+   const ray=new T.Raycaster(),down=new T.Vector3(0,-1,0),v=new T.Vector3(),im=new T.Matrix4(),ib=new T.Box3();
    pipeline.render=(scene,camera,...rest)=>{const result=render(scene,camera,...rest),ar=scene.userData.architecture,p=globalThis.phase3Engine?.spatial();
     if(ar&&p&&++frame%8===0){
-     if(lastGroup!==ar.group){lastGroup=ar.group;boxes=[];ar.group.traverse(o=>{if(o.isMesh)boxes.push({name:o.name,box:new T.Box3().setFromObject(o,true)});});}
+     if(lastGroup!==ar.group){lastGroup=ar.group;boxes=[];ar.group.traverse(o=>{if(!o.isMesh)return;
+      o.geometry.computeBoundingBox();
+      if(o.isInstancedMesh){for(let i=0;i<o.count;i++){o.getMatrixAt(i,im);ib.copy(o.geometry.boundingBox).applyMatrix4(im).applyMatrix4(o.matrixWorld);boxes.push({name:o.name+'#'+i,box:ib.clone()});}}
+      else boxes.push({name:o.name,box:new T.Box3().setFromObject(o,true)});});}
      const errors=[];v.copy(camera.position);
      for(const {name,box}of boxes){
       if(box.distanceToPoint(v)<.16)errors.push('camera:'+name);
       if(box.max.y<=p.y+.23||box.min.y>=p.y+1.65||box.max.y<=p.y+.32)continue;
       const dx=p.x-Math.max(box.min.x,Math.min(box.max.x,p.x)),dz=p.z-Math.max(box.min.z,Math.min(box.max.z,p.z));if(dx*dx+dz*dz<.28**2)errors.push('torso:'+name);
      }
-     ray.set(new T.Vector3(p.x,p.y+.07,p.z),down);ray.far=.12;const ground=scene.getObjectByName('witness-terrain'),hit=ray.intersectObjects([ground,ar.group],true)[0];
+     ray.set(new T.Vector3(p.x,p.y+.07,p.z),down);ray.far=.12;const ground=scene.getObjectByName('witness-terrain'),hits=ray.intersectObjects([ground,ar.group],true),hit=hits[0];
      if(!hit||Math.abs(hit.point.y-p.y)>.025)errors.push('unsupported-feet');
-     if(errors.length){globalThis.phase3GeometryErrors??=[];phase3GeometryErrors.push({p,camera:{...camera.position},errors});}
+     if(errors.length){globalThis.phase3GeometryErrors??=[];phase3GeometryErrors.push({p,camera:{...camera.position},errors,feet:hits.slice(0,3).map(h=>({name:h.object.name,y:+h.point.y.toFixed(4),d:+h.distance.toFixed(4)}))});}
     }return result;};return pipeline;
   };`;
  await b.send('Page.addScriptToEvaluateOnNewDocument',{source:hook.replace('const e=make',geometryHook+';const e=make')});await b.seed(M.fresh());
@@ -85,6 +88,9 @@ try{
   await b.evaluate('phase3Trace=[]');await go('architecture:store-entry');await reached('architecture:store-entry');await trace('offline-'+view+'-down');
  }
  const resources=await b.evaluate('performance.getEntriesByType("resource").filter(r=>/^https?:/.test(r.name)).map(r=>r.name)');assert.deepEqual(resources,[]);
+ const offlineMaterials=await b.evaluate(`(()=>{const scene=WitnessWorld.getContext().scene,maps={};scene.traverse(o=>{for(const m of [o.material].flat().filter(Boolean)){if(!m.userData.q01Material||!m.map)continue;maps[m.userData.q01Material]=[m.map,m.normalMap,m.roughnessMap].map(t=>({width:t.image?.width,embedded:t.image?.src?.startsWith('data:')}));}});return maps;})()`);
+ for(const family of ['stone','plaster','wood','floor'])assert(offlineMaterials[family]?.every(x=>x.width===512&&x.embedded),'Offline material missing: '+family);
+ report.checks.push({name:'Q01 offline albedo, normal and ORM are all embedded 512 px',materials:offlineMaterials});
  report.checks.push({name:'cold standalone completes both camera routes with all HTTP blocked',httpResources:resources});
  assert.deepEqual(b.errors,[]);report.status='passed';report.architecture=p;
  report.hashes=Object.fromEntries(['witness-architecture.js','vendor/adventure-3d.js','witness-world.js','witness-model.js','witness-app.js'].map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')]));

@@ -7,30 +7,30 @@
     {
       "name": "reload roof-resume",
       "before": {
-        "x": -23.610753509887818,
-        "y": 3.900984701520631,
-        "z": -14.995281491599208,
+        "x": -23.58655890470845,
+        "y": 3.469000002214713,
+        "z": -15.014097250130579,
         "supportId": "q01-roof-main"
       },
       "after": {
-        "x": -23.610753509887818,
-        "y": 3.900984701520631,
-        "z": -14.995281491599208,
+        "x": -23.58655890470845,
+        "y": 3.469000002214713,
+        "z": -15.014097250130579,
         "supportId": "q01-roof-main"
       }
     },
     {
       "name": "reload stairs-resume",
       "before": {
-        "x": -19.80047842233837,
-        "y": 2.280984701520631,
-        "z": -13.239543697331461,
+        "x": -19.800339152196706,
+        "y": 1.8490000022147128,
+        "z": -13.163075931940899,
         "supportId": "q01-step-8"
       },
       "after": {
-        "x": -19.80047842233837,
-        "y": 2.280984701520631,
-        "z": -13.239543697331461,
+        "x": -19.800339152196706,
+        "y": 1.8490000022147128,
+        "z": -13.163075931940899,
         "supportId": "q01-step-8"
       }
     },
@@ -47,6 +47,67 @@
       "passed": true
     },
     {
+      "name": "Q01 offline albedo, normal and ORM are all embedded 512 px",
+      "materials": {
+        "stone": [
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          }
+        ],
+        "wood": [
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          }
+        ],
+        "plaster": [
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          }
+        ],
+        "floor": [
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          },
+          {
+            "width": 512,
+            "embedded": true
+          }
+        ]
+      }
+    },
+    {
       "name": "cold standalone completes both camera routes with all HTTP blocked",
       "httpResources": []
     }
@@ -54,7 +115,7 @@
   "runs": [
     {
       "name": "third-up",
-      "frames": 465,
+      "frames": 467,
       "supports": [
         "world",
         "q01-room",
@@ -85,7 +146,7 @@
     },
     {
       "name": "third-down",
-      "frames": 177,
+      "frames": 184,
       "supports": [
         "q01-roof-main",
         "q01-roof-back",
@@ -115,7 +176,7 @@
     },
     {
       "name": "first-roof-return",
-      "frames": 316,
+      "frames": 293,
       "supports": [
         "q01-step-8",
         "q01-step-9",
@@ -146,7 +207,7 @@
     },
     {
       "name": "offline-third-up",
-      "frames": 512,
+      "frames": 471,
       "supports": [
         "world",
         "q01-room",
@@ -177,7 +238,7 @@
     },
     {
       "name": "offline-third-down",
-      "frames": 179,
+      "frames": 183,
       "supports": [
         "q01-roof-main",
         "q01-roof-back",
@@ -207,7 +268,7 @@
     },
     {
       "name": "offline-first-up",
-      "frames": 170,
+      "frames": 172,
       "supports": [
         "q01-room",
         "q01-step-0",
@@ -237,7 +298,7 @@
     },
     {
       "name": "offline-first-down",
-      "frames": 180,
+      "frames": 185,
       "supports": [
         "q01-roof-main",
         "q01-roof-back",
@@ -266,20 +327,20 @@
       "independentGeometryErrors": 0
     }
   ],
-  "scope": "Actual gameplay movement in the Q01 blockout; scripted input, hardware WebGL, not human playtesting",
+  "scope": "Actual Q01 architecture movement and rendered-geometry checks; scripted input, hardware WebGL, not human playtesting",
   "status": "passed",
   "architecture": {
     "id": "Q01-WEST-STORE",
-    "base": 0.6609847015206309,
-    "roof": 3.900984701520631,
+    "base": 0.22900000221471287,
+    "roof": 3.469000002214713,
     "surfaces": 22,
-    "solids": 51
+    "solids": 60
   },
   "hashes": {
-    "witness-architecture.js": "e3f6bd3e64ef5ce04a6009cd0617263a0aa12abc9e28300e90cc6d00b6a69548",
-    "vendor/adventure-3d.js": "545f3c5fa34ef6d0ca91c3dc5f8802c1665a4a2626dbac2d833dc795d7a61fba",
-    "witness-world.js": "86e06d86302df418b98de30f0eb5a382af200c4d68762bd85512c0feb59928b8",
-    "witness-model.js": "653a6510b5363b51ebfa32d10644905a3e07b341e2dfc3168f94d21a861774a1",
-    "witness-app.js": "3111cdade4ecb1f02f9664ad32a25180e47cf55cb364541cb77b9c6592bec315"
+    "witness-architecture.js": "c7d6572d5474330f01adf14f9f3647f7073e63e088260d390bf94718f13529ae",
+    "vendor/adventure-3d.js": "8d8a5608d6ba4742b13945640ceeb7ab1c9fc58133083b1a217b62a327da228b",
+    "witness-world.js": "43e6f8f979a33e92c964273fc8c448bc1f482d70d0e68b7f69f1c9b10ff4363d",
+    "witness-model.js": "536e70ff676d5dddccebbf4ee267b231bb951792435f4199b43f689a7fc74743",
+    "witness-app.js": "ea0d244365d6e208e6ffe6ae34faecd419d31da7c2f7ffd6b86582b48f03a503"
   }
 }

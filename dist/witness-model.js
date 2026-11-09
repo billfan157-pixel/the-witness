@@ -32,7 +32,7 @@
     return {claim:'P01',audience:'private_group',slots:{P01:[],P02:[],P03:[],P04:[]}};
   }
   function defaultSettings(){
-    return {text:1,motion:'calm',sound:false,masterVolume:.8,ambienceVolume:.55,effectsVolume:.75,voiceVolume:.95,uiVolume:.4,voiceMode:'recorded',autoVoice:true,audioCaptions:true,audioSpatial:true,audioRange:'natural',guide:true,guideMode:'full',comfort:true,sprintToggle:false,stickSide:'left',subtitleBg:true,graphics:'ultra',workMode:'field',cameraMode:'third'};
+    return {text:1,motion:'calm',sound:false,masterVolume:.8,ambienceVolume:.55,effectsVolume:.75,voiceVolume:.95,uiVolume:.4,voiceMode:'recorded',autoVoice:true,audioCaptions:true,audioSpatial:true,audioRange:'natural',guide:true,guideMode:'full',comfort:true,sprintToggle:false,stickSide:'left',subtitleBg:true,graphics:'ultra',workMode:'field',cameraMode:'third',q01Lighting:'day'};
   }
 
   function fresh(profile={}){
@@ -565,6 +565,7 @@
     if(!['recorded','system','off'].includes(s.settings.voiceMode))s.settings.voiceMode='recorded';
     if(!['natural','night'].includes(s.settings.audioRange))s.settings.audioRange='natural';
     if(!['ultra','high','balanced'].includes(s.settings.graphics))s.settings.graphics='ultra';
+    if(!['day','evening'].includes(s.settings.q01Lighting))s.settings.q01Lighting='day';
     if(!['third','first'].includes(s.settings.cameraMode))s.settings.cameraMode='third';
     if(!['field','board'].includes(s.settings.workMode))s.settings.workMode='field';
     if(raw.skills&&typeof raw.skills==='object'&&!Array.isArray(raw.skills)){

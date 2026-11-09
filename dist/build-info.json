@@ -7,7 +7,7 @@
   "offlineVoice": true,
   "design": "3.2",
   "contractVersion": "3.0",
-  "revision": "90b36be41f6c",
+  "revision": "e164443b3ad0",
   "bridgeQuests": 12,
   "requiredLegends": [
     "L01",

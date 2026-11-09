@@ -1,0 +1,248 @@
+{
+  "scope": "Q01 scripted gameplay and image evidence; artistic approval and human playtest pending",
+  "checks": [
+    "lighting switch preserves q01-roof-main",
+    "both views traverse harbor / door / room / stairs / roof; both lighting states",
+    "Q01 load mission still reachable and interactive",
+    "lighting switch preserves world",
+    "lighting switch preserves world",
+    "full quality loads 1024 px maps with GTAO and both lighting modes"
+  ],
+  "images": [
+    "day-third-titus.png",
+    "day-first-titus.png",
+    "day-titus-portrait.png",
+    "day-third-door.png",
+    "day-first-door.png",
+    "day-first-interior.png",
+    "day-first-roof.png",
+    "evening-first-roof.png",
+    "evening-third-door.png",
+    "evening-titus-portrait.png",
+    "evening-third-roof.png",
+    "quest-preserved.png",
+    "day-ultra-third-door.png",
+    "day-ultra-third-harbor.png",
+    "day-ultra-titus.png",
+    "evening-ultra-titus.png",
+    "evening-ultra-third-door.png"
+  ],
+  "performance": [
+    {
+      "name": "day balanced hero",
+      "samples": 169,
+      "cpuSubmitMedianMs": 3.2000000001862645,
+      "cpuSubmitP95Ms": 4.7000000001862645,
+      "renderIntervalMedianMs": 16.700000000186265,
+      "renderIntervalP95Ms": 18.299999999813735,
+      "callsMedian": 166,
+      "callsP95": 359,
+      "trianglesP95": 1151693,
+      "cpuSubmitMs": 2.7999999998137355,
+      "calls": 166,
+      "triangles": 625821,
+      "textures": 46,
+      "geometries": 332,
+      "gpu": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "buffer": [
+        1440,
+        900
+      ],
+      "position": {
+        "x": -22.104436180869726,
+        "y": 0.2787467740017595,
+        "z": 4.8955638191303,
+        "supportId": "world"
+      },
+      "camera": {
+        "position": {
+          "x": -22.104436180869726,
+          "y": 1.8587467740017596,
+          "z": 4.8955638191303
+        },
+        "look": {
+          "x": -22.811542962056265,
+          "y": 1.8587467740017596,
+          "z": 4.188457037943742
+        },
+        "view": "first"
+      }
+    },
+    {
+      "name": "day balanced roof",
+      "samples": 169,
+      "cpuSubmitMedianMs": 3.099999999627471,
+      "cpuSubmitP95Ms": 4.7999999998137355,
+      "renderIntervalMedianMs": 16.699999999254942,
+      "renderIntervalP95Ms": 18.700000000186265,
+      "callsMedian": 112,
+      "callsP95": 317,
+      "trianglesP95": 1125935,
+      "cpuSubmitMs": 2.6000000005587935,
+      "calls": 112,
+      "triangles": 599383,
+      "textures": 46,
+      "geometries": 332,
+      "gpu": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "buffer": [
+        1440,
+        900
+      ],
+      "position": {
+        "x": -23.610948951088485,
+        "y": 3.469000002214713,
+        "z": -14.995124947646971,
+        "supportId": "q01-roof-main"
+      },
+      "camera": {
+        "position": {
+          "x": -23.610948951088485,
+          "y": 5.049000002214713,
+          "z": -14.995124947646971
+        },
+        "look": {
+          "x": -23.155175201832694,
+          "y": 5.049000002214713,
+          "z": -15.885220610758145
+        },
+        "view": "first"
+      }
+    },
+    {
+      "name": "evening balanced exterior",
+      "samples": 168,
+      "cpuSubmitMedianMs": 4.2000000001862645,
+      "cpuSubmitP95Ms": 6.5,
+      "renderIntervalMedianMs": 16.600000000558794,
+      "renderIntervalP95Ms": 19.299999999813735,
+      "callsMedian": 203,
+      "callsP95": 393,
+      "trianglesP95": 1277796,
+      "cpuSubmitMs": 4.8999999994412065,
+      "calls": 203,
+      "triangles": 683356,
+      "textures": 47,
+      "geometries": 253,
+      "gpu": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "buffer": [
+        1440,
+        900
+      ],
+      "position": {
+        "x": -22.954011139534458,
+        "y": 0.22900000221471287,
+        "z": -9.907821475941633,
+        "supportId": "q01-room"
+      },
+      "camera": {
+        "position": {
+          "x": -22.846446698263996,
+          "y": 3.86931310700745,
+          "z": -2.6754514654244144
+        },
+        "look": {
+          "x": -22.975574084008034,
+          "y": 1.519000002214713,
+          "z": -11.357661135843937
+        },
+        "view": "third"
+      }
+    },
+    {
+      "name": "day ultra roof",
+      "samples": 168,
+      "cpuSubmitMedianMs": 4.7000000001862645,
+      "cpuSubmitP95Ms": 7.7000000001862645,
+      "renderIntervalMedianMs": 16.600000000558794,
+      "renderIntervalP95Ms": 22,
+      "callsMedian": 196,
+      "callsP95": 417,
+      "trianglesP95": 1282379,
+      "cpuSubmitMs": 6.2999999998137355,
+      "calls": 196,
+      "triangles": 686619,
+      "textures": 64,
+      "geometries": 320,
+      "gpu": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "buffer": [
+        1440,
+        900
+      ],
+      "position": {
+        "x": -23.612542429044964,
+        "y": 3.469000002214713,
+        "z": -14.993820810311691,
+        "supportId": "q01-roof-main"
+      },
+      "camera": {
+        "position": {
+          "x": -26.478412255735556,
+          "y": 7.109313119621687,
+          "z": -8.35262086011345
+        },
+        "look": {
+          "x": -23.038034804792403,
+          "y": 4.759000002214713,
+          "z": -16.325151343904185
+        },
+        "view": "third"
+      }
+    }
+  ],
+  "assets": {
+    "hero": {
+      "name": "Titus",
+      "fictional": true,
+      "approval": "pending",
+      "version": 1
+    },
+    "triangles": {
+      "hero": 64160,
+      "architecture": 11904,
+      "finish": 48088
+    },
+    "materials": {
+      "floor": {
+        "width": 512,
+        "albedo": "srgb",
+        "normal": "",
+        "orm": ""
+      },
+      "plaster": {
+        "width": 512,
+        "albedo": "srgb",
+        "normal": "",
+        "orm": ""
+      },
+      "wood": {
+        "width": 512,
+        "albedo": "srgb",
+        "normal": "",
+        "orm": ""
+      },
+      "stone": {
+        "width": 512,
+        "albedo": "srgb",
+        "normal": "",
+        "orm": ""
+      }
+    }
+  },
+  "fullQuality": {
+    "widths": [
+      1024
+    ],
+    "graphics": {
+      "enabled": true,
+      "msaaSamples": 4,
+      "gtao": true,
+      "aoSize": [
+        720,
+        450
+      ],
+      "scene": "shore:Q01",
+      "fallback": null
+    }
+  },
+  "status": "passed"
+}

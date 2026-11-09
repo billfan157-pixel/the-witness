@@ -35,12 +35,7 @@
     const tick=sky(T,scene,biome);
     return time=>{
       tick(time);
-      if(water?.material?.uniforms?.time){
-        water.userData.waterAnimate?.(time);
-      }else if(water){
-        water.material.opacity=.78+Math.sin(time*.45)*.035;
-        water.position.y=water.userData.base+Math.sin(time*.65)*.032;
-      }
+      water?.userData.waterAnimate?.(time);
       if(emberLight){
         emberLight.intensity=8.8+Math.sin(time*4.3)*1.4+Math.cos(time*7.1)*.8;
       }
@@ -181,10 +176,15 @@
         };
       }
     }
-    return createCharacter(T,role,options);
+    const hero=root.WitnessQ01?.active(current)&&options.appearance==='wt-titus';
+    if(hero)options={...options,overrides:root.WitnessQ01.heroLook(root.CharacterProfiles.get('wt-titus'))};
+    const character=createCharacter(T,role,options);
+    if(hero)root.WitnessQ01.finishHero(T,character);
+    return character;
   };
 
   function descriptor(s){
+    root.WitnessQ01?.selectClimate(s);
     if(!s.layer)return {...D.regions[M.chapter(s).region],region:M.chapter(s).region};
     const src=s.layer.kind==='legend'?D.legends[s.layer.id]:D.veils[s.layer.id];
     return {base:src.base,biome:src.biome,name:src.title,region:s.layer.id};
@@ -192,10 +192,15 @@
 
   function layout(s){
     const d=descriptor(s),base=root.Adventure3D.layoutFor(d.base),src=s.layer&&(s.layer.kind==='legend'?D.legends[s.layer.id]:D.veils[s.layer.id]);
+    // Terrain heightmap region must be pinned before engine.load displaces the grid.
+    const terrainRegion=s.layer?({L01:'jerusalem',L02:'jerusalem',L04:'galilee'}[s.layer.id]||null)
+      :({caesarea:'caesarea',road:'caesarea',galilee:'galilee',ravine:'galilee',jerusalem:'jerusalem'}[d.region]||null);
+    root.WitnessGraphics?.setRegion(terrainRegion);
     const nodes=s.layer?[...src.steps.map((_,i)=>M.layerAt(i,s)),...(src.discoveries||[]).map(d=>d.at),src.returnAt||[13,-10]]:M.chapter(s).nodes.map(n=>n.at);
     const start=src?.start||(s.layer?.id==='L03'?[-6,5]:[-15,12]);
     return {
       ...base,
+      q01Gold:!!root.WitnessQ01?.active(s),
       clearLegacyProps:!!src?.required,
       flatGround:!!src?.required,
       biome:d.biome,
@@ -303,7 +308,7 @@
     if(ch.companion&&D.people[ch.companion]&&!ch.nodes.some(n=>n.person===ch.companion)){
       const cid='companion-'+ch.companion,cat=[-23,4],cp=D.people[ch.companion];
       const cbond=D.bonds.find(b=>b.person===ch.companion&&b.from<=s.chapter&&!s.bonds[b.id]);
-      objects.push({id:cid,at:cat,kind:'npc',variant:cp.model,appearance:'wt-'+ch.companion,fixed:true,pose:'talk'});
+      objects.push({id:cid,at:cat,kind:'npc',variant:cp.model,appearance:'wt-'+ch.companion,fixed:true,pose:root.WitnessQ01?.active(s)?'idle':'talk'});
       targets.push({id:cid,actor:cid,at:cat,name:cp.name+' · Đồng hành',range:2.9,elevation:2.0,main:false,symbol:cbond?'◇':'·',person:ch.companion,companionSpot:true});
     }
 
@@ -322,9 +327,15 @@
   }
 
   function decorate(s){
-    if(!context)return;current=s;const {T,scene,biome}=context;water=null;emberLight=null;reactive=[];animators=[];placeSolids=[];
+    if(!context)return;current=s;const {T,scene,biome}=context;
+    water?.userData?.disposeWater?.();
+    root.WitnessModularKit?.releaseMounted?.();
+    water=null;emberLight=null;reactive=[];animators=[];placeSolids=[];
+    root.WitnessGraphics?.setQuality(s.settings?.graphics);
     const AV=root.AdventureVisuals;
     const ground=scene.children.find(c=>c.isMesh&&c.geometry?.parameters?.width===156);
+    if(root.WitnessQ01?.active(s)&&ground)root.WitnessQ01.prepareGround(ground);
+    if(root.WitnessQ01?.active(s))for(const child of scene.children)if(child.userData.isSkyRidge)child.visible=false;
     const keepOutdoorSky=s.layer&&['L01','L04'].includes(s.layer.id);
     if(s.layer)for(const child of scene.children){if(child.isLight||child===ground||child.name==='player'||child.geometry?.parameters?.radius>=100||child.type==='Object3D'||(keepOutdoorSky&&child.userData?.isSkyRidge))continue;child.visible=false;}
     const ray=new T.Raycaster();const down=new T.Vector3(0,-1,0);
@@ -332,10 +343,12 @@
     const height=(x,z)=>{if(terrainSampler)return terrainSampler(x,z);if(!ground)return 0;ray.set(new T.Vector3(x,40,z),down);return ray.intersectObject(ground)[0]?.point.y||0;};
     decor=new T.Group();decor.name='witness-place';scene.add(decor);
     const materials=new Map();
+    const q01Surfaces=root.WitnessQ01?.active(s)?root.WitnessQ01.surfaces(T,s.settings.graphics==='balanced'||!!root.WitnessKitOfflineQuality):null;
     const mat=(c,kind='stone',opts={})=>{
       const key=c+'|'+kind+'|'+JSON.stringify(opts);
       if(!materials.has(key)){
         const {noSurface,noCast,...materialOptions}=opts;
+        if(q01Surfaces&&!noSurface&&['wood','masonry'].includes(kind)){const qmat=q01Surfaces(kind==='wood'?'wood':'stone',kind==='wood'?'#d0bfa2':'#dfd0b2');materials.set(key,qmat);return qmat;}
         const m=new T.MeshStandardMaterial({color:c,roughness:.88,metalness:0,...materialOptions});
         if(!noSurface)AV?.surface?.(m,kind);
         materials.set(key,m);
@@ -346,7 +359,7 @@
       const o=new T.Mesh(geometry,mat(c,kind,opts));
       o.position.set(x,height(x,z)+y,z);o.castShadow=!opts.noCast;o.receiveShadow=true;decor.add(o);return o;
     }
-    const box=(c,x,y,z,w,h,d,kind='masonry',opts={})=>mesh(new T.BoxGeometry(w,h,d),c,x,y,z,kind,opts);
+    const box=(c,x,y,z,w,h,d,kind='masonry',opts={})=>mesh(q01Surfaces&&!opts.noSurface&&['wood','masonry'].includes(kind)?root.WitnessQ01.uvBox(T,w,h,d,x,height(x,z)+y,z,kind==='wood'?1.8:3):new T.BoxGeometry(w,h,d),c,x,y,z,kind,opts);
     const pole=(x,z,h=2,c='#6b5137',r=.09)=>mesh(new T.CylinderGeometry(r*.84,r,h,10),c,x,h/2,z,'wood');
     const solidGroup=id=>{const g={id:'col-'+id,solids:[]};placeSolids.push(g);return (x,z,r)=>g.solids.push([x,z,r]);};
 
@@ -416,6 +429,7 @@
     }
 
     function house(x,z,w=7,d=5,h=4,c='#cdb996',lit=false){
+      if(root.WitnessQ01?.active(s)&&s.settings.q01Lighting!=='evening')lit=false;
       // Một cao độ nền duy nhất cho cả căn: mọi thành phần bám cùng mặt phẳng,
       // tránh cửa/cửa sổ/mái lệch nhau khi nhà đặt trên sườn dốc.
       const y0=height(x,z);
@@ -427,11 +441,24 @@
       const hb=(col,dx,dy,dz,bw,bh,bd,kind='masonry',opts)=>{
         const o=box(col,x+dx,dy,z+dz,bw,bh,bd,kind,opts);o.position.y=y0+dy;return o;
       };
+      // Monolithic shell courses become beveled kit masonry with a weathering
+      // mask (cavity dirt, arris wear, rising damp) instead of flat boxes.
+      const kitShell=(dx,dy,dz,bw,bh,bd)=>{
+        if(!root.WitnessModularKit)return hb('#cbb996',dx,dy,dz,bw,bh,bd);
+        const K=root.WitnessModularKit,g=K.bevelBox(T,bw,bh,bd,Math.min(.035,bh*.2),3);
+        K.maskAttr(T,g,(a,o,px,py,pz,n,i)=>{
+          a[o]=.14;a[o+1]=n.getY(i)>.5?.42:.14;
+          a[o+2]=Math.max(0,1-(py+bh/2)/1.2)*.8;
+        });
+        K.worldUV(T,g,x+dx,z+dz);
+        const m=new T.Mesh(g,K.material(T,s.settings.graphics==='balanced'||!!root.WitnessKitOfflineQuality));
+        m.position.set(x+dx,y0+dy,z+dz);m.castShadow=m.receiveShadow=true;decor.add(m);return m;
+      };
       // Móng chìm sâu để nhà bám đất cả phía dốc lẫn phía thấp
-      hb('#9b8d75',0,-.31,0,w+.42,1.5,d+.42);
-      hb(c,0,h/2+.3,0,w,h,d);
-      hb('#a79476',0,h+.38,0,w+.42,.30,d+.42);
-      hb('#b5a385',0,h+.58,0,w+.12,.22,d+.12);
+      kitShell(0,-.31,0,w+.42,1.5,d+.42);
+      kitShell(0,h/2+.3,0,w,h,d);
+      kitShell(0,h+.38,0,w+.42,.30,d+.42);
+      kitShell(0,h+.58,0,w+.12,.22,d+.12);
       for(const sx of [-1,1])for(const sz of [-1,1])hb('#b2a082',sx*(w/2-.06),h/2+.3,sz*(d/2-.06),.36,h+.1,.36);
       const beams=Math.max(4,Math.round(w/1.4));
       for(let i=0;i<beams;i++)hb('#614833',-w*.42+i*(w*.84/(beams-1)),h-.04,d/2+.16,.16,.24,.46,'wood');
@@ -453,9 +480,14 @@
       for(let i=0;i<cols;i++){
         const cx=cols===1?x1:x1+span*(i/(cols-1));
         addS(cx,z,.55);
-        box('#a8997c',cx,.16,z,.94,.32,.94,'masonry');
-        mesh(new T.CylinderGeometry(.30,.36,h-.6,16),c,cx,h/2+.12,z,'masonry');
-        box('#b5a385',cx,h-.05,z,.88,.24,.88,'masonry');
+        if(root.WitnessModularKit){
+          const m=new T.Mesh(root.WitnessModularKit.column(T,h,.34,i*31+7),root.WitnessModularKit.material(T));
+          m.position.set(cx,height(cx,z),z);m.castShadow=m.receiveShadow=true;m.userData.reactive=true;decor.add(m);
+        }else{
+          box('#a8997c',cx,.16,z,.94,.32,.94,'masonry');
+          mesh(new T.CylinderGeometry(.30,.36,h-.6,16),c,cx,h/2+.12,z,'masonry');
+          box('#b5a385',cx,h-.05,z,.88,.24,.88,'masonry');
+        }
       }
       box('#b9a786',x1+span/2,h+.24,z,span+1.4,.46,.98,'masonry');
     }
@@ -466,6 +498,7 @@
     }
 
     function lamp(x,z){
+      if(root.WitnessQ01?.active(s))return null;
       box('#7d705c',x,.12,z,.46,.24,.46,'stone');
       mesh(new T.CylinderGeometry(.065,.09,1.72,10),'#5a4a35',x,.98,z,'bronze');
       const basket=mesh(new T.CylinderGeometry(.20,.14,.18,12),'#4d402c',x,1.88,z,'bronze');
@@ -539,19 +572,20 @@
       if(changed){pos.needsUpdate=true;ground.geometry.computeVertexNormals();}
     }
 
-    let pendingCoast=null;
+    let pendingCoast=null,pendingWater=null;
     function sea(z=-25,tone='#3c7f8c',foamEdge=.085,levelY=-.10,waveScale=.045){
       const night=Boolean(AV?.atmosphere?.(biome)?.night);
       const len=74,cz=z-len*.5+.5;
       pendingCoast=z+.2;
+      pendingWater={minX:-92,minZ:cz-len/2,width:184,depth:len,levelY};
       if(AV?.water){
         const w=AV.water(T,tone,184,len,night,biome,{foamEdge,waveScale});
-        water=w.water;water.position.set(0,levelY,cz);water.userData.base=water.position.y;
-        water.userData.reactive=true;water.userData.waterAnimate=w.animate;
+        water=w.water;water.position.set(0,levelY,cz);
+        water.userData.reactive=true;water.userData.waterAnimate=w.animate;water.userData.setBed=w.setBed;
         decor.add(water);
       }else{
         water=mesh(new T.PlaneGeometry(184,len,24,16),tone,0,levelY,cz,'stone',{transparent:true,opacity:.84,roughness:.2,metalness:.24});
-        water.rotation.x=-Math.PI/2;water.castShadow=false;water.userData.base=water.position.y;
+        water.rotation.x=-Math.PI/2;water.castShadow=false;
       }
     }
 
@@ -572,7 +606,7 @@
     }
 
     function boat(x,z,size=1,sail=true){
-      const grp=new T.Group();grp.position.set(x,height(x,z)+.16,z);
+      const grp=new T.Group();grp.position.set(x,root.WitnessQ01?.active(s)?.04:height(x,z)+.16,z);
       grp.userData.bob=true;grp.userData.baseY=grp.position.y;grp.userData.bobPhase=x*.25+z*.1;grp.userData.reactive=true;
       const woodMat=mat('#6d4d34','wood'),deckMat=mat('#b0926c','wood'),sailMat=mat('#e5d7b8','linen',{side:T.DoubleSide});
       const hull=new T.Mesh(new T.LatheGeometry([[0,-.4],[1.1,-.32],[1.55,.06],[1.65,.55],[1.42,.66],[.95,-.12],[0,-.2]].map(p=>new T.Vector2(...p)),22),woodMat);
@@ -775,9 +809,12 @@
     }else if(desc.region==='ravine'){
       if(AV?.water){
         const st=AV.water(T,'#4d888b',8.5,58,false,biome,{foamEdge:.14,waveScale:.035});
-        water=st.water;water.position.set(20,.05,-4);water.userData.base=water.position.y;water.userData.reactive=true;water.userData.waterAnimate=st.animate;decor.add(water);
+        water=st.water;water.position.set(20,.05,-4);water.userData.reactive=true;
+        water.userData.waterAnimate=st.animate;water.userData.setBed=st.setBed;
+        pendingWater={minX:20-4.25,minZ:-4-29,width:8.5,depth:58,levelY:.05};
+        decor.add(water);
       }else{
-        const stream=mesh(new T.PlaneGeometry(8.5,56,8,12),'#6c999b',20,.04,-4,'stone',{transparent:true,opacity:.86,roughness:.2});stream.rotation.x=-Math.PI/2;water=stream;water.userData.base=stream.position.y;
+        const stream=mesh(new T.PlaneGeometry(8.5,56,8,12),'#6c999b',20,.04,-4,'stone',{transparent:true,opacity:.86,roughness:.2});stream.rotation.x=-Math.PI/2;water=stream;
       }
       for(let i=0;i<7;i++){const o=mesh(new T.DodecahedronGeometry(2.5,1),'#a39173',24+(i%2)*4,1,-24+i*7,'stone');o.scale.set(1.4,1.1,1);}
       pole(-3,-2,1.3);pole(12,-9,1.2);box('#927752',13,.2,-8,4,.2,3,'wood');lamp(-9,8);
@@ -796,16 +833,23 @@
       }
     }
     if(pendingCoast!==null)carveSeabed(pendingCoast);
+    // Real bed depth for Beer-Lambert absorption and shoreline foam, sampled
+    // from the displaced terrain grid after the seabed carve.
+    if(water?.userData?.setBed&&ground?.geometry?.parameters&&pendingWater&&root.WitnessGraphics?.bedTexture){
+      const bed=root.WitnessGraphics.bedTexture(T,ground.geometry,pendingWater.minX,pendingWater.minZ,pendingWater.width,pendingWater.depth);
+      water.userData.setBed(bed,pendingWater.levelY);
+    }
     if(root.WitnessArchitecture&&ground){terrainSampler=root.WitnessArchitecture.terrainSampler(ground);scene.userData.terrainHeight=height;}
     if(!s.layer&&M.chapter(s).id==='Q01'&&root.WitnessArchitecture){
-      const architecture=root.WitnessArchitecture.install({T,scene,height,ground});
+      const architecture=root.WitnessArchitecture.install({T,scene,height,ground,state:s});
+      if(root.WitnessQ01){const finish=root.WitnessQ01.install({T,scene,height,architecture,state:s});placeSolids.push({id:'q01-finish-solids',solids:finish.outdoorSolids});animators.push(time=>finish.tick(time));}
       // Vegetation generated for the former closed building cannot occupy its new interior.
       const matrix=new T.Matrix4(),position=new T.Vector3(),r=architecture.bounds;
       for(const batch of scene.children.filter(o=>o.isInstancedMesh)){
         let count=0;
         for(let i=0;i<batch.count;i++){
           batch.getMatrixAt(i,matrix);position.setFromMatrixPosition(matrix);
-          if(position.x>r[0]-.3&&position.x<r[1]+.3&&position.z>r[2]-.3&&position.z<r[3]+.3)continue;
+          if(root.WitnessQ01?.clearVegetation(position.x,position.z)||(position.x>r[0]-.3&&position.x<r[1]+.3&&position.z>r[2]-.3&&position.z<r[3]+.3))continue;
           batch.setMatrixAt(count++,matrix);
         }
         if(count!==batch.count){batch.count=count;batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();}
@@ -822,7 +866,7 @@
     }
     for(const batch of batches.values()){
       const merged=new T.BufferGeometry();
-      for(const name of ['position','normal','uv']){
+      for(const name of ['position','normal','uv','aMask']){
         const size=name==='uv'?2:3;
         const length=batch.geometries.reduce((n,g)=>n+(g.attributes[name]?.count||0)*size,0);
         if(!length||batch.geometries.some(g=>!g.attributes[name]))continue;
@@ -838,6 +882,7 @@
       reactive.push(next=>crafted.update(next));animators.push(time=>crafted.tick(time));
     }
     root.WitnessGraphics?.configureScene(T,scene,biome,s.layer?.id??M.chapter(s).id);
+    if(root.WitnessQ01?.active(s)&&scene.userData.graphics){scene.userData.graphics.fogDensity=s.settings.q01Lighting==='evening'?.0045:.0027;scene.userData.graphics.fogFalloff=.22;}
   }
 
   function makeController(engine,callbacks){

@@ -5,7 +5,7 @@ try{
   let s=M.fresh();s.chapter=4;s.quests.Q05.plan='open_audit';s.quests.Q05.done=D.chapters[4].tasks.map(a=>a.id).filter(id=>id!=='choose'&&id!=='audit');
   s=M.fieldStart(s,'audit');const point=C.fieldSpots(s).find(p=>p.key==='received');s.positions['Q05.mortal']=point.at;
   await b.seed(s);await b.wait(`!!document.querySelector('[data-act=field-number][data-delta="1"]')`);
-  await b.click('.field-brief > summary');await b.click('.field-destinations > summary');
+  await b.evaluate('for(const sel of [".field-brief",".field-destinations"])document.querySelector(sel).open=true;');
   await b.evaluate(`document.querySelector('[data-act=field-number][data-delta="1"]').focus()`);
   for(let count=1;count<=2;count++){
     await b.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13,text:'\r',unmodifiedText:'\r'});await b.send('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});

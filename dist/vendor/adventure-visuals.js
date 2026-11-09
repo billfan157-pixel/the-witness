@@ -18,6 +18,7 @@
   };
 
   const atmosphere = biome => atmospheres[biome] ?? atmospheres.lands;
+  globalThis.__registerWitnessAtmospheres = values => Object.assign(atmospheres, values);
 
   function randomFrom(seed) {
     return () => {
@@ -56,6 +57,60 @@
       -Math.cos(climate.azimuth) * Math.cos(angle));
   }
 
+  // Shared wind clock + player footfall trail for all flora shaders.
+  let windState = null;
+  function windUniforms(T) {
+    if (!windState) windState = {
+      uWindTime: { value: 0 },
+      uTrail: { value: Array.from({ length: 5 }, () => new T.Vector4(0, -100, 0, -10)) }
+    };
+    return windState;
+  }
+  const windGLSL = `
+    vec3 windMod289(vec3 x){return x-floor(x*(1./289.))*289.;}
+    vec4 windMod289(vec4 x){return x-floor(x*(1./289.))*289.;}
+    vec4 windPerm(vec4 x){return windMod289(((x*34.)+1.)*x);}
+    vec4 windTaylor(vec4 r){return 1.79284291400159-.85373472095314*r;}
+    float windSimplex(vec3 v){
+      const vec2 C=vec2(1./6.,1./3.);const vec4 D=vec4(0.,.5,1.,2.);
+      vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);
+      vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);
+      vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;
+      i=windMod289(i);
+      vec4 p=windPerm(windPerm(windPerm(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));
+      float n_=1./7.;vec3 ns=n_*D.wyz-D.xzx;
+      vec4 j=p-49.*floor(p*ns.z*ns.z);
+      vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.*x_);
+      vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.-abs(x)-abs(y);
+      vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);
+      vec4 s0=floor(b0)*2.+1.;vec4 s1=floor(b1)*2.+1.;vec4 sh=-step(h,vec4(0.));
+      vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+      vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);
+      vec4 norm=windTaylor(inversesqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3))));
+      p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
+      vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);m=m*m;
+      return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
+    }
+    uniform float uWindTime;
+    uniform vec4 uTrail[5];
+    vec2 windPush(vec2 base){
+      vec2 push=vec2(0.);
+      for(int i=0;i<5;i++){
+        vec4 tp=uTrail[i];
+        float age=uWindTime-tp.w;
+        if(age<0.||age>1.5)continue;
+        vec2 d=base-tp.xz;
+        float infl=smoothstep(.85,.05,length(d))*(1.-age/1.5);
+        push+=normalize(d+vec2(1e-4))*infl;
+      }
+      return push;
+    }
+    vec2 windGust(vec2 base){
+      float gust=windSimplex(vec3(base*.07,uWindTime*.25))*.5+.5;
+      float sway=windSimplex(vec3(base*.18,uWindTime*.45));
+      return vec2(sway*.7+gust*.9,sway*.4-gust*.5);
+    }`;
+
   function light(T, scene, sun, ambient, fill, biome) {
     const climate = atmosphere(biome);
     const direction = sunDirection(T, climate);
@@ -75,16 +130,20 @@
   }
 
   const envCache = new WeakMap();
+  // The active engine pipeline; water registers its planar-reflection pass here.
+  let currentPipeline = null;
 
   function environment(T, renderer, scene, biome) {
     if (!T.PMREMGenerator || !renderer) return null;
+    const envClimate=atmosphere(biome);
+    const cacheKey=[biome,envClimate.sky,envClimate.haze,envClimate.light,envClimate.elevation,envClimate.azimuth,!!envClimate.night].join('|');
     let map = envCache.get(renderer);
     if (!map) {
       map = new Map();
       envCache.set(renderer, map);
     }
-    if (map.has(biome)) {
-      const tex = map.get(biome);
+    if (map.has(cacheKey)) {
+      const tex = map.get(cacheKey);
       scene.environment = tex;
       scene.environmentIntensity = atmosphere(biome).night ? .52 : .58;
       return tex;
@@ -132,7 +191,7 @@
       dome.material.dispose();
       pmrem.dispose();
       rt.texture.userData.sharedMap = true;
-      map.set(biome, rt.texture);
+      map.set(cacheKey, rt.texture);
       scene.environment = rt.texture;
       scene.environmentIntensity = climate.night ? .52 : .58;
       return rt.texture;
@@ -622,15 +681,19 @@
     const material = new T.MeshStandardMaterial({
       color, vertexColors: true, side: T.DoubleSide, roughness: blades ? .90 : .86
     });
-    material.customProgramCacheKey = () => blades ? "journey-grass-2" : "journey-canopy-2";
+    material.customProgramCacheKey = () => blades ? "journey-grass-3" : "journey-canopy-3";
     material.onBeforeCompile = shader => {
       shader.uniforms.windTime = time;
+      const shared = windUniforms(T);
+      shader.uniforms.uWindTime = shared.uWindTime;
+      shader.uniforms.uTrail = shared.uTrail;
       shader.vertexShader = shader.vertexShader
         .replace("#include <common>", `#include <common>
           uniform float windTime;
           attribute float aFlex;
           attribute float aPhase;
-          varying float vTint;`)
+          varying float vTint;
+          ${windGLSL}`)
         .replace("#include <begin_vertex>", `
           #include <begin_vertex>
           #ifdef USE_INSTANCING
@@ -652,6 +715,11 @@
           transformed.x += fl * aFlex * ${blades ? ".02" : ".012"} * (.5 + gust) * distFade;
           transformed.y += fl2 * aFlex * ${blades ? ".008" : ".010"} * (.5 + gust) * distFade;
           transformed.z += fl2 * aFlex * ${blades ? ".016" : ".010"} * (.5 + gust) * distFade;
+          vec2 windPushV = windPush(base.xz);
+          vec2 windGustV = windGust(base.xz);
+          transformed.x += (windGustV.x * .05 + windPushV.x * .30) * crownFlex * distFade;
+          transformed.z += (windGustV.y * .05 + windPushV.y * .30) * crownFlex * distFade;
+          transformed.y -= length(windPushV) * .10 * crownFlex * distFade;
           vTint = fract(sin(dot(base.xz, vec2(12.9898, 78.233))) * 43758.5453);`);
       shader.fragmentShader = shader.fragmentShader
         .replace("#include <common>", `#include <common>
@@ -664,103 +732,279 @@
           float leafRim = pow(1. - abs(dot(normal, leafV)), 2.5);
           diffuseColor.rgb += diffuseColor.rgb * leafRim * ${blades ? ".06" : ".14"};`);
     };
-    return { material, animate: elapsed => { time.value = elapsed; } };
+    return { material, animate: elapsed => { time.value = elapsed; windUniforms(T).uWindTime.value = elapsed; } };
   }
 
+  // Tileable water detail-normal map, generated once per Three instance.
+  const waterNormalCache = new WeakMap();
+  function waterNormalTexture(T) {
+    if (waterNormalCache.has(T)) return waterNormalCache.get(T);
+    const size = 256, height = new Float32Array(size * size);
+    const lattice = (freq, seed) => {
+      const grid = new Float32Array(freq * freq);
+      let s = seed;
+      for (let i = 0; i < grid.length; i++) { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; grid[i] = s / 4294967296; }
+      return (x, y) => {
+        const gx = x / size * freq, gy = y / size * freq;
+        const x0 = Math.floor(gx) % freq, y0 = Math.floor(gy) % freq;
+        const fx = gx - Math.floor(gx), fy = gy - Math.floor(gy);
+        const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
+        const at = (xx, yy) => grid[((yy + freq) % freq) * freq + ((xx + freq) % freq)];
+        return at(x0, y0) * (1 - sx) * (1 - sy) + at(x0 + 1, y0) * sx * (1 - sy)
+          + at(x0, y0 + 1) * (1 - sx) * sy + at(x0 + 1, y0 + 1) * sx * sy;
+      };
+    };
+    const octaves = [[4, 911, .5], [8, 337, .26], [16, 577, .15], [32, 229, .09]];
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+      let h = 0;
+      for (const [freq, seed, amp] of octaves) h += lattice(freq, seed)(x, y) * amp;
+      h += Math.sin((x * 3 + y * 7) / size * Math.PI * 2) * .05;
+      height[y * size + x] = h;
+    }
+    const data = new Uint8Array(size * size * 4), strength = 2.4;
+    const at = (x, y) => height[((y + size) % size) * size + ((x + size) % size)];
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+      const dx = (at(x - 1, y) - at(x + 1, y)) * strength;
+      const dy = (at(x, y - 1) - at(x, y + 1)) * strength;
+      const len = Math.sqrt(dx * dx + dy * dy + 1);
+      const i = (y * size + x) * 4;
+      data[i] = Math.round((dx / len * .5 + .5) * 255);
+      data[i + 1] = Math.round((dy / len * .5 + .5) * 255);
+      data[i + 2] = Math.round((1 / len * .5 + .5) * 255);
+      data[i + 3] = 255;
+    }
+    const texture = new T.DataTexture(data, size, size, T.RGBAFormat);
+    texture.wrapS = texture.wrapT = T.RepeatWrapping;
+    texture.minFilter = T.LinearMipmapLinearFilter; texture.magFilter = T.LinearFilter;
+    texture.generateMipmaps = true; texture.needsUpdate = true;
+    texture.userData.sharedMap = true;
+    waterNormalCache.set(T, texture);
+    return texture;
+  }
+
+  // Physical water: Gerstner swell, dual scrolling detail normals, Beer-Lambert
+  // absorption over real bed depth, planar reflection and depth-based foam.
   function water(T, color, width, length, night, biome, opts = {}) {
     const climate = atmosphere(biome);
     const time = { value: 0 };
     const foamEdge = opts.foamEdge ?? .09;
     const waveScale = opts.waveScale ?? .055;
-    const segW = Math.max(16, Math.min(64, Math.round(width * 1.2)));
-    const segL = Math.max(16, Math.min(64, Math.round(length * 1.2)));
+    const segW = Math.max(24, Math.min(96, Math.round(width * 1.4)));
+    const segL = Math.max(24, Math.min(96, Math.round(length * 1.4)));
+    const uniforms = {
+      waterColor: { value: new T.Color(color).multiplyScalar(night ? .34 : .64) },
+      shallowColor: { value: new T.Color(color).lerp(new T.Color(night ? "#365f66" : "#67aba3"), .52) },
+      skyColor: { value: new T.Color(climate.sky) },
+      horizonColor: { value: new T.Color(climate.haze) },
+      sunlight: { value: new T.Color(climate.light) },
+      sun: { value: sunDirection(T, climate) },
+      fogColor: { value: new T.Color(climate.haze) },
+      foamEdge: { value: foamEdge },
+      waveScale: { value: waveScale },
+      uNormalMap: { value: waterNormalTexture(T) },
+      uBedTex: { value: null },
+      uBedRect: { value: new T.Vector4(0, 0, 1, 1) },
+      uHasBed: { value: 0 },
+      uLevelY: { value: 0 },
+      uReflection: { value: null },
+      uTexMatrix: { value: new T.Matrix4() },
+      uHasReflection: { value: 0 },
+      uAbsorption: { value: new T.Vector3(night ? 2.6 : 1.9, night ? 1.5 : .95, night ? .9 : .48) },
+      time
+    };
     const material = new T.ShaderMaterial({
-      uniforms: {
-        waterColor: { value: new T.Color(color).multiplyScalar(night ? .34 : .64) },
-        shallowColor: { value: new T.Color(color).lerp(new T.Color(night ? "#365f66" : "#67aba3"), .52) },
-        skyColor: { value: new T.Color(climate.sky) },
-        horizonColor: { value: new T.Color(climate.haze) },
-        sunlight: { value: new T.Color(climate.light) },
-        sun: { value: sunDirection(T, climate) },
-        fogColor: { value: new T.Color(climate.haze) },
-        foamEdge: { value: foamEdge },
-        waveScale: { value: waveScale },
-        time
-      },
+      uniforms,
       vertexShader: `
         varying vec3 vWater;
         varying vec2 vUv;
-        uniform float time, waveScale, foamEdge;
+        varying vec3 vWaveNormal;
+        varying vec4 vReflCoord;
+        varying float vCrest;
+        uniform float time, waveScale, uHasBed, uLevelY;
+        uniform sampler2D uBedTex;
+        uniform vec4 uBedRect;
+        uniform mat4 uTexMatrix;
+        float bedDepth(vec2 xz) {
+          if (uHasBed < .5) return 2.;
+          vec2 buv = clamp((xz - uBedRect.xy) * uBedRect.zw, 0., 1.);
+          vec4 tap = texture2D(uBedTex, buv);
+          float bed = -8. + (tap.r * 255. * 256. + tap.g * 255.) / 65535. * 16.;
+          return max(0., uLevelY - bed);
+        }
+        vec3 gerstner(vec2 dir, float steepness, float wavelength, float speed,
+                      vec3 p, inout vec3 tangent, inout vec3 binormal) {
+          float k = 6.2831853 / wavelength;
+          float c = sqrt(9.8 / k);
+          float f = k * (dot(dir, p.xz) - c * speed * time);
+          float a = steepness / k;
+          float sf = sin(f), cf = cos(f);
+          tangent += vec3(-dir.x * dir.x * steepness * sf, dir.x * steepness * cf, -dir.x * dir.y * steepness * sf);
+          binormal += vec3(-dir.x * dir.y * steepness * sf, dir.y * steepness * cf, -dir.y * dir.y * steepness * sf);
+          return vec3(dir.x * a * cf, a * sf, dir.y * a * cf);
+        }
         void main() {
           vUv = uv;
-          vec3 pos = position;
-          float shoreDamp = smoothstep(0., max(.08, foamEdge * 1.6), uv.x);
-          vec3 wPos = (modelMatrix * vec4(pos, 1.)).xyz;
-          // Directional Multi-Component Gerstner Waves
-          vec2 dir1 = vec2(0.85, 0.52);
-          vec2 dir2 = vec2(-0.42, 0.91);
-          float w1 = dot(dir1, wPos.xz) * 1.15 - time * 1.55;
-          float w2 = dot(dir2, wPos.xz) * 2.05 - time * 2.25;
-          float gWave = sin(w1) * 0.62 + cos(w1 * 1.8) * 0.18 + sin(w2) * 0.35;
-          pos.z += gWave * waveScale * shoreDamp;
-          vWater = (modelMatrix * vec4(pos, 1.)).xyz;
-          gl_Position = projectionMatrix * viewMatrix * vec4(vWater, 1.);
+          vec3 wPos = (modelMatrix * vec4(position, 1.)).xyz;
+          float damp = smoothstep(0., .55, bedDepth(wPos.xz));
+          float amp = waveScale * 1.35;
+          vec3 tangent = vec3(1., 0., 0.), binormal = vec3(0., 0., 1.);
+          vec3 disp = vec3(0.);
+          disp += gerstner(normalize(vec2(.85, .52)), amp * 1.1, 9.5, 1., wPos, tangent, binormal);
+          disp += gerstner(normalize(vec2(-.42, .91)), amp * .8, 5.6, 1.12, wPos, tangent, binormal);
+          disp += gerstner(normalize(vec2(.23, -.97)), amp * .5, 3.1, 1.3, wPos, tangent, binormal);
+          disp += gerstner(normalize(vec2(-.88, -.3)), amp * .3, 1.7, 1.6, wPos, tangent, binormal);
+          wPos += disp * damp;
+          vWaveNormal = normalize(cross(binormal, tangent));
+          vCrest = disp.y / max(amp * 2.2, 1e-4);
+          vWater = wPos;
+          vReflCoord = uTexMatrix * vec4(wPos, 1.);
+          gl_Position = projectionMatrix * viewMatrix * vec4(wPos, 1.);
         }`,
       fragmentShader: `
         varying vec3 vWater;
         varying vec2 vUv;
-        uniform vec3 waterColor, shallowColor, skyColor, horizonColor, sunlight, sun, fogColor;
-        uniform float time, foamEdge;
+        varying vec3 vWaveNormal;
+        varying vec4 vReflCoord;
+        varying float vCrest;
+        uniform vec3 waterColor, shallowColor, skyColor, horizonColor, sunlight, sun, fogColor, uAbsorption;
+        uniform float time, foamEdge, uHasBed, uLevelY, uHasReflection;
+        uniform sampler2D uNormalMap, uBedTex, uReflection;
+        uniform vec4 uBedRect;
         ${noise}
+        float bedDepth(vec2 xz) {
+          if (uHasBed < .5) return 2.;
+          vec2 buv = clamp((xz - uBedRect.xy) * uBedRect.zw, 0., 1.);
+          vec4 tap = texture2D(uBedTex, buv);
+          float bed = -8. + (tap.r * 255. * 256. + tap.g * 255.) / 65535. * 16.;
+          return max(0., uLevelY - bed);
+        }
         void main() {
           vec2 point = vWater.xz;
-          float a = point.x * 2.5 + point.y * .92 - time * 1.75;
-          float b = point.x * -.78 + point.y * 4.3 + time * 1.92;
-          float c = point.x * 8.4 + point.y * 5.2 - time * 2.75;
-          float d = fbmNoise(point * 1.35 + vec2(time * .18, -time * .14));
-          vec3 normal = normalize(vec3(
-            .082 * cos(a) + .034 * cos(b) + .024 * cos(c) + (d - .5) * .12,
-            1.,
-            .068 * cos(b) + .038 * cos(a) + .022 * cos(c) + (d - .5) * .12
-          ));
+          // Dual scrolling normal maps moving against each other.
+          vec3 n1 = texture2D(uNormalMap, point * .16 + vec2(time * .023, time * .017)).xyz * 2. - 1.;
+          vec3 n2 = texture2D(uNormalMap, point * .37 - vec2(time * .031, time * .013)).xyz * 2. - 1.;
+          vec2 detail = n1.xy * .55 + n2.xy * .45;
+          vec3 normal = normalize(vec3(vWaveNormal.x + detail.x * .45, vWaveNormal.y, vWaveNormal.z + detail.y * .45));
           vec3 view = normalize(cameraPosition - vWater);
           float facing = max(.001, dot(view, normal));
           float fresnel = .02 + .98 * pow(1. - facing, 4.2);
-          
-          // Beer-Lambert depth absorption (freshwater Lake Galilee & Caesarea harbour)
-          float waterDist = vUv.x;
-          vec3 absorption = exp(-vec3(3.2, 1.15, 0.42) * waterDist * 2.8);
-          float caustic = smoothstep(.52, .88, grainNoise(point * 2.8 + vec2(time * .36, -time * .24)));
-          vec3 bedColor = shallowColor * (1. + caustic * .28);
-          vec3 body = mix(waterColor, bedColor, absorption);
 
-          float sss = pow(max(0., dot(view, -sun + normal * .35)), 3.0) * .25;
+          // Beer-Lambert extinction over measured bed depth.
+          float depth = bedDepth(point);
+          vec3 transmittance = exp(-uAbsorption * depth * 1.35);
+          float caustic = smoothstep(.52, .88, grainNoise(point * 2.8 + vec2(time * .36, -time * .24)))
+            * smoothstep(2.4, .3, depth);
+          vec3 bedColor = shallowColor * (1. + caustic * .38);
+          vec3 body = bedColor * transmittance + waterColor * (1. - transmittance);
+          float sss = pow(max(0., dot(view, -sun + normal * .35)), 3.) * .25 * (1. - transmittance.g);
           body += shallowColor * sss;
-          // Environment sky gradient reflection
+
+          // Planar reflection with sky-gradient fallback.
           vec3 reflDir = reflect(-view, normal);
           vec3 reflSky = mix(horizonColor, skyColor, smoothstep(0., .52, max(0., reflDir.y)));
-          vec3 color = mix(body, reflSky, clamp(.10 + fresnel * .78, 0., .92));
-          // Crisp dual-lobe solar specular path
-          vec3 halfV = normalize(sun + view);
-          float specTight = pow(max(0., dot(normal, halfV)), 260.);
-          float specSoft = pow(max(0., dot(normal, halfV)), 32.);
-          color += sunlight * (specTight * 1.45 + specSoft * .22);
-          // Animated shoreline foam with fractal turbulent noise
-          if (foamEdge > .001) {
-            float lap = .5 + .5 * sin(time * 2.1 - vUv.x * 38. + point.y * 1.3);
-            float foamNoise = grainNoise(point * 5.5 - vec2(time * .35, time * .2));
-            float foam = smoothstep(foamEdge, 0., vUv.x) * smoothstep(.32, .72, foamNoise + lap * .38);
-            color = mix(color, mix(horizonColor, vec3(.96), .75), clamp(foam * .88, 0., 1.));
+          vec3 reflected = reflSky;
+          if (uHasReflection > .5) {
+            vec2 ruv = vReflCoord.xy / max(vReflCoord.w, 1e-4) + detail * .035;
+            if (ruv.x > 0. && ruv.x < 1. && ruv.y > 0. && ruv.y < 1.)
+              reflected = mix(reflSky, texture2D(uReflection, ruv).rgb, .85);
           }
-          float depth = length(cameraPosition - vWater) * .0055;
-          gl_FragColor = vec4(mix(color, fogColor, 1. - exp(-depth * depth)), 1.);
+          vec3 color = mix(body, reflected, clamp(.10 + fresnel * .78, 0., .92));
+
+          vec3 halfV = normalize(sun + view);
+          color += sunlight * (pow(max(0., dot(normal, halfV)), 260.) * 1.45
+            + pow(max(0., dot(normal, halfV)), 32.) * .22);
+
+          // Shoreline foam from real water depth plus lap and crest whitecaps.
+          float shore = 1. - smoothstep(.04, max(.18, foamEdge * 4.2), depth);
+          float lap = .5 + .5 * sin(time * 2.1 - depth * 26. + point.y * 1.3);
+          float foamNoise = fbmNoise(point * 4.6 - vec2(time * .35, time * .2));
+          float foam = shore * smoothstep(.30, .72, foamNoise + lap * .38);
+          foam += smoothstep(.62, .95, vCrest) * smoothstep(.4, 1.2, depth) * .35;
+          color = mix(color, mix(horizonColor, vec3(.96), .75), clamp(foam * .88, 0., 1.));
+
+          float fogDist = length(cameraPosition - vWater) * .0055;
+          gl_FragColor = vec4(mix(color, fogColor, 1. - exp(-fogDist * fogDist)), 1.);
           #include <colorspace_fragment>
         }`
     });
     const mesh = new T.Mesh(new T.PlaneGeometry(width, length, segW, segL), material);
     mesh.rotation.x = -Math.PI / 2;
     mesh.receiveShadow = true;
-    return { water: mesh, animate: elapsed => { time.value = elapsed; } };
+
+    // Planar reflection pass, driven by the engine pipeline's pre-render hook.
+    const reflectionRT = new T.WebGLRenderTarget(512, 512, {
+      minFilter: T.LinearFilter, magFilter: T.LinearFilter, depthBuffer: true
+    });
+    reflectionRT.texture.userData.sharedMap = true;
+    const virtualCamera = new T.PerspectiveCamera();
+    const reflectorWorldPosition = new T.Vector3(), cameraWorldPosition = new T.Vector3();
+    const rotationMatrix = new T.Matrix4(), normal = new T.Vector3(), view = new T.Vector3();
+    const lookAtPosition = new T.Vector3(), target = new T.Vector3();
+    const reflectorPlane = new T.Plane(), clipPlane = new T.Vector4(), q = new T.Vector4();
+    const textureMatrix = new T.Matrix4();
+    let frame = 0, removeHook = null, disposed = false;
+    function updateReflection(renderer, scene, camera) {
+      if (disposed || currentPipeline?.quality === "balanced") { uniforms.uHasReflection.value = 0; return; }
+      if (currentPipeline?.quality === "high" && ++frame % 2) return;
+      mesh.getWorldPosition(reflectorWorldPosition);
+      camera.getWorldPosition(cameraWorldPosition);
+      rotationMatrix.extractRotation(mesh.matrixWorld);
+      normal.set(0, 0, 1).applyMatrix4(rotationMatrix);
+      view.subVectors(reflectorWorldPosition, cameraWorldPosition);
+      if (view.dot(normal) > 0) { uniforms.uHasReflection.value = 0; return; }
+      view.reflect(normal).negate().add(reflectorWorldPosition);
+      rotationMatrix.extractRotation(camera.matrixWorld);
+      lookAtPosition.set(0, 0, -1).applyMatrix4(rotationMatrix).add(cameraWorldPosition);
+      target.subVectors(reflectorWorldPosition, lookAtPosition);
+      target.reflect(normal).negate().add(reflectorWorldPosition);
+      virtualCamera.position.copy(view);
+      virtualCamera.up.set(0, 1, 0).applyMatrix4(rotationMatrix).reflect(normal);
+      virtualCamera.lookAt(target);
+      virtualCamera.near = camera.near; virtualCamera.far = camera.far;
+      virtualCamera.updateMatrixWorld();
+      virtualCamera.projectionMatrix.copy(camera.projectionMatrix);
+      textureMatrix.set(.5, 0, 0, .5, 0, .5, 0, .5, 0, 0, .5, .5, 0, 0, 0, 1);
+      textureMatrix.multiply(virtualCamera.projectionMatrix);
+      textureMatrix.multiply(virtualCamera.matrixWorldInverse);
+      uniforms.uTexMatrix.value.copy(textureMatrix);
+      reflectorPlane.setFromNormalAndCoplanarPoint(normal, reflectorWorldPosition);
+      reflectorPlane.applyMatrix4(virtualCamera.matrixWorldInverse);
+      clipPlane.set(reflectorPlane.normal.x, reflectorPlane.normal.y, reflectorPlane.normal.z, reflectorPlane.constant);
+      const projectionMatrix = virtualCamera.projectionMatrix;
+      q.x = (Math.sign(clipPlane.x) + projectionMatrix.elements[8]) / projectionMatrix.elements[0];
+      q.y = (Math.sign(clipPlane.y) + projectionMatrix.elements[9]) / projectionMatrix.elements[5];
+      q.z = -1;
+      q.w = (1 + projectionMatrix.elements[10]) / projectionMatrix.elements[14];
+      clipPlane.multiplyScalar(2 / clipPlane.dot(q));
+      projectionMatrix.elements[2] = clipPlane.x;
+      projectionMatrix.elements[6] = clipPlane.y;
+      projectionMatrix.elements[10] = clipPlane.z + 1 - .003;
+      projectionMatrix.elements[14] = clipPlane.w;
+      const prevTarget = renderer.getRenderTarget();
+      const prevVisible = mesh.visible;
+      mesh.visible = false;
+      renderer.setRenderTarget(reflectionRT);
+      renderer.clear();
+      renderer.render(scene, virtualCamera);
+      renderer.setRenderTarget(prevTarget);
+      mesh.visible = prevVisible;
+      uniforms.uReflection.value = reflectionRT.texture;
+      uniforms.uHasReflection.value = 1;
+    }
+    if (currentPipeline?.addBeforeRender) removeHook = currentPipeline.addBeforeRender(updateReflection);
+
+    function setBed(bed, levelY) {
+      uniforms.uBedTex.value = bed.texture;
+      uniforms.uBedRect.value.set(...bed.rect);
+      uniforms.uHasBed.value = 1;
+      uniforms.uLevelY.value = levelY;
+    }
+    mesh.userData.disposeWater = () => {
+      disposed = true;
+      removeHook?.();
+      reflectionRT.dispose();
+    };
+    return { water: mesh, animate: elapsed => { time.value = elapsed; }, setBed };
   }
 
   function mesh(T, group, geometry, material, position) {
@@ -1143,6 +1387,7 @@
     const sunVec = new T.Vector3();
     const camDir = new T.Vector3();
     const savedClearColor = new T.Color();
+    const beforeHooks = [];
     const diagnostics = {enabled:true,msaaSamples:sceneRT.samples,gtao:false,aoSize:[400,300],scene:null,fallback:null};
 
     function setSize(w, h, pr = 1) {
@@ -1178,6 +1423,7 @@
     function render(scene, camera, sun, climateNight = false) {
       scene.userData.graphicsStatus=diagnostics;
       if (!enabled) {
+        for (const hook of beforeHooks) hook(renderer, scene, camera);
         renderer.render(scene, camera);
         return;
       }
@@ -1189,6 +1435,7 @@
       renderer.toneMapping = T.NoToneMapping ?? 0;
       try {
         if(oldDensity!==null)scene.fog.density=0; // Height fog is integrated once, in linear HDR.
+        for (const hook of beforeHooks) hook(renderer, scene, camera);
         renderer.setRenderTarget(sceneRT);
         renderer.clear(true, true, true);
         renderer.render(scene, camera);
@@ -1281,6 +1528,7 @@
     }
 
     function dispose() {
+      if (currentPipeline === api) currentPipeline = null;
       sceneRT.dispose();
       aoA.dispose();aoB.dispose();noiseTexture.dispose();aoMat.dispose();denoiseMat.dispose();
       bloomA.dispose();
@@ -1292,12 +1540,22 @@
     }
 
     setQuality(quality);
-    return { setSize, setQuality, render, dispose, diagnostics };
+    const api = {
+      setSize, setQuality, render, dispose, diagnostics, renderer,
+      get quality() { return mode; },
+      addBeforeRender(fn) {
+        beforeHooks.push(fn);
+        return () => { const i = beforeHooks.indexOf(fn); if (i >= 0) beforeHooks.splice(i, 1); };
+      }
+    };
+    currentPipeline = api;
+    return api;
   }
 
   globalThis.AdventureVisuals = {
     atmosphere, sunDirection, light, environment, sky, ridges, surface,
     rocks, treeTrunk, canopy, grass, vegetation, water, tent, accessory,
-    createPipeline
+    createPipeline, getRenderer: () => currentPipeline?.renderer ?? null,
+    windUniforms, windGLSL
   };
 })();

@@ -1,0 +1,57 @@
+{
+  "date": "2026-11-10",
+  "status": "passed",
+  "scope": "Environment & world building upgrade: eroded heightmap terrain + POM, modular architecture kit, close-inspection props, physical water, GPU flora; functional regression only, art acceptance and G3 visual review remain open",
+  "releaseBuild": "a3610ae6d2c6",
+  "commands": {
+    "npm test": "passed (108 checks)",
+    "npm run build": "passed (engine rebuild, architecture unit suite, kit budgets, dist + standalone + cloud)",
+    "node test/graphics-browser.mjs": "passed on fresh dist (coast-ultra, road-high, night-ultra, mobile-balanced, standalone-offline; AO image probe glError 0)",
+    "node test/architecture-browser.mjs": "passed on fresh dist (7 routes, 1955 frames, zero camera/body/support errors against rendered geometry; cold standalone with all HTTP blocked)",
+    "node test/craft-browser.mjs": "passed (9 checks; 27 worlds render finite geometry)",
+    "npm run test:craft-details": "passed (parchment 2048px readable ink, lifted flap, zero evidence; field keyboard focus and open-state persistence)",
+    "node test/flora-browser.mjs": "passed (15 chunks x LOD0/LOD1 per species; near/mid/far visibility swap; footfall trail recorded; wind time advances)"
+  },
+  "items": [
+    {
+      "item": "Terrain",
+      "result": "16-bit uint16 heightmaps (257x257) for Galilea/Jerusalem/Caesarea simulated with droplet hydraulic + thermal erosion; terrainSplat shader gains height-blended splat weights and parallax occlusion mapping (14/9/0 steps by tier)",
+      "evidence": ["assets/terrain/heightmaps", "vendor/witness-heightmaps.js", "docs/environment-kit/validation/graphics-regression.json"],
+      "source": "tools/prepare-heightmaps.cjs"
+    },
+    {
+      "item": "Architecture",
+      "result": "Beveled ashlar walls and Roman columns exported as Meshopt+KTX2 GLB (wall 1200 tris, column 1176 tris) with vertex-mask weathering (cavity dirt/arris wear/moss); walkable slabs keep sharp full-extent tops matching physics; identical procedural fallback offline",
+      "evidence": ["assets/environment-kit/arch/manifest-v2.json", "docs/environment-kit/validation/phase3/browser.json"],
+      "source": "tools/environment-kit/build-arch-kit.mjs"
+    },
+    {
+      "item": "Props",
+      "result": "Close-inspection lathe/cylinder segments raised to 32-64; per-kind normal/roughness/metalness maps; parchment 2048x1024 with papyrus grain normal and alpha-cutout torn edges",
+      "evidence": ["docs/environment-kit/validation/craft-details.json", "docs/environment-kit/validation/craft-browser.json"]
+    },
+    {
+      "item": "Water",
+      "result": "Gerstner-wave shader with dual scrolling normals, Beer-Lambert absorption from a 16-bit bed-depth texture, planar reflection, depth-based shoreline foam; replaces opacity bobbing",
+      "evidence": ["docs/environment-kit/validation/graphics-regression.json"]
+    },
+    {
+      "item": "Vegetation",
+      "result": "Chunked InstancedMesh HLOD (LOD0 <26m, LOD1 26-90m, culled beyond) with bounding-sphere frustum culling, simplex vertex wind and a 5-point footfall trail that bends grass where the player walks",
+      "evidence": ["docs/environment-kit/validation/flora.json"]
+    }
+  ],
+  "offline": {
+    "playerBytes": 16559650,
+    "coldFileHttpRequests": 0,
+    "note": "Standalone keeps the authored kit fallback; compressed arch GLB pack is online-only by design"
+  },
+  "limits": [
+    "Heightmaps are produced by the project's own reproducible erosion simulator, not Gaea/World Machine exports; tools/prepare-heightmaps.cjs --external accepts real .r16 drop-ins",
+    "Architecture kit is procedurally authored photogrammetry-style geometry, not scanned assets; sources and licenses are in assets/ART-CREDITS.md",
+    "witness-depth.js is an evidence catalog, so water depth comes from the carved bed-height texture instead",
+    "Flora culling is per-chunk bounding-sphere frustum culling on InstancedMesh, not compute-shader indirect GPU culling",
+    "Headless browser verification on the laptop GPU; no human playtest, FPS certification or art acceptance",
+    "G3 visual review must be repeated against the upgraded look before art acceptance"
+  ]
+}

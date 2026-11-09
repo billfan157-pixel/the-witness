@@ -1,5 +1,25 @@
 # Art sources
 
+## World upgrade 2026-11-10 (environment & world building)
+
+- `terrain/heightmaps/{galilee,jerusalem,caesarea}.{r16,png}` are project-authored
+  16-bit heightmaps [H]: gradient-noise macro shape plus droplet hydraulic
+  erosion and thermal talus weathering, simulated by
+  `tools/prepare-heightmaps.cjs` (the same simulation class Gaea/World Machine
+  run). They are not exports from those applications; real 16-bit RAW exports
+  can replace them via `--external`. Parameters and seeds: `terrain/heightmaps/sources.json`.
+- `environment-kit/arch/*.glb` modular ashlar wall and Roman column modules are
+  project-authored geometry [H] from `witness-modular-kit.js`, exported by
+  `tools/environment-kit/build-arch-kit.mjs` with Meshopt geometry compression
+  and KTX2/Basis Universal textures (ETC1S albedo/ORM, UASTC normal). Limestone
+  PBR maps derive from the CC0 Poly Haven study listed below. Vertex colour
+  channels carry a weathering mask (R cavity dirt, G arris wear, B moisture/moss),
+  not a baked albedo tint.
+- Water, terrain POM and flora wind shaders are project-authored GLSL [H] in
+  `vendor/adventure-visuals.js`, `vendor/witness-graphics.js` and
+  `witness-ambience.js`; the planar-reflection matrix math follows the Three.js
+  Reflector example (MIT, `THREE-LICENSE.txt`).
+
 ## Environment kit pipeline sample
 
 `environment-kit/cae/ENV_CAE_Wall_Ashlar_4m_A_LOD0.glb` is project-authored
@@ -70,6 +90,17 @@ near-lossless WebP in `architecture/full/` and `architecture/lite/`. Source
 URLs, MD5/SHA256, dimensions and per-slot interpretation limits are recorded in
 `architecture/sources.json`. Rebuild with
 `node tools/environment-kit/prepare-house-materials.mjs` (sharp required).
+
+## Q01 scene composition
+
+`witness-q01.js` authors the west-store finish, world-scaled/rounded geometry,
+chipped-plaster edge, amphorae, clay oil lamps, cordage, cargo joinery,
+terrain-following inlays and olive-tree geometry. These are project-authored
+interpretations [H]. The PBR maps use the CC0 comparison surfaces documented
+above; no archaeological or museum photograph is included as a texture.
+The fictional Titus work outfit, pouch and material variation use the
+existing CC0 human topology/rig. Historical comparisons and their limits
+are recorded in `docs/environment-kit/research/q01-gold-materials.md`.
 
 ## Characters
 

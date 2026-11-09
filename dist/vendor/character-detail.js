@@ -89,10 +89,55 @@
         sssLutPixels[offset + 3] = 255;
       }
     }
+    // High-frequency tileable pore micro-normal. A wrapped jittered grid of
+    // sub-millimetre dimples plus fine grain reads as real skin when the camera
+    // pushes in close, where the broad 256px normal map alone goes smooth.
+    const microSize = 256, microHeight = new Float32Array(microSize * microSize);
+    const cell = 8, cells = microSize / cell;
+    const wrapDelta = (a, b) => { const d = Math.abs(a - b); return Math.min(d, microSize - d); };
+    for (let y = 0; y < microSize; y++) for (let x = 0; x < microSize; x++) {
+      const gx = Math.floor(x / cell), gy = Math.floor(y / cell);
+      let dimple = 0;
+      for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) {
+        const cx = (gx + ox + cells) % cells, cy = (gy + oy + cells) % cells;
+        const px = (cx + .5 + (noise(cx, cy) - .5) * .8) * cell;
+        const py = (cy + .5 + (noise(cx + 91, cy + 17) - .5) * .8) * cell;
+        const dist = Math.hypot(wrapDelta(x, px), wrapDelta(y, py));
+        const radius = .9 + noise(cx + 7, cy + 3) * 1.5;
+        dimple -= bell(dist / radius, 1) * (.5 + noise(cx + 31, cy + 53) * .5);
+      }
+      const grain = (noise(x * 3.1, y * 2.7) - .5) * .18 + (noise(x * 7.3, y * 6.1) - .5) * .08;
+      microHeight[y * microSize + x] = dimple * .5 + grain;
+    }
+    const microPixels = new Uint8Array(microSize * microSize * 4);
+    for (let y = 0; y < microSize; y++) for (let x = 0; x < microSize; x++) {
+      const offset = (y * microSize + x) * 4;
+      const dx = microHeight[y * microSize + (x + 1) % microSize] - microHeight[y * microSize + (x + microSize - 1) % microSize];
+      const dy = microHeight[((y + 1) % microSize) * microSize + x] - microHeight[((y + microSize - 1) % microSize) * microSize + x];
+      const length = Math.hypot(dx * 2.4, dy * 2.4, 1);
+      microPixels.set([128 - dx * 2.4 / length * 127, 128 - dy * 2.4 / length * 127, 128 + 127 / length, 255], offset);
+    }
+    // Woven fuzz micro-normal for cloth sheen: short fibre fuzz standing off the
+    // weave, tileable, used to break the specular rim of wool/linen mantles.
+    const fuzzSize = 128, fuzzHeight = new Float32Array(fuzzSize * fuzzSize);
+    for (let y = 0; y < fuzzSize; y++) for (let x = 0; x < fuzzSize; x++) {
+      const fibre = Math.sin(x * 1.7 + noise(x >> 2, y >> 2) * 6.28) * .5 + Math.sin(y * 2.3 + x * .4) * .3;
+      fuzzHeight[y * fuzzSize + x] = fibre * .3 + (noise(x * 5.1, y * 5.7) - .5) * .5;
+    }
+    const fuzzPixels = new Uint8Array(fuzzSize * fuzzSize * 4);
+    for (let y = 0; y < fuzzSize; y++) for (let x = 0; x < fuzzSize; x++) {
+      const offset = (y * fuzzSize + x) * 4;
+      const dx = fuzzHeight[y * fuzzSize + (x + 1) % fuzzSize] - fuzzHeight[y * fuzzSize + (x + fuzzSize - 1) % fuzzSize];
+      const dy = fuzzHeight[((y + 1) % fuzzSize) * fuzzSize + x] - fuzzHeight[((y + fuzzSize - 1) % fuzzSize) * fuzzSize + x];
+      const length = Math.hypot(dx * 1.8, dy * 1.8, 1);
+      fuzzPixels.set([128 - dx * 1.8 / length * 127, 128 - dy * 1.8 / length * 127, 128 + 127 / length, 255], offset);
+    }
     const result = {
       skinNormal: texture(T, normalPixels, size, size, true),
       skinRoughness: texture(T, roughPixels, size, size, true),
       skinSssLut: texture(T, sssLutPixels, lutSize, lutSize, false),
+      skinMicroNormal: texture(T, microPixels, microSize, microSize, true),
+      fuzzNormal: texture(T, fuzzPixels, fuzzSize, fuzzSize, true),
       hair: texture(T, pixels, width, height),
       hairline: texture(T, hairlinePixels, 128, 128)
     };
@@ -143,31 +188,54 @@
   }
 
   function skin(T, part, look, landmarks, mouth) {
-    const shared = maps(T), eyeY = landmarks["joint-l-eye"][1];
-    const uv = [];
+    const shared = maps(T), eye = landmarks["joint-l-eye"], eyeY = eye[1], eyeX = Math.abs(eye[0]);
+    const uv = [], thickness = [];
     const p = part.attributes.position;
+    // Baked Thickness / Translucency Map: thin anatomy (ear helix, nose tip,
+    // nostril wings, lips, eyelids, fingers) transmits Middle-Eastern sunlight;
+    // thick torso/limb skin stays opaque. Stored per-vertex so it survives the
+    // planar UV overlap on the body and reads correctly at any camera distance.
     for (let i = 0; i < p.count; i++) {
-      // Planar face projection keeps pores continuous through the eyelids/lips.
-      uv.push(p.getX(i) * 32 + p.getZ(i) * 12, p.getY(i) * 32);
+      const x = p.getX(i), y = p.getY(i), z = p.getZ(i), side = Math.abs(x);
+      uv.push(x * 32 + z * 12, y * 32);
+      let thin = .05;
+      const ear = bell((side - .076) / .017, 1) * bell((y - eyeY + .004) / .030, 1) * (1 - clamp((z - .01) / .05));
+      const noseTip = bell(x / .019, 1) * bell((y - eyeY + .036) / .016, 1) * clamp((z - .085) / .03);
+      const nostril = bell((side - .0165) / .006, 1) * bell((y - eyeY + .0435) / .006, 1) * clamp((z - .08) / .03);
+      const lip = bell((y - mouth[1]) / .0075, 1) * (1 - clamp((side - .018) / .018)) * clamp((z - .08) / .03);
+      const lid = bell((side - eyeX) / .014, 1) * bell((y - eyeY) / .012, 1) * clamp((z - .05) / .04);
+      const hand = clamp((eyeY - .52 - y) / .18) * clamp((side - .15) / .07);
+      const finger = hand * bell((y - (eyeY - .78)) / .07, 1);
+      thin = Math.max(thin, ear * .80, noseTip * .40, nostril * .46, lip * .30, lid * .10, hand * .38, finger * .62);
+      thickness.push(clamp(thin, 0, 1));
     }
     part.setAttribute("uv", new T.Float32BufferAttribute(uv, 2));
+    part.setAttribute("skinThickness", new T.Float32BufferAttribute(thickness, 1));
     const material = new T.MeshPhysicalMaterial({
-      vertexColors: true, roughness: .68, metalness: 0,
-      normalMap: shared.skinNormal, normalScale: new T.Vector2(.18, .18),
+      vertexColors: true, roughness: .66, metalness: 0,
+      normalMap: shared.skinNormal, normalScale: new T.Vector2(.16, .16),
       roughnessMap: shared.skinRoughness,
-      ior: 1.4, clearcoat: .035, clearcoatRoughness: .48
+      ior: 1.4, clearcoat: .045, clearcoatRoughness: .42,
+      sheen: .12, sheenColor: new T.Color("#ffcdb2"), sheenRoughness: .8
     });
-    material.name = "skin-pore-normal-zone-roughness-sss";
-    material.userData.subsurface = "preintegrated-skin-sss-lut-diffusion";
-    material.customProgramCacheKey = () => "character-skin-aaa-v1";
+    material.name = "skin-sss-thickness-micropore";
+    material.userData.subsurface = "preintegrated-skin-sss-lut+thickness-translucency+micro-normal";
+    material.customProgramCacheKey = () => "character-skin-aaa-v2";
     material.onBeforeCompile = shader => {
       shader.uniforms.uEyeY = { value: eyeY };
+      shader.uniforms.uEyeX = { value: eyeX };
       shader.uniforms.uMouth = { value: new T.Vector3(...mouth) };
       shader.uniforms.uAge = { value: look.age };
       shader.uniforms.uSkinSssLut = { value: shared.skinSssLut };
-      const declarations = "\nvarying vec3 vSkinPoint;\nuniform float uEyeY, uAge;\nuniform vec3 uMouth;\nuniform sampler2D uSkinSssLut;\n";
-      shader.vertexShader = shader.vertexShader.replace("#include <common>", "#include <common>\nvarying vec3 vSkinPoint;")
-        .replace("#include <begin_vertex>", "#include <begin_vertex>\nvSkinPoint = position;");
+      shader.uniforms.uSkinMicroNormal = { value: shared.skinMicroNormal };
+      shader.uniforms.uMicroRepeat = { value: 5.0 };
+      shader.uniforms.uMicroStrength = { value: .34 };
+      shader.uniforms.uTransColor = { value: new T.Color("#b05136").convertSRGBToLinear() };
+      shader.uniforms.uSssStrength = { value: .34 };
+      const declarations = "\nvarying vec3 vSkinPoint;\nvarying vec2 vSkinUv;\nvarying float vSkinThickness;\nuniform float uEyeY, uEyeX, uAge, uMicroRepeat, uMicroStrength, uSssStrength;\nuniform vec3 uMouth, uTransColor;\nuniform sampler2D uSkinSssLut, uSkinMicroNormal;\n";
+      shader.vertexShader = shader.vertexShader
+        .replace("#include <common>", "#include <common>\nattribute float skinThickness;\nvarying vec3 vSkinPoint;\nvarying vec2 vSkinUv;\nvarying float vSkinThickness;")
+        .replace("#include <begin_vertex>", "#include <begin_vertex>\nvSkinPoint = position;\nvSkinUv = uv;\nvSkinThickness = skinThickness;");
       shader.fragmentShader = shader.fragmentShader.replace("#include <common>", "#include <common>" + declarations)
         .replace("#include <normal_fragment_maps>", `#include <normal_fragment_maps>
           float foreheadMask = exp(-pow((vSkinPoint.y - uEyeY - .055) / .027, 2.)) * (1. - smoothstep(.040, .068, abs(vSkinPoint.x))) * smoothstep(.08, .13, vSkinPoint.z);
@@ -178,38 +246,45 @@
           float determinant = dot(dpdx, r1);
           vec3 gradient = sign(determinant) * (dFdx(creaseHeight) * r1 + dFdy(creaseHeight) * r2);
           normal = normalize(abs(determinant) * normal - gradient);
+          // High-frequency pore micro-normal in an isotropic tangent frame.
+          vec3 microN = texture2D(uSkinMicroNormal, vSkinUv * uMicroRepeat).xyz * 2.0 - 1.0;
+          vec3 microT = normalize(cross(dpdy, normal) + vec3(1e-6));
+          vec3 microB = cross(normal, microT);
+          float poreZone = smoothstep(.02, .09, vSkinPoint.z) * (1.0 - smoothstep(.055, .085, abs(vSkinPoint.x)));
+          normal = normalize(normal + (microN.x * microT + microN.y * microB) * uMicroStrength * (.35 + poreZone * .65));
         `)
         .replace("#include <roughnessmap_fragment>", `#include <roughnessmap_fragment>
           float frontSkin = smoothstep(.07, .12, vSkinPoint.z);
           float skinLip = exp(-pow((vSkinPoint.y - uMouth.y) / .007, 2.)) * (1. - smoothstep(.020, .035, abs(vSkinPoint.x))) * frontSkin;
           float skinTzone = exp(-pow(vSkinPoint.x / .021, 2.)) * exp(-pow((vSkinPoint.y - uEyeY + .010) / .042, 2.)) * frontSkin;
-          roughnessFactor = clamp(roughnessFactor - skinTzone * .09 - skinLip * .15 + uAge * .025, .3, .82);
+          roughnessFactor = clamp(roughnessFactor - skinTzone * .10 - skinLip * .16 + uAge * .025, .28, .82);
         `)
         .replace("#include <lights_physical_pars_fragment>", `#include <lights_physical_pars_fragment>
           void RE_SkinScattering(const in IncidentLight light, const in vec3 N, const in vec3 V, inout ReflectedLight reflected) {
-            float ear = smoothstep(.065, .086, abs(vSkinPoint.x)) * exp(-pow((vSkinPoint.y - uEyeY + .006) / .043, 2.));
+            float ear = smoothstep(.064, .086, abs(vSkinPoint.x)) * exp(-pow((vSkinPoint.y - uEyeY + .006) / .043, 2.));
             float nose = exp(-pow(vSkinPoint.x / .020, 2.)) * exp(-pow((vSkinPoint.y - uEyeY + .034) / .020, 2.));
             float lips = exp(-pow((vSkinPoint.y - uMouth.y) / .008, 2.)) * (1. - smoothstep(.018, .036, abs(vSkinPoint.x)));
-            float thickness = .025 + ear * .35 + nose * .14 + lips * .08;
+            // Baked thickness map drives translucency; procedural masks add helix detail.
+            float thickness = clamp(vSkinThickness + ear * .18 + nose * .06, 0.0, 1.0);
 
-            // Curvature estimation from geometric normal derivatives and anatomical landmarks
-            vec3 dNdx = dFdx(N);
-            vec3 dNdy = dFdy(N);
+            vec3 dNdx = dFdx(N), dNdy = dFdy(N);
             float geomCurv = clamp(length(dNdx) + length(dNdy), 0.08, 0.85);
             float anatCurv = clamp(geomCurv + ear * 0.45 + nose * 0.35 + lips * 0.25, 0.05, 0.95);
 
-            // 1. Pre-Integrated Forward Scattering (Penner skin SSS LUT)
+            // 1. Pre-Integrated forward scattering (Penner / GPU Pro 2 skin LUT).
             float NdotL = dot(N, light.direction);
             vec2 lutUv = vec2(clamp(NdotL * 0.5 + 0.5, 0.005, 0.995), anatCurv);
             vec3 sssProfile = texture2D(uSkinSssLut, lutUv).rgb;
-            reflected.directDiffuse += light.color * sssProfile * 0.45;
+            vec3 scatterAlbedo = mix(vec3(1.0), uTransColor * 1.6 + 0.35, thickness * 0.5);
+            reflected.directDiffuse += light.color * sssProfile * scatterAlbedo * uSssStrength * (0.35 + thickness * 0.5);
 
-            // 2. Translucency / Back-scattering (Light through ears and nostrils)
-            vec3 transLight = normalize(light.direction + N * 0.32);
-            float backDot = clamp(dot(-V, transLight), 0.0, 1.0);
-            float backScatter = pow(backDot, 3.8) * thickness;
-            vec3 bloodTone = vec3(0.85, 0.22, 0.075);
-            reflected.directDiffuse += light.color * bloodTone * backScatter * 2.1;
+            // 2. Translucency back-scatter (Frostbite / DICE): sunlight through
+            //    ears, nose tip and fingers, tinted by blood perfusion.
+            vec3 transLight = normalize(light.direction + N * 0.38);
+            float transDot = pow(clamp(dot(V, -transLight), 0.0, 1.0), 3.6) * 1.1;
+            float transAmbient = 0.08;
+            vec3 trans = (transDot + transAmbient) * thickness * uTransColor;
+            reflected.directDiffuse += light.color * trans * 0.9;
           }
         `);
       const direct = "RE_Direct( directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );";
@@ -228,13 +303,13 @@
     });
     const material = new T.MeshPhysicalMaterial({
       color: hairColor, map: maps(T).hair, vertexColors: true,
-      roughness: .59, metalness: 0, side: T.DoubleSide,
-      alphaTest: .015, transparent: true, depthWrite: false, forceSinglePass: true,
+      roughness: .55, metalness: 0, side: T.DoubleSide,
+      alphaTest: .05, alphaToCoverage: true, transparent: false, depthWrite: true, forceSinglePass: true,
       sheen: .42, sheenColor: hairColor.clone().lerp(new T.Color("#b7a28a"), .24), sheenRoughness: .62
     });
-    material.name = "groom-cards-fibre-atlas";
+    material.name = "groom-cards-fibre-atlas-a2c-aniso";
     const sway = config.sway || { value: new T.Vector2() }, jawOpen = { value: 0 };
-    function batch() { return { p: [], uv: [], colors: [], indices: [] }; }
+    function batch() { return { p: [], uv: [], colors: [], indices: [], t: [] }; }
     const fixed = batch(), flowing = batch(), beard = batch(), fibres = batch();
     let cardIndex = 0;
     function fibre(points, radius, shade) {
@@ -258,10 +333,12 @@
       const across = new T.Vector3(...direction).normalize();
       for (let i = 0; i <= steps; i++) {
         const t = i / steps, center = curve.getPoint(t);
+        const tangent = curve.getTangent(t);
         const taper = .75 + Math.sin(t * Math.PI) * .25 - Math.pow(t, 5) * .62;
         for (const side of [-1, 1]) {
           const point = center.clone().addScaledVector(across, side * width * taper * .5);
           target.p.push(...point.toArray());
+          target.t.push(tangent.x, tangent.y, tangent.z);
           // Atlas rows are authored root first; DataTexture flipY stays false.
           target.uv.push((tile + (side + 1) * .5) / 4, t);
           const rootShade = .76, tipShade = 1.12;
@@ -351,7 +428,7 @@
     }
     if (look.gender !== "female" && look.beard > .012) {
       const length = look.beard;
-      for (let i = 0; i < 360; i++) {
+      for (let i = 0; i < 520; i++) {
         const u = noise(i, 40) * 2 - 1, v = noise(i, 41), side = Math.abs(u);
         const x = u * .071;
         const top = mouth[1] - .010 + side * .040 + Math.sin(u * 17) * .003;
@@ -364,7 +441,7 @@
         const tipZ = Math.max(z, faceDepth(x + outward, tipY) + .0014);
         card(beard, [[x, y, z], [x + outward * .4, midY, midZ],
           [x + outward, tipY, tipZ]],
-        .005 + noise(i, 44) * .005, .85 + noise(i, 45) * .32, [1, side * .25, -u * .7]);
+        .007 + noise(i, 44) * .006, .85 + noise(i, 45) * .32, [1, side * .25, -u * .7]);
         fibre([[x, y, z + .0014], [x + outward * .4, midY, midZ + .0015],
           [x + outward, tipY, tipZ + .001]], .00018 + noise(i, 49) * .00014, .85 + noise(i, 50) * .5);
       }
@@ -380,35 +457,71 @@
         fibre([[x, y, z + .001], [x * 1.13, y - .0028, z + .0017], [x * 1.25, y - .0065, z + .001]], .00019, 1.0);
       }
     }
+    const specTint2 = hairColor.clone().lerp(new T.Color("#ffffff"), .35).convertSRGBToLinear();
+    function swayGLSL(moving) {
+      return moving ? `float dropWeight = 1. - smoothstep(${(eye[1] - .13).toFixed(4)}, ${(eye[1] + .04).toFixed(4)}, position.y);
+        transformed.x += uHairSway.x * dropWeight; transformed.z += uHairSway.y * dropWeight;`
+        : `float jawWeight = 1. - smoothstep(${(mouth[1] - .018).toFixed(4)}, ${(mouth[1] + .006).toFixed(4)}, position.y);
+        transformed.y -= uJawOpen * .012 * jawWeight; transformed.z -= uJawOpen * .004 * jawWeight;`;
+    }
+    // Kajiya-Kay / Marschner anisotropic fibre specular: a sharp tip-ward primary
+    // lobe plus a broader coloured secondary lobe, aligned to the card tangent.
+    function hairShader(mat, moving, jaw) {
+      mat.customProgramCacheKey = () => "hair-aaa-v1-" + (moving ? "sway" : jaw ? "jaw" : "static");
+      mat.onBeforeCompile = shader => {
+        shader.uniforms.uHairSway = sway; shader.uniforms.uJawOpen = jawOpen;
+        shader.uniforms.uSpecPower1 = { value: 40 }; shader.uniforms.uSpecPower2 = { value: 14 };
+        shader.uniforms.uShift2 = { value: .10 }; shader.uniforms.uSpecStrength = { value: .20 };
+        shader.uniforms.uSpecTint1 = { value: hairColor.clone().lerp(new T.Color("#ffffff"), .6).convertSRGBToLinear() };
+        shader.uniforms.uSpecTint2 = { value: specTint2 };
+        shader.vertexShader = shader.vertexShader
+          .replace("#include <common>", "#include <common>\nattribute vec3 hairTangent;\nvarying vec3 vHairTangent;\nuniform vec2 uHairSway; uniform float uJawOpen;")
+          .replace("#include <begin_vertex>", `#include <begin_vertex>
+            vHairTangent = normalize(normalMatrix * hairTangent);
+            ${(moving || jaw) ? swayGLSL(moving) : ""}`);
+        shader.fragmentShader = shader.fragmentShader
+          .replace("#include <common>", "#include <common>\nvarying vec3 vHairTangent;\nuniform float uSpecPower1, uSpecPower2, uShift2, uSpecStrength;\nuniform vec3 uSpecTint1, uSpecTint2;")
+          .replace("#include <lights_physical_pars_fragment>", `#include <lights_physical_pars_fragment>
+            void RE_HairAniso(const in IncidentLight light, const in vec3 N, const in vec3 V, inout ReflectedLight reflected) {
+              vec3 T = normalize(vHairTangent);
+              vec3 H = normalize(light.direction + V);
+              float dotTH = dot(T, H);
+              float sinTH = sqrt(max(0.0, 1.0 - dotTH * dotTH));
+              float primary = pow(sinTH, uSpecPower1);
+              float secondary = pow(clamp(sinTH - uShift2, 0.0, 1.0), uSpecPower2);
+              reflected.directSpecular += light.color * (primary * uSpecTint1 + secondary * uSpecTint2) * uSpecStrength;
+            }`);
+        const direct = "RE_Direct( directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );";
+        shader.fragmentShader = shader.fragmentShader.replace("#include <lights_fragment_begin>",
+          T.ShaderChunk.lights_fragment_begin.split(direct).join(direct + "\nRE_HairAniso(directLight, geometryNormal, geometryViewDir, reflectedLight);"));
+      };
+    }
+    function depthShader(mat, moving) {
+      mat.customProgramCacheKey = () => "hair-depth-" + (moving ? "sway" : "jaw");
+      mat.onBeforeCompile = shader => {
+        shader.uniforms.uHairSway = sway; shader.uniforms.uJawOpen = jawOpen;
+        shader.vertexShader = shader.vertexShader
+          .replace("#include <common>", "#include <common>\nuniform vec2 uHairSway; uniform float uJawOpen;")
+          .replace("#include <begin_vertex>", "#include <begin_vertex>\n" + swayGLSL(moving));
+      };
+    }
     function mesh(target, name, moving = false) {
       if (!target.p.length) return;
       const geometry = new T.BufferGeometry();
       geometry.setAttribute("position", new T.Float32BufferAttribute(target.p, 3));
       geometry.setAttribute("uv", new T.Float32BufferAttribute(target.uv, 2));
       geometry.setAttribute("color", new T.Float32BufferAttribute(target.colors, 3));
+      if (target.t.length) geometry.setAttribute("hairTangent", new T.Float32BufferAttribute(target.t, 3));
       geometry.setIndex(target.indices); geometry.computeVertexNormals();
-      const finish = moving || name === "beard-hair-cards" ? material.clone() : material;
-      if (moving || name === "beard-hair-cards") {
-        finish.customProgramCacheKey = () => "character-groom-" + (moving ? "sway" : "jaw");
-        finish.onBeforeCompile = shader => {
-          shader.uniforms.uHairSway = sway; shader.uniforms.uJawOpen = jawOpen;
-          shader.vertexShader = shader.vertexShader.replace("#include <common>", "#include <common>\nuniform vec2 uHairSway; uniform float uJawOpen;")
-            .replace("#include <begin_vertex>", `#include <begin_vertex>
-              ${moving ? `float dropWeight = 1. - smoothstep(${(eye[1] - .13).toFixed(4)}, ${(eye[1] + .04).toFixed(4)}, position.y);
-                transformed.x += uHairSway.x * dropWeight; transformed.z += uHairSway.y * dropWeight;` : `float jawWeight = 1. - smoothstep(${(mouth[1] - .018).toFixed(4)}, ${(mouth[1] + .006).toFixed(4)}, position.y);
-                transformed.y -= uJawOpen * .012 * jawWeight; transformed.z -= uJawOpen * .004 * jawWeight;`}
-            `);
-        };
-      }
+      const jaw = name === "beard-hair-cards";
+      const finish = moving || jaw ? material.clone() : material;
+      hairShader(finish, moving, jaw);
       const object = skinned(geometry, finish, () => [["head", 1]]);
       object.name = name;
       object.renderOrder = 1;
       // The atlas casts the same cutout silhouette as the visible fibres.
       object.customDepthMaterial = new T.MeshDepthMaterial({ depthPacking: T.RGBADepthPacking, map: maps(T).hair, alphaTest: .23, side: T.DoubleSide });
-      if (moving || name === "beard-hair-cards") {
-        object.customDepthMaterial.onBeforeCompile = finish.onBeforeCompile;
-        object.customDepthMaterial.customProgramCacheKey = finish.customProgramCacheKey;
-      }
+      if (moving || jaw) depthShader(object.customDepthMaterial, moving);
       return object;
     }
     mesh(fixed, "groomed-hair-cards");

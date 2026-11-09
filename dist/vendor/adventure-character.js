@@ -454,10 +454,9 @@
     const material = (color, kind, vertexColors = true) => AdventureVisuals.surface(new T.MeshStandardMaterial({
       color, side: T.DoubleSide, roughness: 1, vertexColors,
       normalMap: textile(T, kind), roughnessMap: textileRoughness(T, kind),
-      normalScale: new T.Vector2(kind === "haircloth" ? .24 : .10, .10)
+      normalScale: new T.Vector2(kind === "haircloth" ? .18 : .045, .045)
     }), kind === "leather" ? "bark" : kind === "linen" ? "linen" : "wool", true);
     const mainCloth = material(palette[0], look.cloth);
-    const mantleCloth = material(palette[1], "wool");
     const trim = new T.MeshStandardMaterial({ color: palette[2], roughness: .94 });
     const leather = material("#594634", "leather", false);
     const cordMaterial = new T.MeshStandardMaterial({ color: "#a99776", roughness: 1 });
@@ -530,54 +529,75 @@
       return surface;
     }
 
+    const waistY = pelvisY + .06;
     const tunic = fabricSurface([
-      [hem, .270, .180], [hem + .018, .272, .182], [Math.max(hem + .06, .53), .242, .170], [.79, .218, .160],
-      [pelvisY + .035, .188, .148], [pelvisY + .105, .168, .139],
+      [waistY, .190, .150], [pelvisY + .105, .168, .139],
       [shoulderY - .18, .204, .145], [shoulderY + .025, .232, .150],
       [shoulderY + .075, .215, .143], [neckY - .028, .116, .110], [neckY - .006, .079, .102]
     ], 0, Math.PI * 2, 56, look.cloth === "haircloth" ? .105 : .075);
     const tunicMesh = skinned(tunic, mainCloth, torsoWeights);
-    tunicMesh.name = "woven-tunic";
-    // Finished hem: a stitched edge that follows the real folds of the cloth.
-    const hemStitch = [];
-    for (let index = 0; index <= 56; index++) {
-      const angle = index / 56 * Math.PI * 2;
-      const radius = foldRadius(hem, angle, look.cloth === "haircloth" ? .105 : .075);
-      hemStitch.push([Math.sin(angle) * .270 * radius,
-        hem + Math.sin(angle * 3 + .6) * .009 + Math.sin(angle * 5 + 1.4) * .004 + .0016,
-        Math.cos(angle) * .180 * radius]);
-    }
-    thread(hemStitch, .0024, trim, "tunic-hem-stitch");
+    tunicMesh.name = "woven-tunic-bodice";
     const mantleLength = look.headcover === "veil" ? 1.05 : look.cloak === "shoulder" ? .93 : .69;
+    const clothLayers = [];
+    let mantleSim = null;
+    // Tunic skirt: an independent simulated layer pinned at the waist ring so the
+    // hem swings with wind and stride instead of being skinned to the legs.
+    {
+      const cols = 48, rows = 14, rest = [], weaveUv = [], tones = [], indices = [], waistRing = [];
+      for (let r = 0; r < rows; r++) {
+        const t = r / (rows - 1);
+        const y = T.MathUtils.lerp(waistY, hem, t);
+        const width = T.MathUtils.lerp(.190, .300, t), depth = T.MathUtils.lerp(.150, .200, t);
+        for (let c = 0; c < cols; c++) {
+          const angle = c / cols * Math.PI * 2;
+          const radius = foldRadius(y, angle, look.cloth === "haircloth" ? .105 : .075);
+          const x = Math.sin(angle) * width * radius, z = Math.cos(angle) * depth * radius;
+          rest.push(x, y, z);
+          if (r === 0) waistRing.push(x, y, z);
+          weaveUv.push(c / cols * 6, t * 4);
+          const tone = .97 - (r > rows - 3 ? .06 : 0) + .03 * Math.cos(angle * 13 + y * 2);
+          tones.push(tone, tone * .99, tone * .96);
+          if (r && c) { const a = r * cols + c, b = a - cols; indices.push(a, b, a - 1, a - 1, b, b - 1); }
+        }
+      }
+      const skirt = CharacterCloth.create(T, {
+        cols, rows, rest: new Float32Array(rest), weaveUv: new Float32Array(weaveUv),
+        tones: new Float32Array(tones), indices, wrapX: true, pinRow: 0,
+        color: palette[0], name: "cloth-tunic-skirt", fuzzRepeat: 8
+      });
+      skirt.mesh.userData.restPin = new Float32Array(waistRing);
+      skirt.mesh.userData.pinBone = "pelvis";
+      skirt.mesh.userData.shape = 55;
+      root.add(skirt.mesh);
+      clothLayers.push(skirt);
+    }
     if (look.cloak !== "none") {
       const drape = CharacterDetail.mantle(T, { shoulderY, pelvisY, length: mantleLength, look });
-      const mantleMesh = skinned(drape.geometry, mantleCloth, torsoWeights);
-      mantleMesh.name = "rectangular-wool-mantle";
-        for (let i = 0; i < drape.edges.length; i++) thread(drape.edges[i], .0013, mantleCloth, "mantle-selvedge-" + i);
-    }
-    if (look.cloak !== "none") {
-      // An authentic Levantine draped himation fold with soft gravity sag,
-      // layered roll edges and natural cloth thickness.
-      const vertices = [], indices = [], tones = [], uv = [];
-      for (let row = 0; row <= 20; row++) for (let column = 0; column <= 40; column++) {
-        const u = column / 40, v = row / 20;
-        const angle = -1.18 + u * 2.45;
-        const top = pelvisY + .23 + u * (shoulderY - pelvisY - .20);
-        const y = top - v * .235 - Math.sin(u * Math.PI) * .055 * (1 - v * .45);
-        const sag = Math.sin(u * Math.PI) * .049;
-        const drapeWave = Math.sin(v * Math.PI * 3.3 + u * 1.4) * .0055 * Math.sin(u * Math.PI) + Math.cos(v * Math.PI * 5.2 - u * 1.9) * .0020;
-        const edgeRoll = Math.sin(v * Math.PI) ** 0.45;
-        const fold = (drapeWave + sag * (1 - v * .35)) * edgeRoll;
-        vertices.push(Math.sin(angle) * (.212 + fold), y,
-          Math.cos(angle) * (.172 + fold) + .012);
-        const shade = .97 + Math.sin(v * 6 + u * 2) * .012;
-        tones.push(shade, shade * .99, shade * .96);
-        uv.push(u, v * .6);
-        if (row && column) { const a = row * 41 + column, b = a - 41; indices.push(a, b, a - 1, a - 1, b, b - 1); }
+      const mcols = 41, mrows = 29;
+      const src = drape.geometry.attributes.position.array;
+      const rest = new Float32Array(src);
+      const weaveUv = new Float32Array(mcols * mrows * 2), tones = new Float32Array(mcols * mrows * 3), indices = [];
+      const shoulderRing = [];
+      for (let r = 0; r < mrows; r++) for (let c = 0; c < mcols; c++) {
+        const i = r * mcols + c;
+        weaveUv[i * 2] = c / (mcols - 1) * 5; weaveUv[i * 2 + 1] = r / (mrows - 1) * 6;
+        const tone = .97 - (r > mrows - 3 ? .06 : 0);
+        tones[i * 3] = tone; tones[i * 3 + 1] = tone * .99; tones[i * 3 + 2] = tone * .96;
+        if (r === 0) shoulderRing.push(src[i * 3], src[i * 3 + 1], src[i * 3 + 2]);
+        if (r && c) { const a = i, b = i - mcols; indices.push(a, b, a - 1, a - 1, b, b - 1); }
       }
-      const front = geometry(T, vertices, indices, tones);
-      front.setAttribute("uv", new T.Float32BufferAttribute(uv, 2));
-      skinned(front, mantleCloth, torsoWeights).name = "mantle-fold-over-shoulder";
+      drape.geometry.dispose();
+      const mantle = CharacterCloth.create(T, {
+        cols: mcols, rows: mrows, rest, weaveUv, tones, indices, wrapX: false, pinRow: 0,
+        color: palette[1], name: "cloth-wool-mantle", fuzzRepeat: 6, backend: "cpu"
+      });
+      mantle.mesh.userData.restPin = new Float32Array(shoulderRing);
+      mantle.mesh.userData.pinBone = "spine_03";
+      mantle.mesh.userData.cols = mcols; mantle.mesh.userData.rows = mrows;
+      mantle.mesh.userData.shape = 22;
+      root.add(mantle.mesh);
+      clothLayers.push(mantle);
+      mantleSim = mantle;
     }
     const clothTime = { value: 0 }, clothPace = { value: 0 };
     const hairDynamics = CharacterDetail.spring(T, 72, 12);
@@ -587,7 +607,7 @@
     const elbowL = new T.Vector3(...joint("lowerarm_l"));
     const elbowR = new T.Vector3(...joint("lowerarm_r"));
     const elbowBend = { value: new T.Vector2() };
-    for (const [fabric, floor, top, scale] of [[mainCloth, hem, pelvisY, .007], [mantleCloth, shoulderY - mantleLength, shoulderY, .013]]) {
+    for (const [fabric, floor, top, scale] of [[mainCloth, hem, pelvisY, .007]]) {
       const before = fabric.onBeforeCompile;
       const key = fabric.customProgramCacheKey();
       fabric.customProgramCacheKey = () => key + "-drape-" + floor.toFixed(3) + "-" + top.toFixed(3);
@@ -712,10 +732,15 @@
       const linen = material("#d3c6aa", "linen", false);
       skinned(towel, linen, torsoWeights).name = "footwashing-linen-towel";
     }
-    // Levantine & Jewish corner fringes (tzitzit) according to Numbers 15:37-41 & Deuteronomy 22:12
+    // Levantine & Jewish corner fringes (tzitzit) according to Numbers 15:37-41 & Deuteronomy 22:12.
+    // They ride the simulated mantle hem so they never detach from the cloth.
     const devoutFringes = ["jesus", "jesus-supper", "peter", "andrew", "philip", "scholar", "isaiah", "nathan", "david", "cleopas", "beloved", "shepherd"].includes(identity) || look.tzitzit;
-    if (devoutFringes && look.cloak !== "none") {
+    const fringes = [];
+    if (devoutFringes && look.cloak !== "none" && mantleSim) {
+      const mc = mantleSim.mesh.userData.cols, mr = mantleSim.mesh.userData.rows;
       for (const side of [-1, 1]) for (const frontBack of [1, -1]) {
+        const col = side > 0 ? (frontBack > 0 ? 0 : Math.floor(mc / 3)) : (frontBack > 0 ? Math.floor(2 * mc / 3) : mc - 1);
+        const corner = (mr - 1) * mc + col;
         for (let cord = 0; cord < 3; cord++) {
           const x = side * (.165 + cord * .004);
           const y = shoulderY - mantleLength;
@@ -725,7 +750,8 @@
             [x + side * .002, y - .025, z + frontBack * .004],
             [x + side * .004, y - .075, z + frontBack * .002]
           ], .0018, cordMaterial, "garment-corner-fringe");
-          fringe.visible = look.cloak !== "none";
+          fringe.userData.corner = corner;
+          fringes.push(fringe);
         }
       }
     }
@@ -778,7 +804,7 @@
     const pupilMaterial = new T.MeshBasicMaterial({ color: "#060504" });
     const corneaMat = new T.MeshPhysicalMaterial({
       color: "#ffffff", transparent: true, opacity: .10, roughness: .025, metalness: 0, depthWrite: false,
-      clearcoat: 1.0, clearcoatRoughness: .015, reflectivity: .99
+      clearcoat: 1.0, clearcoatRoughness: .015, reflectivity: .99, ior: 1.376
     });
     const lashMaterial = new T.MeshStandardMaterial({ color: new T.Color(palette[4]).multiplyScalar(.55), roughness: .82 });
     const tearMat = new T.MeshPhysicalMaterial({
@@ -794,6 +820,36 @@
       sheen: .30, sheenColor: new T.Color("#ffd6bd"), sheenRoughness: .74
     });
     const GLOBE = .0134, LID = .0137;
+    // 3A eye shading: a baked upper-lid contact shadow falls onto the globe, and
+    // the iris is sampled with a view-dependent refraction parallax so it reads
+    // as a concave disc seated behind the refracting cornea (ior 1.376).
+    function eyeShading(mat, refract) {
+      mat.customProgramCacheKey = () => "eye-aaa-v1-" + (refract ? "iris" : "sclera");
+      mat.onBeforeCompile = shader => {
+        shader.uniforms.uLidShadow = { value: .5 };
+        shader.uniforms.uGlobeR = { value: GLOBE };
+        if (refract) shader.uniforms.uIrisRefract = { value: .05 };
+        shader.vertexShader = shader.vertexShader
+          .replace("#include <common>", "#include <common>\nvarying vec3 vEyeLocal;\nvarying vec2 vEyeUv;\nvarying vec3 vEyeView;")
+          .replace("#include <begin_vertex>", "#include <begin_vertex>\nvEyeLocal = position;\nvEyeUv = uv;\nvEyeView = -(modelViewMatrix * vec4(position, 1.0)).xyz;");
+        shader.fragmentShader = shader.fragmentShader
+          .replace("#include <common>", "#include <common>\nvarying vec3 vEyeLocal;\nvarying vec2 vEyeUv;\nvarying vec3 vEyeView;\nuniform float uLidShadow, uGlobeR;" + (refract ? "\nuniform float uIrisRefract;" : ""))
+          .replace("#include <map_fragment>", refract ? `
+            vec3 vDir = normalize(vEyeView);
+            vec2 tanView = vDir.xy / max(.25, abs(vDir.z));
+            vec2 iuv = clamp(vEyeUv - tanView * uIrisRefract, 0.0, 1.0);
+            diffuseColor *= texture2D(map, iuv);
+          ` : "#include <map_fragment>")
+          .replace("#include <color_fragment>", `#include <color_fragment>
+            float lidOcc = smoothstep(.10, .95, vEyeLocal.y / uGlobeR);
+            float cornerOcc = smoothstep(.55, 1.0, abs(vEyeLocal.x) / uGlobeR) * .3;
+            diffuseColor.rgb *= 1.0 - (lidOcc * uLidShadow + cornerOcc);
+          `);
+      };
+      return mat;
+    }
+    eyeShading(whites, false);
+    eyeShading(irisMaterial, true);
     // Eyelid shells: spherical caps framing the globe. Their rims lift at the
     // corners so the aperture closes into an almond instead of a round hole.
     function lidShell(radius, thetaStart, thetaLength, corner, segments = 28, rings = 7) {
@@ -927,14 +983,23 @@
     // be omitted once the character is a small figure in the landscape.
     const worldPoint = new T.Vector3(), cameraPoint = new T.Vector3();
     body.onBeforeRender = (renderer, scene, camera) => {
+      liveRenderer = renderer;
       worldPoint.setFromMatrixPosition(root.matrixWorld);
       camera.getWorldPosition(cameraPoint);
       eyeGroup.visible = cameraPoint.distanceToSquared(worldPoint) < 90.25;
+      clothActive = cameraPoint.distanceToSquared(worldPoint) < 144;
     };
 
     let previous = null, gait = 0, motion = 0, crouch = 0, gesture = 0, gaze = 0, gazeTarget = 0, seated = 0, armed = false;
     let previousYaw = 0;
     const phase = (seed % 1000) / 100;
+    // Two-bone (thigh->calf) rest lengths for the analytical foot IK.
+    const legL1 = new T.Vector3(...joint("calf_l")).distanceTo(new T.Vector3(...joint("thigh_l")));
+    const legL2 = new T.Vector3(...joint("foot_l")).distanceTo(new T.Vector3(...joint("calf_l")));
+    let liveRenderer = null;
+    let clothActive = true;
+    const clothWind = new T.Vector3(), clothInertia = new T.Vector3();
+    let prevRootX = 0, prevRootZ = 0, prevVelX = 0, prevVelZ = 0;
     function animate(time, pace = 0, heading, posture = "idle", progress = 0) {
       const speaking = posture === "talk" || posture === "seated-talk";
       const delta = previous === null ? 1 / 60 : Math.max(1 / 240, Math.min(.06, time - previous));
@@ -1009,10 +1074,22 @@
         const side = suffix === "l" ? 1 : -1;
         const swing = side * step;
         const footDiff = suffix === "l" ? dHL : dHR;
-        const ikFlex = Math.max(0, footDiff);
-        bone("thigh_" + suffix).rotation.x = swing * .48 - crouch * .25 - seated * 1.35 - ikFlex * 1.25;
-        bone("calf_" + suffix).rotation.x = Math.max(0, swing) * .70 + crouch * 1.88 + seated * 1.42 + ikFlex * 2.10;
-        bone("foot_" + suffix).rotation.x = -swing * .20 - Math.max(0, swing) * .12 - crouch * 1.2 - terrainPitch * .82;
+        // Analytical two-bone IK: place the ankle on the sampled terrain/stair
+        // height, then lock the foot's world pitch to the local slope.
+        const hipY = joint("thigh_" + suffix)[1] + (bone("pelvis").position.y - rest[jointIndex("pelvis")].y);
+        const targetY = joint("foot_" + suffix)[1] + footDiff + Math.max(0, swing) * .05;
+        const dy = Math.max(.05, hipY - targetY);
+        const dz = swing * .12;
+        const reach = T.MathUtils.clamp(Math.hypot(dy, dz), Math.abs(legL1 - legL2) + .002, legL1 + legL2 - .002);
+        const kneeInterior = Math.acos(T.MathUtils.clamp((legL1 * legL1 + legL2 * legL2 - reach * reach) / (2 * legL1 * legL2), -1, 1));
+        const calfBend = Math.PI - kneeInterior;
+        const hipAlpha = Math.acos(T.MathUtils.clamp((legL1 * legL1 + reach * reach - legL2 * legL2) / (2 * legL1 * reach), -1, 1));
+        const phi = Math.atan2(dz, dy);
+        const thighRot = -(phi + hipAlpha) - crouch * .25 - seated * 1.35;
+        const calfRot = calfBend + crouch * 1.88 + seated * 1.42;
+        bone("thigh_" + suffix).rotation.x = thighRot;
+        bone("calf_" + suffix).rotation.x = calfRot;
+        bone("foot_" + suffix).rotation.x = -terrainPitch * .82 - (thighRot + calfRot) * .55 - crouch * 1.2;
         bone("foot_" + suffix).rotation.z = (suffix === "l" ? 1 : -1) * terrainRoll * .35;
         bone("upperarm_" + suffix).rotation.x = -swing * .35 - crouch * .27;
         bone("upperarm_" + suffix).rotation.z = -side * (.025 + Math.abs(step) * .017);
@@ -1174,11 +1251,52 @@
       }
       for (const sandal of sandals) sandal.visible = posture !== "barefoot";
       if (personalItem) personalItem.visible = !armed && !combat && posture !== "cross";
+
+      // Drive the independent cloth layers (GPU compute / CPU Verlet) with wind,
+      // stride inertia, body capsules and the sampled ground/stair height.
+      if (clothLayers.length && clothActive) {
+        const yaw = root.rotation.y, cosH = Math.cos(yaw), sinH = Math.sin(yaw);
+        const gust = .7 + Math.sin(time * .7 + phase) * .35 + motion * .5;
+        const wx = (Math.sin(time * .43 + phase) * .5 + .9) * gust, wz = Math.cos(time * .31 + phase) * .5 * gust;
+        clothWind.set(wx * cosH + wz * sinH, 0, -wx * sinH + wz * cosH);
+        const velX = (root.position.x - prevRootX) / delta, velZ = (root.position.z - prevRootZ) / delta;
+        const accX = T.MathUtils.clamp((velX - prevVelX) / delta, -9, 9), accZ = T.MathUtils.clamp((velZ - prevVelZ) / delta, -9, 9);
+        prevRootX = root.position.x; prevRootZ = root.position.z; prevVelX = velX; prevVelZ = velZ;
+        clothInertia.set(-accX * .012 + step * motion * .12, 0, -accZ * .012 + Math.sin(gait) * motion * .2);
+        const pelvisDelta = bone("pelvis").position.y - rest[jointIndex("pelvis")].y;
+        const groundLocal = (typeof root.userData.heightAt === "function" ? root.userData.heightAt(root.position.x, root.position.z) : root.position.y) - root.position.y + .012;
+        const capsules = [
+          { a: [0, pelvisY + pelvisDelta, 0], b: [0, shoulderY + pelvisDelta, 0], r: .165 }
+        ];
+        for (const layer of clothLayers) {
+          const ud = layer.mesh.userData;
+          const cols = ud.restPin.length / 3;
+          if (!ud.pinBuf) ud.pinBuf = new Float32Array(ud.restPin.length);
+          const bDelta = bone(ud.pinBone).position.clone().sub(rest[jointIndex(ud.pinBone)]);
+          for (let c = 0; c < cols; c++) {
+            ud.pinBuf[c * 3] = ud.restPin[c * 3] + bDelta.x;
+            ud.pinBuf[c * 3 + 1] = ud.restPin[c * 3 + 1] + bDelta.y;
+            ud.pinBuf[c * 3 + 2] = ud.restPin[c * 3 + 2] + bDelta.z;
+          }
+          layer.update(delta, {
+            renderer: liveRenderer, time, wind: clothWind.toArray(), inertia: clothInertia.toArray(),
+            gravity: 9.8, capsules, groundY: groundLocal, pinTargets: ud.pinBuf, stiffness: .8, shape: ud.shape ?? 26
+          });
+        }
+        if (mantleSim) for (const fringe of fringes) {
+          const i = fringe.userData.corner * 3;
+          fringe.position.set(
+            mantleSim.positions[i] - mantleSim.rest[i],
+            mantleSim.positions[i + 1] - mantleSim.rest[i + 1],
+            mantleSim.positions[i + 2] - mantleSim.rest[i + 2]);
+        }
+      }
     }
     CharacterDetail.batchGarments(T, root, skeleton);
     animate(0, 0, 0);
     return {
       object: root, animate,
+      cloth: clothLayers,
       arm(enabled) { armed = enabled; practiceStaff.visible = enabled; },
       look(angle) { gazeTarget = Math.max(-.46, Math.min(.46, angle)); },
       profile: look,
@@ -1191,6 +1309,7 @@
         });
         geometries.forEach(item => item.dispose());
         materials.forEach(item => item.dispose());
+        for (const layer of clothLayers) layer.dispose();
         skeleton.dispose();
       }
     };

@@ -1,0 +1,307 @@
+{
+  "snapshots": [
+    {
+      "name": "status",
+      "claims": {
+        "altered": {
+          "status": "supported",
+          "cards": []
+        },
+        "author": {
+          "status": "",
+          "cards": []
+        },
+        "lot": {
+          "status": "",
+          "cards": []
+        }
+      },
+      "dom": [
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "fiber",
+          "checked": false,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"fiber\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"fiber\">Thớ giấy bị bóc</label>"
+        },
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "ink",
+          "checked": false,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"ink\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"ink\">Nét mực chồng</label>"
+        },
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "copy",
+          "checked": false,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"copy\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"copy\">Bản chép cùng trang</label>"
+        },
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "cloth",
+          "checked": false,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"cloth\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"cloth\">Vải bọc phổ biến</label>"
+        }
+      ]
+    },
+    {
+      "name": "fiber",
+      "claims": {
+        "altered": {
+          "status": "supported",
+          "cards": [
+            "fiber"
+          ]
+        },
+        "author": {
+          "status": "",
+          "cards": []
+        },
+        "lot": {
+          "status": "",
+          "cards": []
+        }
+      },
+      "dom": [
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "fiber",
+          "checked": true,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"fiber\" checked=\"\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"fiber\" checked=\"\">Thớ giấy bị bóc</label>"
+        },
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "ink",
+          "checked": false,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"ink\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"ink\">Nét mực chồng</label>"
+        },
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "copy",
+          "checked": false,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"copy\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"copy\">Bản chép cùng trang</label>"
+        },
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "cloth",
+          "checked": false,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"cloth\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"cloth\">Vải bọc phổ biến</label>"
+        }
+      ]
+    },
+    {
+      "name": "ink",
+      "claims": {
+        "altered": {
+          "status": "supported",
+          "cards": [
+            "fiber",
+            "ink"
+          ]
+        },
+        "author": {
+          "status": "",
+          "cards": []
+        },
+        "lot": {
+          "status": "",
+          "cards": []
+        }
+      },
+      "dom": [
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "fiber",
+          "checked": true,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"fiber\" checked=\"\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"fiber\" checked=\"\">Thớ giấy bị bóc</label>"
+        },
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "ink",
+          "checked": true,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"ink\" checked=\"\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"ink\" checked=\"\">Nét mực chồng</label>"
+        },
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "copy",
+          "checked": false,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"copy\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"copy\">Bản chép cùng trang</label>"
+        },
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "cloth",
+          "checked": false,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"cloth\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"cloth\">Vải bọc phổ biến</label>"
+        }
+      ]
+    },
+    {
+      "name": "open claims",
+      "claims": {
+        "altered": {
+          "status": "supported",
+          "cards": [
+            "fiber",
+            "ink"
+          ]
+        },
+        "author": {
+          "status": "open",
+          "cards": []
+        },
+        "lot": {
+          "status": "open",
+          "cards": []
+        }
+      },
+      "dom": [
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "fiber",
+          "checked": true,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"fiber\" checked=\"\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"fiber\" checked=\"\">Thớ giấy bị bóc</label>"
+        },
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "ink",
+          "checked": true,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"ink\" checked=\"\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"ink\" checked=\"\">Nét mực chồng</label>"
+        },
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "copy",
+          "checked": false,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"copy\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"copy\">Bản chép cùng trang</label>"
+        },
+        {
+          "tag": "INPUT",
+          "type": "checkbox",
+          "value": "cloth",
+          "checked": false,
+          "disabled": false,
+          "inModal": true,
+          "html": "<input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"cloth\">",
+          "parent": "<label class=\"check\"><input type=\"checkbox\" data-depth-input=\"\" data-kind=\"card\" data-key=\"altered\" value=\"cloth\">Vải bọc phổ biến</label>"
+        }
+      ]
+    }
+  ],
+  "standaloneSHA256": "4964c656c4873f71a4684e4c6fa6f8fba96e8e3df43527705f6e7a8dab66518e",
+  "q01EmbeddedMaterialPixels": 512,
+  "events": [
+    {
+      "type": "change",
+      "kind": "status",
+      "key": "altered",
+      "value": "supported",
+      "defaultPrevented": false
+    },
+    {
+      "type": "click",
+      "kind": "card",
+      "key": "altered",
+      "value": "fiber",
+      "checked": true,
+      "defaultPrevented": false
+    },
+    {
+      "type": "change",
+      "kind": "card",
+      "key": "altered",
+      "value": "fiber",
+      "checked": true,
+      "defaultPrevented": false
+    },
+    {
+      "type": "click",
+      "kind": "card",
+      "key": "altered",
+      "value": "ink",
+      "checked": true,
+      "defaultPrevented": false
+    },
+    {
+      "type": "change",
+      "kind": "card",
+      "key": "altered",
+      "value": "ink",
+      "checked": true,
+      "defaultPrevented": false
+    },
+    {
+      "type": "change",
+      "kind": "status",
+      "key": "author",
+      "value": "open",
+      "defaultPrevented": false
+    },
+    {
+      "type": "change",
+      "kind": "status",
+      "key": "lot",
+      "value": "open",
+      "defaultPrevented": false
+    }
+  ],
+  "httpResources": [],
+  "status": "passed"
+}

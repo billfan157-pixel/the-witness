@@ -162,7 +162,7 @@
     const m=new T.Matrix4(),p=new T.Vector3(),q=new T.Quaternion(),s=new T.Vector3();
     scene.traverse(o=>{
       if(!o.isInstancedMesh||!o.visible)return;
-      if(o.material?.customProgramCacheKey?.()!=='journey-canopy-2')return;
+      if(o.material?.customProgramCacheKey?.()!=='journey-canopy-3')return;
       for(let i=0;i<o.count;i++){
         o.getMatrixAt(i,m);m.decompose(p,q,s);
         sources.push({x:p.x,y:p.y,z:p.z,r:Math.max(.4,s.x)});
@@ -235,52 +235,133 @@
     return{object:mesh,tick:t=>{mat.uniforms.uTime.value=t;},dispose:[geo,mat]};
   }
 
-  // Hoa dại nhiều màu rải theo địa hình (InstancedMesh, instanceColor nhân màu cánh).
-  function flowers(T,heightAt,blocked=()=>false){
-    const n=scaleCount(150);
-    const petalPos=[],petalCol=[],petalIdx=[];
-    const petals=5;
-    for(let i=0;i<petals;i++){
-      const a=i/petals*Math.PI*2,ax=Math.cos(a),az=Math.sin(a),px=-az,pz=ax;
-      const b=petalPos.length/3,r0=.02,r1=.085,w0=.018,w1=.032;
-      petalPos.push(ax*r0+px*w0,.012,az*r0+pz*w0, ax*r0-px*w0,.012,az*r0-pz*w0,
-        ax*r1-px*w1,.032,az*r1-pz*w1, ax*r1+px*w1,.032,az*r1+pz*w1);
-      for(let k=0;k<4;k++)petalCol.push(1,1,1);
-      petalIdx.push(b,b+1,b+2,b,b+2,b+3);
-    }
-    const cb=petalPos.length/3;
-    petalPos.push(0,.038,0);petalCol.push(1,.82,.28);
-    for(let i=0;i<petals;i++){
-      const a0=i/petals*Math.PI*2,a1=(i+1)/petals*Math.PI*2,b=petalPos.length/3;
-      petalPos.push(Math.cos(a0)*.03,.032,Math.sin(a0)*.03, Math.cos(a1)*.03,.032,Math.sin(a1)*.03);
-      petalCol.push(1,.82,.28,1,.82,.28);
-      petalIdx.push(cb,b,b+1);
+  // Hoa dại và bụi cỏ theo chunk: mỗi chunk một cặp InstancedMesh LOD0/LOD1
+  // (HLOD + frustum culling theo bounding sphere), gió simplex và tương tác
+  // đẩy nghiêng khi nhân vật bước qua chạy trong vertex shader.
+  function flowerGeometry(T,detail){
+    const pos=[],col=[],idx=[];
+    if(detail){
+      const petals=5;
+      for(let i=0;i<petals;i++){
+        const a=i/petals*Math.PI*2,ax=Math.cos(a),az=Math.sin(a),px=-az,pz=ax;
+        const b=pos.length/3,r0=.02,r1=.085,w0=.018,w1=.032;
+        pos.push(ax*r0+px*w0,.012,az*r0+pz*w0, ax*r0-px*w0,.012,az*r0-pz*w0,
+          ax*r1-px*w1,.032,az*r1-pz*w1, ax*r1+px*w1,.032,az*r1+pz*w1);
+        for(let k=0;k<4;k++)col.push(1,1,1);
+        idx.push(b,b+1,b+2,b,b+2,b+3);
+      }
+      const cb=pos.length/3;
+      pos.push(0,.038,0);col.push(1,.82,.28);
+      for(let i=0;i<petals;i++){
+        const a0=i/petals*Math.PI*2,a1=(i+1)/petals*Math.PI*2,b=pos.length/3;
+        pos.push(Math.cos(a0)*.03,.032,Math.sin(a0)*.03, Math.cos(a1)*.03,.032,Math.sin(a1)*.03);
+        col.push(1,.82,.28,1,.82,.28);
+        idx.push(cb,b,b+1);
+      }
+    }else{
+      for(const a of [0,Math.PI/2]){
+        const dx=Math.cos(a),dz=Math.sin(a),b=pos.length/3;
+        pos.push(-dx*.07,0,-dz*.07, dx*.07,0,dz*.07, dx*.07,.11,dz*.07, -dx*.07,.11,-dz*.07);
+        for(let k=0;k<4;k++)col.push(1,1,1);
+        idx.push(b,b+1,b+2,b,b+2,b+3);
+      }
     }
     const geo=new T.BufferGeometry();
-    geo.setAttribute('position',new T.Float32BufferAttribute(petalPos,3));
-    geo.setAttribute('color',new T.Float32BufferAttribute(petalCol,3));
-    geo.setIndex(petalIdx);geo.computeVertexNormals();
-    const mat=new T.MeshStandardMaterial({vertexColors:true,roughness:.75,metalness:0,side:T.DoubleSide});
-    const mesh=new T.InstancedMesh(geo,mat,n);
-    const palette=['#f4efe2','#e9c95d','#9a7fb8','#cf6f5f','#e3a0b0'];
+    geo.setAttribute('position',new T.Float32BufferAttribute(pos,3));
+    geo.setAttribute('color',new T.Float32BufferAttribute(col,3));
+    geo.setIndex(idx);geo.computeVertexNormals();
+    return geo;
+  }
+  function grassGeometry(T,blades,segs){
+    const pos=[],col=[],idx=[];
+    for(let b=0;b<blades;b++){
+      const a=b/blades*Math.PI,dx=Math.cos(a),dz=Math.sin(a);
+      const h=.30+(b%2)*.09,w=.045,base=pos.length/3;
+      for(let s=0;s<=segs;s++){
+        const t=s/segs,y=h*t,bend=t*t*.12,ww=w*(1-t*.8),px=-dz*ww,pz=dx*ww;
+        pos.push(dx*bend+px,y,dz*bend+pz, dx*bend-px,y,dz*bend-pz);
+        const g=.75+.25*t;
+        col.push(.30*g,.42*g,.20*g, .34*g,.46*g,.22*g);
+      }
+      for(let s=0;s<segs;s++){const r=base+s*2;idx.push(r,r+1,r+2, r+1,r+3,r+2);}
+    }
+    const geo=new T.BufferGeometry();
+    geo.setAttribute('position',new T.Float32BufferAttribute(pos,3));
+    geo.setAttribute('color',new T.Float32BufferAttribute(col,3));
+    geo.setIndex(idx);geo.computeVertexNormals();
+    return geo;
+  }
+  function floraSystem(T,heightAt,blocked,kind){
+    const n=scaleCount(kind==='flower'?150:240);
+    const geo0=kind==='flower'?flowerGeometry(T,true):grassGeometry(T,3,2);
+    const geo1=kind==='flower'?flowerGeometry(T,false):grassGeometry(T,2,1);
+    const shared=AV.windUniforms(T);
+    const mat=new T.MeshStandardMaterial({vertexColors:true,roughness:.8,metalness:0,side:T.DoubleSide});
+    mat.customProgramCacheKey=()=> 'witness-flora-'+kind+'-1';
+    mat.onBeforeCompile=shader=>{
+      shader.uniforms.uWindTime=shared.uWindTime;
+      shader.uniforms.uTrail=shared.uTrail;
+      shader.vertexShader=shader.vertexShader
+        .replace('#include <common>',`#include <common>\n${AV.windGLSL}`)
+        .replace('#include <begin_vertex>',`#include <begin_vertex>
+          #ifdef USE_INSTANCING
+            vec3 floraBase=(modelMatrix*instanceMatrix*vec4(0.,0.,0.,1.)).xyz;
+          #else
+            vec3 floraBase=(modelMatrix*vec4(0.,0.,0.,1.)).xyz;
+          #endif
+          float floraFlex=${kind==='flower'?'clamp(position.y*8.,0.,1.)':'position.y*position.y*2.6'};
+          vec2 fw=windGust(floraBase.xz)*${kind==='flower'?'.02':'.06'};
+          vec2 fp=windPush(floraBase.xz)*${kind==='flower'?'.12':'.34'};
+          transformed.x+=(fw.x+fp.x)*floraFlex;
+          transformed.z+=(fw.y+fp.y)*floraFlex;
+          transformed.y-=length(fp)*.12*floraFlex;`);
+    };
+    const chunks=new Map();
     const dummy=new T.Object3D(),color=new T.Color();
+    const palette=['#f4efe2','#e9c95d','#9a7fb8','#cf6f5f','#e3a0b0'];
     let placed=0,guard=0;
     while(placed<n&&guard++<n*6){
       const x=rand(-30,30),z=rand(-20,18),y=heightAt(x,z);
       if(y<-.15||blocked(x,z))continue;
-      dummy.position.set(x,y+.1,z);
-      dummy.rotation.set(rand(-.1,.1),rand(0,6.28),rand(-.1,.1));
-      dummy.scale.setScalar(rand(.8,1.6));
-      dummy.updateMatrix();
-      mesh.setMatrixAt(placed,dummy.matrix);
-      mesh.setColorAt(placed,color.set(palette[Math.floor(Math.random()*palette.length)]));
+      const key=Math.floor(x/16)+','+Math.floor(z/16);
+      if(!chunks.has(key))chunks.set(key,{items:[],cx:Math.floor(x/16)*16+8,cz:Math.floor(z/16)*16+8});
+      chunks.get(key).items.push({x,y,z,s:rand(.8,1.6),yaw:kind==='flower'?rand(0,6.28):0,c:palette[Math.floor(Math.random()*palette.length)]});
       placed++;
     }
-    mesh.count=placed;
-    mesh.instanceMatrix.needsUpdate=true;
-    if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;
-    mesh.receiveShadow=true;mesh.frustumCulled=false;
-    return{object:mesh,tick:null,dispose:[geo,mat]};
+    const group=new T.Group();group.name='witness-flora-'+kind;
+    const pairs=[];
+    for(const chunk of chunks.values()){
+      const meshes=[geo0,geo1].map((geo,level)=>{
+        const mesh=new T.InstancedMesh(geo,mat,chunk.items.length);
+        chunk.items.forEach((item,i)=>{
+          dummy.position.set(item.x,item.y+(kind==='flower'?.1:.02),item.z);
+          dummy.rotation.set(0,item.yaw,0);
+          dummy.scale.setScalar(item.s);
+          dummy.updateMatrix();
+          mesh.setMatrixAt(i,dummy.matrix);
+          if(kind==='flower')mesh.setColorAt(i,color.set(item.c));
+        });
+        mesh.instanceMatrix.needsUpdate=true;
+        if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;
+        mesh.receiveShadow=true;
+        mesh.computeBoundingSphere();
+        mesh.visible=level===0;
+        group.add(mesh);
+        return mesh;
+      });
+      pairs.push({chunk,meshes});
+    }
+    return {
+      object:group,
+      tick:(t,player)=>{
+        for(const {chunk,meshes} of pairs){
+          const d=player?Math.hypot(player.x-chunk.cx,player.z-chunk.cz):0;
+          meshes[0].visible=d<26;
+          meshes[1].visible=d>=26&&d<90;
+        }
+      },
+      dispose:[geo0,geo1,mat]
+    };
   }
 
   function build(state){
@@ -309,12 +390,25 @@
         if(!desert&&!room&&!layer)add(leaves(T,heightAt,canopySources(T,scene)));
         add(motes(T,{count:desert?40:60,color:desert?'#e8cf9a':'#ffe6b0',opacity:desert?.3:.34,sizeMin:1.4,sizeMax:2.8,spread:16,yMin:.3,yMax:4.5,blink:false,drift:1}));
       }
-      if(!layer&&!desert&&!room&&['lands','spring','shore','hill','dawn','evening'].includes(biome))
-        add(flowers(T,heightAt,(x,z)=>{const r=scene.userData.architecture?.bounds;return !!r&&x>r[0]-.3&&x<r[1]+.3&&z>r[2]-.3&&z<r[3]+.3;}));
+      if(!layer&&!desert&&!room&&['lands','spring','shore','hill','dawn','evening'].includes(biome)){
+        const blocked=(x,z)=>{const r=scene.userData.architecture?.bounds;return !!scene.userData.q01&&root.WitnessQ01.clearVegetation(x,z)||!!r&&x>r[0]-.3&&x<r[1]+.3&&z>r[2]-.3&&z<r[3]+.3;};
+        add(floraSystem(T,heightAt,blocked,'flower'));
+        add(floraSystem(T,heightAt,blocked,'grass'));
+      }
     }
 
     scene.add(group);
-    active={group,tick:t=>{for(const f of ticks)f(t);},dispose};
+    const shared=AV.windUniforms(T);
+    let trailCursor=0,lastAt=null,lastRecord=-1;
+    active={group,tick:t=>{
+      shared.uWindTime.value=t;
+      const player=scene.getObjectByName('player')?.position??null;
+      if(player&&t-lastRecord>.12&&(!lastAt||Math.hypot(player.x-lastAt[0],player.z-lastAt[1])>.25)){
+        shared.uTrail.value[trailCursor].set(player.x,player.y,player.z,t);
+        trailCursor=(trailCursor+1)%5;lastAt=[player.x,player.z];lastRecord=t;
+      }
+      for(const f of ticks)f(t,player);
+    },dispose};
   }
 
   const innerSky=AV.sky;

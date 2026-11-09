@@ -1,0 +1,41 @@
+{
+  "checks": [
+    "both pupils are visible through anatomical skin openings",
+    "final hero rendered in first-person and close inspection, day/evening, balanced/ultra",
+    "final lamp scale and placements captured at warehouse and harbor; actual walking to roof",
+    "cold final standalone has no HTTP resources"
+  ],
+  "scope": "Targeted final Titus eye fitting, real rendered character and day/evening images; scripted QA",
+  "day": {
+    "removed": 950,
+    "eyes": [
+      {
+        "first": "CircleGeometry",
+        "firstRadius": 0.0022,
+        "bodyDistance": 0.17878530388034383
+      },
+      {
+        "first": "CircleGeometry",
+        "firstRadius": 0.0022,
+        "bodyDistance": 0.17866905821887227
+      }
+    ]
+  },
+  "evening": {
+    "removed": 950,
+    "eyes": [
+      {
+        "first": "CircleGeometry",
+        "firstRadius": 0.0022,
+        "bodyDistance": 0.1787664927117539
+      },
+      {
+        "first": "CircleGeometry",
+        "firstRadius": 0.0022,
+        "bodyDistance": 0.17867071638885595
+      }
+    ]
+  },
+  "httpResources": [],
+  "status": "passed"
+}

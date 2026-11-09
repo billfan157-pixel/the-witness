@@ -1,5 +1,12 @@
 # Chứng Nhân: Di Sản Giao Ước (UNSEALED WITNESS: Legacy of the Covenant)
 
+**Cảnh mẫu Q01:** bến cảng, kho phía tây và Titus có bản sản xuất để duyệt
+ở cả góc nhìn thứ nhất/thứ ba và ánh sáng ngày/tối. Trong Q01, mở **Bản đồ →
+Khám phá kho phía tây** để đi qua phòng, cầu thang và mái; **V** đổi góc nhìn,
+nút **Buổi tối / Ban ngày** trên thanh công cụ đổi ánh sáng. Vật liệu và phạm
+vi duyệt được ghi trong [hồ sơ cảnh Q01](docs/environment-kit/q01-gold-scene.md).
+Trạng thái mỹ thuật đang chờ người dùng chấp thuận, chưa tự đánh dấu đạt G3.
+
 Bản **0.7.0** bổ sung backend Cloudflare Worker và database D1 cho tài khoản, 3 ô lưu đám mây, đồng bộ nhiều thiết bị, hàng đợi khi mất mạng và khôi phục lịch sử. Chơi khách vẫn lưu trên máy; đăng nhập bằng ChatGPT để tiếp tục trên thiết bị khác. Bản cũ được giữ riêng và có thể chuyển vào tài khoản từ **Tài khoản & Lưu đám mây**. Chờ thông báo **Đã lưu đám mây** trước khi chuyển máy.
 
 Chi tiết API, bảo mật, lưu trữ và vận hành nằm ở [Backend và bản lưu đám mây](docs/the-witness/23-backend-and-cloud-saves.md). Cài bằng `npm ci`, dùng Node 22.13+; chạy `npm run dev:cloud` để xem bản có backend trên cổng 8035 với database cục bộ. `npm run test:backend` kiểm API và cơ chế đồng bộ. Bản HTML ngoại tuyến vẫn chơi được và giữ tiến trình trên trình duyệt đang dùng; không có máy chủ khi mở file trực tiếp.
