@@ -65,9 +65,34 @@
       const coverage = clamp((edge - y / 127) / .045) * 255;
       hairlinePixels.set([coverage, coverage, coverage, 255], (y * 128 + x) * 4);
     }
+    // Pre-Integrated Skin Subsurface Scattering LUT (Penner / GPU Pro 2)
+    // Dimension X: N·L mapped from [-1, 1] to [0, 1]
+    // Dimension Y: Curvature (1 / radius) from 0.0 to 1.0
+    const lutSize = 256;
+    const sssLutPixels = new Uint8Array(lutSize * lutSize * 4);
+    for (let y = 0; y < lutSize; y++) {
+      const curvature = (y + 1) / lutSize;
+      for (let x = 0; x < lutSize; x++) {
+        const ndotl = (x / (lutSize - 1)) * 2 - 1;
+        // Multi-dipole diffusion approximation for Levantine 1st-century skin
+        const wrapR = clamp((ndotl + curvature * 0.65) / (1 + curvature * 0.65));
+        const sssR = Math.pow(wrapR, 1.0 + curvature * 0.20) + Math.exp(-Math.pow((ndotl + 0.12) / (0.32 + curvature * 0.35), 2)) * 0.28 * curvature;
+        const wrapG = clamp((ndotl + curvature * 0.38) / (1 + curvature * 0.38));
+        const sssG = Math.pow(wrapG, 1.25 + curvature * 0.30) + Math.exp(-Math.pow((ndotl + 0.06) / (0.24 + curvature * 0.25), 2)) * 0.12 * curvature;
+        const wrapB = clamp((ndotl + curvature * 0.16) / (1 + curvature * 0.16));
+        const sssB = Math.pow(wrapB, 1.45 + curvature * 0.40) + Math.exp(-Math.pow(ndotl / (0.16 + curvature * 0.18), 2)) * 0.05 * curvature;
+
+        const offset = (y * lutSize + x) * 4;
+        sssLutPixels[offset] = Math.round(clamp(sssR, 0, 1) * 255);
+        sssLutPixels[offset + 1] = Math.round(clamp(sssG, 0, 1) * 255);
+        sssLutPixels[offset + 2] = Math.round(clamp(sssB, 0, 1) * 255);
+        sssLutPixels[offset + 3] = 255;
+      }
+    }
     const result = {
       skinNormal: texture(T, normalPixels, size, size, true),
       skinRoughness: texture(T, roughPixels, size, size, true),
+      skinSssLut: texture(T, sssLutPixels, lutSize, lutSize, false),
       hair: texture(T, pixels, width, height),
       hairline: texture(T, hairlinePixels, 128, 128)
     };
@@ -133,13 +158,14 @@
       ior: 1.4, clearcoat: .035, clearcoatRoughness: .48
     });
     material.name = "skin-pore-normal-zone-roughness-sss";
-    material.userData.subsurface = "light-dependent thickness approximation";
-    material.customProgramCacheKey = () => "character-skin-3";
+    material.userData.subsurface = "preintegrated-skin-sss-lut-diffusion";
+    material.customProgramCacheKey = () => "character-skin-aaa-v1";
     material.onBeforeCompile = shader => {
       shader.uniforms.uEyeY = { value: eyeY };
       shader.uniforms.uMouth = { value: new T.Vector3(...mouth) };
       shader.uniforms.uAge = { value: look.age };
-      const declarations = "\nvarying vec3 vSkinPoint;\nuniform float uEyeY, uAge;\nuniform vec3 uMouth;\n";
+      shader.uniforms.uSkinSssLut = { value: shared.skinSssLut };
+      const declarations = "\nvarying vec3 vSkinPoint;\nuniform float uEyeY, uAge;\nuniform vec3 uMouth;\nuniform sampler2D uSkinSssLut;\n";
       shader.vertexShader = shader.vertexShader.replace("#include <common>", "#include <common>\nvarying vec3 vSkinPoint;")
         .replace("#include <begin_vertex>", "#include <begin_vertex>\nvSkinPoint = position;");
       shader.fragmentShader = shader.fragmentShader.replace("#include <common>", "#include <common>" + declarations)
@@ -163,12 +189,27 @@
           void RE_SkinScattering(const in IncidentLight light, const in vec3 N, const in vec3 V, inout ReflectedLight reflected) {
             float ear = smoothstep(.065, .086, abs(vSkinPoint.x)) * exp(-pow((vSkinPoint.y - uEyeY + .006) / .043, 2.));
             float nose = exp(-pow(vSkinPoint.x / .020, 2.)) * exp(-pow((vSkinPoint.y - uEyeY + .034) / .020, 2.));
-            float thickness = .028 + ear * .28 + nose * .10;
-            vec3 H = normalize(light.direction + N * .16);
-            float forwardScatter = pow(max(0., dot(V, -H)), 3.2);
-            float wrapScatter = max(0., dot(N, light.direction) + .35) / 1.35;
-            vec3 bloodTone = vec3(.65, .19, .085);
-            reflected.directDiffuse += light.color * bloodTone * thickness * (forwardScatter * .8 + wrapScatter * .12);
+            float lips = exp(-pow((vSkinPoint.y - uMouth.y) / .008, 2.)) * (1. - smoothstep(.018, .036, abs(vSkinPoint.x)));
+            float thickness = .025 + ear * .35 + nose * .14 + lips * .08;
+
+            // Curvature estimation from geometric normal derivatives and anatomical landmarks
+            vec3 dNdx = dFdx(N);
+            vec3 dNdy = dFdy(N);
+            float geomCurv = clamp(length(dNdx) + length(dNdy), 0.08, 0.85);
+            float anatCurv = clamp(geomCurv + ear * 0.45 + nose * 0.35 + lips * 0.25, 0.05, 0.95);
+
+            // 1. Pre-Integrated Forward Scattering (Penner skin SSS LUT)
+            float NdotL = dot(N, light.direction);
+            vec2 lutUv = vec2(clamp(NdotL * 0.5 + 0.5, 0.005, 0.995), anatCurv);
+            vec3 sssProfile = texture2D(uSkinSssLut, lutUv).rgb;
+            reflected.directDiffuse += light.color * sssProfile * 0.45;
+
+            // 2. Translucency / Back-scattering (Light through ears and nostrils)
+            vec3 transLight = normalize(light.direction + N * 0.32);
+            float backDot = clamp(dot(-V, transLight), 0.0, 1.0);
+            float backScatter = pow(backDot, 3.8) * thickness;
+            vec3 bloodTone = vec3(0.85, 0.22, 0.075);
+            reflected.directDiffuse += light.color * bloodTone * backScatter * 2.1;
           }
         `);
       const direct = "RE_Direct( directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );";
@@ -378,7 +419,10 @@
       geometry.setAttribute("position", new T.Float32BufferAttribute(fibres.p, 3));
       geometry.setAttribute("color", new T.Float32BufferAttribute(fibres.colors, 3));
       geometry.setIndex(fibres.indices); geometry.computeVertexNormals();
-      const finish = new T.MeshStandardMaterial({ color: hairColor, roughness: .68, vertexColors: true });
+      const finish = new T.MeshPhysicalMaterial({
+        color: hairColor, roughness: .64, vertexColors: true,
+        sheen: .36, sheenColor: hairColor.clone().lerp(new T.Color("#9d8873"), .22), sheenRoughness: .56
+      });
       const beardMesh = skinned(geometry, finish, () => [["head", 1]]);
       beardMesh.name = "beard-individual-fibres";
       finish.onBeforeCompile = shader => {

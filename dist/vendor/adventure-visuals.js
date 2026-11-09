@@ -267,18 +267,23 @@
   const surfaceColor = {
     earth: `
       vec2 p = vSurface.xz;
-      float macro = fbmNoise(p * .22);
+      float macro = fbmNoise(p * .16);
+      float micro = grainNoise(p * 3.6);
+      float detail = fbmNoise(p * 1.1 + vec2(macro * 1.4, -macro * 1.1));
+      float surfRelief = macro * .38 + detail * .45 + micro * .17;
       float damp = 1. - smoothstep(-.25, .45, vSurface.y);
-      float surfRelief = macro * .45;
-      diffuseColor.rgb *= mix(.82, 1.14, macro);
+      diffuseColor.rgb *= mix(.84, 1.16, surfRelief);
       diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * .72, damp * .35);`,
     stone: `
       vec2 p = vSurface.xz + vec2(vSurface.y * .73, vSurface.y * 1.48);
       float strata = fbmNoise(p * 1.8);
-      float groundAO = smoothstep(-.05, .42, vSurface.y);
+      float groundAO = smoothstep(-.15, .52, vSurface.y);
+      float dustNoise = grainNoise(vSurface.xz * 2.2);
+      float groundDust = (1. - smoothstep(0., .42 + dustNoise * .15, vSurface.y)) * .52;
+      vec3 dustColor = vec3(.76, .69, .55);
       float surfRelief = strata * .60;
       diffuseColor.rgb *= mix(.82, 1.15, strata);
-      diffuseColor.rgb *= mix(.82, 1., groundAO);`,
+      diffuseColor.rgb = mix(diffuseColor.rgb * mix(.78, 1., groundAO), dustColor, groundDust);`,
     masonry: `
       vec3 gdx = dFdx(vSurface);
       vec3 gdy = dFdy(vSurface);
@@ -291,10 +296,13 @@
       float mortar = max(smoothstep(.43, .498, seam.x), smoothstep(.41, .498, seam.y));
       float chisel = fbmNoise(p * 2.8);
       float blockVar = grainHash(floor(block));
-      float aoBase = smoothstep(0., .58, vSurface.y);
+      float aoBase = smoothstep(-.12, .56, vSurface.y);
+      float dustNoiseM = grainNoise(vSurface.xz * 2.4);
+      float groundDustM = (1. - smoothstep(0., .38 + dustNoiseM * .12, vSurface.y)) * .48;
+      vec3 dustColorM = vec3(.77, .71, .58);
       float surfRelief = (1. - mortar) * (.50 + chisel * .50);
       diffuseColor.rgb *= mix(.82 + chisel * .18 + blockVar * .14, .64 + chisel * .12, mortar * .65);
-      diffuseColor.rgb *= mix(.82, 1., aoBase);`,
+      diffuseColor.rgb = mix(diffuseColor.rgb * mix(.78, 1., aoBase), dustColorM, groundDustM);`,
     bark: `
       vec2 p = vec2(vSurface.x + vSurface.z * 1.35, vSurface.y);
       float furrows = fbmNoise(p * vec2(15., 1.7));
@@ -356,13 +364,19 @@
 
   const surfaceRim = {
     linen: `
-      vec3 cV = normalize(vEyeDir);
-      float cRim = 1. - max(0., dot(normal, cV));
-      diffuseColor.rgb += diffuseColor.rgb * pow(cRim, 3.2) * .12;`,
+      vec3 lV = normalize(vEyeDir);
+      float lNdotV = clamp(dot(normal, lV), 0.001, 1.0);
+      float lSinTheta = sqrt(max(0.0, 1.0 - lNdotV * lNdotV));
+      float charlieLinen = pow(lSinTheta, 3.4) * 0.159;
+      vec3 sheenTintLinen = mix(diffuseColor.rgb, vec3(0.96, 0.92, 0.85), 0.45);
+      diffuseColor.rgb += sheenTintLinen * charlieLinen * 0.52;`,
     wool: `
       vec3 wV = normalize(vEyeDir);
-      float wRim = 1. - max(0., dot(normal, wV));
-      diffuseColor.rgb += vec3(.14, .13, .11) * pow(wRim, 2.6) * .20;`,
+      float wNdotV = clamp(dot(normal, wV), 0.001, 1.0);
+      float wSinTheta = sqrt(max(0.0, 1.0 - wNdotV * wNdotV));
+      float charlieWool = pow(wSinTheta, 2.6) * 0.159;
+      vec3 sheenTintWool = mix(diffuseColor.rgb, vec3(0.88, 0.84, 0.78), 0.55);
+      diffuseColor.rgb += sheenTintWool * charlieWool * 0.68;`,
     skin: `
       vec3 sV = normalize(vEyeDir);
       float sRim = 1. - max(0., dot(normal, sV));
@@ -681,8 +695,13 @@
           vec3 pos = position;
           float shoreDamp = smoothstep(0., max(.08, foamEdge * 1.6), uv.x);
           vec3 wPos = (modelMatrix * vec4(pos, 1.)).xyz;
-          float swell = (sin(wPos.x * .9 + time * 1.4) + cos(wPos.z * .75 - time * 1.15)) * .5;
-          pos.z += swell * waveScale * shoreDamp;
+          // Directional Multi-Component Gerstner Waves
+          vec2 dir1 = vec2(0.85, 0.52);
+          vec2 dir2 = vec2(-0.42, 0.91);
+          float w1 = dot(dir1, wPos.xz) * 1.15 - time * 1.55;
+          float w2 = dot(dir2, wPos.xz) * 2.05 - time * 2.25;
+          float gWave = sin(w1) * 0.62 + cos(w1 * 1.8) * 0.18 + sin(w2) * 0.35;
+          pos.z += gWave * waveScale * shoreDamp;
           vWater = (modelMatrix * vec4(pos, 1.)).xyz;
           gl_Position = projectionMatrix * viewMatrix * vec4(vWater, 1.);
         }`,
@@ -706,10 +725,14 @@
           vec3 view = normalize(cameraPosition - vWater);
           float facing = max(.001, dot(view, normal));
           float fresnel = .02 + .98 * pow(1. - facing, 4.2);
-          float shallows = 1. - smoothstep(0., .24, vUv.x);
-          // Beer-Lambert color + subsurface turquoise glow
+          
+          // Beer-Lambert depth absorption (freshwater Lake Galilee & Caesarea harbour)
+          float waterDist = vUv.x;
+          vec3 absorption = exp(-vec3(3.2, 1.15, 0.42) * waterDist * 2.8);
           float caustic = smoothstep(.52, .88, grainNoise(point * 2.8 + vec2(time * .36, -time * .24)));
-          vec3 body = mix(waterColor, shallowColor * (1. + caustic * .24), shallows * .82);
+          vec3 bedColor = shallowColor * (1. + caustic * .28);
+          vec3 body = mix(waterColor, bedColor, absorption);
+
           float sss = pow(max(0., dot(view, -sun + normal * .35)), 3.0) * .25;
           body += shallowColor * sss;
           // Environment sky gradient reflection
@@ -721,12 +744,12 @@
           float specTight = pow(max(0., dot(normal, halfV)), 260.);
           float specSoft = pow(max(0., dot(normal, halfV)), 32.);
           color += sunlight * (specTight * 1.45 + specSoft * .22);
-          // Animated shoreline foam
+          // Animated shoreline foam with fractal turbulent noise
           if (foamEdge > .001) {
             float lap = .5 + .5 * sin(time * 2.1 - vUv.x * 38. + point.y * 1.3);
             float foamNoise = grainNoise(point * 5.5 - vec2(time * .35, time * .2));
-            float foam = smoothstep(foamEdge, 0., vUv.x) * smoothstep(.34, .76, foamNoise + lap * .35);
-            color = mix(color, mix(horizonColor, vec3(.96), .7), clamp(foam * .85, 0., 1.));
+            float foam = smoothstep(foamEdge, 0., vUv.x) * smoothstep(.32, .72, foamNoise + lap * .38);
+            color = mix(color, mix(horizonColor, vec3(.96), .75), clamp(foam * .88, 0., 1.));
           }
           float depth = length(cameraPosition - vWater) * .0055;
           gl_FragColor = vec4(mix(color, fogColor, 1. - exp(-depth * depth)), 1.);
@@ -989,20 +1012,28 @@
           const float e = 0.14;
           return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0., 1.);
         }
+        // Henyey-Greenstein phase function for Levant atmospheric dust (g ≈ 0.65)
+        float hgPhase(float cosTheta, float g) {
+          float g2 = g * g;
+          return (1.0 - g2) / (4.0 * 3.14159265 * pow(max(1e-4, 1.0 + g2 - 2.0 * g * cosTheta), 1.5));
+        }
         void main() {
           vec3 hdr = texture2D(tDiffuse, vUv).rgb;
           vec3 bloom = texture2D(tBloom, vUv).rgb;
           vec3 col = hdr + bloom * bloomIntensity;
           if (sunScatter > .001) {
-            float d = length((vUv - sunScreen) * vec2(1.4, 1.));
-            float shaft = exp(-d * 3.6) * sunScatter;
+            vec2 sunOffset = (vUv - sunScreen) * vec2(1.35, 1.0);
+            float d = length(sunOffset);
+            float cosTheta = clamp(1.0 - d * 0.9, -1.0, 1.0);
+            float dustHG = hgPhase(cosTheta, 0.65) * 12.5;
+            float shaft = exp(-d * 3.2) * dustHG * sunScatter;
             col += sunTint * shaft;
           }
           col *= exposure;
           col = acesFilmic(col);
           // Crisp contrast and vivid Mediterranean vibrance
           float lum = dot(col, vec3(.2126, .7152, .0722));
-          col = mix(vec3(lum), col, 1.14);
+          col = mix(vec3(lum), col, 1.12);
           vec2 vc = vUv - .5;
           col *= 1. - dot(vc, vc) * vignette;
           // Blue-noise style interleaved gradient dither removes 8-bit banding

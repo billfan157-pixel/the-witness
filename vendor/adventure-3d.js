@@ -4333,14 +4333,30 @@ function Zt(blend) {
   const wanted = h.direction.length();
   h.direction.divideScalar(wanted);
   let allowed = wanted;
-  for (const volume of fpActive ? [] : T.cameraVolumes) {
-    if (volume.containsPoint(h.origin)) continue;
-    const obstruction = volume instanceof Pe ? h.intersectSphere(volume, f) : h.intersectBox(volume, f);
-    if (obstruction) allowed = Math.min(allowed, Math.max(1.16, h.origin.distanceTo(obstruction) - .48));
-  }
-  if (allowed < wanted) {
-    l.copy(h.origin).addScaledVector(h.direction, allowed);
-    if (a.position.distanceTo(h.origin) > allowed + .15) blend = 1;
+  if (!fpActive) {
+    const probeOffsets = [[0,0,0],[0,.18,0],[0,-.18,0],[.18,0,0],[-.18,0,0]];
+    for (const volume of T.cameraVolumes) {
+      if (volume.containsPoint(h.origin)) continue;
+      for (const [ox, oy, oz] of probeOffsets) {
+        h.origin.set(origin.x + ox, origin.y + 1.3 + oy, origin.z + oz);
+        const obstruction = volume instanceof Pe ? h.intersectSphere(volume, f) : h.intersectBox(volume, f);
+        if (obstruction) allowed = Math.min(allowed, Math.max(1.16, h.origin.distanceTo(obstruction) - .42));
+      }
+    }
+    h.origin.set(origin.x, origin.y + 1.3, origin.z);
+    if (allowed < 3.2 && !cinematic) {
+      const shoulderX = Math.cos(G) * .35, shoulderZ = -Math.sin(G) * .35;
+      o.x += shoulderX; o.z += shoulderZ;
+      l.x += shoulderX; l.z += shoulderZ;
+    }
+    if (allowed < currentSpringDist) {
+      currentSpringDist = Ni.lerp(currentSpringDist, allowed, Math.min(1, blend * 2.8));
+    } else {
+      currentSpringDist = Ni.lerp(currentSpringDist, allowed, Math.min(1, blend * .42));
+    }
+    l.copy(h.origin).addScaledVector(h.direction, currentSpringDist);
+  } else {
+    currentSpringDist = allowed;
   }
   let fill = y.userData.portraitFill;
   if (portrait && !fill) {

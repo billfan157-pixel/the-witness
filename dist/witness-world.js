@@ -889,7 +889,12 @@
           const mx=pos[0]-prevPos[0],mz=pos[1]-prevPos[1],ml=Math.hypot(mx,mz);
           if(ml>1e-5)lastDir=[mx/ml,mz/ml];
         }
-        if(prevPos&&(x||y)&&lastDir&&manualBlocked(pos[0]+lastDir[0]*.16,pos[1]+lastDir[1]*.16)){x=0;y=0;}
+        if(prevPos&&(x||y)&&lastDir&&manualBlocked(pos[0]+lastDir[0]*.16,pos[1]+lastDir[1]*.16)){
+          const tx=-lastDir[1],tz=lastDir[0];
+          if(!manualBlocked(pos[0]+tx*.16,pos[1]+tz*.16)){const dot=x*tx+y*tz;x=tx*dot;y=tz*dot;}
+          else if(!manualBlocked(pos[0]-tx*.16,pos[1]-tz*.16)){const dot=x*(-tx)+y*(-tz);x=-tx*dot;y=-tz*dot;}
+          else{x=0;y=0;}
+        }
         prevPos=pos;
       }
       engine.controls(x,y,run);
