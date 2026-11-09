@@ -1,16 +1,35 @@
 {
   "name": "unsealed-witness-legacy-of-the-covenant",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "UNSEALED WITNESS: Legacy of the Covenant (Chứng Nhân: Di Sản Giao Ước) - Biblical Explorer RPG",
   "private": true,
   "scripts": {
-    "test": "node test/campaign.cjs && node test/spine.cjs && node test/charset.cjs && node test/scene-plan.cjs && node test/v31-systems.cjs && node test/depth.cjs && node test/craft.cjs",
+    "test": "node test/campaign.cjs && node test/spine.cjs && node test/charset.cjs && node test/scene-plan.cjs && node test/v31-systems.cjs && node test/depth.cjs && node test/craft.cjs && node test/architecture.cjs",
     "test:browser": "node test/browser.mjs && node test/scene.mjs && node test/spine-browser.mjs && node test/depth-browser.mjs && node test/craft-browser.mjs",
     "test:craft-details": "node test/craft-details-browser.mjs && node test/field-keyboard-browser.mjs",
-    "build": "node tools/build.cjs",
-    "dev": "node tools/serve.cjs"
+    "test:graphics": "node test/graphics-browser.mjs",
+    "test:kit-budget": "node test/kit-budget.cjs",
+    "build:kit": "node tools/environment-kit/build-kit.cjs && node tools/environment-kit/build-references.cjs && node tools/environment-kit/build-board.cjs",
+    "build": "node tools/environment-kit/build-engine.cjs && node test/architecture.cjs && node test/kit-budget.cjs && node tools/build.cjs && node tools/build-cloud.mjs",
+    "dev": "node tools/serve.cjs",
+    "setup:kit": "npm ci --prefix tools/environment-kit && node tools/environment-kit/setup-encoder.mjs",
+    "test:kit-cache": "node test/kit-cache.cjs",
+    "test:kit-lifecycle": "node test/kit-lifecycle-browser.mjs",
+    "test:kit-profile": "node test/kit-profile-browser.mjs",
+    "build:engine": "node tools/environment-kit/build-engine.cjs",
+    "test:architecture": "node test/architecture.cjs",
+    "test:architecture-browser": "node test/architecture-browser.mjs",
+    "dev:cloud": "node tools/serve-cloud.mjs",
+    "test:backend": "node --test test/backend.test.mjs test/cloud-client.test.cjs",
+    "db:generate": "drizzle-kit generate"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.13.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.31.11",
+    "drizzle-orm": "0.45.2",
+    "esbuild": "0.28.2",
+    "miniflare": "4.20260730.0"
   }
 }

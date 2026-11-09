@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "raw": {
+      "url": "./assets/environment-kit/cae/wall-pbr-raw-f0a88ead002c.glb",
+      "sha256": "f0a88ead002ce25a0fef89e3f47d839fb97cca92a8d90a2916628cca484cf3b0",
+      "bytes": 2049288
+    },
+    "full": {
+      "url": "./assets/environment-kit/cae/wall-pbr-full-286c341dcf5e.glb",
+      "sha256": "286c341dcf5e846bde1b38d3b5909338439460a7bbb85a9f788d4916394aa061",
+      "bytes": 549812
+    },
+    "lite": {
+      "url": "./assets/environment-kit/cae/wall-pbr-lite-d5f92c1f0b03.glb",
+      "sha256": "d5f92c1f0b031b1bddcf0c52cb1096ab11da6c25d2a88e1d179af3771fcce94d",
+      "bytes": 525636
+    }
+  },
+  "encoderSha256": "b42d951b1bf146133578e8c7927ad4a4a857552846a46a3ee33b541b2a06bc7d",
+  "fullComparedToRaw": 0.2682941587517225,
+  "liteComparedToRaw": 0.25649689062737885
+}

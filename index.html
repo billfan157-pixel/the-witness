@@ -11,6 +11,9 @@
   <script src="./vendor/adventure-cast.js" defer></script>
   <script src="./vendor/character-profiles.js" defer></script>
   <script src="./vendor/adventure-visuals.js" defer></script>
+  <script src="./vendor/witness-graphics.js" defer></script>
+  <script src="./vendor/witness-gtao.js" defer></script>
+  <script src="./vendor/witness-loaders.js" defer></script>
   <script src="./assets/human-topology.js" defer></script>
   <script src="./vendor/character-detail.js" defer></script>
   <script src="./vendor/adventure-character.js" defer></script>
@@ -23,12 +26,14 @@
   <script src="./witness-model.js" defer></script>
   <script src="./witness-craft-renderer.js" defer></script>
   <script src="./witness-field-ui.js" defer></script>
+  <script src="./witness-architecture.js" defer></script>
   <script src="./witness-world.js" defer></script>
   <script src="./witness-ambience.js" defer></script>
   <script src="./witness-compass.js" defer></script>
   <script src="./vendor/adventure-3d.js" defer></script>
   <script src="./witness-audio-library.js" defer></script>
   <script src="./witness-audio.js" defer></script>
+  <script src="./witness-cloud.js" defer></script>
   <script src="./witness-app.js" defer></script>
 </head>
 <body>
@@ -60,6 +65,8 @@
         <p class="title-sub">Di Sản Giao Ước</p>
         <p class="title-lead">Bước vào những câu chuyện Kinh Thánh trong vai chứng nhân đời thường.<br>Quan sát. Lắng nghe. Giữ lời cùng nhau.</p>
         <div id="title-actions"><button class="primary" data-act="new">Bắt đầu hành trình <span aria-hidden="true">→</span></button></div>
+        <button class="cloud-entry text-link" data-act="cloud" id="cloud-entry">Tài khoản &amp; Lưu đám mây</button>
+        <p class="cloud-title-status" id="cloud-title-status" role="status">Đang kiểm tra bản lưu…</p>
         <div class="title-secondary"><button data-act="import">Nhập bản lưu</button><button data-act="about">Về hành trình này</button><button data-act="title-sound" class="title-sound-toggle" aria-label="Bật hoặc tắt âm thanh"><span class="sound-toggle-icon">🔊</span> Âm thanh</button></div>
         <p class="edition">BA HỒI · MÔSÊ — ĐAVÍT — PHÊRÔ · KIẾN TRÚC NHÂN VẬT HAI TẦNG</p>
       </div>
@@ -125,7 +132,7 @@
         <small id="distance-label"></small>
         <button id="interact-button" class="primary" data-act="interact"><kbd>E</kbd><span id="interact-label">Khám phá bến cảng</span></button>
       </div>
-      <span id="save-status" class="save-status">Đã lưu</span>
+      <button class="cloud-hud text-link" data-act="cloud" aria-label="Mở tài khoản và bản lưu"><span id="save-status" class="save-status">Đang kiểm tra bản lưu…</span></button>
     </footer>
 
     <div id="touch-controls" class="touch-controls" hidden>

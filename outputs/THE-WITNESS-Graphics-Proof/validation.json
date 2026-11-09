@@ -1,0 +1,18 @@
+{
+  "buildRevision": "b228fa73d3a3",
+  "logicTests": "passed",
+  "graphicsBrowserTests": "passed",
+  "scenes": [
+    "coast-ultra",
+    "road-high",
+    "night-ultra",
+    "mobile-balanced"
+  ],
+  "standaloneWithNetworkBlocked": "passed",
+  "gtaoContactImage": "passed",
+  "webglError": 0,
+  "qualityAndOddSizeResize": "passed",
+  "keyboardMovementAndFollowingShadow": "passed",
+  "physicalDeviceFPS": "not measured",
+  "fullBrowserCampaignSuite": "not completed in this change"
+}

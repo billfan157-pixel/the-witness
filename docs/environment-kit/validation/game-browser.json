@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "errors": [],
+  "checks": [
+    "WebGL 2 boot",
+    "desktop title layout",
+    "new character and chapter entry",
+    "keyboard movement",
+    "first-person toggle persists and first-person movement works",
+    "objective compass points at the current task",
+    "walk to physical target",
+    "interactive preparation puzzle with three-step hints",
+    "persistent checkpoint reload",
+    "mobile title/dialog/game layout",
+    "Q02 redaction rejects identifiers then accepts safe copy",
+    "Q02 physical escort arrives before handoff commit",
+    "left-behind trace is readable in the world",
+    "sense reveals a nearby trace",
+    "Jeremiah scene loads and skip preserves evidence",
+    "Jerusalem region loads",
+    "final chapter loads",
+    "all three practice profiles start and stop without evidence rewards",
+    "touch joystick moves player",
+    "service-worker offline reload resumes campaign",
+    "self-contained file opens with embedded assets"
+  ]
+}

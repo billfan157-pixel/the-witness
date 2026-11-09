@@ -1,0 +1,43 @@
+{
+  "date": "2026-11-09",
+  "status": "passed",
+  "scope": "Environment Kit phases 1–2, foundation and pipeline; no art or multi-level traversal acceptance",
+  "releaseBuild": "7a15b0fa9eb9",
+  "commands": {
+    "npm test": "passed",
+    "npm run test:browser": "passed",
+    "npm run test:craft-details": "passed",
+    "npm run test:graphics": "passed",
+    "node test/kit-budget.cjs": "passed",
+    "node test/kit-cache.cjs": "passed",
+    "node test/kit-lifecycle-browser.mjs": "passed",
+    "node test/kit-profile-browser.mjs": "passed",
+    "npm run build": "passed"
+  },
+  "hardware": {
+    "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "rawGpuMedianMs": 1.6104159999999998,
+    "fullGpuMedianMs": 1.625963,
+    "rawTextureUploadBytes": 4194306,
+    "fullTextureUploadBytes": 1048656
+  },
+  "offline": {
+    "playerBytes": 12943564,
+    "labBytes": 5967150,
+    "playerPack": "lite only",
+    "labPack": "raw/full/lite + bundled codecs",
+    "coldFileHttpRequests": 0
+  },
+  "document": {
+    "revision": 3,
+    "pages": 9,
+    "renderer": "Microsoft Word PDF export; all pages visually reviewed"
+  },
+  "limits": [
+    "Headless rendering on actual laptop GPU; excludes physical screen presentation and human input latency",
+    "No physical phone result",
+    "Dedicated 200-module scene does not certify the future complete Q01 scene",
+    "Texture bytes are upload-size estimates; browser backbuffer and driver allocation are not measured",
+    "Background OS activity and thermal conditions were not controlled"
+  ]
+}

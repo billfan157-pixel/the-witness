@@ -26,7 +26,7 @@ try{
   const record=id=>waitFor(`!!JSON.parse(localStorage.getItem(WitnessModel.STORE)).workshop.records[${JSON.stringify(id)}]`);
   await send('Runtime.enable');await send('Page.enable');await send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
   await send('Page.addScriptToEvaluateOnNewDocument',{source:'Object.defineProperty(navigator,"deviceMemory",{get:()=>4});'});
-  await send('Page.navigate',{url:'http://127.0.0.1:8034/'});await waitFor('!!globalThis.WitnessDepth&&!!document.querySelector("canvas")');
+  await send('Page.navigate',{url:process.env.WITNESS_BASE_URL??'http://127.0.0.1:8034/'});await waitFor('!!globalThis.WitnessDepth&&!!document.querySelector("canvas")');
   const seed=async s=>{
     console.log(JSON.stringify({scene:s.layer?.id||M.chapter(s).id}));
     const hook=await send('Page.addScriptToEvaluateOnNewDocument',{source:`localStorage.setItem('the-witness.spine.v3',${JSON.stringify(JSON.stringify(s))});`});
@@ -49,4 +49,4 @@ try{
   await send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});await seed(seedState('Q01','brace'));await open('brace');await click('[data-act=depth-hint]');assert((await evaluate('document.querySelector("#depth-feedback").textContent')).includes('Gợi ý 1/3'));await click('[data-act=depth-hint]');await click('[data-act=depth-hint]');assert.equal((await read()).quests.Q01.done.includes('brace'),false);await click('[data-act=depth-commit]');await record('Q01.LOAD');assert((await read()).workshop.records['Q01.LOAD'].assisted);checks.push('Third hint prepares an assisted plan but completion remains an explicit action');
   await send('Page.navigate',{url:pathToFileURL(path.resolve(import.meta.dirname,'../dist/ban-choi-ngoai-tuyen.html')).href});await waitFor('!!globalThis.WitnessDepth&&!!document.querySelector("canvas")');assert.equal(await evaluate('WitnessDepth.catalog.length'),25);checks.push('Standalone HTML embeds all depth rules and workshop renderer');
   assert.equal(errors.length,0,errors.join('\n'));fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({status:'passed',checks,errors},null,2));console.log(JSON.stringify({status:'passed',checks,errors},null,2));
-}finally{socket?.close();child.kill();}
+}finally{socket?.close();child.kill();try{fs.rmSync(profile,{recursive:true,force:true,maxRetries:5,retryDelay:300});}catch{}}

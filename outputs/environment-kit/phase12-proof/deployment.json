@@ -1,0 +1,19 @@
+{
+  "id": "appgdep_6af188f65160819182d4c2246493e7e4",
+  "project_id": "appgprj_6aef3449e4008191bbe1a03326a7967e",
+  "title": "Chứng Nhân — Di Sản Giao Ước",
+  "version_id": "appgprj_6aef3449e4008191bbe1a03326a7967e~appgver_4ddec4b2d4808191857cbefa151826a4",
+  "type": "publish",
+  "status": "succeeded",
+  "url": "https://chung-nhan-di-san-giao-uoc.hh8873851.chatgpt.site",
+  "has_mcp": false,
+  "screenshot_asset_pointer": null,
+  "provider_deployment_id": "site---6aef3449e4008191bbe1a03326a7967e",
+  "failure_message": null,
+  "env_set_revision": 0,
+  "updated_at": "2026-11-09T08:49:19.943144+00:00",
+  "commit_sha": "bea70bfde69aa5ee2423e562416dbe2574c93b76",
+  "buildRevision": "7a15b0fa9eb9",
+  "audience": "owner-private; unchanged",
+  "verification": "docs/environment-kit/validation/verification.json"
+}

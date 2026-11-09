@@ -1,0 +1,4 @@
+ID,name,region,evidence,priority,tri_budget,status,license,source,region_lock,access,art_accepted
+CAE-WALL-PIPELINE-01,Module tuong thu pipeline 4m,caesarea,H,P0,800,pipeline-prototype,project-authored,tools/environment-kit/build-kit.cjs,caesarea,closed,false
+CAE-WALL-PBR-02,Module tuong PBR KTX2 Meshopt 4m,caesarea,H,P0,800,pipeline-surface-study,CC0-1.0+project-authored,tools/environment-kit/compress-kit.mjs,caesarea,closed,false
+CAE-STORE-BLOCKOUT-03,Kho phia tay Q01 9x8m,caesarea,H,P0,3000,playable-blockout,project-authored,witness-architecture.js,caesarea,interior+stairs+roof,false

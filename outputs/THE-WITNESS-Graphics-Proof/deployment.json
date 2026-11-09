@@ -1,0 +1,18 @@
+{
+  "project_id": "appgprj_6aef3449e4008191bbe1a03326a7967e",
+  "commit_sha": "4f55f4e00b16a82688c5569ea48e1cb6fc478afe",
+  "archive": "C:\\hanh-trinh-loi-chua\\the-witness-graphics-061\\THE-WITNESS-Graphics-deploy.tar",
+  "id": "appgdep_6af1615006b081918fbc43093106b783",
+  "title": "Chứng Nhân — Di Sản Giao Ước",
+  "version_id": "appgprj_6aef3449e4008191bbe1a03326a7967e~appgver_42513311295c81919d98af7aef857bb6",
+  "type": "publish",
+  "status": "succeeded",
+  "url": "https://chung-nhan-di-san-giao-uoc.hh8873851.chatgpt.site",
+  "has_mcp": false,
+  "screenshot_asset_pointer": null,
+  "provider_deployment_id": "site---6aef3449e4008191bbe1a03326a7967e",
+  "failure_message": null,
+  "env_set_revision": 0,
+  "updated_at": "2026-11-09T06:00:13.178007+00:00",
+  "build_revision": "b228fa73d3a3"
+}

@@ -71,6 +71,7 @@
     fill.intensity = climate.night ? .18 : .22;
     fill.position.set(-direction.x * 24 + 10, 14, -direction.z * 24 + 8);
     scene.environmentIntensity = climate.night ? .52 : .58;
+    globalThis.WitnessGraphics?.configureScene(T, scene, biome);
   }
 
   const envCache = new WeakMap();
@@ -930,6 +931,43 @@
       stencilBuffer: false
     };
     const sceneRT = new T.WebGLRenderTarget(800, 600, targetOpts);
+    // Canvas antialiasing does not cover offscreen postprocessing targets.
+    const format = targetType === T.HalfFloatType ? gl.RGBA16F : gl.RGBA8;
+    const sampleCounts = Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, format, gl.SAMPLES) || []);
+    sceneRT.samples = Math.max(0, ...sampleCounts.filter(samples => samples <= 4));
+    sceneRT.depthTexture = new T.DepthTexture(800, 600, T.UnsignedIntType);
+    sceneRT.depthTexture.minFilter = sceneRT.depthTexture.magFilter = T.NearestFilter;
+    let framebufferChecked = false;
+    const aoA = new T.WebGLRenderTarget(400, 300, {...bloomOpts, type:T.UnsignedByteType});
+    const aoB = aoA.clone();
+    const gtao = globalThis.WitnessGTAO(T);
+    const noiseTexture = gtao.generateMagicSquareNoise();
+    const aoMat = new T.ShaderMaterial({
+      ...gtao.GTAOShader,
+      uniforms:T.UniformsUtils.clone(gtao.GTAOShader.uniforms),
+      defines:{...gtao.GTAOShader.defines,NORMAL_VECTOR_TYPE:0,SAMPLES:24},
+      depthTest:false,depthWrite:false,toneMapped:false,blending:T.NoBlending
+    });
+    Object.assign(aoMat.uniforms.tDepth,{value:sceneRT.depthTexture});
+    aoMat.uniforms.tNoise.value = noiseTexture;
+    aoMat.uniforms.radius.value = .85;
+    aoMat.uniforms.thickness.value = .8;
+    aoMat.uniforms.distanceExponent.value = 1.6;
+    aoMat.uniforms.distanceFallOff.value = 1;
+    const denoiseMat = new T.ShaderMaterial({
+      ...gtao.PoissonDenoiseShader,
+      uniforms:T.UniformsUtils.clone(gtao.PoissonDenoiseShader.uniforms),
+      defines:{...gtao.PoissonDenoiseShader.defines,NORMAL_VECTOR_TYPE:0,SAMPLES:8,
+        SAMPLE_VECTORS:gtao.generatePdSamplePointInitializer(8,2,1)},
+      depthTest:false,depthWrite:false,toneMapped:false,blending:T.NoBlending
+    });
+    denoiseMat.uniforms.tDepth.value = sceneRT.depthTexture;
+    denoiseMat.uniforms.tNoise.value = noiseTexture;
+    denoiseMat.uniforms.tDiffuse.value = aoA.texture;
+    denoiseMat.uniforms.radius.value = 5;
+    denoiseMat.uniforms.depthPhi.value = .25;
+    denoiseMat.uniforms.normalPhi.value = 8;
+    denoiseMat.uniforms.lumaPhi.value = .8;
     const bloomA = new T.WebGLRenderTarget(200, 150, bloomOpts);
     const bloomB = new T.WebGLRenderTarget(200, 150, bloomOpts);
     const postCam = new T.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -989,6 +1027,18 @@
       uniforms: {
         tDiffuse: { value: null },
         tBloom: { value: null },
+        tAO: { value: aoB.texture },
+        tDepth: { value: sceneRT.depthTexture },
+        tLUT: { value: null },
+        aoIntensity: { value: .8 },
+        lutIntensity: { value: 0 },
+        aoResolution: { value: new T.Vector2(400,300) },
+        projectionInverse: { value: new T.Matrix4() },
+        cameraWorld: { value: new T.Matrix4() },
+        fogColor: { value: new T.Color() },
+        fogDensity: { value: 0 },
+        fogHeight: { value: 1.5 },
+        fogFalloff: { value: .14 },
         bloomIntensity: { value: .18 },
         exposure: { value: 1.10 },
         sunScreen: { value: new T.Vector2(.5, .7) },
@@ -1000,8 +1050,12 @@
       vertexShader: screenVert,
       fragmentShader: `
         varying vec2 vUv;
-        uniform sampler2D tDiffuse, tBloom;
+        uniform sampler2D tDiffuse, tBloom, tAO, tDepth, tLUT;
         uniform float bloomIntensity, exposure, sunScatter, vignette;
+        uniform float aoIntensity, lutIntensity, fogDensity, fogHeight, fogFalloff;
+        uniform mat4 projectionInverse, cameraWorld;
+        uniform vec3 fogColor;
+        uniform vec2 aoResolution;
         uniform vec2 sunScreen;
         uniform vec3 sunTint;
         vec3 acesFilmic(vec3 x) {
@@ -1017,10 +1071,49 @@
           float g2 = g * g;
           return (1.0 - g2) / (4.0 * 3.14159265 * pow(max(1e-4, 1.0 + g2 - 2.0 * g * cosTheta), 1.5));
         }
+        vec3 viewPosition(vec2 uv, float d) {
+          vec4 v=projectionInverse*vec4(vec3(uv,d)*2.-1.,1.);
+          return v.xyz/v.w;
+        }
+        // Bilateral upsampling prevents half-resolution AO leaking over silhouettes.
+        float contactAO(float depth) {
+          vec2 pixel=vUv*aoResolution-.5;
+          vec2 base=floor(pixel), f=fract(pixel);
+          float centerZ=viewPosition(vUv,depth).z;
+          float sum=0., weights=0.;
+          for(int y=0;y<2;y++)for(int x=0;x<2;x++) {
+            vec2 corner=vec2(float(x),float(y));
+            vec2 uv=clamp((base+corner+.5)/aoResolution,vec2(0.),vec2(1.));
+            float z=viewPosition(uv,texture2D(tDepth,uv).r).z;
+            vec2 bilinear=mix(1.-f,f,corner);
+            float w=bilinear.x*bilinear.y*exp(-abs(z-centerZ)*12.);
+            sum+=texture2D(tAO,uv).r*w;weights+=w;
+          }
+          return weights>.00001 ? sum/weights : 1.;
+        }
+        vec3 grade(vec3 color) {
+          vec3 c=clamp(color,0.,1.)*15.;
+          float low=floor(c.b), high=min(low+1.,15.);
+          vec2 uv=vec2((low*16.+c.r+.5)/256.,(c.g+.5)/16.);
+          vec2 uv2=vec2((high*16.+c.r+.5)/256.,uv.y);
+          return mix(texture2D(tLUT,uv).rgb,texture2D(tLUT,uv2).rgb,fract(c.b));
+        }
         void main() {
           vec3 hdr = texture2D(tDiffuse, vUv).rgb;
+          float depth = texture2D(tDepth,vUv).r;
+          if(aoIntensity>.001 && depth<.999999)hdr*=mix(1.,contactAO(depth),aoIntensity);
           vec3 bloom = texture2D(tBloom, vUv).rgb;
           vec3 col = hdr + bloom * bloomIntensity;
+          if(fogDensity>0. && depth<.999999) {
+            vec3 viewPos=viewPosition(vUv,depth);
+            vec3 worldPos=(cameraWorld*vec4(viewPos,1.)).xyz;
+            vec3 eye=cameraWorld[3].xyz;
+            float dy=(worldPos.y-eye.y)*fogFalloff;
+            // Analytic integral through exponential height density; stable at a level ray.
+            float integral=abs(dy)<.001 ? 1.-dy*.5 : (1.-exp(clamp(-dy,-30.,30.)))/dy;
+            float opticalDepth=fogDensity*length(viewPos)*exp(clamp(-(eye.y-fogHeight)*fogFalloff,-10.,10.))*integral;
+            col=mix(col,fogColor,clamp(1.-exp(-max(0.,opticalDepth)),0.,.94));
+          }
           if (sunScatter > .001) {
             vec2 sunOffset = (vUv - sunScreen) * vec2(1.35, 1.0);
             float d = length(sunOffset);
@@ -1031,9 +1124,7 @@
           }
           col *= exposure;
           col = acesFilmic(col);
-          // Crisp contrast and vivid Mediterranean vibrance
-          float lum = dot(col, vec3(.2126, .7152, .0722));
-          col = mix(vec3(lum), col, 1.12);
+          if(lutIntensity>.001)col=mix(col,grade(col),lutIntensity);
           vec2 vc = vUv - .5;
           col *= 1. - dot(vc, vc) * vignette;
           // Blue-noise style interleaved gradient dither removes 8-bit banding
@@ -1051,11 +1142,20 @@
 
     const sunVec = new T.Vector3();
     const camDir = new T.Vector3();
+    const savedClearColor = new T.Color();
+    const diagnostics = {enabled:true,msaaSamples:sceneRT.samples,gtao:false,aoSize:[400,300],scene:null,fallback:null};
 
     function setSize(w, h, pr = 1) {
       width = Math.max(2, Math.floor(w * pr));
       height = Math.max(2, Math.floor(h * pr));
       sceneRT.setSize(width, height);
+      framebufferChecked = false;
+      const aw=Math.max(2,Math.ceil(width*.5)), ah=Math.max(2,Math.ceil(height*.5));
+      aoA.setSize(aw,ah);aoB.setSize(aw,ah);
+      aoMat.uniforms.resolution.value.set(aw,ah);
+      denoiseMat.uniforms.resolution.value.set(aw,ah);
+      compositeMat.uniforms.aoResolution.value.set(aw,ah);
+      diagnostics.aoSize=[aw,ah];
       const bw = Math.max(64, width >> 2);
       const bh = Math.max(48, height >> 2);
       bloomA.setSize(bw, bh);
@@ -1068,27 +1168,48 @@
       brightMat.uniforms.knee.value = .22;
       compositeMat.uniforms.bloomIntensity.value = mode === "ultra" ? .18 : .12;
       compositeMat.uniforms.vignette.value = mode === "ultra" ? .08 : .05;
+      const samples=mode==='ultra'?24:12;
+      if(aoMat.defines.SAMPLES!==samples){aoMat.defines.SAMPLES=samples;aoMat.needsUpdate=true;}
+      compositeMat.uniforms.aoIntensity.value = mode==='balanced'?0:mode==='ultra'?.8:.65;
+      if(mode==='balanced')compositeMat.uniforms.bloomIntensity.value=0;
+      diagnostics.gtao=mode!=='balanced';
     }
 
     function render(scene, camera, sun, climateNight = false) {
-      if (!enabled || mode === "balanced") {
+      scene.userData.graphicsStatus=diagnostics;
+      if (!enabled) {
         renderer.render(scene, camera);
         return;
       }
       const prevTone = renderer.toneMapping;
+      const prevTarget = renderer.getRenderTarget();
+      const oldDensity = scene.fog?.isFogExp2 ? scene.fog.density : null;
+      const clearAlpha=renderer.getClearAlpha();
+      renderer.getClearColor(savedClearColor);
       renderer.toneMapping = T.NoToneMapping ?? 0;
       try {
+        if(oldDensity!==null)scene.fog.density=0; // Height fog is integrated once, in linear HDR.
         renderer.setRenderTarget(sceneRT);
         renderer.clear(true, true, true);
         renderer.render(scene, camera);
-        if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
-          enabled = false;
-          renderer.setRenderTarget(null);
-          renderer.toneMapping = prevTone;
-          renderer.render(scene, camera);
-          return;
+        if(oldDensity!==null)scene.fog.density=oldDensity;
+        if (!framebufferChecked) {
+          if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw new Error('Incomplete HDR framebuffer');
+          framebufferChecked=true;
+        }
+        // The target switch resolves the multisampled color AND depth attachments.
+        if(mode!=='balanced') {
+          for(const material of [aoMat,denoiseMat])material.uniforms.cameraProjectionMatrixInverse.value.copy(camera.projectionMatrixInverse);
+          aoMat.uniforms.cameraProjectionMatrix.value.copy(camera.projectionMatrix);
+          aoMat.uniforms.cameraWorldMatrix.value.copy(camera.matrixWorld);
+          aoMat.uniforms.cameraNear.value=camera.near;aoMat.uniforms.cameraFar.value=camera.far;
+          renderer.setClearColor(0xffffff,1);
+          postQuad.material=aoMat;renderer.setRenderTarget(aoA);renderer.clear();renderer.render(postScene,postCam);
+          postQuad.material=denoiseMat;renderer.setRenderTarget(aoB);renderer.clear();renderer.render(postScene,postCam);
+          renderer.setClearColor(savedClearColor,clearAlpha);
         }
         // Bright pass -> bloomA
+        if(mode!=='balanced') {
         postQuad.material = brightMat;
         brightMat.uniforms.tDiffuse.value = sceneRT.texture;
         renderer.setRenderTarget(bloomA);
@@ -1111,6 +1232,7 @@
           renderer.setRenderTarget(bloomA);
           renderer.render(postScene, postCam);
         }
+        }
 
         // Screen sun scatter factor
         let scatter = 0;
@@ -1126,15 +1248,31 @@
         }
         compositeMat.uniforms.sunScatter.value = scatter;
         if (sun) compositeMat.uniforms.sunTint.value.copy(sun.color);
+        const profile=scene.userData.graphics;
+        diagnostics.scene=profile?.key??null;
+        compositeMat.uniforms.lutIntensity.value=profile?1:0;
+        if(profile) {
+          compositeMat.uniforms.tLUT.value=profile.lut;
+          compositeMat.uniforms.fogColor.value.copy(profile.fogColor);
+          compositeMat.uniforms.fogDensity.value=profile.fogDensity;
+          compositeMat.uniforms.fogHeight.value=profile.fogHeight;
+          compositeMat.uniforms.fogFalloff.value=profile.fogFalloff;
+        }else compositeMat.uniforms.fogDensity.value=0;
+        compositeMat.uniforms.projectionInverse.value.copy(camera.projectionMatrixInverse);
+        compositeMat.uniforms.cameraWorld.value.copy(camera.matrixWorld);
 
         postQuad.material = compositeMat;
         compositeMat.uniforms.tDiffuse.value = sceneRT.texture;
         compositeMat.uniforms.tBloom.value = bloomA.texture;
-        renderer.setRenderTarget(null);
+        renderer.setRenderTarget(prevTarget);
         renderer.render(postScene, postCam);
-      } catch {
+      } catch(error) {
         enabled = false;
-        renderer.setRenderTarget(null);
+        diagnostics.enabled=false;diagnostics.fallback=error.message;
+        console.warn('Witness postprocessing disabled:',error);
+        if(oldDensity!==null)scene.fog.density=oldDensity;
+        renderer.setClearColor(savedClearColor,clearAlpha);
+        renderer.setRenderTarget(prevTarget);
         renderer.toneMapping = prevTone;
         renderer.render(scene, camera);
         return;
@@ -1144,6 +1282,7 @@
 
     function dispose() {
       sceneRT.dispose();
+      aoA.dispose();aoB.dispose();noiseTexture.dispose();aoMat.dispose();denoiseMat.dispose();
       bloomA.dispose();
       bloomB.dispose();
       quadGeo.dispose();
@@ -1153,7 +1292,7 @@
     }
 
     setQuality(quality);
-    return { setSize, setQuality, render, dispose };
+    return { setSize, setQuality, render, dispose, diagnostics };
   }
 
   globalThis.AdventureVisuals = {

@@ -22,7 +22,7 @@ try{
   await send('Runtime.enable');await send('Page.enable');await send('Page.addScriptToEvaluateOnNewDocument',{source:"Object.defineProperty(navigator,'deviceMemory',{get:()=>4});"});await send('Emulation.setDeviceMetricsOverride',{width:1440,height:960,deviceScaleFactor:1,mobile:false});
   let state=M.fresh();state.chapter=1;state=M.openLayer(state,'legend','L03');
   const hook1=await send('Page.addScriptToEvaluateOnNewDocument',{source:`localStorage.setItem('the-witness.spine.v3',${JSON.stringify(JSON.stringify(state))});`});
-  await send('Page.navigate',{url:'http://127.0.0.1:8034/'});
+  await send('Page.navigate',{url:process.env.WITNESS_BASE_URL??'http://127.0.0.1:8034/'});
   await waitFor(`!!document.querySelector('#title-actions [data-act="continue"]')`);
   await send('Page.removeScriptToEvaluateOnNewDocument',{identifier:hook1.identifier});
   await evaluate(`document.querySelector('[data-act="continue"]').click()`);
@@ -64,4 +64,4 @@ try{
   await waitFor(`!!document.querySelector('dialog [data-act="close"]')`);
   await evaluate(`document.querySelector('dialog [data-act="close"]').click()`);
   assert.equal(errors.length,0);console.log(JSON.stringify({status:'passed',scene:'L03+v31-ui',errors}));
-}finally{socket?.close();child.kill();}
+}finally{socket?.close();child.kill();try{fs.rmSync(profile,{recursive:true,force:true,maxRetries:5,retryDelay:300});}catch{}}

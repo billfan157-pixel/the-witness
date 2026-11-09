@@ -1,0 +1,39 @@
+diff --git a/tools/build.cjs b/tools/build.cjs
+index 7c81389..336237b 100644
+--- a/tools/build.cjs
++++ b/tools/build.cjs
+@@ -13,6 +13,9 @@ if(fs.existsSync(path.join(dossier,'THE-WITNESS-Design-Compendium.html'))){
+ const walk=dir=>fs.readdirSync(path.join(root,dir),{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(dir+'/'+e.name):[dir+'/'+e.name]);
+ const all=[...files,...['assets','vendor'].flatMap(walk)];
+ const revision=crypto.createHash('sha256').update([...all,'tools/build.cjs','tools/service-worker-template.cjs','tools/kit-offline-assets.cjs'].map(f=>f+':'+crypto.createHash('sha256').update(fs.readFileSync(path.join(root,f))).digest('hex')).join('|')).digest('hex').slice(0,12);
++// Avoid mixing a fresh HTML shell with scripts retained by an older Service Worker.
++const webHtml=fs.readFileSync(path.join(root,'index.html'),'utf8').replace(/((?:src|href)="\.\/[^"?]+\.(?:js|css))"/g,(_,link)=>link+'?v='+revision+'"');
++fs.writeFileSync(path.join(out,'index.html'),webHtml);
+ const shellFiles=all.filter(f=>!f.startsWith('assets/environment-kit/')&&!f.startsWith('vendor/basis/'));
+ const sw=require('./service-worker-template.cjs')({revision,files:shellFiles.map(f=>'./'+f)});
+ fs.writeFileSync(path.join(root,'witness-sw.js'),sw);fs.writeFileSync(path.join(out,'witness-sw.js'),sw);
+diff --git a/tools/service-worker-template.cjs b/tools/service-worker-template.cjs
+index a649868..1aacdc0 100644
+--- a/tools/service-worker-template.cjs
++++ b/tools/service-worker-template.cjs
+@@ -21,6 +21,6 @@ self.addEventListener('fetch',event=>{
+    catch(error){if(cached)return cached;throw error;}
+   })());return;
+  }
+- event.respondWith(caches.open(SHELL).then(async cache=>(await cache.match(request))||fetch(request).catch(()=>request.mode==='navigate'?cache.match('./index.html'):Response.error())));
++ event.respondWith(caches.open(SHELL).then(async cache=>(await cache.match(request,{ignoreSearch:true}))||fetch(request).catch(()=>request.mode==='navigate'?cache.match('./index.html'):Response.error())));
+ });`;
+ };
+diff --git a/witness-app.js b/witness-app.js
+index 58c1213..6179f42 100644
+--- a/witness-app.js
++++ b/witness-app.js
+@@ -819,7 +819,7 @@
+   async function cloudPanel(){
+     const info=cloud.info();
+     if(!info.user){
+-      cloudDialog(`<p>Chơi khách vẫn giữ tiến trình trên trình duyệt này. Đăng nhập để tiếp tục hành trình trên thiết bị khác.</p><p class="notice">${esc(info.message)}</p><p>Đăng nhập bằng tài khoản ChatGPT. Bản chơi khách hiện tại được giữ riêng; bạn có thể đưa nó vào tài khoản sau khi đăng nhập.</p><p class="cloud-privacy">Dữ liệu lưu gồm nhân vật, lựa chọn, điểm dừng và thiết lập game. Game không lưu mật khẩu hay địa chỉ email của bạn.</p>`,location.protocol==='file:'?'<p class="notice">Mở bản web để dùng lưu đám mây.</p>':'<a class="primary" href="/signin-with-chatgpt?return_to=%2F" target="_top">Đăng nhập để lưu đám mây</a>');return;
++      cloudDialog(`<p>Chơi khách vẫn giữ tiến trình trên trình duyệt này. Đăng nhập để tiếp tục hành trình trên thiết bị khác.</p><p class="notice">${esc(info.message)}</p><p>Đăng nhập bằng tài khoản ChatGPT. Bản chơi khách hiện tại được giữ riêng; bạn có thể đưa nó vào tài khoản sau khi đăng nhập.</p><p class="cloud-privacy">Dữ liệu lưu gồm nhân vật, lựa chọn, điểm dừng và thiết lập game. Game không lưu mật khẩu hay địa chỉ email của bạn.</p>`,location.protocol==='file:'?'<p class="notice">Mở bản web để dùng lưu đám mây.</p>':'<a class="primary" href="/signin-with-chatgpt?return_to=%2F" target="_top">Đăng nhập để lưu đám mây</a><button class="secondary" data-cloud="retry">Kiểm tra kết nối</button>');return;
+     }
+     cloudDialog('<p role="status">Đang tải các ô lưu…</p>');
+     try{

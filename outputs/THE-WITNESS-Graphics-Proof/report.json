@@ -1,0 +1,150 @@
+{
+  "scenes": [
+    {
+      "name": "coast-ultra",
+      "graphics": {
+        "enabled": true,
+        "msaaSamples": 4,
+        "gtao": true,
+        "aoSize": [
+          500,
+          360
+        ],
+        "scene": "shore:Q01",
+        "fallback": null
+      },
+      "terrain": {
+        "splat": true,
+        "range": 9.579062938690186
+      },
+      "shadow": {
+        "width": 44,
+        "follow": true
+      },
+      "messages": []
+    },
+    {
+      "name": "road-high",
+      "graphics": {
+        "enabled": true,
+        "msaaSamples": 4,
+        "gtao": true,
+        "aoSize": [
+          500,
+          360
+        ],
+        "scene": "road:Q03",
+        "fallback": null
+      },
+      "terrain": {
+        "splat": true,
+        "range": 13.614229679107666
+      },
+      "shadow": {
+        "width": 44,
+        "follow": true
+      },
+      "messages": []
+    },
+    {
+      "name": "night-ultra",
+      "graphics": {
+        "enabled": true,
+        "msaaSamples": 4,
+        "gtao": true,
+        "aoSize": [
+          500,
+          360
+        ],
+        "scene": "room:L05",
+        "fallback": null
+      },
+      "terrain": {
+        "splat": true,
+        "range": 1.7221766654402018
+      },
+      "shadow": {
+        "width": 44,
+        "follow": true
+      },
+      "messages": []
+    },
+    {
+      "name": "mobile-balanced",
+      "graphics": {
+        "enabled": true,
+        "msaaSamples": 4,
+        "gtao": false,
+        "aoSize": [
+          195,
+          422
+        ],
+        "scene": "shore:Q01",
+        "fallback": null
+      },
+      "terrain": {
+        "splat": true,
+        "range": 9.579062938690186
+      },
+      "shadow": {
+        "width": 44,
+        "follow": true
+      },
+      "messages": []
+    }
+  ],
+  "checks": [
+    {
+      "name": "GTAO contact image, quality changes, odd-size resize and WebGL state",
+      "darkened": 3804,
+      "maxDelta": 26.333333333333332,
+      "diagnostics": {
+        "enabled": true,
+        "msaaSamples": 4,
+        "gtao": true,
+        "aoSize": [
+          128,
+          96
+        ],
+        "scene": "road:AO-probe",
+        "fallback": null
+      },
+      "resized": [
+        97,
+        73
+      ],
+      "glError": 0
+    },
+    {
+      "name": "Standalone file with network URLs blocked",
+      "graphics": {
+        "enabled": true,
+        "msaaSamples": 4,
+        "gtao": true,
+        "aoSize": [
+          400,
+          300
+        ],
+        "scene": "road:Q03",
+        "fallback": null
+      },
+      "maps": [
+        {
+          "width": 1056,
+          "embedded": true
+        },
+        {
+          "width": 1056,
+          "embedded": true
+        },
+        {
+          "width": 1056,
+          "embedded": true
+        }
+      ],
+      "httpResources": [],
+      "messages": []
+    }
+  ],
+  "errors": []
+}

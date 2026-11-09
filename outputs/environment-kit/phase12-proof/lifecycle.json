@@ -1,0 +1,199 @@
+{
+  "checks": [
+    {
+      "quality": "raw",
+      "compressed": false,
+      "textureWidth": 512,
+      "mips": 0,
+      "footprints": 4
+    },
+    {
+      "quality": "full",
+      "compressed": true,
+      "textureWidth": 512,
+      "mips": 10,
+      "footprints": 4
+    },
+    {
+      "quality": "lite",
+      "compressed": false,
+      "textureWidth": 256,
+      "mips": 0,
+      "footprints": 4
+    },
+    {
+      "name": "raw versus KTX2 render comparison",
+      "rmseByteRGB": 1.3716311713840934
+    },
+    {
+      "name": "compressed geometry retains authored collision space",
+      "passed": true
+    },
+    {
+      "name": "independent abort of shared request",
+      "passed": true
+    },
+    {
+      "name": "scene-close during decode/postprocess leaves no late attachment or resources",
+      "passed": true
+    },
+    {
+      "name": "failed load evicted and retried successfully",
+      "passed": true
+    },
+    {
+      "name": "integrity mismatch and truncated GLB rejected without GPU resources",
+      "passed": true
+    },
+    {
+      "name": "partial pack failure releases successful sibling assets",
+      "passed": true
+    },
+    {
+      "name": "shared live scenes retain resources until last owner; multi-mesh roots detach",
+      "passed": true
+    },
+    {
+      "name": "24 full/lite scene changes return to stable GPU baseline",
+      "memory": [
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        },
+        {
+          "geometries": 1,
+          "textures": 3,
+          "programs": 3
+        }
+      ]
+    },
+    {
+      "name": "real service worker cold dependencies cached and rendered on offline reload",
+      "cached": [
+        "http://127.0.0.1:8034/assets/environment-kit/cae/manifest-v2.json",
+        "http://127.0.0.1:8034/assets/environment-kit/cae/wall-pbr-full-286c341dcf5e.glb",
+        "http://127.0.0.1:8034/vendor/basis/basis_transcoder.js",
+        "http://127.0.0.1:8034/vendor/basis/basis_transcoder.wasm"
+      ]
+    },
+    {
+      "name": "cold standalone KTX2 + Meshopt + WASM without network",
+      "quality": "full",
+      "compressed": true,
+      "http": []
+    }
+  ],
+  "runtime": "hardware WebGL functional checks; performance measured separately",
+  "status": "passed"
+}

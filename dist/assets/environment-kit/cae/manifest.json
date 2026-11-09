@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "cae-pipeline-v1",
+  "region": "caesarea",
+  "status": "pipeline-prototype",
+  "pieces": [{
+    "id": "CAE-WALL-PIPELINE-01",
+    "url": "./assets/environment-kit/cae/ENV_CAE_Wall_Ashlar_4m_A_LOD0.glb",
+    "source": "tools/environment-kit/build-kit.cjs",
+    "artAccepted": false,
+    "access": "closed"
+  }]
+}

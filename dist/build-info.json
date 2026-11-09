@@ -1,10 +1,13 @@
 {
-  "release": "0.6.0",
+  "release": "0.7.0",
+  "cloudSaves": true,
+  "cloudSlots": 3,
+  "cloudHistory": 10,
   "spatialAudio": true,
   "offlineVoice": true,
   "design": "3.2",
   "contractVersion": "3.0",
-  "revision": "fb9973943e9b",
+  "revision": "90b36be41f6c",
   "bridgeQuests": 12,
   "requiredLegends": [
     "L01",

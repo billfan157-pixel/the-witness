@@ -39,4 +39,4 @@ try{
   for(let i=1;i<=3;i++){await hold('r',430);await delay(250);await shot(`${tag}-${i}-turn.png`);}
   await hold('w',2200);await delay(300);await shot(tag+'-4-walk.png');
   console.log(JSON.stringify({tag,probe,errors:errors.slice(0,3),errorCount:errors.length}));
-}finally{socket?.close();child.kill();}
+}finally{socket?.close();child.kill();try{fs.rmSync(profile,{recursive:true,force:true,maxRetries:5,retryDelay:300});}catch{}}

@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "checks": [
+    "Paper inspection retains readable ink, a lifted flap and zero new evidence",
+    "B02 completed work remains inspectable beside the participant",
+    "B04 completed work remains inspectable beside the participant",
+    "Standalone file embeds all 31 activities and performs field preparation without committing early"
+  ],
+  "errors": [],
+  "scope": "automated browser inspection and offline interaction; visual screenshots reviewed separately"
+}

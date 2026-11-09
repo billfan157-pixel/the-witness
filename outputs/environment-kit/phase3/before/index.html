@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#13221d">
+  <meta name="description" content="Khám phá những trình thuật Kinh Thánh qua góc nhìn Chứng nhân Vô danh bên cạnh Môsê, Đavít và Phêrô, rồi nối câu chuyện vào đời sống của người thường.">
+  <title>Chứng Nhân — Di Sản Giao Ước</title>
+  <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./witness.css">
+  <script src="./vendor/adventure-cast.js" defer></script>
+  <script src="./vendor/character-profiles.js" defer></script>
+  <script src="./vendor/adventure-visuals.js" defer></script>
+  <script src="./vendor/witness-graphics.js" defer></script>
+  <script src="./vendor/witness-gtao.js" defer></script>
+  <script src="./vendor/witness-loaders.js" defer></script>
+  <script src="./assets/human-topology.js" defer></script>
+  <script src="./vendor/character-detail.js" defer></script>
+  <script src="./vendor/adventure-character.js" defer></script>
+  <script src="./witness-content.js" defer></script>
+  <script src="./witness-spine.js" defer></script>
+  <script src="./witness-depth.js" defer></script>
+  <script src="./witness-relationships.js" defer></script>
+  <script src="./witness-craft.js" defer></script>
+  <script src="./witness-workshop-ui.js" defer></script>
+  <script src="./witness-model.js" defer></script>
+  <script src="./witness-craft-renderer.js" defer></script>
+  <script src="./witness-field-ui.js" defer></script>
+  <script src="./witness-world.js" defer></script>
+  <script src="./witness-ambience.js" defer></script>
+  <script src="./witness-compass.js" defer></script>
+  <script src="./vendor/adventure-3d.js" defer></script>
+  <script src="./witness-audio-library.js" defer></script>
+  <script src="./witness-audio.js" defer></script>
+  <script src="./witness-app.js" defer></script>
+</head>
+<body>
+  <main id="game" aria-label="Chứng Nhân — Di Sản Giao Ước">
+    <div id="world" class="world"><div class="adv-markers"></div></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <section id="title-screen" class="title-screen">
+      <div class="title-particles" aria-hidden="true">
+        <span class="particle p1"></span>
+        <span class="particle p2"></span>
+        <span class="particle p3"></span>
+        <span class="particle p4"></span>
+        <span class="particle p5"></span>
+      </div>
+      <div class="title-copy">
+        <div class="title-seal" aria-hidden="true">
+          <svg viewBox="0 0 220 28" fill="none">
+            <path d="M0 14h88M132 14h88" stroke="currentColor" stroke-width="1.2" opacity=".4"/>
+            <circle cx="110" cy="14" r="12" stroke="currentColor" stroke-width="1.2" opacity=".7"/>
+            <circle cx="110" cy="14" r="7" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2" opacity=".9"/>
+            <path d="M110 4l2.5 7.5L120 14l-7.5 2.5L110 24l-2.5-7.5L100 14l7.5-2.5L110 4Z" fill="currentColor" opacity=".85"/>
+            <circle cx="110" cy="14" r="1.8" fill="#fff7e2"/>
+            <circle cx="20" cy="14" r="2" fill="currentColor" opacity=".6"/>
+            <circle cx="200" cy="14" r="2" fill="currentColor" opacity=".6"/>
+          </svg>
+        </div>
+        <span class="eyebrow">UNSEALED WITNESS · LEGACY OF THE COVENANT · V3.1</span>
+        <h1>Chứng Nhân</h1>
+        <p class="title-sub">Di Sản Giao Ước</p>
+        <p class="title-lead">Bước vào những câu chuyện Kinh Thánh trong vai chứng nhân đời thường.<br>Quan sát. Lắng nghe. Giữ lời cùng nhau.</p>
+        <div id="title-actions"><button class="primary" data-act="new">Bắt đầu hành trình <span aria-hidden="true">→</span></button></div>
+        <div class="title-secondary"><button data-act="import">Nhập bản lưu</button><button data-act="about">Về hành trình này</button><button data-act="title-sound" class="title-sound-toggle" aria-label="Bật hoặc tắt âm thanh"><span class="sound-toggle-icon">🔊</span> Âm thanh</button></div>
+        <p class="edition">BA HỒI · MÔSÊ — ĐAVÍT — PHÊRÔ · KIẾN TRÚC NHÂN VẬT HAI TẦNG</p>
+      </div>
+      <div class="title-caption"><span>XÊDARÊ · NĂM 58</span><p>Mỗi cuộc đời đều để lại một lời chứng.</p></div>
+    </section>
+
+    <header id="hud-top" class="hud-top" hidden>
+      <button class="brand" data-act="pause" aria-label="Mở menu">W<span>CHỨNG NHÂN</span></button>
+      <div class="place"><span id="region-name"></span><strong id="chapter-name"></strong></div>
+      <div class="hud-tools">
+        <button data-act="journal" data-tab="evidence" title="Bảng đối chiếu chứng cứ">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M6 21h12M4 8h16M7 8l-3 6a3 3 0 0 0 6 0L7 8ZM17 8l-3 6a3 3 0 0 0 6 0l-3-6Z"/></svg></span>
+          <span class="tool-label">Đối chiếu</span>
+        </button>
+        <button data-act="journal" title="Sổ hành trình (J)">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3V4Z"/><path d="M8 4v16M11 8h5M11 12h5"/></svg></span>
+          <span class="tool-label">Sổ</span>
+        </button>
+        <button data-act="map" title="Bản đồ (M)">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5 15.5 8.5"/></svg></span>
+          <span class="tool-label">Bản đồ</span>
+        </button>
+        <button data-act="settings" title="Tùy chỉnh">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/><circle cx="9" cy="7" r="2" fill="#13221d"/><circle cx="15" cy="12" r="2" fill="#13221d"/><circle cx="10" cy="17" r="2" fill="#13221d"/></svg></span>
+          <span class="tool-label">Tùy chỉnh</span>
+        </button>
+      </div>
+    </header>
+
+    <aside id="objective" class="objective" hidden>
+      <p class="spine-context" id="spine-status"></p>
+      <span class="eyebrow" id="quest-number"></span>
+      <h2 id="objective-title"></h2>
+      <p id="objective-detail"></p>
+      <div id="witness-status" class="witness-status" hidden></div>
+      <div id="quest-progress" class="quest-progress"></div>
+      <div class="objective-links">
+        <button class="text-link" data-act="guide">Chỉ hướng tiếp theo <span aria-hidden="true">↗</span></button>
+        <button class="text-link" id="quiet-trigger" data-act="quiet-moment" hidden>Khoảng yên</button>
+      </div>
+    </aside>
+
+    <div id="companion-hud" class="companion-hud" hidden></div>
+
+    <aside id="combat-hud" class="combat-hud" hidden>
+      <strong>Sân luyện · không gây thương tích</strong>
+      <p id="combat-state"></p>
+      <span id="combat-tell"></span>
+      <div>
+        <button data-act="strike">Đánh <kbd>K</kbd></button>
+        <button data-act="guard" id="touch-guard">Giữ để đỡ <kbd>H</kbd></button>
+        <button data-act="dodge">Né <kbd>Space</kbd></button>
+        <button data-act="stop-trial">Dừng tập</button>
+      </div>
+    </aside>
+
+    <div id="subtitle" class="ambient-line" role="status" aria-live="polite"></div>
+
+    <footer id="hud-bottom" class="hud-bottom" hidden>
+      <div class="control-legend"><span><kbd>W A S D</kbd> Di chuyển</span><span><kbd>X</kbd> Nhận dấu</span><span><kbd>J</kbd> Sổ &amp; Đối chiếu</span></div>
+      <div class="interaction">
+        <span id="compass" class="compass" hidden aria-hidden="true"><i></i></span>
+        <small id="distance-label"></small>
+        <button id="interact-button" class="primary" data-act="interact"><kbd>E</kbd><span id="interact-label">Khám phá bến cảng</span></button>
+      </div>
+      <span id="save-status" class="save-status">Đã lưu</span>
+    </footer>
+
+    <div id="touch-controls" class="touch-controls" hidden>
+      <div id="stick" class="stick"><i></i></div>
+      <div class="touch-camera">
+        <button data-act="sense" aria-label="Nhận ra dấu vết gần đây"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg></button>
+        <button data-act="focus-goal" aria-label="Nhìn về mục tiêu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="5"/></svg></button>
+        <button data-act="recenter" aria-label="Đặt lại góc nhìn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5"/><polyline points="4 3.5 4 8.5 9 8.5"/></svg></button>
+        <button data-act="zoom-in" aria-label="Đến gần">+</button>
+        <button data-act="zoom-out" aria-label="Lùi xa">−</button>
+      </div>
+    </div>
+
+    <section id="field-work" class="field-work" aria-label="Phần việc tại hiện trường" hidden></section>
+    <div id="modal-host"></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="transition" class="transition" aria-hidden="true"><span></span><h2></h2><p></p></div>
+  </main>
+  <input id="import-file" type="file" accept=".json,application/json" hidden>
+  <noscript>Hãy bật JavaScript để bắt đầu hành trình.</noscript>
+</body>
+</html>

@@ -42,4 +42,4 @@ try{
   for(let i=6;i<=8;i++){await hold('r',430);await delay(250);await shot(`${tag}-${i}-turn.png`);}
   await hold('w',1200);await delay(300);await shot(tag+'-9-walk.png');
   console.log(JSON.stringify({tag,chapter,errors:errors.slice(0,3),errorCount:errors.length,shots:fs.readdirSync(out).filter(f=>f.startsWith(tag+'-')).length}));
-}finally{socket?.close();child.kill();}
+}finally{socket?.close();child.kill();try{fs.rmSync(profile,{recursive:true,force:true,maxRetries:5,retryDelay:300});}catch{}}

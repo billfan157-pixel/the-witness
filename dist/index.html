@@ -7,29 +7,34 @@
   <meta name="description" content="Khám phá những trình thuật Kinh Thánh qua góc nhìn Chứng nhân Vô danh bên cạnh Môsê, Đavít và Phêrô, rồi nối câu chuyện vào đời sống của người thường.">
   <title>Chứng Nhân — Di Sản Giao Ước</title>
   <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./witness.css">
-  <script src="./vendor/adventure-cast.js" defer></script>
-  <script src="./vendor/character-profiles.js" defer></script>
-  <script src="./vendor/adventure-visuals.js" defer></script>
-  <script src="./assets/human-topology.js" defer></script>
-  <script src="./vendor/character-detail.js" defer></script>
-  <script src="./vendor/adventure-character.js" defer></script>
-  <script src="./witness-content.js" defer></script>
-  <script src="./witness-spine.js" defer></script>
-  <script src="./witness-depth.js" defer></script>
-  <script src="./witness-relationships.js" defer></script>
-  <script src="./witness-craft.js" defer></script>
-  <script src="./witness-workshop-ui.js" defer></script>
-  <script src="./witness-model.js" defer></script>
-  <script src="./witness-craft-renderer.js" defer></script>
-  <script src="./witness-field-ui.js" defer></script>
-  <script src="./witness-world.js" defer></script>
-  <script src="./witness-ambience.js" defer></script>
-  <script src="./witness-compass.js" defer></script>
-  <script src="./vendor/adventure-3d.js" defer></script>
-  <script src="./witness-audio-library.js" defer></script>
-  <script src="./witness-audio.js" defer></script>
-  <script src="./witness-app.js" defer></script>
+  <link rel="stylesheet" href="./witness.css?v=90b36be41f6c">
+  <script src="./vendor/adventure-cast.js?v=90b36be41f6c" defer></script>
+  <script src="./vendor/character-profiles.js?v=90b36be41f6c" defer></script>
+  <script src="./vendor/adventure-visuals.js?v=90b36be41f6c" defer></script>
+  <script src="./vendor/witness-graphics.js?v=90b36be41f6c" defer></script>
+  <script src="./vendor/witness-gtao.js?v=90b36be41f6c" defer></script>
+  <script src="./vendor/witness-loaders.js?v=90b36be41f6c" defer></script>
+  <script src="./assets/human-topology.js?v=90b36be41f6c" defer></script>
+  <script src="./vendor/character-detail.js?v=90b36be41f6c" defer></script>
+  <script src="./vendor/adventure-character.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-content.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-spine.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-depth.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-relationships.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-craft.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-workshop-ui.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-model.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-craft-renderer.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-field-ui.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-architecture.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-world.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-ambience.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-compass.js?v=90b36be41f6c" defer></script>
+  <script src="./vendor/adventure-3d.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-audio-library.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-audio.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-cloud.js?v=90b36be41f6c" defer></script>
+  <script src="./witness-app.js?v=90b36be41f6c" defer></script>
 </head>
 <body>
   <main id="game" aria-label="Chứng Nhân — Di Sản Giao Ước">
@@ -60,6 +65,8 @@
         <p class="title-sub">Di Sản Giao Ước</p>
         <p class="title-lead">Bước vào những câu chuyện Kinh Thánh trong vai chứng nhân đời thường.<br>Quan sát. Lắng nghe. Giữ lời cùng nhau.</p>
         <div id="title-actions"><button class="primary" data-act="new">Bắt đầu hành trình <span aria-hidden="true">→</span></button></div>
+        <button class="cloud-entry text-link" data-act="cloud" id="cloud-entry">Tài khoản &amp; Lưu đám mây</button>
+        <p class="cloud-title-status" id="cloud-title-status" role="status">Đang kiểm tra bản lưu…</p>
         <div class="title-secondary"><button data-act="import">Nhập bản lưu</button><button data-act="about">Về hành trình này</button><button data-act="title-sound" class="title-sound-toggle" aria-label="Bật hoặc tắt âm thanh"><span class="sound-toggle-icon">🔊</span> Âm thanh</button></div>
         <p class="edition">BA HỒI · MÔSÊ — ĐAVÍT — PHÊRÔ · KIẾN TRÚC NHÂN VẬT HAI TẦNG</p>
       </div>
@@ -125,7 +132,7 @@
         <small id="distance-label"></small>
         <button id="interact-button" class="primary" data-act="interact"><kbd>E</kbd><span id="interact-label">Khám phá bến cảng</span></button>
       </div>
-      <span id="save-status" class="save-status">Đã lưu</span>
+      <button class="cloud-hud text-link" data-act="cloud" aria-label="Mở tài khoản và bản lưu"><span id="save-status" class="save-status">Đang kiểm tra bản lưu…</span></button>
     </footer>
 
     <div id="touch-controls" class="touch-controls" hidden>

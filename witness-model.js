@@ -9,6 +9,7 @@
   const clone=x=>JSON.parse(JSON.stringify(x));
   const error=message=>{throw new Error(message);};
   const unique=a=>[...new Set(a)];
+  function requireGroundWork(state){const p=state.spatialPositions?.[chapter(state).id+'.'+(state.layer?.id||'mortal')];if(p&&/^q01-(roof|step)/.test(p.supportId))error('Hãy trở lại đúng tầng có người hoặc vật trước khi thực hiện.');}
   const SKILL_KEYS=['observe','craft','commune','defend'];
 
   function baseSkills(origin='scribe'){
@@ -48,7 +49,7 @@
       skillXp:baseSkillXp(origin),
       quests:Object.fromEntries(D.chapters.map(q=>[q.id,{done:[],plan:null,route:null,decisions:{}}])),
       evidence:[],consent:{},flags:{},resources:{money:3,food:3,tools:1},
-      relationships:{miriam:0,damar:0,lea:0,titus:0},bonds:{},legends:{},veils:{},events:[],layer:null,positions:{},
+      relationships:{miriam:0,damar:0,lea:0,titus:0},bonds:{},legends:{},veils:{},events:[],layer:null,positions:{},spatialPositions:{},
       pendingEscort:null,finished:false,pendingBond:null,
       campaignProgress:{requiredLegends:{}},unlockedBridgeContext:[],
       board:defaultBoard(),talked:{},quietSeen:[],workshop:{drafts:{},records:{}},craft:{looked:[],field:null},
@@ -249,6 +250,7 @@
   }
 
   function act(state,id,options={}){
+    requireGroundWork(state);
     if(state.layer)error('Hãy hoàn tất hoặc rời trải nghiệm hiện tại trước.');
     const s=clone(state),ch=chapter(s),q=quest(s);const a=actions(s).find(x=>x.id===id);if(!a)error('Việc này chưa sẵn sàng hoặc đã hoàn tất.');
     if(a.legend)error('Hãy mở chương chính bằng phần chơi hoặc bản tóm tắt.');
@@ -291,7 +293,7 @@
     s.layer=checkpoint?clone(checkpoint):{kind,id,step:0,reflection:null,format:'interactive',summaryIndex:0,receipts:[],discovered:[],route:'near',composure:baseComp,attunements:[]};
     if(typeof s.layer.composure!=='number')s.layer.composure=baseComp;
     if(!Array.isArray(s.layer.attunements))s.layer.attunements=[];
-    s.layer.replay=replay;if(replay)delete s.positions[ch.id+'.'+id];
+    s.layer.replay=replay;if(replay){delete s.positions[ch.id+'.'+id];delete s.spatialPositions?.[ch.id+'.'+id];}
     if(format&&format!==s.layer.format)return switchLayer(s,format);
     rememberLayer(s);return s;
   }
@@ -552,6 +554,12 @@
     }
     s.evidence=unique((raw.evidence||[]).filter(id=>Object.hasOwn(D.evidence,id)));
     for(const key of ['consent','flags','resources','relationships','bonds','legends','veils','positions','settings'])if(raw[key]&&typeof raw[key]==='object'&&!Array.isArray(raw[key]))s[key]={...s[key],...clone(raw[key])};
+    if(raw.spatialPositions&&typeof raw.spatialPositions==='object'&&!Array.isArray(raw.spatialPositions)){
+      for(const [key,p]of Object.entries(raw.spatialPositions).slice(0,48)){
+        if(!/^Q(0[1-9]|1[0-2])\.(mortal|L0[1-5]|V0[1-4])$/.test(key)||!p||p.schema!==1||![p.x,p.y,p.z].every(Number.isFinite)||Math.abs(p.x)>78||Math.abs(p.z)>78||Math.abs(p.y)>30||! /^(world|q01-room|q01-roof-(main|back|front)|q01-step-([0-9]|1[0-7]))$/.test(p.supportId))continue;
+        s.spatialPositions[key]={schema:1,x:p.x,y:p.y,z:p.z,supportId:p.supportId};
+      }
+    }
     for(const k of ['masterVolume','ambienceVolume','effectsVolume','voiceVolume','uiVolume'])s.settings[k]=typeof s.settings[k]==='number'&&Number.isFinite(s.settings[k])?Math.max(0,Math.min(1,s.settings[k])):defaultSettings()[k];
     for(const k of ['sound','autoVoice','audioCaptions','audioSpatial'])if(typeof s.settings[k]!=='boolean')s.settings[k]=defaultSettings()[k];
     if(!['recorded','system','off'].includes(s.settings.voiceMode))s.settings.voiceMode='recorded';
@@ -665,6 +673,7 @@
   }
   function writeCraft(s,data){if(s.layer){s.layer.craft=data;rememberLayer(s);}else s.craft=data;return s;}
   function inspectDetail(state,id,position){
+    requireGroundWork(state);
     const detail=C.details(state).find(d=>d.id===id);if(!detail||!Array.isArray(position)||position.length!==2||!position.every(Number.isFinite)||Math.hypot(position[0]-detail.at[0],position[1]-detail.at[1])>3.2)error('Hãy tới gần chi tiết trước khi quan sát.');
     const s=clone(state),old=C.stores(s);return writeCraft(s,{...old,looked:unique([...(old.looked||[]),id]),field:old.field||null});
   }
@@ -673,6 +682,7 @@
     return writeCraft(s,{...old,views:{...(old.views||{}),[id]:{lift:typeof options.lift==='boolean'?options.lift:prev.lift,light:[0,1,2].includes(options.light)?options.light:prev.light}}});
   }
   function fieldStart(state,id){
+    requireGroundWork(state);
     let s=clone(state);const a=actions(s).find(a=>a.id===id),def=X.encounter(s,a);if(!def)error('Phần việc này chưa sẵn sàng tại cảnh.');
     const old=C.stores(s);s=writeCraft(s,{...old,looked:old.looked||[],field:{encounter:def.id,action:id,selected:null}});
     const p=workshopState(s).drafts[def.id]?.payload||X.empty(X.materialize(s,def));return workshopDraft(s,id,p);
@@ -682,6 +692,7 @@
     const s=clone(state),c=C.stores(s);return writeCraft(s,{...c,field:{...c.field,selected:item}});
   }
   function fieldAct(state,id,options={}){
+    requireGroundWork(state);
     const f=C.field(state),spot=C.fieldSpots(state).find(x=>x.id===id),p=options.position;
     if(!f||!spot||!Array.isArray(p)||p.length!==2||!p.every(Number.isFinite)||Math.hypot(p[0]-spot.at[0],p[1]-spot.at[1])>2.8)error('Hãy tới đúng điểm thao tác trong cảnh trước.');
     const result=C.reduceField(state,spot,options);return {ok:result.ok,message:result.message,state:result.ok?workshopDraft(state,f.a.id,result.payload):state};
@@ -693,6 +704,7 @@
   }
   function fieldStop(state){const s=clone(state),old=C.stores(s);return writeCraft(s,{...old,looked:old.looked||[],field:null});}
   function fieldFinish(state,position){
+    requireGroundWork(state);
     const f=C.field(state);if(!f||!Array.isArray(position)||position.length!==2||!position.every(Number.isFinite)||Math.hypot(position[0]-f.origin[0],position[1]-f.origin[1])>3.4)error('Hãy trở lại điểm bàn giao trước khi thực hiện phương án.');
     const result=X.evaluate(state,f.def,f.payload);if(!result.ok)error(result.issues[0]||'Phương án còn phần cần đối chiếu.');
     const s=fieldStop(state);return s.layer?layerStep(s,f.a.id,{position,work:f.payload}):act(s,f.a.id,{puzzle:{work:f.payload}});

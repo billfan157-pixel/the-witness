@@ -16,6 +16,13 @@ Bản chơi 0.5.0 có 31 phần việc trực tiếp tại hiện trường, g�
 
 ## Đọc theo nhu cầu
 
+Tài khoản, database và đồng bộ tiến trình dùng [23 • Backend và bản lưu đám mây](23-backend-and-cloud-saves.md), gồm API, chính sách lưu, quy trình khôi phục và giới hạn kiểm chứng của bản 0.7.0.
+
+Phát triển môi trường dùng [lộ trình hiện hành](../environment-kit/roadmap.md),
+[tiêu chuẩn](../environment-kit/standards.md), [Look Bible](../environment-kit/look-bible.md)
+và trạng thái cổng trong `../environment-kit/progress.json`. Q01 bắt buộc, L04
+mở rộng; AI thực hiện build và nghiệm thu theo chất lượng.
+
 1. [Tổng quan sáng tạo và nghiên cứu](01-vision-research.md): luận đề sản phẩm, so sánh tham chiếu, phương pháp và phát hiện.
 2. [Game Design Document](02-game-design-document.md): vòng chơi, chiến đấu, điều tra, tiến triển, quan hệ, UI và phạm vi.
 3. [Narrative Bible](03-narrative-bible.md): cốt truyện xuyên suốt, ba tầng, chủ đề, hồi, nhánh và kết thúc.

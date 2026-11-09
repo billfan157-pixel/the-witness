@@ -1,0 +1,142 @@
+{
+  "date": "2026-11-09",
+  "status": "passed",
+  "scope": "Environment Kit Phase 3 / Gate 2: playable Q01 west-store blockout, functional acceptance only; no final art",
+  "releaseBuild": "1ca87a3f70b6",
+  "commands": {
+    "npm test": "passed",
+    "npm run test:browser": "passed",
+    "npm run test:craft-details": "passed",
+    "npm run test:graphics": "passed",
+    "node test/kit-cache.cjs": "passed",
+    "node test/kit-lifecycle-browser.mjs": "passed",
+    "node test/kit-profile-browser.mjs": "passed",
+    "npm run test:architecture-browser": "passed",
+    "npm run build": "passed"
+  },
+  "architecture": {
+    "id": "Q01-WEST-STORE",
+    "base": 0.6609847015206309,
+    "roof": 3.900984701520631,
+    "surfaces": 22,
+    "solids": 51
+  },
+  "traversal": {
+    "runs": [
+      {
+        "name": "third-up",
+        "frames": 465,
+        "supports": 22,
+        "cameraCollisions": 0,
+        "bodyCollisions": 0,
+        "independentGeometryErrors": 0
+      },
+      {
+        "name": "third-down",
+        "frames": 177,
+        "supports": 21,
+        "cameraCollisions": 0,
+        "bodyCollisions": 0,
+        "independentGeometryErrors": 0
+      },
+      {
+        "name": "first-roof-return",
+        "frames": 316,
+        "supports": 22,
+        "cameraCollisions": 0,
+        "bodyCollisions": 0,
+        "independentGeometryErrors": 0
+      },
+      {
+        "name": "offline-third-up",
+        "frames": 512,
+        "supports": 22,
+        "cameraCollisions": 0,
+        "bodyCollisions": 0,
+        "independentGeometryErrors": 0
+      },
+      {
+        "name": "offline-third-down",
+        "frames": 179,
+        "supports": 21,
+        "cameraCollisions": 0,
+        "bodyCollisions": 0,
+        "independentGeometryErrors": 0
+      },
+      {
+        "name": "offline-first-up",
+        "frames": 170,
+        "supports": 21,
+        "cameraCollisions": 0,
+        "bodyCollisions": 0,
+        "independentGeometryErrors": 0
+      },
+      {
+        "name": "offline-first-down",
+        "frames": 180,
+        "supports": 21,
+        "cameraCollisions": 0,
+        "bodyCollisions": 0,
+        "independentGeometryErrors": 0
+      }
+    ],
+    "totalFrames": 1999,
+    "independentMethod": "Every 8 rendered frames: Box3 bounds of displayed architecture meshes against camera clearance (0.16 m) and torso radius (0.28 m); downward raycast against the real terrain and architecture meshes verifies foot support within 0.025 m",
+    "saveResume": "Roof and stair checkpoint reloads preserve exact x/y/z and supportId; legacy planar saves stay downstairs; cross-floor interaction and markers blocked",
+    "offline": "Cold standalone with all http/https URLs blocked completes both camera modes up and down; zero HTTP resource entries"
+  },
+  "standalone": {
+    "playerBytes": 12970545,
+    "playerSha256": "4dbe8336d11d0903ac981051cdfe6995ab8d40a1c1c4750f3cfed9d3fa85245c",
+    "labSha256": "d39b0af3b1812beff4fc111bcdf3f725503aed8eca876e5b031a87cffd9596f1",
+    "embeddedImages": "13 player-resolved keys (top-level art + terrain PBR); unused Phase 4 material candidates stay web/precache-only",
+    "byteIdenticalAfterFinalRebuild": true
+  },
+  "hardware": {
+    "renderer": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "drawingBuffer": [
+      1920,
+      1080
+    ],
+    "grouped": {
+      "raw": {
+        "gpuMedian": 1.655208,
+        "cpuMedian": 0.3000000000174623,
+        "frameP95": 8.600000000000364,
+        "textureUploadBytes": 4194306
+      },
+      "full": {
+        "gpuMedian": 1.8126295,
+        "cpuMedian": 0.20000000001164153,
+        "frameP95": 9.700000000000728,
+        "textureUploadBytes": 1048656
+      },
+      "lite": {
+        "gpuMedian": 2.4080985,
+        "cpuMedian": 0.15000000002328306,
+        "frameP95": 8.799999999999272,
+        "textureUploadBytes": 1048578
+      }
+    },
+    "noRegression": true
+  },
+  "sourceHashes": {
+    "witness-architecture.js": "e3f6bd3e64ef5ce04a6009cd0617263a0aa12abc9e28300e90cc6d00b6a69548",
+    "vendor/adventure-3d.js": "545f3c5fa34ef6d0ca91c3dc5f8802c1665a4a2626dbac2d833dc795d7a61fba",
+    "witness-world.js": "86e06d86302df418b98de30f0eb5a382af200c4d68762bd85512c0feb59928b8",
+    "witness-model.js": "653a6510b5363b51ebfa32d10644905a3e07b341e2dfc3168f94d21a861774a1",
+    "witness-app.js": "3111cdade4ecb1f02f9664ad32a25180e47cf55cb364541cb77b9c6592bec315"
+  },
+  "fixes": [
+    "Player standalone no longer embeds unused architecture material candidates: 28454717 to 12970545 bytes with the full playable route retained",
+    "All seven test drivers now remove their temporary Chrome profile on close; 207 orphaned profiles (15.4 GB) cleaned, preventing the ENOSPC failure seen mid-regression",
+    "ART-CREDITS ledger rows added for the four Poly Haven CC0 candidate surfaces with authors, URLs, date and modifications"
+  ],
+  "limits": [
+    "Scripted input on headless Chrome using the actual Intel Arc GPU; not human playtesting and not a phone measurement",
+    "The blockout is original reconstruction [H], not accepted final art; Phase 4 look development is next",
+    "Other buildings remain closed; no NPC upper-floor routes are claimed",
+    "GPU numbers are the dedicated 200-module lab scene, not complete-Q01 frame time",
+    "Release package prepared locally; publication pending owner decision"
+  ]
+}

@@ -16,6 +16,7 @@
 
   // Lấy cao độ địa hình từ lưới đỉnh của mặt đất (PlaneGeometry 156x134, 152x130 đoạn, xoay -90° X).
   function heightSampler(scene){
+    if(typeof scene.userData.terrainHeight==='function')return scene.userData.terrainHeight;
     const floor=scene.children.find(c=>c.isMesh&&c.geometry?.parameters?.width===156);
     const pos=floor?.geometry?.attributes?.position;
     if(!pos)return()=>0;
@@ -235,7 +236,7 @@
   }
 
   // Hoa dại nhiều màu rải theo địa hình (InstancedMesh, instanceColor nhân màu cánh).
-  function flowers(T,heightAt){
+  function flowers(T,heightAt,blocked=()=>false){
     const n=scaleCount(150);
     const petalPos=[],petalCol=[],petalIdx=[];
     const petals=5;
@@ -266,7 +267,7 @@
     let placed=0,guard=0;
     while(placed<n&&guard++<n*6){
       const x=rand(-30,30),z=rand(-20,18),y=heightAt(x,z);
-      if(y<-.15)continue;
+      if(y<-.15||blocked(x,z))continue;
       dummy.position.set(x,y+.1,z);
       dummy.rotation.set(rand(-.1,.1),rand(0,6.28),rand(-.1,.1));
       dummy.scale.setScalar(rand(.8,1.6));
@@ -309,7 +310,7 @@
         add(motes(T,{count:desert?40:60,color:desert?'#e8cf9a':'#ffe6b0',opacity:desert?.3:.34,sizeMin:1.4,sizeMax:2.8,spread:16,yMin:.3,yMax:4.5,blink:false,drift:1}));
       }
       if(!layer&&!desert&&!room&&['lands','spring','shore','hill','dawn','evening'].includes(biome))
-        add(flowers(T,heightAt));
+        add(flowers(T,heightAt,(x,z)=>{const r=scene.userData.architecture?.bounds;return !!r&&x>r[0]-.3&&x<r[1]+.3&&z>r[2]-.3&&z<r[3]+.3;}));
     }
 
     scene.add(group);

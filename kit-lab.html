@@ -1,0 +1,14 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>THE WITNESS · Xưởng môi trường</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#151b1c;color:#eee9dc;font:15px/1.55 system-ui,sans-serif}header{padding:22px 30px;border-bottom:1px solid #404740;display:flex;justify-content:space-between;gap:25px}h1{font-size:23px;margin:0}p{margin:6px 0;color:#bfc7bd}a{color:#e6c780}main{display:grid;grid-template-columns:minmax(0,1fr) 310px;min-height:75vh}#stage{position:relative;min-height:600px}canvas{display:block;width:100%;height:100%;position:absolute;inset:0}aside{padding:25px;background:#202728}label{display:block;margin:15px 0 7px}select,button{font:inherit;border:1px solid #6e7769;color:inherit;background:#2b3534;padding:9px;width:100%}button{margin-top:12px;cursor:pointer}small{display:block;color:#b4bdb1;margin-top:14px}#status{margin-top:24px;color:#d8c291;white-space:pre-line}footer{padding:20px 30px;border-top:1px solid #404740}#error{color:#ffad9d} @media(max-width:750px){main{grid-template-columns:1fr}header{display:block}#stage{min-height:430px}aside{padding:18px}aside>label,aside>select{max-width:100%}}
+</style>
+<script>globalThis.ExpeditionCampaign={bounds:{left:-39,right:39,far:-37,near:29}};</script>
+<script src="./vendor/adventure-3d.js" defer></script><script src="./vendor/witness-loaders.js" defer></script><script src="./kit-lab.js" defer></script>
+</head><body><header><div><h1>THE WITNESS · Xưởng môi trường</h1><p>Nghiên cứu bề mặt limestone và kiểm chứng pipeline asset.</p></div><div><a href="./environment-references.html">Bộ tham chiếu</a> · <a href="./index.html">Mở game</a></div></header>
+<main><div id="stage" aria-label="Mô hình tường PBR ba chiều"></div><aside>
+<strong>Module tường 4 m</strong><p>Mẫu nghiên cứu [H]. Chưa nghiệm thu mỹ thuật hoặc phục dựng Caesarea.</p>
+<label for="quality">Gói vật liệu</label><select id="quality"><option value="full">KTX2 512 + Meshopt</option><option value="raw">PNG 512 tham chiếu</option><option value="lite">PNG 256 gọn nhẹ</option></select>
+<label for="count">Số module</label><select id="count"><option value="1">1 · xem chi tiết</option><option value="200">200 · kiểm tra lặp</option></select>
+<button id="reset">Đặt lại góc nhìn</button><div id="status" role="status">Đang mở mô hình…</div><div id="error" role="alert"></div>
+<small>Kéo để xoay. Cuộn để đổi khoảng cách. Nguồn bề mặt: Poly Haven Coral Ground 02, CC0; bản đồ màu, normal OpenGL và ORM được xử lý riêng.</small>
+</aside></main><footer>Tham chiếu [H] không thay bằng chứng khảo cổ. Mô hình và collider này chưa chứng minh khả năng vào nhà hoặc leo cầu thang.</footer></body></html>

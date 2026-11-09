@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "checks": [
+    "Native Enter can increment twice across field redraws while keeping the same button focused",
+    "Open instructions and destinations stay open through draft changes",
+    "Keyboard preparation does not commit the audit"
+  ],
+  "errors": []
+}

@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-09",
+  "gate": "G2",
+  "status": "package-ready",
+  "publication": "pending owner decision",
+  "buildRevision": "1ca87a3f70b6",
+  "package": "outputs/environment-kit/phase3-site.tar.gz",
+  "packageBytes": 41871522,
+  "packageSha256": "d16826df14d5e000f92c1fe176f47d56cea029559a724b1c3611c2246660d723",
+  "standalonePlayer": {
+    "bytes": 12970545,
+    "sha256": "4dbe8336d11d0903ac981051cdfe6995ab8d40a1c1c4750f3cfed9d3fa85245c"
+  },
+  "standaloneLab": {
+    "sha256": "d39b0af3b1812beff4fc111bcdf3f725503aed8eca876e5b031a87cffd9596f1"
+  },
+  "verification": "docs/environment-kit/validation/phase3/verification.json",
+  "roadmapDocument": {
+    "revision": 5,
+    "path": "docs/environment-kit/THE-WITNESS-Environment-Kit-Roadmap.docx",
+    "sha256": "310e781cd7ba815927ab75c3669cb74cd0c211526b6c9554fa1e2250f19f67ea"
+  },
+  "note": "dist matches the tested sources; the player standalone is byte-identical to the file exercised with all HTTP blocked. Previous publication target was a Codex-hosted site (outputs/environment-kit/deployment.json); this package has not been published."
+}

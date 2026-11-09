@@ -1,5 +1,16 @@
 # Chứng Nhân: Di Sản Giao Ước (UNSEALED WITNESS: Legacy of the Covenant)
 
+Bản **0.7.0** bổ sung backend Cloudflare Worker và database D1 cho tài khoản, 3 ô lưu đám mây, đồng bộ nhiều thiết bị, hàng đợi khi mất mạng và khôi phục lịch sử. Chơi khách vẫn lưu trên máy; đăng nhập bằng ChatGPT để tiếp tục trên thiết bị khác. Bản cũ được giữ riêng và có thể chuyển vào tài khoản từ **Tài khoản & Lưu đám mây**. Chờ thông báo **Đã lưu đám mây** trước khi chuyển máy.
+
+Chi tiết API, bảo mật, lưu trữ và vận hành nằm ở [Backend và bản lưu đám mây](docs/the-witness/23-backend-and-cloud-saves.md). Cài bằng `npm ci`, dùng Node 22.13+; chạy `npm run dev:cloud` để xem bản có backend trên cổng 8035 với database cục bộ. `npm run test:backend` kiểm API và cơ chế đồng bộ. Bản HTML ngoại tuyến vẫn chơi được và giữ tiến trình trên trình duyệt đang dùng; không có máy chủ khi mở file trực tiếp.
+
+Phát triển tài nguyên môi trường theo [lộ trình hiện hành](docs/environment-kit/roadmap.md)
+và [tiêu chuẩn](docs/environment-kit/standards.md). Đọc các tài liệu này trước khi
+build hoặc thay asset. Danh mục nằm tại `docs/environment-kit/catalog.csv`.
+`npm ci --prefix tools/environment-kit` cài đúng công cụ đã khóa phiên bản;
+`npm run build:kit` tái tạo mẫu GLB và loader; `npm run build` kiểm tra ngân sách
+asset trước khi đóng gói. Không ghi cổng nghiệm thu đạt nếu thiếu bằng chứng.
+
 Bản **0.5.0 / hồ sơ thiết kế 3.2** đưa 31 phần việc vào thao tác trực tiếp tại hiện trường, gồm 25 tình huống chương và sáu nhiệm vụ quan hệ với 12 biến thể. Có 44 chi tiết 3D tại 27 chủ cảnh: tải xe, chốt nứt, mép giấy dán, đèn cuối đoàn, đường đi, các khoản hàng, phong bì và phần việc cùng NPC. Bản nháp giữ khi rời hoặc tải lại; chỉ bàn giao hợp lệ mới hoàn tất việc. Bảng đối chiếu vẫn có cùng luật và quyền hoàn tất.
 
 Bộ tài liệu bắt đầu ở [nghiên cứu chiều sâu](docs/the-witness/16-depth-research.md), [atlas 25 tình huống chương](docs/the-witness/17-encounter-atlas.md), [kịch bản chi tiết và thoại](docs/the-witness/18-scene-craft-and-dialogue.md), [protocol playtest](docs/the-witness/19-depth-playtest.md) và [thực thi từng cảnh 0.5.0](docs/the-witness/20-scene-implementation.md). Bản đọc đầy đủ và gói nguồn nằm trong `outputs/THE-WITNESS-Design-v3.2/`. Dàn dựng dùng các trạng thái có điều kiện; chưa là mô phỏng vật lý dây mềm, chất lỏng, đám đông hoặc âm học liên tục. Chưa có playtest người thật.
@@ -24,6 +35,8 @@ Nền 0.3.0 triển khai sâu kiến trúc v3.1 trên runtime 3D: **Kinh Thánh 
 Chạy `npm run dev`, mở địa chỉ Local được in ra. Bản đóng gói nằm ở `dist/ban-choi-ngoai-tuyen.html`; có thể mở trực tiếp mà không cần mạng hoặc cài thư viện.
 
 WASD đi, kéo chuột nhìn, Q/R xoay, V đổi góc nhìn thứ nhất/thứ ba, C đặt lại góc, E tương tác, F dẫn hướng, J mở sổ, M bản đồ, Escape menu. Cảm ứng dùng nửa trái để đi, nửa phải để nhìn. Tay cầm hỗ trợ cần trái/phải (cần phải nhìn lên/xuống, nhấn cần phải đổi góc nhìn), A tương tác, Y sổ, Start menu. Sân luyện dùng K đánh, H đỡ, Space né; có nút cảm ứng và ba nhịp đối phương.
+
+Ở Q01, mở Bản đồ rồi chọn **Khám phá kho phía tây** để đi tuyến bến–cửa–phòng–cầu thang 18 bậc–sân mái và trở về, bằng cả hai góc nhìn; bản lưu khôi phục đúng tầng và bậc thang. Vật trên mái chỉ ghi quan sát, không cấp chứng cứ hay phần thưởng. Đây là blockout công năng [H] đã nghiệm thu chức năng (giai đoạn 3), chưa là mỹ thuật cuối; xem [phase-3.md](docs/environment-kit/phase-3.md).
 
 Trong phần việc hiện trường, chọn người/vật/nguồn trong bảng gọn, đi tới điểm thao tác rồi thực hiện; dùng danh sách địa điểm để dẫn tới chỗ cần làm. Có thể thử luật, sửa bản nháp hoặc chuyển sang bảng đối chiếu. Điểm bàn giao kiểm lại toàn bộ phương án trước khi ghi truyện. Nhìn gần vật thể chỉ ghi quan sát, không tự cấp chứng cứ hay quyền công bố.
 

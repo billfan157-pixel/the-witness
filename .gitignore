@@ -1,4 +1,13 @@
 node_modules/
+.witness-runtime/
+.wrangler/
+.sites-runtime/
+dist/client/
+dist/server/
+dist/.openai/
+tools/environment-kit/bin/
+tools/environment-kit/work/
+outputs/environment-kit/*-site.tar.gz
 .DS_Store
 test/artifacts/
 *.log

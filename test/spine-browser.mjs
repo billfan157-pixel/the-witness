@@ -24,7 +24,7 @@ try{
   await send('Runtime.enable');await send('Page.enable');
   await send('Page.addScriptToEvaluateOnNewDocument',{source:'Object.defineProperty(navigator,"deviceMemory",{get:()=>4});'});
   await send('Emulation.setDeviceMetricsOverride',{width:1440,height:960,deviceScaleFactor:1,mobile:false});
-  await send('Page.navigate',{url:'http://127.0.0.1:8034/'});await waitFor('!!document.querySelector("canvas")');
+  await send('Page.navigate',{url:process.env.WITNESS_BASE_URL??'http://127.0.0.1:8034/'});await waitFor('!!document.querySelector("canvas")');
   const seed=async state=>{const hook=await send('Page.addScriptToEvaluateOnNewDocument',{source:'localStorage.setItem("the-witness.spine.v3",'+JSON.stringify(JSON.stringify(state))+');'});await send('Page.reload',{ignoreCache:true});await waitFor('!!document.querySelector("#title-actions [data-act=continue]")');await send('Page.removeScriptToEvaluateOnNewDocument',{identifier:hook.identifier});await click('#title-actions [data-act=continue]');await waitFor('!!document.querySelector("dialog")');if(await evaluate('!document.querySelector("[data-act=summary-next]")'))await click('dialog [data-act=close]');await delay(400);};
   for(const id of (visualOnly?[]:D.spine)){
     await seed(ready(id));await waitFor('!!document.querySelector("[data-world-target=gate]")');await click('[data-world-target=gate]');await waitFor('!!document.querySelector("dialog [data-act=layer-open]")');await click('dialog [data-act=layer-skip]');await waitFor('!!document.querySelector("dialog [data-act=summary-next]")');
@@ -58,4 +58,4 @@ try{
   await click('dialog [data-act=summary-next]');await seed(await read());assert.equal((await read()).layer.summaryIndex,1);await shot('summary-resume-mobile.png');checks.push('Mobile summary fits screen and reload resumes exact page');
   await click('dialog [data-act=close]');await click('#hud-top [data-act=pause]');await click('dialog [data-act=layer-format]');await waitFor('JSON.parse(localStorage.getItem(WitnessModel.STORE)).layer.format==="interactive"');await delay(500);await shot('peter-mobile.png');assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false);checks.push('Format switch resumes first missing source beat');
   assert.equal(errors.length,0);const report={release:D.release,status:'passed',checks,errors,scope:'Browser UI and WebGL with scripted input; no human playtest'};fs.writeFileSync(path.join(out,visualOnly?'visual-browser-report.json':'spine-browser-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
-}finally{socket?.close();child.kill();}
+}finally{socket?.close();child.kill();try{fs.rmSync(profile,{recursive:true,force:true,maxRetries:5,retryDelay:300});}catch{}}

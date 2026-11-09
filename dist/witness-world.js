@@ -316,6 +316,7 @@
     if(s.pendingBond){objects.push({id:'bond-work',at:[-16,-4],kind:'prop',variant:'table'});targets.push({id:'bond-work',actor:'bond-work',at:[-16,-4],name:'Phần việc riêng đã nhận',range:2.8,elevation:1.2,symbol:'◇'});}
     if(s.flags.trainingSpawned){objects.push({id:'training',at:[-21,16],kind:'npc',variant:'man',appearance:'guard',fixed:true});targets.push({id:'training',actor:'training',at:[-21,16],name:'Người hướng dẫn sân gậy',range:2.9,elevation:2,symbol:'◇'});}
     if(ch.legend||ch.veil){const n=ch.nodes.find(n=>n.id==='rest');if(n){const t=targets.find(t=>t.id==='rest');if(t){t.name='Một khoảng dừng để lắng nghe';t.symbol='◇';}}}
+    if(!s.layer&&ch.id==='Q01'&&root.WitnessArchitecture)targets.push(...root.WitnessArchitecture.targets(context?.scene.userData.architecture));
     const objs=applySolids(objects);
     return C?C.augment(s,{objects:objs,targets}):{objects:objs,targets};
   }
@@ -327,14 +328,16 @@
     const keepOutdoorSky=s.layer&&['L01','L04'].includes(s.layer.id);
     if(s.layer)for(const child of scene.children){if(child.isLight||child===ground||child.name==='player'||child.geometry?.parameters?.radius>=100||child.type==='Object3D'||(keepOutdoorSky&&child.userData?.isSkyRidge))continue;child.visible=false;}
     const ray=new T.Raycaster();const down=new T.Vector3(0,-1,0);
-    const height=(x,z)=>{if(!ground)return 0;ray.set(new T.Vector3(x,40,z),down);return ray.intersectObject(ground)[0]?.point.y||0;};
+    let terrainSampler=null;
+    const height=(x,z)=>{if(terrainSampler)return terrainSampler(x,z);if(!ground)return 0;ray.set(new T.Vector3(x,40,z),down);return ray.intersectObject(ground)[0]?.point.y||0;};
     decor=new T.Group();decor.name='witness-place';scene.add(decor);
     const materials=new Map();
     const mat=(c,kind='stone',opts={})=>{
       const key=c+'|'+kind+'|'+JSON.stringify(opts);
       if(!materials.has(key)){
-        const m=new T.MeshStandardMaterial({color:c,roughness:opts.roughness??.88,metalness:opts.metalness??0,...opts});
-        if(!opts.noSurface)AV?.surface?.(m,kind);
+        const {noSurface,noCast,...materialOptions}=opts;
+        const m=new T.MeshStandardMaterial({color:c,roughness:.88,metalness:0,...materialOptions});
+        if(!noSurface)AV?.surface?.(m,kind);
         materials.set(key,m);
       }
       return materials.get(key);
@@ -740,7 +743,7 @@
       // Herodian stone seawall & quay walkway
       box('#a5987e',0,.25,-22,68,.55,3.2,'masonry');
       for(let x=-20;x<=20;x+=5)box('#877a63',x,.65,-23.2,.48,.48,.48,'stone');
-      house(-23,-13,9,7,5.2,'#cbb998',true);house(-10,-21,8,6,4.5,'#c7b493');house(4,-22,10,5,5.2,'#d1c0a0',true);house(27,-10,6,10,5.5,'#c4b292');
+      if(M.chapter(s).id!=='Q01'||s.layer)house(-23,-13,9,7,5.2,'#cbb998',true);house(-10,-21,8,6,4.5,'#c7b493');house(4,-22,10,5,5.2,'#d1c0a0',true);house(27,-10,6,10,5.5,'#c4b292');
       colonnade(-4,10,-21,4.6,5,'#cbbba0');
       cloth(6,10,6,'#b69b72');cloth(-6,9,4.5,'#8e9c91');
       for(let i=0;i<6;i++){box('#927554',12+i*2,.25,-24,1.9,.36,8,'wood');pole(12+i*2,-21,1.4);}
@@ -793,6 +796,21 @@
       }
     }
     if(pendingCoast!==null)carveSeabed(pendingCoast);
+    if(root.WitnessArchitecture&&ground){terrainSampler=root.WitnessArchitecture.terrainSampler(ground);scene.userData.terrainHeight=height;}
+    if(!s.layer&&M.chapter(s).id==='Q01'&&root.WitnessArchitecture){
+      const architecture=root.WitnessArchitecture.install({T,scene,height,ground});
+      // Vegetation generated for the former closed building cannot occupy its new interior.
+      const matrix=new T.Matrix4(),position=new T.Vector3(),r=architecture.bounds;
+      for(const batch of scene.children.filter(o=>o.isInstancedMesh)){
+        let count=0;
+        for(let i=0;i<batch.count;i++){
+          batch.getMatrixAt(i,matrix);position.setFromMatrixPosition(matrix);
+          if(position.x>r[0]-.3&&position.x<r[1]+.3&&position.z>r[2]-.3&&position.z<r[3]+.3)continue;
+          batch.setMatrixAt(count++,matrix);
+        }
+        if(count!==batch.count){batch.count=count;batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();}
+      }
+    }
 
     // Gộp vật cảnh tĩnh theo vật liệu để giữ tốc độ khung hình mượt mà trên cả thiết bị di động.
     decor.updateMatrixWorld(true);const batches=new Map();
@@ -819,6 +837,7 @@
       const crafted=root.WitnessCraftRenderer.create({T,scene,height});crafted.update(s);
       reactive.push(next=>crafted.update(next));animators.push(time=>crafted.tick(time));
     }
+    root.WitnessGraphics?.configureScene(T,scene,biome,s.layer?.id??M.chapter(s).id);
   }
 
   function makeController(engine,callbacks){
@@ -830,6 +849,7 @@
     // thực tế, không đụng engine.walk tự động (input=0 khi đang dẫn đường).
     function manualBlocked(nx,nz){
       if(!current)return false;
+      const sp=engine.spatial?.();if(sp&&root.WitnessArchitecture&&['roof','stairs'].includes(root.WitnessArchitecture.family(sp.supportId)))return false;
       const ch=M.chapter(current);
       for(const nd of ch.nodes){
         if(nd.model==='gate')continue;

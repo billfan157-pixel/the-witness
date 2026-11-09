@@ -1,0 +1,92 @@
+{
+  "documentRevision": 3,
+  "roadmap": "docs/environment-kit/roadmap.md",
+  "standards": "docs/environment-kit/standards.md",
+  "catalog": "docs/environment-kit/catalog.csv",
+  "updated": "2026-11-09",
+  "production": "AI",
+  "requiredScene": "Q01",
+  "extensionScene": "L04",
+  "deadlinePolicy": "quality-gated",
+  "gates": [
+    {
+      "id": "G0",
+      "status": "passed",
+      "passed": [
+        "working roadmap, standards, catalog and evidence vocabulary",
+        "12 repeatable pre-kit Q01/L04 baseline views",
+        "16 annotated regional references from 8 sources, with reconstruction and image-rights boundaries",
+        "physical laptop hardware identified and Intel Arc WebGL verified"
+      ],
+      "remaining": []
+    },
+    {
+      "id": "G1",
+      "status": "passed",
+      "passed": [
+        "reproducible 288-triangle GLB with three PBR quality variants",
+        "shared Three r187, KTX2 and Meshopt with local JS/WASM",
+        "SHA256, KTX2 mipmaps, transfer functions and authored collision coordinates",
+        "200 instances rendered on Intel Arc at 1920x1080; raw/full GPU comparison",
+        "independent subscriber cancellation, late scene close, retry and partial failure",
+        "shared live owners and 24 full/lite transitions return to GPU baseline",
+        "real service-worker cache and offline reload",
+        "cold full-quality standalone with all HTTP blocked; player standalone uses lighter pack"
+      ],
+      "remaining": []
+    },
+    {
+      "id": "G2",
+      "status": "passed",
+      "passed": [
+        "continuous Q01 doorway/interior/18-step stair/roof route in actual engine",
+        "third- and first-person walking and return; cold standalone with all HTTP blocked",
+        "roof and stair checkpoint reload preserves exact support and position",
+        "same-xz stacked floor interaction rejected",
+        "legacy mission model suite and capsule/terrain unit checks",
+        "independent Box3/raycast checks against rendered meshes on all seven recorded routes (1999 frames): zero camera, body and support errors",
+        "full campaign browser suite (21 checks), scene, spine, depth, craft, craft-details, field-keyboard, graphics tiers and kit cache/lifecycle/profile regressions pass on release build 1ca87a3f70b6",
+        "deterministic rebuild verified: player standalone byte-identical to the offline-tested file; evidence source hashes match",
+        "player standalone slimmed to active assets (12970545 bytes); test-driver profile cleanup fixes the ENOSPC regression failure; ART-CREDITS ledger completed for candidate surfaces"
+      ],
+      "remaining": []
+    },
+    {
+      "id": "G3",
+      "status": "not_started",
+      "passed": [],
+      "remaining": [
+        "accepted playable Q01 look-development corner"
+      ]
+    },
+    {
+      "id": "G4",
+      "status": "not_started",
+      "passed": [],
+      "remaining": [
+        "Q01 completion",
+        "lighter offline gameplay parity",
+        "functional and visual regression",
+        "device performance evidence",
+        "L04 extension decision"
+      ]
+    }
+  ],
+  "evidence": [
+    "docs/environment-kit/validation/kit-proof.json",
+    "docs/environment-kit/validation/lifecycle.json",
+    "docs/environment-kit/validation/hardware-profile.json",
+    "docs/environment-kit/research/references.json",
+    "docs/environment-kit/validation/phase3/model.json",
+    "docs/environment-kit/validation/phase3/browser.json",
+    "docs/environment-kit/validation/phase3/verification.json"
+  ],
+  "limitations": [
+    "pipeline surface study is not accepted final art or exact Caesarea kurkar",
+    "Q01 west-store blockout is functional original reconstruction [H], not accepted final art; other buildings remain closed",
+    "headless actual laptop GPU excludes display presentation/input latency",
+    "no physical phone measurement or future complete-Q01 performance certification",
+    "reference board diagrams are original H illustrations; external photographs are linked only",
+    "release package prepared locally; publication pending owner decision"
+  ]
+}

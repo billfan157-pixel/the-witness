@@ -16,6 +16,13 @@
 
   const loaded=M.load();
   let state=loaded.state,engine,controls,title=true,dialog=null,last=null,activePuzzle=null,toastTimer,subTimer,checkpointTime=0,walking=false,escortLive=false,storageWarning=false,currentTarget=null,audioOn=false,legendOrder=[],legendHint=0,attuneChosen=false;
+  const cloud=WitnessCloud.create({model:M,onStatus(info){
+    const text=info.storageFailed?'Bộ nhớ máy đã đầy · hãy xuất bản lưu':info.message;
+    setText('#save-status',text);setText('#cloud-title-status',text);
+    document.documentElement.dataset.cloud=info.mode;
+    for(const b of document.querySelectorAll('#title-actions [data-act]'))b.disabled=!info.ready;
+  },onState(next){state=next;title=true;if(dialog)close();if(engine)launchWorld();}});
+  globalThis.WitnessCloudSession=cloud;
   const initial=()=>state||M.fresh();
   let fieldMessage='',fieldTested=false,fieldCache='',fieldNearest=null,fieldFocus=null;
   const assetUrl=f=>globalThis.AdventureCast?.asset?.(f)||'./assets/'+f;
@@ -86,8 +93,9 @@
   }
   function save(){
     if(!state)return;
-    const result=M.save(state);state=result.state;
-    $('#save-status').textContent=result.persisted?'Đã lưu trên máy':'Chưa lưu được';
+    const result=M.save(state,cloud.storage);state=result.state;
+    cloud.capture(state);
+    if(!result.persisted)$('#save-status').textContent='Chưa lưu được trên máy · hãy xuất bản lưu';
     if(!result.persisted&&!storageWarning){storageWarning=true;toast('Máy chưa cho lưu tiến độ. Bạn có thể xuất bản lưu từ menu.');}
   }
   function update(next){state=next;save();W.setState(state);refresh();}
@@ -151,7 +159,7 @@
       const key=M.chapter(s).id+'.'+(s.layer?.id||'mortal');
       let point=s.positions[key];if(!Array.isArray(point)||point.length!==2||!point.every(Number.isFinite))point=null;
       if(s.pendingEscort){const n=M.chapter(s).nodes.find(n=>n.id===s.pendingEscort.target);point=n?[n.at[0]-1,n.at[1]+1]:null;}
-      engine.load(desc.base,point,W.layout(s),true);W.decorate(s);engine.mount($('#world'),$('.adv-markers'));
+      engine.load(desc.base,point,W.layout(s),true);W.decorate(s);engine.restoreSpatial?.(s.spatialPositions?.[key]);engine.mount($('#world'),$('.adv-markers'));
       const p=W.plan(s);engine.update(p.objects,p.targets,{carrying:!!s.pendingEscort});
       engine.pause(title);controls.enable(!title);applyView();
       audioOn=!!s.settings.sound;
@@ -187,6 +195,7 @@
         snap=`<div class="title-snapshot"><div class="snapshot-header"><span class="snapshot-badge">TIẾN ĐỘ HIỆN TẠI</span><span class="snapshot-act">HỒI ${esc(ch?.act||'I')} · ${esc(ch?.id||'Q01')}</span></div><div class="snapshot-body"><strong class="snapshot-title">${esc(ch?.title||'Bến không chờ người về')}</strong><div class="snapshot-meta"><span class="snapshot-place">📍 ${esc(desc?.name||'Xêdarê')}</span><span class="snapshot-task">✦ ${esc(a?.title||'Lời chứng còn ở lại')}</span></div></div></div>`;
       }
       $('#title-actions').innerHTML=snap+(state?primary(state.finished?'Xem đoạn kết':'Tiếp tục hành trình','continue')+'<button class="secondary" data-act="new">Hành trình mới</button>':primary('Bắt đầu hành trình','new'));
+      for(const b of $('#title-actions').querySelectorAll('[data-act]'))b.disabled=!cloud.info().ready;
       return;
     }
 
@@ -230,6 +239,7 @@
     audio.tick(next,state);
     refreshField(next);
     last=next;if(title||!state)return;
+    if(next.spatial){state.spatialPositions??={};state.spatialPositions[M.chapter(state).id+'.'+(state.layer?.id||'mortal')]={schema:1,...next.spatial};}
     walking=!!next.walking;
     const combat=next.combat;const combatHud=$('#combat-hud');
     if(combatHud.hidden!==!combat)combatHud.hidden=!combat;
@@ -298,7 +308,7 @@
   function introChapter(){
     const ch=M.chapter(state),tenet=M.activeTenetForChapter(state),amb=D.regions[ch.region]?.ambient;
     pushLog(ch.title,ch.lead);
-    show(ch.act,`${amb?`<span class="sound-cue">${esc(amb)}</span>`:''}<p>${esc(ch.lead)}</p><p class="notice">${esc(ch.quiet)}</p>${X.context(state).map(line=>`<p class="notice">${esc(line)}</p>`).join('')}${tenet?`<div class="notice tenet"><strong>Nguyên lý Chứng Nhân · ${esc(tenet.title)}</strong><br>${esc(tenet.resonance)}</div>`:''}`,primary('Bước vào câu chuyện','close'));
+    show(ch.act,`${amb?`<span class="sound-cue">${esc(amb)}</span>`:''}<p>${esc(ch.lead)}</p><p class="notice"><strong>Mục tiêu chương:</strong> ${ch.tasks.map(t=>esc(t.title)).join(' → ')}</p><p class="notice">${esc(ch.quiet)}</p>${X.context(state).map(line=>`<p class="notice">${esc(line)}</p>`).join('')}${tenet?`<div class="notice tenet"><strong>Nguyên lý Chứng Nhân · ${esc(tenet.title)}</strong><br>${esc(tenet.resonance)}</div>`:''}`,primary('Bước vào câu chuyện','close'));
     heading(ch.title);
   }
 
@@ -349,6 +359,7 @@
     if(!target){guide();return;}
     if(!engine.within(target)){guide(target,true);return;}
     currentTarget=target;
+    if(String(target).startsWith('architecture:')){const d=WitnessArchitecture.describe(target);show('KHÔNG GIAN BẾN CẢNG',`<p>${esc(d.body)}</p>`,primary('Trở lại','close'));heading(d.title);return;}
     if(String(target).startsWith('craft:')){inspectSceneDetail(target);return;}
     if(String(target).startsWith('field:')){operateField(target);return;}
     if(String(target).startsWith('trace-')){readTrace(target);return;}
@@ -517,7 +528,7 @@
     const f=state&&CRAFT.field(state),visible=!!(f&&!title&&!dialog);
     panel.hidden=!visible;document.body.classList.toggle('field-active',visible);if(!visible)return;
     if(snapshot?.position){
-      const spots=CRAFT.fieldSpots(state).map(p=>({p,dist:Math.hypot(p.at[0]-snapshot.position[0],p.at[1]-snapshot.position[1])})).filter(x=>x.dist<2.8).sort((a,b)=>a.dist-b.dist);
+      const spots=CRAFT.fieldSpots(state).map(p=>({p,dist:Math.hypot(p.at[0]-snapshot.position[0],p.at[1]-snapshot.position[1])})).filter(x=>x.dist<2.8&&engine.within(x.p.id)).sort((a,b)=>a.dist-b.dist);
       fieldNearest=spots.find(x=>x.p.id===fieldFocus)?.p.id||spots.find(x=>x.p.id===snapshot.nearest?.id)?.p.id||spots[0]?.p.id||null;
     }
     const key=JSON.stringify([f.def.id,f.payload,f.selected,fieldNearest,fieldMessage,fieldTested]);if(key===fieldCache)return;fieldCache=key;
@@ -574,11 +585,12 @@
     if(title||dialog||!state)return;
     const s=state,a=M.actions(s)[0],plan=W.plan(s);const id=target||(CRAFT.field(s)?plan.targets.find(t=>t.main)?.id:a?.target);if(!id)return;
     const at=engine.locate(id)||plan.targets.find(t=>t.id===id)?.at||(s.layer?a?.at:M.chapter(s).nodes.find(n=>n.id===id)?.at);if(!at)return;
-    walking=engine.walk(at,()=>{
+    const arrived=()=>{
       walking=false;
       if(autoOpen&&engine.within(id))interact(id);
       else subline('Đã tới gần. Nhấn E hoặc chạm nút tương tác để tự chọn điều muốn làm.');
-    },1.6);
+    };
+    walking=engine.walkTarget?engine.walkTarget(id,arrived,1.6):engine.walk(at,arrived,1.6);
     if(!walking)toast('Hãy đi vòng vật chắn; bản đồ cho biết nơi đang cần tới.');
   }
 
@@ -755,7 +767,8 @@
       {id:'jerusalem',name:'Giêrusalem',file:'land-dawn.jpg',active:region==='jerusalem',note:'Phố đá cao & sân đối chiếu chung'}
     ];
     const strip=`<div class="region-vistas">${vistas.map(v=>`<figure class="region-vista ${v.active?'active':''}"><img src="${esc(assetUrl(v.file))}" alt="${esc(v.name)}" loading="lazy"><figcaption><small>${v.active?'VÙNG HIỆN TẠI':'TUYẾN HÀNH TRÌNH'}</small><strong>${esc(v.name)}</strong><span>${esc(v.note)}</span></figcaption></figure>`).join('')}</div>`;
-    show('NHỮNG VÙNG ĐÃ ĐI QUA',`${strip}<div class="map"><svg viewBox="0 0 700 270" role="img" aria-label="Sơ đồ nghệ thuật tuyến Xêdarê, Galilê, Giêrusalem"><path d="M0 0H125Q170 70 123 140T130 270H0" fill="#93ada5"/><path d="M180 130Q290 80 440 58L505 203Q380 240 180 130" fill="none" stroke="#8b774f" stroke-width="2.4" stroke-dasharray="6 6"/><g fill="#586f59" stroke="#f5ebd1" stroke-width="3"><circle cx="180" cy="130" r="${region==='caesarea'||region==='road'?10:6}"/><circle cx="440" cy="58" r="${region==='galilee'||region==='ravine'?10:6}"/><circle cx="505" cy="203" r="${region==='jerusalem'?10:6}"/></g><text x="195" y="122" class="map-label">XÊDARÊ</text><text x="456" y="53" class="map-label">GALILÊ</text><text x="521" y="207" class="map-label">GIÊRUSALEM</text><text x="22" y="30" class="map-label">ĐỊA TRUNG HẢI</text></svg></div><p class="credits">Sơ đồ tuyến được nén và sáng tác, không phải bản đồ tỷ lệ hoặc phục dựng khảo cổ.</p><div class="timeline">${D.chapters.map((ch,i)=>`<div class="chapter-tile ${i===state.chapter?'current':''}"><small>${ch.id} · ${i<state.chapter?'ĐÃ QUA':i===state.chapter?'ĐANG Ở ĐÂY':'CHƯA ĐI TỚI'}</small><strong>${esc(ch.title)}</strong></div>`).join('')}</div>`,primary('Trở lại và chỉ hướng','map-guide'),true);
+    const exploration=!state.layer&&M.chapter(state).id==='Q01'?`<div class="entry"><h3>Khám phá kho phía tây</h3><p>Đi qua cửa kho, lên cầu thang và nhìn lại bến cảng từ sân mái.</p><div class="choices"><button class="choice" data-act="explore-place" data-id="architecture:store-entry">Đi tới cửa kho</button><button class="choice" data-act="explore-place" data-id="architecture:roof-rack">Đi lên sân mái</button></div></div>`:'';
+    show('NHỮNG VÙNG ĐÃ ĐI QUA',`${strip}<div class="map"><svg viewBox="0 0 700 270" role="img" aria-label="Sơ đồ nghệ thuật tuyến Xêdarê, Galilê, Giêrusalem"><path d="M0 0H125Q170 70 123 140T130 270H0" fill="#93ada5"/><path d="M180 130Q290 80 440 58L505 203Q380 240 180 130" fill="none" stroke="#8b774f" stroke-width="2.4" stroke-dasharray="6 6"/><g fill="#586f59" stroke="#f5ebd1" stroke-width="3"><circle cx="180" cy="130" r="${region==='caesarea'||region==='road'?10:6}"/><circle cx="440" cy="58" r="${region==='galilee'||region==='ravine'?10:6}"/><circle cx="505" cy="203" r="${region==='jerusalem'?10:6}"/></g><text x="195" y="122" class="map-label">XÊDARÊ</text><text x="456" y="53" class="map-label">GALILÊ</text><text x="521" y="207" class="map-label">GIÊRUSALEM</text><text x="22" y="30" class="map-label">ĐỊA TRUNG HẢI</text></svg></div><p class="credits">Sơ đồ tuyến được nén và sáng tác, không phải bản đồ tỷ lệ hoặc phục dựng khảo cổ.</p>${exploration}<div class="timeline">${D.chapters.map((ch,i)=>`<div class="chapter-tile ${i===state.chapter?'current':''}"><small>${ch.id} · ${i<state.chapter?'ĐÃ QUA':i===state.chapter?'ĐANG Ở ĐÂY':'CHƯA ĐI TỚI'}</small><strong>${esc(ch.title)}</strong></div>`).join('')}</div>`,primary('Trở lại và chỉ hướng','map-guide'),true);
     heading('Một hành trình qua ba vùng');
   }
 
@@ -802,6 +815,64 @@
     heading('Hành trình của '+state.profile.name);
   }
 
+  const cloudDate=value=>value?new Date(value).toLocaleString('vi-VN'):'Chưa có';
+  function cloudDialog(content,actions=''){
+    show('HÀNH TRÌNH CỦA BẠN',content,actions+'<button class="secondary" data-act="close">Trở lại game</button>');heading('Tài khoản & Lưu đám mây');
+    dialog.dataset.cloud='true';
+  }
+  async function cloudPanel(){
+    const info=cloud.info();
+    if(!info.user){
+      cloudDialog(`<p>Chơi khách vẫn giữ tiến trình trên trình duyệt này. Đăng nhập để tiếp tục hành trình trên thiết bị khác.</p><p class="notice">${esc(info.message)}</p><p>Đăng nhập bằng tài khoản ChatGPT. Bản chơi khách hiện tại được giữ riêng; bạn có thể đưa nó vào tài khoản sau khi đăng nhập.</p><p class="cloud-privacy">Dữ liệu lưu gồm nhân vật, lựa chọn, điểm dừng và thiết lập game. Game không lưu mật khẩu hay địa chỉ email của bạn.</p>`,location.protocol==='file:'?'<p class="notice">Mở bản web để dùng lưu đám mây.</p>':'<a class="primary" href="/signin-with-chatgpt?return_to=%2F" target="_top">Đăng nhập để lưu đám mây</a><button class="secondary" data-cloud="retry">Kiểm tra kết nối</button>');return;
+    }
+    cloudDialog('<p role="status">Đang tải các ô lưu…</p>');
+    try{
+      const account=await cloud.api('/api/account'),current=cloud.info();
+      const slots=[1,2,3].map(slot=>{const item=account.slots.find(s=>s.slot===slot);return `<article class="cloud-slot${slot===current.slot?' active':''}"><div><strong>Ô ${slot}${slot===current.slot?' · đang dùng':''}</strong><p>${item&&!item.deleted?esc(item.characterName)+' · '+esc(D.chapters[item.chapter]?.id||''):'Chưa có hành trình'}</p><small>${item?'Phiên bản '+item.revision+' · '+esc(cloudDate(item.updatedAt)):''}</small></div>${slot!==current.slot?`<button class="secondary" data-cloud="slot" data-slot="${slot}">Chuyển sang ô ${slot}</button>`:''}</article>`;}).join('');
+      const local=cloud.localState(),copies=cloud.copies();
+      const conflict=current.conflict?`<section class="cloud-conflict" role="alert"><h3>Hai thiết bị có tiến trình khác nhau</h3><p>Bản trên máy và bản đám mây đều được giữ. Chọn một bản để tiếp tục; thay bản đám mây sẽ tạo phiên bản mới.</p><button class="primary" data-cloud="remote">Dùng bản đám mây</button><button class="secondary" data-cloud="local-confirm">Dùng bản trên máy</button></section>`:'';
+      cloudDialog(`<p class="notice" role="status">${esc(current.message)}</p>${conflict}<form id="cloud-profile" class="cloud-profile"><label for="cloud-name">Tên tài khoản trong game</label><div><input id="cloud-name" name="displayName" maxlength="40" value="${esc(account.profile.display_name)}" autocomplete="nickname"><button class="secondary" data-cloud="profile" type="button">Lưu tên</button></div></form><div class="cloud-slots">${slots}</div><div class="cloud-actions"><button class="primary" data-cloud="sync">Lưu &amp; kiểm tra ngay</button><button class="secondary" data-cloud="history">Lịch sử ô ${current.slot}</button>${cloud.guest()?'<button class="secondary" data-cloud="guest-confirm">Đưa bản chơi khách vào ô này</button>':''}<button class="secondary" data-cloud="export">Tải dữ liệu tài khoản</button>${local?'<button class="secondary" data-cloud="delete-confirm">Xóa ô lưu hiện tại</button>':''}</div>${copies.length?`<details class="cloud-copies"><summary>Bản chờ trên máy (${copies.length})</summary><p>Các bản lưu chưa nhận được xác nhận từ máy chủ được giữ riêng để có thể lấy lại.</p>${copies.map((c,i)=>`<button class="choice" data-cloud="copy-confirm" data-copy="${i}"><strong>${esc((c.pending||c.request?.state)?.profile?.name||'Người Chứng')}</strong><small>${esc(cloudDate(c.updatedAt))}</small></button>`).join('')}</details>`:''}<details class="cloud-privacy"><summary>Lưu trữ và quyền riêng tư</summary><p>Mỗi tài khoản có 3 ô lưu. Mỗi ô giữ 10 phiên bản gần nhất và bản cuối của từng ngày trong 14 ngày (theo UTC). Tiến trình lưu riêng theo tài khoản. Khi mất mạng, bản trên máy được giữ và tự gửi lại khi kết nối phục hồi. Chỉ khi có thông báo «Đã lưu đám mây» thì thiết bị khác mới tải được tiến trình mới nhất.</p><p>Bản chơi khách nằm trong trình duyệt; xóa dữ liệu trình duyệt có thể làm mất bản này. Bạn có thể tải dữ liệu tài khoản và xuất bản JSON riêng từ menu.</p><button class="text-link" data-cloud="erase-confirm">Xóa toàn bộ dữ liệu tài khoản trong game</button></details>`,'<button class="text-link" data-cloud="signout">Đăng xuất</button>');
+    }catch(error){cloudDialog(`<p class="notice" role="alert">${esc(error.message)}</p><p>Bản trên máy được giữ. Bạn vẫn có thể tiếp tục chơi và xuất bản lưu từ menu.</p>`,'<button class="primary" data-cloud="retry">Kết nối lại</button><a class="secondary" href="/signin-with-chatgpt?return_to=%2F" target="_top">Đăng nhập lại</a>');}
+  }
+  let cloudRestoreState=null;
+  document.addEventListener('click',async event=>{
+    const button=event.target.closest('[data-cloud]');if(!button||button.disabled)return;event.preventDefault();button.disabled=true;
+    try{
+      const action=button.dataset.cloud;
+      if(action==='profile'){await cloud.api('/api/account',{method:'PUT',body:JSON.stringify({displayName:$('#cloud-name').value})});toast('Đã lưu tên tài khoản.');}
+      else if(action==='sync'||action==='retry'){await cloud.refresh();await cloudPanel();}
+      else if(action==='slot'){await cloud.switchSlot(Number(button.dataset.slot));await cloudPanel();}
+      else if(action==='remote'){await cloud.chooseRemote();await cloudPanel();}
+      else if(['local-confirm','guest-confirm','copy-confirm'].includes(action)){
+        cloudRestoreState=action==='guest-confirm'?cloud.guest():action==='copy-confirm'?(cloud.copies()[Number(button.dataset.copy)]?.pending||cloud.copies()[Number(button.dataset.copy)]?.request?.state):cloud.localState();
+        cloudDialog(`<p>Bạn chọn ${esc(cloudRestoreState?.profile?.name||'bản lưu trên máy')} · ${esc(D.chapters[cloudRestoreState?.chapter]?.title||'')}.</p><p class="notice">Bản này sẽ thay tiến trình đang dùng trong ô ${cloud.info().slot}. Máy chủ giữ phiên bản cũ trong lịch sử khôi phục.</p>`,'<button class="primary" data-cloud="restore">Xác nhận dùng bản này</button><button class="secondary" data-cloud="panel">Hủy</button>');
+      }
+      else if(action==='restore'){await cloud.chooseLocal(cloudRestoreState);cloudRestoreState=null;await cloudPanel();}
+      else if(action==='history'){
+        const result=await cloud.api('/api/saves/'+cloud.info().slot+'/history');
+        cloudDialog(`<p>Chọn bản cũ để khôi phục thành một phiên bản mới trong ô ${cloud.info().slot}.</p><div class="cloud-history">${result.revisions.map(r=>`<article class="cloud-slot"><div><strong>Phiên bản ${r.revision} · ${esc(r.characterName||'Ô đã xóa')}</strong><p>${esc(cloudDate(r.updatedAt))}${r.deleted?' · Đã xóa':''}</p></div>${!r.deleted?`<button class="secondary" data-cloud="history-select" data-revision="${r.revision}">Xem &amp; khôi phục</button>`:''}</article>`).join('')||'<p>Chưa có lịch sử lưu.</p>'}</div>`,'<button class="secondary" data-cloud="panel">Các ô lưu</button>');
+      }
+      else if(action==='history-select'){
+        const result=await cloud.api('/api/saves/'+cloud.info().slot+'/history/'+button.dataset.revision);cloudRestoreState=result.save.state;
+        cloudDialog(`<p>${esc(cloudRestoreState.profile.name)} · ${esc(D.chapters[cloudRestoreState.chapter].title)}</p><p class="notice">Khôi phục phiên bản ${Number(button.dataset.revision)} sẽ tạo bản lưu mới. Tiến trình hiện tại vẫn có trong lịch sử.</p>`,'<button class="primary" data-cloud="restore">Khôi phục bản này</button><button class="secondary" data-cloud="history">Hủy</button>');
+      }
+      else if(action==='export'){
+        const result=await cloud.api('/api/account/export'),url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)],{type:'application/json'}));
+        const a=document.createElement('a');a.href=url;a.download='chung-nhan-tai-khoan-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Đã xuất dữ liệu tài khoản.');
+      }
+      else if(action==='delete-confirm')cloudDialog('<p class="notice">Xóa ô hiện tại sẽ đưa bạn về màn hình bắt đầu. Bạn vẫn có thể khôi phục phiên bản gần đây trong lịch sử.</p>','<button class="primary" data-cloud="delete">Xóa ô '+cloud.info().slot+'</button><button class="secondary" data-cloud="panel">Hủy</button>');
+      else if(action==='delete'){await cloud.removeSlot();await cloudPanel();}
+      else if(action==='erase-confirm')cloudDialog('<p class="notice">Xóa tất cả ô lưu, lịch sử, tên tài khoản trong game và bản chờ của tài khoản này trên máy. Thao tác này không thể khôi phục từ game.</p><label for="cloud-erase">Nhập XOA để xác nhận</label><input id="cloud-erase" autocomplete="off">','<button class="primary" data-cloud="erase">Xóa dữ liệu tài khoản</button><button class="secondary" data-cloud="panel">Hủy</button>');
+      else if(action==='erase'){if($('#cloud-erase').value!=='XOA')throw Error('Hãy nhập XOA để xác nhận.');await cloud.erase();await cloudPanel();}
+      else if(action==='signout'){
+        await cloud.flush();if(cloud.info().pending)cloudDialog('<p class="notice">Còn thay đổi đang chờ đồng bộ. Đăng xuất lúc này sẽ giữ bản chờ trên máy, nhưng thiết bị khác chưa nhận được.</p>','<button class="primary" data-cloud="signout-now">Đăng xuất và giữ bản chờ</button><button class="secondary" data-cloud="panel">Ở lại</button>');
+        else {await cloud.signOut();window.top.location.href='/signout-with-chatgpt?return_to=%2F';}
+      }
+      else if(action==='signout-now'){await cloud.signOut();window.top.location.href='/signout-with-chatgpt?return_to=%2F';}
+      else if(action==='panel')await cloudPanel();
+    }catch(error){toast(error.message);}finally{if(button.isConnected)button.disabled=false;}
+  });
+
   function training(){
     show('TỰ VỆ VÀ BIẾT DỪNG',`<p>Đọc tín hiệu, giữ sức bền, đỡ và tạo khoảng trống. Đây là sân tập hư cấu tùy chọn rèn kỹ năng Tự vệ, không phải nhiệm vụ trừng phạt.</p><div class="choices">${[['steady','Giữ nhịp','Đòn rõ, khoảng nghỉ rộng.'],['pressing','Chịu áp lực','Đối phương tiến nhanh, cần chọn lúc rút.'],['feint','Đọc hướng đòn','Có động tác nhử; đừng đánh chỉ vì thấy người ấy cử động.']].map(c=>`<button class="choice" data-act="trial-start" data-profile="${c[0]}"><strong>${c[1]}</strong><small>${c[2]}</small></button>`).join('')}</div><p class="notice">K đánh, giữ H đỡ, Space né. Nút trên màn hình hỗ trợ cảm ứng. Ra khỏi vòng hoặc chọn dừng sẽ kết thúc buổi tập.</p>`);
     heading('Sân luyện gậy');
@@ -832,7 +903,7 @@
     heading('Điều còn lại sau một lời nói');
   }
 
-  function checkpointPosition(){if(state&&last)state.positions[M.chapter(state).id+'.'+(state.layer?.id||'mortal')]=last.position;}
+  function checkpointPosition(){if(state&&last){const key=M.chapter(state).id+'.'+(state.layer?.id||'mortal');state.positions[key]=last.position;const p=engine?.spatial?.();if(p){state.spatialPositions??={};state.spatialPositions[key]={schema:1,...p};}}}
   function exportSave(){
     if(!state)return;checkpointPosition();save();
     const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
@@ -854,7 +925,9 @@
     const button=event.target.closest('[data-act]');if(!button||button.disabled)return;
     const {act,id,choice,kind,value,tab,reflection,person,topic,claim}=button.dataset;
     try{
-      if(act==='close'){FeedbackAudio.page();close();}
+      if(['new','continue','create','import'].includes(act)&&!cloud.info().ready){toast('Đang kiểm tra bản lưu. Hãy đợi một chút.');return;}
+      if(act==='cloud'){if(state&&!title){checkpointPosition();save();}cloudPanel().catch(e=>toast(e.message));}
+      else if(act==='close'){FeedbackAudio.page();close();}
       else if(act==='new'){FeedbackAudio.page();newGame();}
       else if(act==='about'){FeedbackAudio.page();about();}
       else if(act==='continue'){FeedbackAudio.page();start();}
@@ -958,6 +1031,7 @@
       else if(act==='board-autofill'){FeedbackAudio.accomplish();state=M.autoFillClaim(state,id);save();journal('evidence');}
       else if(act==='board-audience'){FeedbackAudio.click();state=M.setBoardAudience(state,value);save();journal('evidence');}
       else if(act==='map')map();
+      else if(act==='explore-place'){close();guide(id);}
       else if(act==='map-guide'){close();guide();}
       else if(act==='guide')guide();
       else if(act==='focus-goal')focusGoal();
@@ -1073,13 +1147,16 @@
   document.addEventListener('pointerdown',e=>{if(e.target.closest('[data-act="guard"]')){e.preventDefault();engine?.action('guard',true);}});
   document.addEventListener('pointerup',()=>engine?.action('guard',false));
   document.addEventListener('keydown',e=>{if(e.target.matches?.('input,select,textarea'))return;if(e.repeat||e.metaKey||e.ctrlKey||e.altKey)return;if(e.key==='x'||e.key==='X')sense();});
-  window.addEventListener('pagehide',()=>{audio.visibility(true);checkpointPosition();save();});
+  window.addEventListener('pagehide',()=>{audio.visibility(true);checkpointPosition();save();cloud.flush({keepalive:true});});
   window.addEventListener('pageshow',()=>audio.visibility(document.hidden));
   document.addEventListener('pointerdown',()=>{if(state?.settings.sound)audio.unlock();},{capture:true});
   document.addEventListener('keydown',()=>{if(state?.settings.sound)audio.unlock();},{capture:true});
-  document.addEventListener('visibilitychange',()=>{audio.visibility(document.hidden);if(document.hidden){checkpointPosition();save();stopMotion();}else if(!title&&!dialog)controls?.enable(true);});
+  document.addEventListener('visibilitychange',()=>{audio.visibility(document.hidden);if(document.hidden){checkpointPosition();save();cloud.flush({keepalive:true});stopMotion();}else if(!title&&!dialog)controls?.enable(true);});
+  window.addEventListener('online',()=>cloud.refresh());
+  window.addEventListener('focus',()=>{if(cloud.info().ready)cloud.refresh();});
 
   launchWorld();
+  cloud.init();
   if(loaded.migrated)toast('Đã giữ tiến độ đời thường từ v2. Ba chương chính cần tiếp nhận theo nội dung mới; bản lưu cũ vẫn còn.');
   if(loaded.recovered)toast('Đã khôi phục từ bản dự phòng trên máy.');
   if(loaded.corrupt)toast('Bản lưu không đọc được. Tệp cũ được giữ để bạn có thể kiểm tra hoặc nhập lại.');

@@ -1,0 +1,52 @@
+{
+  "status": "passed",
+  "before": {
+    "player": [
+      -15,
+      0.10476000285067215,
+      12
+    ],
+    "shadow": [
+      -13.254999426265256,
+      2.114228062060326,
+      7.319968627910065
+    ],
+    "status": {
+      "enabled": true,
+      "msaaSamples": 4,
+      "gtao": false,
+      "aoSize": [
+        400,
+        300
+      ],
+      "scene": "shore:Q01",
+      "fallback": null
+    }
+  },
+  "after": {
+    "player": [
+      -14.345337947592846,
+      0.0883192660370246,
+      9.539063760931008
+    ],
+    "shadow": [
+      -13.065906745587583,
+      2.0926364321378794,
+      4.706210632717465
+    ],
+    "status": {
+      "enabled": true,
+      "msaaSamples": 4,
+      "gtao": false,
+      "aoSize": [
+        400,
+        300
+      ],
+      "scene": "shore:Q01",
+      "fallback": null
+    }
+  },
+  "playerDistance": 2.54657807134436,
+  "shadowDistance": 2.6206779843776715,
+  "errors": []
+}

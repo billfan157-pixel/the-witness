@@ -1,0 +1,100 @@
+{
+  "license": "CC0-1.0",
+  "licenseUrl": "https://polyhaven.com/license",
+  "tileSize": 512,
+  "gutter": 8,
+  "layers": [
+    {
+      "layer": "soil",
+      "asset": "brown_mud_dry",
+      "source": "https://polyhaven.com/a/brown_mud_dry",
+      "maps": {
+        "Diffuse": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_dry/brown_mud_dry_diff_1k.jpg",
+          "md5": "0c0ad82fec60f091690c69c23657cb74"
+        },
+        "nor_gl": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_dry/brown_mud_dry_nor_gl_1k.jpg",
+          "md5": "a842517bea5187ccbceb69fd26629d1e"
+        },
+        "arm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_dry/brown_mud_dry_arm_1k.jpg",
+          "md5": "937b4aa85665324b811deb7a2b787ffd"
+        },
+        "Displacement": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brown_mud_dry/brown_mud_dry_disp_1k.jpg",
+          "md5": "df23614707acdfece0d89aa7299e1fa3"
+        }
+      }
+    },
+    {
+      "layer": "limestone",
+      "asset": "coral_ground_02",
+      "source": "https://polyhaven.com/a/coral_ground_02",
+      "maps": {
+        "Diffuse": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coral_ground_02/coral_ground_02_diff_1k.jpg",
+          "md5": "3719bc1f7806d18f83d6c2d7b81e0513"
+        },
+        "nor_gl": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coral_ground_02/coral_ground_02_nor_gl_1k.jpg",
+          "md5": "d0465c5d837b9e00529e146dbdf90dc7"
+        },
+        "arm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coral_ground_02/coral_ground_02_arm_1k.jpg",
+          "md5": "5365d267df936d2b3b6a96a39dd14eee"
+        },
+        "Displacement": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coral_ground_02/coral_ground_02_disp_1k.jpg",
+          "md5": "b99938c7666f8602f6c11b24a22172c7"
+        }
+      }
+    },
+    {
+      "layer": "grass",
+      "asset": "aerial_grass_rock",
+      "source": "https://polyhaven.com/a/aerial_grass_rock",
+      "maps": {
+        "Diffuse": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_diff_1k.jpg",
+          "md5": "e920ce36afd0abff000b8366d3d768d3"
+        },
+        "nor_gl": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_nor_gl_1k.jpg",
+          "md5": "c8aa4c4f09b113cc7edef89ddeaccad9"
+        },
+        "arm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_arm_1k.jpg",
+          "md5": "1f37fdb9b46b7fe34932ed9aa77df0bf"
+        },
+        "Displacement": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_grass_rock/aerial_grass_rock_disp_1k.jpg",
+          "md5": "1c94b490268e4fca333e3d8d4afac033"
+        }
+      }
+    },
+    {
+      "layer": "path",
+      "asset": "grass_path_2",
+      "source": "https://polyhaven.com/a/grass_path_2",
+      "maps": {
+        "Diffuse": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/grass_path_2/grass_path_2_diff_1k.jpg",
+          "md5": "48cebe95af233211c9469a9bfe2f42f2"
+        },
+        "nor_gl": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/grass_path_2/grass_path_2_nor_gl_1k.jpg",
+          "md5": "aa04d930b6af2bd7e3252e31776822bd"
+        },
+        "arm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/grass_path_2/grass_path_2_arm_1k.jpg",
+          "md5": "707c614eee91685bebb8af64cb74dc08"
+        },
+        "Displacement": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/grass_path_2/grass_path_2_disp_1k.jpg",
+          "md5": "e4aaef38ba619cd0432cc5f0d00308e2"
+        }
+      }
+    }
+  ]
+}
