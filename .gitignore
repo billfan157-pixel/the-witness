@@ -9,8 +9,19 @@ tools/environment-kit/bin/
 tools/environment-kit/work/
 outputs/environment-kit/*-site.tar.gz
 outputs/q01-gold/
+outputs/q01-phase-b/
 .DS_Store
 test/artifacts/
+outputs/agent-work/
+outputs/THE-WITNESS-Design-v*/
+outputs/THE-WITNESS-Design-v*.zip
+outputs/THE-WITNESS-Playable-*/
+outputs/THE-WITNESS-Playable-*.zip
+outputs/THE-WITNESS-Playable-*.tar.gz
+outputs/THE-WITNESS-*-deploy.tar*
+outputs/THE-WITNESS-*-backend-final.tar.gz
+outputs/environment-kit/render*/
+outputs/environment-kit/roadmap*.pdf
 *.log
 
 .env

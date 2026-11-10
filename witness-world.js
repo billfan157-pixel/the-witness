@@ -330,11 +330,27 @@
     if(!context)return;current=s;const {T,scene,biome}=context;
     water?.userData?.disposeWater?.();
     root.WitnessModularKit?.releaseMounted?.();
+    root.WitnessQ01Environment?.releaseGI?.();
+    root.WitnessQ01Environment?.beginScene?.();
     water=null;emberLight=null;reactive=[];animators=[];placeSolids=[];
     root.WitnessGraphics?.setQuality(s.settings?.graphics);
     const AV=root.AdventureVisuals;
     const ground=scene.children.find(c=>c.isMesh&&c.geometry?.parameters?.width===156);
     if(root.WitnessQ01?.active(s)&&ground)root.WitnessQ01.prepareGround(ground);
+    if(root.WitnessQ01Environment?.enabled){
+      // Retire small starter-engine props left over the newly authored sea.
+      // The current harbour boats and quay are added below at the water datum.
+      const bb=new T.Box3(),center=new T.Vector3(),extent=new T.Vector3();let pruned=0;
+      for(const child of scene.children){
+        // Starter prefab roots retain old analytic hill heights. Some populate
+        // asynchronously, so test their authored root before inspecting children.
+        if(child.isGroup&&!child.name&&Math.hypot(child.position.x,child.position.z)>1&&root.WitnessQ01Environment.clear(child.position.x,child.position.z)){child.visible=false;pruned++;continue;}
+        if((!child.children.length&&!child.isMesh)||child===ground||child.isLight||child.isInstancedMesh||child.userData?.isSkyRidge||child.name==='player')continue;
+        bb.setFromObject(child,true);if(bb.isEmpty())continue;bb.getCenter(center);bb.getSize(extent);
+        if(extent.x<18&&extent.z<18&&bb.max.y<8&&center.z<root.WitnessQ01Environment.shore(center.x)-.4){child.visible=false;pruned++;}
+      }
+      scene.userData.q01LegacyPruned=pruned;
+    }
     if(root.WitnessQ01?.active(s))for(const child of scene.children)if(child.userData.isSkyRidge)child.visible=false;
     const keepOutdoorSky=s.layer&&['L01','L04'].includes(s.layer.id);
     if(s.layer)for(const child of scene.children){if(child.isLight||child===ground||child.name==='player'||child.geometry?.parameters?.radius>=100||child.type==='Object3D'||(keepOutdoorSky&&child.userData?.isSkyRidge))continue;child.visible=false;}
@@ -438,6 +454,7 @@
       const nx=Math.max(2,Math.ceil((w-2*r)/r)+1),nz=Math.max(2,Math.ceil((d-2*r)/r)+1);
       for(let i=0;i<nx;i++)for(let j=0;j<nz;j++)
         addS(x-w/2+r+(w-2*r)*(i/(nx-1)),z-d/2+r+(d-2*r)*(j/(nz-1)),r);
+      if(root.WitnessQ01Environment?.enabled)return root.WitnessQ01Environment.house({T,parent:decor,height,x,z,w,d,h,lite:s.settings.graphics==='balanced'||!!root.WitnessKitOfflineQuality});
       const hb=(col,dx,dy,dz,bw,bh,bd,kind='masonry',opts)=>{
         const o=box(col,x+dx,dy,z+dz,bw,bh,bd,kind,opts);o.position.y=y0+dy;return o;
       };
@@ -480,6 +497,7 @@
       for(let i=0;i<cols;i++){
         const cx=cols===1?x1:x1+span*(i/(cols-1));
         addS(cx,z,.55);
+        if(root.WitnessQ01Environment?.enabled){const y=height(cx,z);root.WitnessQ01Environment.addSolid({id:'q01-column-'+cx+','+z,min:[cx-.46,y,z-.46],max:[cx+.46,y+h+.13,z+.46],kind:'column'});}
         if(root.WitnessModularKit){
           const m=new T.Mesh(root.WitnessModularKit.column(T,h,.34,i*31+7),root.WitnessModularKit.material(T));
           m.position.set(cx,height(cx,z),z);m.castShadow=m.receiveShadow=true;m.userData.reactive=true;decor.add(m);
@@ -490,6 +508,7 @@
         }
       }
       box('#b9a786',x1+span/2,h+.24,z,span+1.4,.46,.98,'masonry');
+      if(root.WitnessQ01Environment?.enabled){const y=height(x1+span/2,z);root.WitnessQ01Environment.addSolid({id:'q01-portico-beam',min:[x1-.7,y+h+.01,z-.49],max:[x2+.7,y+h+.47,z+.49],kind:'lintel'});}
     }
 
     function jar(x,z,scale=1){
@@ -524,6 +543,7 @@
       geo.computeVertexNormals();
       const o=mesh(geo,c,x,2.95,z,'wool',{side:T.DoubleSide});
       o.rotation.x=-Math.PI/2+.12;o.userData.sway=true;
+      if(root.WitnessQ01Environment?.enabled){const y=height(x,z);root.WitnessQ01Environment.addSolid({id:'q01-awning-'+x+','+z,min:[x-w/2,y+2.55,z-1.48],max:[x+w/2,y+3.35,z+1.48],kind:'awning'});}
     }
 
     function campTent(x,z,yaw=0,c='#9c8868'){
@@ -773,14 +793,14 @@
       for(let i=0;i<9;i++)box('#b7a379',-5+i*3.8,.035,-12,1.3,.06,13.5,'stone');
       lamp(-10,6);lamp(2,-2);lamp(18,-20);
     }else if(desc.region==='caesarea'){
-      sea(-24,'#2d6f7f',.075);
+      sea(root.WitnessQ01Environment?.enabled?-19.8:-24,'#2d6f7f',.075);
       // Herodian stone seawall & quay walkway
-      box('#a5987e',0,.25,-22,68,.55,3.2,'masonry');
-      for(let x=-20;x<=20;x+=5)box('#877a63',x,.65,-23.2,.48,.48,.48,'stone');
+      if(!root.WitnessQ01Environment?.enabled){box('#a5987e',0,.25,-22,68,.55,3.2,'masonry');
+      for(let x=-20;x<=20;x+=5)box('#877a63',x,.65,-23.2,.48,.48,.48,'stone');}
       if(M.chapter(s).id!=='Q01'||s.layer)house(-23,-13,9,7,5.2,'#cbb998',true);house(-10,-21,8,6,4.5,'#c7b493');house(4,-22,10,5,5.2,'#d1c0a0',true);house(27,-10,6,10,5.5,'#c4b292');
-      colonnade(-4,10,-21,4.6,5,'#cbbba0');
+      colonnade(-4,10,root.WitnessQ01Environment?.enabled?-18.1:-21,root.WitnessQ01Environment?.enabled?4.4:4.6,5,'#cbbba0');
       cloth(6,10,6,'#b69b72');cloth(-6,9,4.5,'#8e9c91');
-      for(let i=0;i<6;i++){box('#927554',12+i*2,.25,-24,1.9,.36,8,'wood');pole(12+i*2,-21,1.4);}
+      if(!root.WitnessQ01Environment?.enabled)for(let i=0;i<6;i++){box('#927554',12+i*2,.25,-24,1.9,.36,8,'wood');pole(12+i*2,-21,1.4);}
       // Roman polyspastos treadwheel harbor crane
       solidGroup('crane')(9,-19,.45);
       pole(9,-19,5.8,'#5e462f',.13);
@@ -832,7 +852,7 @@
         reactive.push(apply);apply(s);
       }
     }
-    if(pendingCoast!==null)carveSeabed(pendingCoast);
+    if(pendingCoast!==null&&!root.WitnessQ01Environment?.enabled)carveSeabed(pendingCoast);
     // Real bed depth for Beer-Lambert absorption and shoreline foam, sampled
     // from the displaced terrain grid after the seabed carve.
     if(water?.userData?.setBed&&ground?.geometry?.parameters&&pendingWater&&root.WitnessGraphics?.bedTexture){
@@ -843,16 +863,19 @@
     if(!s.layer&&M.chapter(s).id==='Q01'&&root.WitnessArchitecture){
       const architecture=root.WitnessArchitecture.install({T,scene,height,ground,state:s});
       if(root.WitnessQ01){const finish=root.WitnessQ01.install({T,scene,height,architecture,state:s});placeSolids.push({id:'q01-finish-solids',solids:finish.outdoorSolids});animators.push(time=>finish.tick(time));}
+      if(root.WitnessQ01Environment?.enabled)root.WitnessQ01Environment.install({T,scene,height,architecture,state:s});
       // Vegetation generated for the former closed building cannot occupy its new interior.
       const matrix=new T.Matrix4(),position=new T.Vector3(),r=architecture.bounds;
-      for(const batch of scene.children.filter(o=>o.isInstancedMesh)){
+      const instances=[];scene.updateMatrixWorld(true);scene.traverse(o=>{if(o.isInstancedMesh&&o.name!=='q01-olive-leaves')instances.push(o);});
+      const color=new T.Color();
+      for(const batch of instances){
         let count=0;
         for(let i=0;i<batch.count;i++){
-          batch.getMatrixAt(i,matrix);position.setFromMatrixPosition(matrix);
+          batch.getMatrixAt(i,matrix);position.setFromMatrixPosition(matrix).applyMatrix4(batch.matrixWorld);
           if(root.WitnessQ01?.clearVegetation(position.x,position.z)||(position.x>r[0]-.3&&position.x<r[1]+.3&&position.z>r[2]-.3&&position.z<r[3]+.3))continue;
-          batch.setMatrixAt(count++,matrix);
+          batch.setMatrixAt(count,matrix);if(batch.instanceColor){batch.getColorAt(i,color);batch.setColorAt(count,color);}count++;
         }
-        if(count!==batch.count){batch.count=count;batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();}
+        if(count!==batch.count){batch.count=count;batch.instanceMatrix.needsUpdate=true;if(batch.instanceColor)batch.instanceColor.needsUpdate=true;batch.computeBoundingSphere();}
       }
     }
 

@@ -68,4 +68,4 @@ check('Terrain heights reproduce the triangle mesh rather than bilinear interpol
  const ys=[0,2,4,10],xs=[0,1,0,1],zs=[0,0,1,1],mesh={geometry:{parameters:{widthSegments:1,heightSegments:1},attributes:{position:{count:4,getX:i=>xs[i],getY:i=>ys[i],getZ:i=>zs[i]}}}};
  const h=A.terrainSampler(mesh);assert.equal(h(.25,.25),1.5);assert.equal(h(.75,.75),6.5);ys[3]=14;assert.equal(h(.75,.75),8.5);
 });
-const out=path.resolve('outputs/environment-kit/phase3');fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'model.json'),JSON.stringify({status:'passed',checks:tests,dimensions:A.dimensions,architecture:p.snapshot()},null,2));
+const out=path.resolve(process.env.WITNESS_ARCH_MODEL_OUT||'outputs/environment-kit/phase3');fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'model.json'),JSON.stringify({status:'passed',checks:tests,dimensions:A.dimensions,architecture:p.snapshot()},null,2));

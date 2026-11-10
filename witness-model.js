@@ -556,7 +556,7 @@
     for(const key of ['consent','flags','resources','relationships','bonds','legends','veils','positions','settings'])if(raw[key]&&typeof raw[key]==='object'&&!Array.isArray(raw[key]))s[key]={...s[key],...clone(raw[key])};
     if(raw.spatialPositions&&typeof raw.spatialPositions==='object'&&!Array.isArray(raw.spatialPositions)){
       for(const [key,p]of Object.entries(raw.spatialPositions).slice(0,48)){
-        if(!/^Q(0[1-9]|1[0-2])\.(mortal|L0[1-5]|V0[1-4])$/.test(key)||!p||p.schema!==1||![p.x,p.y,p.z].every(Number.isFinite)||Math.abs(p.x)>78||Math.abs(p.z)>78||Math.abs(p.y)>30||! /^(world|q01-room|q01-roof-(main|back|front)|q01-step-([0-9]|1[0-7]))$/.test(p.supportId))continue;
+        if(!/^Q(0[1-9]|1[0-2])\.(mortal|L0[1-5]|V0[1-4])$/.test(key)||!p||p.schema!==1||![p.x,p.y,p.z].every(Number.isFinite)||Math.abs(p.x)>78||Math.abs(p.z)>78||Math.abs(p.y)>30||! /^(world|q01-room|q01-quay|q01-roof-(main|back|front)|q01-step-([0-9]|1[0-7]))$/.test(p.supportId))continue;
         s.spatialPositions[key]={schema:1,x:p.x,y:p.y,z:p.z,supportId:p.supportId};
       }
     }
@@ -669,6 +669,16 @@
     if(raw.views&&typeof raw.views==='object'&&!Array.isArray(raw.views)){
       out.views={};for(const [id,v]of Object.entries(raw.views))if(ids.has(id)&&(!owner||id.startsWith('craft:'+owner+'-'))&&v&&typeof v==='object')out.views[id]={lift:v.lift===true,light:[0,1,2].includes(v.light)?v.light:0};
     }
+    if(raw.noted&&typeof raw.noted==='object'&&!Array.isArray(raw.noted)){
+      const noted={};
+      for(const [id,v] of Object.entries(raw.noted)){
+        const d=X.all().find(x=>x.id===id);if(!d||!Array.isArray(d.observations))continue;
+        if(owner&&d.owner!==owner)continue;
+        const list=unique((Array.isArray(v)?v:[]).filter(i=>Number.isInteger(i)&&i>=0&&i<d.observations.length)).slice(0,d.observations.length);
+        if(list.length)noted[id]=list;
+      }
+      if(Object.keys(noted).length)out.noted=noted;
+    }
     if(!owner&&D.bonds.some(b=>b.id===raw.lastWork?.bond)&&Number.isInteger(raw.lastWork.chapter)&&raw.lastWork.chapter>=0&&raw.lastWork.chapter<12)out.lastWork={bond:raw.lastWork.bond,chapter:raw.lastWork.chapter};
     return out;
   }
@@ -696,7 +706,7 @@
     requireGroundWork(state);
     const f=C.field(state),spot=C.fieldSpots(state).find(x=>x.id===id),p=options.position;
     if(!f||!spot||!Array.isArray(p)||p.length!==2||!p.every(Number.isFinite)||Math.hypot(p[0]-spot.at[0],p[1]-spot.at[1])>2.8)error('Hãy tới đúng điểm thao tác trong cảnh trước.');
-    const result=C.reduceField(state,spot,options);return {ok:result.ok,message:result.message,state:result.ok?workshopDraft(state,f.a.id,result.payload):state};
+    const result=C.reduceField(state,spot,options);return {ok:result.ok,message:result.message,refused:result.refused||null,hosted:spot.hosted||null,state:result.ok?workshopDraft(state,f.a.id,result.payload):state};
   }
   function fieldReset(state,back=false){
     const f=C.field(state);if(!f)error('Chưa có phần việc tại cảnh.');let p=clone(f.payload);
@@ -704,6 +714,19 @@
     return workshopDraft(state,f.a.id,p);
   }
   function fieldStop(state){const s=clone(state),old=C.stores(s);return writeCraft(s,{...old,looked:old.looked||[],field:null});}
+  // Quan sát chỉ được ghi khi người chơi thực sự đứng sát bộ phận mang dấu ấy.
+  // Trả về nguyên trạng khi chưa đủ điều kiện để gọi được từ vòng khung hình.
+  function noteObservation(state,index,position){
+    const f=C.field(state);if(!f||!Array.isArray(f.def.observations))return state;
+    if(!Number.isInteger(index)||index<0||index>=f.def.observations.length)return state;
+    const spot=C.fieldSpots(state).find(x=>x.obs===index&&x.hosted);
+    if(!spot||!Array.isArray(position)||position.length!==2||!position.every(Number.isFinite))return state;
+    if(Math.hypot(position[0]-spot.at[0],position[1]-spot.at[1])>1.8)return state;
+    const prev=C.stores(state),already=prev.noted?.[f.def.id]||[];
+    if(already.includes(index))return state;
+    const s=clone(state),old=C.stores(s);
+    return writeCraft(s,{...old,noted:{...(old.noted||{}),[f.def.id]:[...already,index]}});
+  }
   function fieldFinish(state,position){
     requireGroundWork(state);
     const f=C.field(state);if(!f||!Array.isArray(position)||position.length!==2||!position.every(Number.isFinite)||Math.hypot(position[0]-f.origin[0],position[1]-f.origin[1])>3.4)error('Hãy trở lại điểm bàn giao trước khi thực hiện phương án.');
@@ -712,7 +735,7 @@
   }
 
   const Model={
-    fresh,chapter,quest,actions,planAllowed,checkPuzzle,act,chooseAgain,escort,workshopState,workshopDraft,inspectDetail,detailView,fieldStart,fieldSelect,fieldAct,fieldReset,fieldStop,fieldFinish,
+    fresh,chapter,quest,actions,planAllowed,checkPuzzle,act,chooseAgain,escort,workshopState,workshopDraft,inspectDetail,detailView,fieldStart,fieldSelect,fieldAct,fieldReset,fieldStop,noteObservation,fieldFinish,
     openLayer,layerStep,closeLayer,switchLayer,summaryStep,adjustComposure,
     legendComplete,dueLegend,allLegends,attunement,kitStatus,tenets,activeTenetForChapter,
     startBond,bond,talkTopics,recordTalk,recordQuiet,

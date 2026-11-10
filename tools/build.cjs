@@ -1,10 +1,12 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
-const root=path.resolve(__dirname,'..'),out=path.join(root,'dist');fs.mkdirSync(out,{recursive:true});
+const root=path.resolve(__dirname,'..');
+const {prepareOutput,verifiedDossier}=require('./build-output.cjs');
+const dossier=verifiedDossier(root),out=prepareOutput(root,'dist');
 const files=['environment-references.html','index.html','kit-lab.html','kit-lab.js','witness.css','witness-content.js','witness-spine.js','witness-depth.js','witness-relationships.js','witness-craft.js','witness-workshop-ui.js','witness-model.js','witness-craft-renderer.js','witness-field-ui.js','witness-architecture.js','witness-q01.js','witness-modular-kit.js','witness-world.js','witness-ambience.js','witness-compass.js','witness-audio-library.js','witness-audio.js','witness-cloud.js','witness-app.js'];
+files.push('witness-q01-environment.js');
 for(const f of files)fs.copyFileSync(path.join(root,f),path.join(out,f));
 for(const dir of ['assets','vendor'])fs.cpSync(path.join(root,dir),path.join(out,dir),{recursive:true});
-const dossier=path.join(root,'outputs','THE-WITNESS-Design-v3.2');
-if(fs.existsSync(path.join(dossier,'THE-WITNESS-Design-Compendium.html'))){
+if(dossier){
   const docsOut=path.join(out,'tai-lieu');fs.mkdirSync(docsOut,{recursive:true});
   for(const f of ['THE-WITNESS-Design-Compendium.html','THE-WITNESS-v3-Pitch.html'])fs.copyFileSync(path.join(dossier,f),path.join(docsOut,f));
   fs.copyFileSync(path.join(dossier,'THE-WITNESS-Design-Compendium.html'),path.join(docsOut,'index.html'));
@@ -25,7 +27,7 @@ let html=fs.readFileSync(path.join(root,'index.html'),'utf8');let css=fs.readFil
 html=html.replace(/<link rel="stylesheet"[^>]+>/,()=>'<style>'+css+'</style>');
 html=html.replace(/<link rel="icon" href="\.\/([^\"]+)"[^>]+>/,(_,f)=>'<link rel="icon" href="'+uri(f)+'">');
 // Embed only player-resolved images; nested architecture material candidates are web/precache-only.
-const assets=Object.fromEntries(walk('assets').filter(f=>/\.(jpg|webp)$/.test(f)&&(f.split('/').length===2||f.startsWith('assets/terrain/')||f.startsWith('assets/architecture/lite/'))).flatMap(f=>{const key=f.slice(7);return [[key,uri(f)],...(key.startsWith('land-')?[[key.slice(5,-4),uri(f)]]:[])];}));
+const assets=Object.fromEntries(walk('assets').filter(f=>/\.(jpg|webp)$/.test(f)&&(f.split('/').length===2||f.startsWith('assets/terrain/')||f.startsWith('assets/architecture/lite/')||f.startsWith('assets/architecture/phase-b/lite/'))).flatMap(f=>{const key=f.slice(7);return [[key,uri(f)],...(key.startsWith('land-')?[[key.slice(5,-4),uri(f)]]:[])];}));
 const scripts=[...html.matchAll(/<script src="\.\/([^\"]+)"[^>]*><\/script>/g)].map(m=>m[1]);
 const audioAssets=Object.fromEntries(all.filter(f=>/\.(mp3|wav|ogg)$/.test(f)).map(f=>[f,uri(f)]));
 let js='globalThis.WitnessAudioAssets='+JSON.stringify(audioAssets)+';\n'+'globalThis.AdventureAssets='+JSON.stringify(assets)+';\n'+scripts.map(f=>fs.readFileSync(path.join(root,f),'utf8')).join('\n');

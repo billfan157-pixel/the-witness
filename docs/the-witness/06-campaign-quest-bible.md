@@ -12,61 +12,118 @@ Mỗi quest có ID bền, tiền điều kiện, trigger, objective, phương á
 | II | Q05–Q06 | L02 sau Q06, trước Q07 | Q07–Q08 | V03 |
 | III | Q09–Q10 | L04 sau Q10, trước Q11 | Q11–Q12 | L05, V04 |
 
-## 2. Hồi I
+## 2. Hồi I — Người bị buộc im lặng (Q01–Q04 + L01)
 
-### Q01 — Bến không chờ người về
+### Q01 — Bến không chờ người về (Vertical Slice Mở Màn — One-Shot Camera)
 
-**Vào:** game mới, hoàn tất tạo nhân vật. **Mục tiêu:** nhận di vật từ Natan, giúp mở lối bị hàng chắn, tìm nơi ngủ. Tutorial đi/nhìn/tương tác trong một nhu cầu thật. **Hai cách:** dùng đòn bẩy theo nghề hoặc nhờ hai người cùng chuyển; không khóa tiến độ theo xuất thân. **Quyết định:** dành tiền cho chỗ ở hay đưa trước cho bữa chung; cả hai có nơi nghỉ cơ bản, nhưng tiện ích và người sẵn lòng giúp khác. **Ra:** `ledger.found=true`; mở Q02. Natan không đưa lời giải vụ án.
+**Vào:** Game mới, cập bến cảng Sebastos (Xêdarê) cuối thập niên 50 AD; không dùng đoạn chơi thử 6 phút L01 ở đầu game để bảo toàn trọng tâm tâm lý cha con.  
+**Cấu trúc 9 nhịp phân cảnh (Beats 00–08):**
+* *Beat 00 (Cập bến & Invisible Tutorial):* Góc máy sát mặt nước lướt lên vai Người Chứng khi ván gỗ hạ xuống; trao quyền điều khiển tức thì không cắt cảnh; làm quen di chuyển qua phu khuân vác.
+* *Beat 01 (Bóng người lạ):* Bố cục hẻm đá đóng khung bóng người lạ dò xét xưởng Natan; lẩn đi khi bị nhìn; không marker chỉ định; tự do bám theo hoặc hỏi thợ cưa gỗ.
+* *Beat 02 (Natan & 3D Close Inspection):* Nhận sổ gia đình; xoay vật thể 3D dưới ánh sáng xiên phát hiện vết ẩm lạnh và đường khâu gáy lệch bất thường; khóa suy diễn tại chỗ.
+* *Beat 03 (Cháy kho phía tây & Titus):* Đà gỗ gãy, chuông báo dập dồn, khói đen bốc lên; gặp Titus — thợ sửa trục/ròng rọc; tập trung cứu hộ người mắc kẹt, loại bỏ combat giả tạo.
+* *Beat 04 (Hiện trường kho 3 tầng & Đa tuyến vật lý):* Tuyến 1 (Cơ học cùng Titus): tháo chốt xe hàng nặng trượt chèn cửa sập, tời cáp mở lối phụ. Tuyến 2 (Sức người): gọi hai thợ cảng hợp lực đòn bẩy nâng xà sồi đè ngang cầu thang.
+* *Beat 05 (Góc nhìn giới hạn từ sân mái):* Bung cửa sân mái lộng gió; nhìn xuống hẻm khuất sau kho ghi nhận 4 thuộc tính giới hạn của bóng người tháo chạy (hướng bến tàu tuần, thời điểm, áo choàng ngắn viền da, cự ly làm mờ mặt).
+* *Beat 06 (Yosef & Mầm Consent):* Xuống đất ngổn ngang tro tàn; Yosef thì thầm về hồ sơ bị ém nhẹm và khẩn nài không được gọi tên anh giữa đám đông để bảo toàn mạng sống.
+* *Beat 07 (Lựa chọn tài nguyên & Cảnh thoại Natan A):* Quyết định `lodging` (bàn riêng) vs `meal` (góp dầu bếp chung). Đối diện quá khứ tại xưởng Natan: câu nói về chữ ký vội của Haddai; Người Chứng đối mặt ký ức mình từng thấy cha ký trước biên nhận nhưng im lặng vì sợ mất việc (T05).
+* *Beat 08 (Dấu vết B06 & Kho sau cháy bền vững):* Hiện trường giữ nguyên trạng thái sau cháy; tìm thấy tờ B06 có vết cạo sửa mực; camera nâng cao qua mái cháy sém nhìn ra vịnh sương đêm mở ra câu hỏi vào Q02: *"Ai đang làm hồ sơ thay đổi và vì sao nhân chứng sợ nói?"*.  
+**Ra:** `ledger.found=true`; `evidence.b06_scraped=found`; mở Q02.
 
 ### Q02 — Những tên không được đọc
+* **TÍCH HỢP v6:** Mép dán B06 được quan sát in-world dưới ánh xiên tại khu sao chép sát bến. Miriam dẫn vào sân bữa bằng công việc hỗ trợ, không dùng điểm quan hệ để ép Yosef. B06 luôn tách biệt G17.
+* **Vào:** Có sổ gia đình, đã gặp Miriam.
+* **Mục tiêu:** Xác minh đợt thiếu 2 bao của bữa chung B06 hôm nay và bảo vệ Yosef.
+* **Ba route:** `shelter` (đưa Yosef và mẹ vào nơi an toàn trước), `anonymous` (bỏ định danh qua trung gian), `consented` (lắng nghe nhu cầu, giải tỏa áp lực, bố trí người bảo vệ và chỉ nhận lời chứng tự nguyện).
+* **Tầng:** L03 và V01 tự chọn. **Ra:** Q03 luôn mở sau route hợp lệ; liên kết sang đầu mối tuyến vận tải G17.
 
-**Vào:** có sổ, đã gặp Miriam. **Mục tiêu:** xác minh một đường chuyển bao và bảo vệ Yosef. **Ba route:** `shelter`, `anonymous`, `consented`, với hành động/đồng thuận theo hồ sơ 11/12. **Tầng:** L03 và V01 tự chọn, không còn là lõi slice v3. **Ra:** Q03 luôn mở sau route hợp lệ; không hoàn thành thay L01. Contract Q02 tiếp tục giữ như mẫu consent, tách với slice L01 mới.
+### Q03 — Con đường biến mất
+* **TÍCH HỢP v6:** Tuyến Antipatris trở thành bài toán đa cao độ: (A) đường xe chậm an toàn qua nền đất cứng; (B) tuyến vượt đá ngắn chỉ cho người đi bộ; (C) lối sửa cầu gỗ dùng dây/tời. Đọc dấu lún bùn bác bỏ lối bậc hẹp 1.05m không vừa trục xe 1.75m có vết mẻ đá va quẹt; có tuyến vượt thay thế nếu không có Titus/Damar.
+* **Vào:** Q02 kết thúc.
+* **Mục tiêu:** Đi tuyến đường đồi ngoài thành, lần theo vệt bánh xe lún sâu dưới tải trọng 24 bao.
+* **Sự thật:** 24 bao rời bến, nhưng 2 bao bị hỏng trên đường có biên bản riêng; 18 bao đi Galilê (chỉ xác nhận trực tiếp ở Q05).
+* **Chọn:** Trả công Amon để xem sổ ngay hoặc giúp sửa chốt phương tiện và đợi. Thiếu tiền không softlock.
+* **Ra:** `evidence.route=verified` (E04). Amon bị đe dọa và rời bỏ tuyến sau đó.
 
-### Q03 — Một bao thiếu, ba người nhớ
-
-**Vào:** Q02 kết. **Mục tiêu:** đi tuyến ngoài thành, đối chiếu lượng xuất/nhận. **Gameplay:** theo dấu vật lý, sửa lối qua rãnh hoặc vòng đồi, gặp Amon. **Twist:** dấu vải cùng loại được dùng ở nhiều kho; không đủ buộc tội. **Chọn:** trả công Amon để xem sổ hoặc giúp sửa phương tiện và đợi. Một bên tốn nguồn, một bên tốn thời gian có báo trước. **Ra:** `evidence.route=verified`; nguồn người làm chứng có thể chưa chắc.
+**Cổng chính sau Q03:** L01 mở; Q04 chờ L01 đủ core và phần kết.
 
 ### Q04 — Đêm kho đóng cửa
+* **TÍCH HỢP v6:** Cảnh đóng kho tái sử dụng lối thoát nước và cầu nổi đã nhìn thấy ở Q01; L01 củng cố cách phối hợp nhóm/đèn/dây. Giữ quyết định food/tools và kiểm chữ ký E01 ở mốc Q04.
+* **Vào:** Q03 và L01 đã commit ở revision hiện hành.
+* **Mục tiêu:** Tiếp nối bằng khảo sát lối, kiểm người, bàn giao thực phẩm hợp lệ trước mốc đóng kho và đối chiếu tờ bìa đã làm khô.
+* **Lối:** Trao đổi với Mattai, sửa then phụ hoặc dùng cầu đã sửa.
+* **Chọn:** `food` / `tools` cho phần tải thêm, chuẩn bị cho Q08/Q11.
+* **Twist:** Natan mở tờ bìa đã khô; nét chữ ký trên biên nhận gốc (E01) đúng là chữ ký thật của Haddai; không thể minh oan bằng cách chối bỏ chữ ký. Amon vắng mặt không rõ tung tích.
+* **Tầng:** V02 tự chọn. **Ra:** Đầu mối Galilê và cộng đồng được bàn giao.
 
-**Vào:** Q03 và L01 đã commit ở revision hiện hành. **Mục tiêu:** tiếp nối bằng khảo sát lối, kiểm người và bàn giao thực phẩm hợp lệ trước mốc đóng đã báo. **Lối:** trao đổi với Mattai, sửa then phụ hoặc dùng cầu đã sửa. **Chọn:** `food`/`tools` cho phần tải thêm. **Hệ quả:** chuẩn bị Q08/Q11; E01 có nguồn Mortal riêng. **Tầng:** V02 tự chọn; L01 đã ở trước Q04. **Ra:** đầu mối Galilê và cộng đồng được bàn giao.
+## 3. Hồi II — Dấu ấn quyền lực (Q05–Q08 + L02)
 
-## 3. Hồi II
+### Q05 — Những người còn chờ bữa
+* **TÍCH HỢP v6:** Làng chài mở ba lớp bờ – sân lưới – bếp chung. Miriam giúp gặp người chứ không mở khóa lời khai. Chỉ tại Q05 mới đối chiếu 18 bao thực nhận E05; NPC chịu callback của tuyến thực phẩm.
+* **Mục tiêu:** Tìm người nhận hàng ở làng chài Galilê, kiểm 18 bao thực nhận.
+* **Gameplay:** Phụ vá lưới để làm quen dân bản địa, hỏi người nhận bữa, kiểm tra số lượng thực nhận (E05) chỉ có 18 bao; phân biệt vải niêm.
+* **Chạm trán Hanan:** Chứng kiến ông vừa có năng lực cứu đói cho dân vừa dùng quyền phân phối để kiểm soát họ; phát hiện kênh sân phụ.
+* **Chọn:** `open_audit` mời kiểm lượng công khai đúng phạm vi hay `private_check` đối chiếu kín; cáo buộc không đủ nguồn có nhánh đền công và sửa lời. **Ra:** Mở Q06.
 
-### Q05 — Lưới rách còn người vá
+### Q06 — Cái giá của một tờ giấy
+* **TÍCH HỢP v6:** Sân phụ có đường vòng, cổng khóa, chốt cơ học và bóng canh. Đây là lần GIỚI THIỆU cơ chế ánh sáng/tiếng động bằng vật thể và dấu vết; **KHÔNG coi L02 (chỉ mở sau Q06) là điều kiện để qua Q06.**
+* **Mục tiêu:** Tiếp cận sân phụ để tìm chứng từ chuyển 4 bao (E06); phát hiện công cụ của Titus từng sửa khóa then kho. Nhóm bị theo dõi do rò rỉ thông tin lộ trình.
+* **Lối:** Lẻn theo tuyến, thương lượng, đọc ca trực, tự vệ không sát thương khi thật cần.
+* **Chọn:** `take_original` / `witnessed_copy` / `reconstruct`.
+* **Ra:** Q06 commit trước, sau đó L02 bắt buộc; đủ beat/phần kết mới mở Q07.
 
-**Mục tiêu:** tìm người nhận hàng ở làng hư cấu Galilê. **Lối:** giúp vá lưới để được nghe, theo chứng từ hoặc hỏi người giữ bữa. **Chọn:** mời kiểm lượng công khai đúng phạm vi hay đối chiếu riêng; cố buộc tội người vá bao khi chưa đủ nguồn là hành động gây hại có nhánh sửa lời/đền công. **Ra:** biết Hanan kiểm soát một phần phân phối, chưa đủ chứng minh lệnh chuyển bốn bao hoặc mọi khoản thiếu do ông.
-
-### Q06 — Chỗ đứng của lưỡi gậy
-
-**Mục tiêu:** đối diện người từng đánh cha đang giữ một vật đối chiếu. **Lối:** trao đổi, tiếp cận kín hoặc tự vệ nếu bị gây hại. **Chọn:** `take_original`/`witnessed_copy`/`reconstruct`. Trả đũa người hết đe dọa là tổn hại riêng. **Ra:** Q06 commit trước, sau đó L02 bắt buộc; đủ beat/phần kết mới mở Q07. L02 không xóa tổn hại Q06.
+**Cổng chính sau Q06:** L02 mở; Q07 chờ L02 đủ core và phần kết.
 
 ### Q07 — Một lời hứa còn thiếu
-
-**Vào:** L02 đã commit. **Mục tiêu:** tiếp nối bằng một lời hứa có đối tượng/giới hạn thật. **Lối:** tự đi, thương lượng lại hoặc bàn giao có người đồng ý. **Hệ quả:** người nhận vai Q08/Q11. Không có L04 tại Q07 trong v3; Phêrô ở hồi III, không khóa theo đổ vỡ quan hệ.
+* **TÍCH HỢP v6:** Giữ Q07.PROMISE và nhiệm vụ của Miriam/Sela đầy đủ; thêm cú lật về Lea vào đoạn giữa chương, với nhánh tìm hiểu, sửa tổn hại và không ép tha thứ. L02 làm sâu cách kiềm chế, không tự nâng skill.
+* **Vào:** L02 đã commit.
+* **Mục tiêu:** Tiếp nối bài học tự chế của Đavít bằng việc đối thoại trách nhiệm trong nội bộ nhóm.
+* **Twist:** Lea thú nhận từng tiết lộ một phần lịch trình di chuyển cho người của Varro/Hanan do sinh kế gia đình bị đe dọa (tách biệt với việc từng xóa tên một người để cứu họ trước đây).
+* **Gameplay & Lựa chọn:** Đối thoại trên cơ sở sự thật, thiết lập ranh giới an toàn mới, giữ Lea ở vai trò phù hợp mà không ép buộc avatar phải tha thứ giả tạo. **Hệ quả:** Xác lập phương án bảo vệ cho Q08/Q11.
 
 ### Q08 — Trang sổ trong nước
+* **TÍCH HỢP v6:** Wadi có ba vùng cao độ W0, W1, W2, cảnh báo nước dâng, lối bọc neo và tuyến cứu Amon. Trải nghiệm L01 giúp người chơi hiểu bài toán dây/gió/nước đã từng tập, nhưng vẫn có hướng dẫn cơ bản và giải pháp cứu cả người lẫn E07 khi chuẩn bị đủ.
+* **Mục tiêu:** Khủng hoảng trên đường đồi khi nước dâng tràn qua hẻm đá wadi hiểm trở; phát hiện Amon còn sống nhưng đang mắc kẹt cùng túi tài liệu phụ.
+* **Gameplay:** Đọc dòng chảy, bố trí người giữ neo, thử tải dây cáp.
+* **Chọn:** Chuẩn bị tốt có thể cứu cả Amon lẫn giấy (`prepared_rescue`); thiếu chuẩn bị buộc phải ưu tiên cứu người trước (`person_first`), chấp nhận giấy bị mờ nhòe (`integrity=partial`).
+* **Tiết lộ:** Amon còn sống và xác nhận lộ trình G17 nếu được cứu an toàn.
+* **Tầng:** V03 tự chọn. **Ra:** Mở đường đến Giêrusalem.
 
-**Mục tiêu:** khủng hoảng đường đi khi nước dâng cắt lối và Amon mang bản phụ bị kẹt. **Lối:** neo dây đúng, nhờ hỗ trợ đã gây dựng, lối vòng an toàn. Chuẩn bị đủ cho phép cứu người lẫn giấy. **Chọn trong nhánh thiếu chuẩn bị:** bỏ túi giấy để cứu sớm hay kéo cả tải gây thương tích; không thưởng bỏ người lấy giấy. **Hệ quả:** `evidence.integrity=partial/full`, thương tích và cách tiếp cận nguồn sau; integrity không thay độ chắc của từng claim. **Tầng:** V03. **Ra:** đầu mối Giêrusalem đã được nghe/giữ khô, mọi route còn đường tiếp tục.
+## 4. Hồi III — Hai bản sửa, một lời chứng (Q09–Q12 + L04)
 
-## 4. Hồi III
+### Q09 — Người có quyền im lặng
+* **TÍCH HỢP v6:** Giêrusalem dùng sân nhà sao lục J0, xưởng sửa papyrus J1, nơi niêm J2 và phòng đối chiếu J3; dựng chain-of-custody E09/E12 bằng tìm đường và gặp người đúng phạm vi. Không dùng “xưởng làm giấy” công nghệ về sau.
+* **Mục tiêu:** Đến Giêrusalem, tìm những người trực tiếp nghe hoặc biết chỉ dẫn chuyển 4 bao.
+* **Gameplay:** Tự tìm nơi gặp qua dấu đời sống, đối chiếu người gửi–nhận thư, trình bày dữ liệu ẩn danh, bố trí lối vào kín.
+* **Chọn:** Lắng nghe giới hạn của từng người; xác lập phạm vi đồng thuận (`consent` scopes: private, anonymous, public); từ chối của nhân chứng được giữ nguyên.
+* **Thu thập:** E09 (lời chứng người nghe lệnh) và củng cố căn cứ vạch trần Hanan. **Ra:** Tập lời chứng có ranh giới rõ ràng.
 
-### Q09 — Quyền được im lặng
+### Q10 — Hai bản sửa
+* **TÍCH HỢP v6:** Hai bản sửa E08/E11 được so bằng thớ papyrus/da viết, nếp gấp, tay sao, niêm và tuyến người giữ. So màu mực không đủ để kết luận tác giả; giữ nguyên Q10.RESPONSIBILITY về lỗi thật của Haddai.
+* **Mục tiêu:** Tìm gói tài liệu Haddai gửi về Giêrusalem; đối mặt với cú lật tài liệu lớn nhất của chiến dịch.
+* **Twist:** Xuất hiện **Bản sửa giả (E11)** do Varro chỉ đạo ngụy tạo, quy hết mọi tội chiếm đoạt cho Haddai và kéo các nhân chứng thành đồng phạm; đồng thời tìm ra **Bản sửa thật của Haddai (E08)** nhận lỗi ký trước nhưng yêu cầu đối chiếu 2 khoản rõ ràng.
+* **Gameplay:** Đọc nét mực, nếp giấy, kiểm tra chuỗi xuất xứ (E12).
+* **Chọn:** `disclose` (nói rõ phần sai lầm của cha với nhóm) hay `conceal` (cố giấu phần bất lợi rồi bị đối chiếu).
+* **Ra:** Không thể dùng kết "cha hoàn toàn vô can"; chuẩn bị tinh thần cho L04.
 
-**Mục tiêu:** gặp các người có tên trong sổ. **Lối:** xin giới thiệu qua quan hệ, giúp công việc cộng đồng, trình bày bằng chứng đã ẩn tên. **Chọn:** chấp nhận một người từ chối hay ép bằng áp lực xã hội. **Hệ quả:** `consent` theo từng người, không có chỉ số đồng thuận chung thay quyền cá nhân. **Ra:** tập lời chứng có phạm vi, không phải danh sách mọi người đều ủng hộ.
-
-### Q10 — Bản sao không nguyên vẹn
-
-**Cổng sau Q10:** sau commit `disclose`/`conceal`/`corrected`, L04 mở qua người kể hoặc journal thay. Cần đủ nội dung nguồn bằng định dạng chọn trước Q11; không buộc avatar nhận lỗi hay tha thứ để vào Ga 21.
-
-**Mục tiêu:** lấy bản đối chiếu của cha, xác định phần cha đã ký sai và phần bị vu cáo. **Gameplay:** đọc hai nguồn không trùng nhau, hỏi người giữ bản, bảo vệ cuộc gặp khỏi kẻ đe dọa hư cấu. **Chọn:** nói phần bất lợi về cha ngay với nhóm hay giấu rồi bị đối chiếu phát hiện. **Hệ quả:** độ tin đối với người chơi, phạm vi phát biểu có thể làm ở Q12. **Ra:** không thể dùng kết “cha hoàn toàn vô can”.
+**Cổng chính sau Q10:** L04 mở; Q11 chờ L04 đủ core và phần kết.
 
 ### Q11 — Những người cùng ở lại
-
-**Mục tiêu:** trở về Xêdarê chuẩn bị lời chứng và bảo vệ người sẽ lên tiếng. **Lối:** phương án công khai, bảo mật hoặc di chuyển người trước; đều cần thực phẩm, nơi trú và nguồn đối chiếu phù hợp. **Tầng:** L05, V04. **Chọn:** đích chuẩn bị, đổi phương án còn được cho tới lúc chốt; UI nêu điều kiện và hậu quả đã biết. **Ra:** snapshot kế hoạch, lưu tay tự động trước point of no return.
+* **TÍCH HỢP v6:** Trở lại cảng ở áp lực cấp 3, gặp cổng niêm và trạm gác mới; những đường đã tìm ở Q01 trở thành lối tắt tùy chọn. Giữ phân bổ bữa, dụng cụ và E10/Mattai; snapshot trước Q12 có diễn tập.
+* **Mục tiêu:** Trở về Xêdarê; củng cố liên minh, chuẩn bị phương án làm chứng có trách nhiệm và đối chiếu nguồn E10 từ sổ ca trực của Mattai.
+* **Lối:** Chọn một trong ba phương án chiến lược (`public`, `distributed`, `relocate`).
+* **Nhận thức:** Varro đã thao túng khâu niêm phong và giấy tờ tại cảng; hồ sơ còn thiếu thì phải thừa nhận thiếu.
+* **Chọn:** Hoàn tất chuẩn bị trước point of no return.
+* **Tầng:** L05, V04 tự chọn. **Ra:** Snapshot kế hoạch toàn diện.
 
 ### Q12 — Điều còn lại sau một lời nói
-
-**Mục tiêu:** thực hiện kế hoạch Q11. **Gameplay:** sắp người, trao bản sao đúng đối tượng, giải tình huống gây áp lực; không thành một menu chọn ending. **Điều kiện:** chỉ nêu tên người đồng thuận và còn an toàn; chứng cứ thiếu thì giảm phạm vi cáo buộc. **Thất bại thao tác:** checkpoint, không âm thầm đổi sang kết “đã bán đứng mọi người”. **Ra:** một trong ba khung kết hồ sơ 03, biến thể bằng chứng và quan hệ; montage chỉ dùng sự kiện đã log.
+* **TÍCH HỢP v6:** Màn kết là set-piece đa tuyến: phối hợp lối/nhân chứng/hồ sơ rồi tiếp nhận chứng cứ. Đối chất P01–P05 chỉ bằng nguồn đủ và scope hợp lệ; camera blend in-world, không đổi sự thật bằng QTE.
+* **Mục tiêu:** Thực hiện kế hoạch đã chuẩn bị tại cảng Xêdarê; không có boss fight.
+* **Gameplay:** Điều phối nhân sự, trao bản sao đúng scope, đối chất công khai dựa trên các claim đã đủ nguồn độc lập; avatar tự dũng cảm nói ra điều mình đã chứng kiến (T05).
+* **Ba tuyến kết thúc:**
+  * *Tuyến A (Công khai có bảo vệ):* Sức ép lớn, vạch trần sai phạm, nhân chứng tự nguyện đứng tên, ẩn danh phần nhạy cảm.
+  * *Tuyến B (Lời chứng được che chở):* Phân tán tài liệu qua mạng lưới người giữ bản độc lập, bảo vệ con người bền vững.
+  * *Tuyến C (Bảo vệ con người trước):* Đưa người yếu thế rời vùng đe dọa, giữ hồ sơ an toàn, làm chứng phần đủ chắc.
+* **Hậu truyện:** Bến cảng đổi thay thực tế theo việc người chơi đã làm; không có màn phán quyết đạo đức.
 
 ## 5. Các chương Legends: Nhân vật Thánh và Cơ chế Thám hiểm
 
@@ -106,19 +163,24 @@ Mỗi B có tối thiểu hai cách tiếp cận và một hậu quả ở hub h
 
 Mỗi quest kiểm tra vắng companion, thiếu tiền/chứng cứ, chọn ngược lời khuyên, load/replay và hỗ trợ. Kiểm riêng **tóm tắt đủ chương bắt buộc**, **thoát giữa chương giữ cổng**, **bỏ L/V tự chọn không phạt ending**. Không có ca bỏ trắng tất cả L vẫn kết campaign. Khi NPC từ chối, journal ghi bước tiếp làm được. Hội tụ giữ biến/callback, không reset lịch sử.
 
-## 9. Phụ lục tích hợp — Sự thật nền (T01–T08) và Sổ chứng cứ (E01–E10 / P01–P04)
+## 9. Phụ lục tích hợp — Sự thật nền (T01–T13) và Sổ chứng cứ (E01–E12 / P01–P05)
 
-### 9.1. Tám sự thật nền (Ground Truths T01–T08)
+### 9.1. Mười ba sự thật nền (Ground Truths T01–T13)
 - **T01:** Lô hàng `G17` rời kho Xêdarê với 24 bao. 2 bao bị hỏng trên đường Amon vận chuyển (có biên bản riêng); 18 bao đến điểm chia bữa tại Galilê; 4 bao còn lại bị chuyển vào sân phụ do Hanan kiểm soát ($24 = 2 + 18 + 4$).
 - **T02:** Haddai (cha của nhân vật chính) đã ký trước biên nhận "đã nhận đủ tại điểm chia" khi hàng chưa tới nơi nhằm giữ lời cam kết cung cấp bữa ăn không bị gián đoạn. Đây là lỗi nghiệp vụ thực tế của ông.
-- **T03:** Hanan là người trực tiếp chỉ dẫn chuyển 4 bao vào sân phụ để tích trữ và kiểm soát nguồn cung, đồng thời lợi dụng chữ ký trước của Haddai để đổ toàn bộ trách nhiệm mất 6 bao lên ông.
-- **T04:** Khi phát hiện sai lệch, Haddai đã soạn bản sửa tự nhận lỗi ký trước và gửi tới một người giữ giấy ở Giêrusalem, nhưng bản sửa chưa kịp đến tay những người có trách nhiệm thì ông lâm bệnh mất.
+- **T03:** Hanan là người trực tiếp chỉ dẫn chuyển 4 bao vào sân phụ để tích trữ và kiểm soát nguồn cung, đồng thời lợi dụng chữ ký trước của Haddai để đổ toàn bộ trách nhiệm mất 6 bao lên ông. Varro hỗ trợ che đậy bằng thủ tục và niêm phong cảng.
+- **T04:** Khi phát hiện sai lệch, Haddai đã soạn bản sửa tự nhận lỗi ký trước và gửi tới một người giữ giấy ở Giêrusalem, nhưng bản sửa bị ngăn chặn và ông lâm bệnh mất.
 - **T05:** Nhân vật chính (Người Chứng) từng chứng kiến việc chưa kiểm đủ hàng nhưng đã giữ im lặng vì sợ mất việc làm.
 - **T06:** Natan (thợ đóng thuyền) giữ sổ hộ gia đình và bìa có biên nhận gốc, giao sổ ở Q01 và giao bản gốc ở Q04.
 - **T07:** Sự cố thiếu 2 bao bữa chung tại Xêdarê (`B06` trong Q02) là sự việc xảy ra ở hiện tại, cho thấy quy trình sửa sổ để trục lợi vẫn đang tiếp diễn.
 - **T08:** Điểm lưu giữ bản sửa là Giêrusalem; người giữ sân Galilê chỉ nhận 18 bao; Rina ở Xêdarê chỉ làm chứng cho đợt B06 mà bà trực tiếp trải qua.
+- **T09:** Varro là nhân vật hư cấu kiểm soát thủ tục niêm phong chứng từ tại cảng Xêdarê; đặt làm Bản sửa giả (E11) quy hết tội chiếm đoạt cho Haddai và kéo người làm chứng thành đồng phạm.
+- **T10:** Rufus phụ trách đội bảo vệ thuê; vụ cháy kho tại Q01 là sự cố ngoài ý muốn trong một lần thu hồi tài liệu vội vã.
+- **T11:** Lea có hai trách nhiệm riêng biệt: từng xóa một tên để cứu người; sau đó dưới áp lực sinh kế gia đình đã tiết lộ một phần lịch trình di chuyển.
+- **T12:** Amon rời bỏ tuyến sau khi bị đe dọa, được cứu sống tại wadi Q08 và có thể trực tiếp làm chứng về lộ trình G17 nếu an toàn.
+- **T13:** Hai bản sửa đối lập: Bản sửa thật của Haddai (E08) gửi Giêrusalem vs Bản sửa giả của Varro (E11) làm sai lệch sự thật.
 
-### 9.2. Mười nguồn chứng cứ độc lập (Evidences E01–E10)
+### 9.2. Mười hai nguồn chứng cứ độc lập (Evidences E01–E12)
 | Mã | Nguồn thu thập | Dữ kiện xác nhận được | Giới hạn chứng minh |
 |---|---|---|---|
 | **E01** | Biên nhận gốc G17 (Natan/Q04) | Haddai thực sự đã ký nhận đủ 24 bao | Chưa chứng minh ông chiếm đoạt hay cất giấu 4 bao |
@@ -131,9 +193,22 @@ Mỗi quest kiểm tra vắng companion, thiếu tiền/chứng cứ, chọn ng�
 | **E08** | Bản sửa của Haddai tại Giêrusalem (Q10) | Haddai tự nhận lỗi ký trước và đề nghị đối chiếu | Lời tự thuật cần đối chiếu với các nguồn khác |
 | **E09** | Lời chứng người trực tiếp nhận lệnh (Q09) | Lệnh chuyển hàng họ nghe thấy (tùy scope) | Điều họ không trực tiếp chứng kiến |
 | **E10** | Sổ bàn giao ca của Mattai (Q11) | Chỉ dẫn mở kho của Hanan trong ca trực | Cần kết hợp đối chiếu với E06/E09 |
+| **E11** | Bản sửa giả quy tội `[Đề xuất v5.0]` (Q10) | Tồn tại văn bản giả mạo đổ tội cho Haddai | Chưa tự chứng minh người chủ mưu đặt làm |
+| **E12** | Dấu đường chuyển thư của bản giả `[Đề xuất v5.0]` (Q09–Q11) | Chuỗi trạm chuyển thư và dấu niêm cảng | Cần chuỗi giữ độc lập để chứng minh Varro |
 
-### 9.3. Bốn mệnh đề kết luận (Claims P01–P04)
+### 9.3. Năm mệnh đề kết luận (Claims P01–P05)
 - **P01 — B06 không khớp:** Yêu cầu `E02` + `E03`. Kết luận số lượng bữa chung bị hụt do can thiệp sổ sách; không quy chụp cho vụ G17.
 - **P02 — G17 thiếu 4 bao chưa được giải trình tại điểm chia:** Yêu cầu `E04` + `E05`. Tách riêng 2 bao hỏng do vận chuyển khỏi 4 bao bị chuyển lệch.
 - **P03 — Haddai chịu trách nhiệm việc ký trước, không có căn cứ nói ông lấy 4 bao:** Yêu cầu `E01` + `E08` đối chiếu với `E04`/`E05`.
-- **P04 — Hanan chỉ dẫn chuyển 4 bao ngoài danh sách phân phối:** Yêu cầu `E06` kết hợp nguồn độc lập `E09` hoặc `E10`, trên nền tảng `E04`/`E05`. Nếu chưa đủ nguồn độc lập thứ hai, chỉ được nêu nghi vấn, không được khẳng định tuyệt đối.
+- **P04 — Hanan chỉ dẫn chuyển 4 bao ngoài danh sách phân phối:** Yêu cầu `E06` kết hợp nguồn độc lập `E09` hoặc `E10`, trên nền tảng `E04`/`E05`.
+- **P05 — Varro can thiệp chứng từ và đặt bản sửa giả `[Đề xuất v5.0]`:** Yêu cầu `E11` + `E12` với chuỗi người giữ độc lập. Nếu chưa đủ nguồn, chỉ nêu nghi vấn thủ tục tại cảng, không tuyên bố án hình sự.
+
+---
+
+## 10. Năm Định hướng Nâng cấp Hệ thống Chiến dịch 3A (Strategic Pillars)
+
+1. **Khảo cổ Hiện trường Đa tầng (3.1):** Nâng cấp hành trình truy vết E01–E12 thành giải mã công trình cổ đại và thử thách địa hình: hệ thống rãnh nước ngầm/hầm phân tầng cảng Sebastos (Q01–Q04), đọc dấu bánh xe lún bùn và đo khổ trục qua bậc đá hẹp hẻm đồi Antipatris (Q03), định hướng dây neo vượt lũ quét Wadi (Q08), và pháo đài thủ tục Giêrusalem với xưởng giấy/niêm sáp phân tích lý hóa mực và đất sét (Q09–Q10).
+2. **Khám phá Đồng hành — Companion-Driven Traversal (3.2):** Chiều sâu gameplay phi bạo lực dựa trên kỹ năng môi trường của 4 đồng hành: Titus (cơ học, đối trọng, sửa trục cầu cạn, mở khóa nặng), Lea (giám định bao bì sợi gai, vết khâu lệch bìa sổ, quy chuẩn văn thư La Mã), Damar (đọc luồng tuần tra Rufus, leo gờ đá, dò vết cát đá), Miriam (mở cửa bếp chung, xưởng dệt, xóm chài qua tương trợ xã hội).
+3. **Cộng hưởng Cơ chế Chơi — Mechanical Resonance (3.3):** Ba Legends trục rèn luyện ngôn ngữ cơ học áp dụng vào thế giới Mortal tuân thủ 100% Canon Lock: L01 (gió đêm, đèn hiệu, cứu xe lún) → dòng lũ wadi Q08 giữ E07; L02 (âm học vách đá dội lại, mảng sáng tối hang Đavít) → lẻn qua hành lang lính canh sân phụ ban đêm Q06–Q07; L04 (lao động tĩnh lặng rạng đông, máy quay cận cảnh) → ngôn ngữ điện ảnh ngày trở về cảng Q11–Q12.
+4. **Hệ thống World Callback Động theo Áp lực Hành chính (3.4):** Thế giới biến đổi vật lý theo 3 nấc Milestone Pressure (cổng niêm phong chì, trạm gác ngã ba mọc lên, buộc leo mái hoặc luồn rãnh ngầm) cùng hệ sinh thái NPC phản ứng theo nhân quả các lựa chọn đối xử với Yosef ở Q02 hay phân bổ tải đồ ở Q04.
+5. **Đạo diễn Interactive Set-Piece Đa tuyến cho Q12 (3.5):** Không chỉ ghép thẻ chứng cứ tĩnh, Q12 diễn ra thời gian thực: người chơi di chuyển qua bến cảng căng thẳng, ra hiệu Titus khóa cổng chặn tay sai Rufus, hướng dẫn nhân chứng chưa consent ẩn nấp an toàn, bước vào sảnh đối chất với máy quay chuyển mượt sang cận cảnh biểu cảm Hanan, Varro và nhân chứng khi đưa ra P01–P05.

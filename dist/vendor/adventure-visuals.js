@@ -1420,11 +1420,19 @@
       diagnostics.gtao=mode!=='balanced';
     }
 
+    let exposureTime=0;const exposureDirection=new T.Vector3();
     function render(scene, camera, sun, climateNight = false) {
       scene.userData.graphicsStatus=diagnostics;
+      const qExposure=scene.userData.q01Exposure,ar=scene.userData.architecture,p=camera.position;
+      const inStore=qExposure&&ar&&p.x>-27.25&&p.x<-18.75&&p.z>-17.25&&p.z<-9.5&&p.y<ar.roof-.05;
+      let interiorMeter=inStore?1:0;
+      if(qExposure&&ar&&!inStore&&p.x>-24.25&&p.x<-21.75&&p.z>-9.5&&p.z<-6.3&&p.y<ar.roof-.05){camera.getWorldDirection(exposureDirection);interiorMeter=Math.max(0,Math.min(1,(-6.3-p.z)/1.8))*Math.max(0,Math.min(1,(-exposureDirection.z-.25)/.55));}
+      const targetExposure=qExposure?qExposure.outside+((scene.userData.q01?.lighting==='evening'?qExposure.insideEvening:qExposure.insideDay)-qExposure.outside)*interiorMeter:1.10;
+      const now=performance.now(),exposureDelta=Math.min(.1,Math.max(0,(now-exposureTime)/1000));exposureTime=now;
+      if(!qExposure)compositeMat.uniforms.exposure.value=1.10;else compositeMat.uniforms.exposure.value+=(targetExposure-compositeMat.uniforms.exposure.value)*(1-Math.exp(-exposureDelta*3.5));
       if (!enabled) {
-        for (const hook of beforeHooks) hook(renderer, scene, camera);
-        renderer.render(scene, camera);
+        const savedExposure=renderer.toneMappingExposure;renderer.toneMappingExposure=savedExposure*(qExposure?compositeMat.uniforms.exposure.value/1.10:1);
+        try{for (const hook of beforeHooks) hook(renderer, scene, camera);renderer.render(scene, camera);}finally{renderer.toneMappingExposure=savedExposure;}
         return;
       }
       const prevTone = renderer.toneMapping;

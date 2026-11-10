@@ -1,0 +1,524 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "q01-aabb-diffuse-pathtrace-sh9-v1",
+  "sourceHash": "3edfe19cdce74a6e0056bd80b9d68e7da4de9020d95d82f42181168e95d607f6",
+  "generatedAt": "2026-11-10T06:20:36.488Z",
+  "runtime": {
+    "node": "v24.14.1",
+    "platform": "win32",
+    "architecture": "x64"
+  },
+  "seconds": 16.928145400000002,
+  "scene": {
+    "source": "WitnessArchitecture.create({height:()=>-.12}); WitnessQ01Environment.bakeBoxes(ar); WitnessQ01Environment.lamps",
+    "bakerSha256": "2a2e325dce5052039a305d0a55ba74e9d6cc3d4297d2be2c182146356083469e",
+    "sceneInputSha256": "76125f8bebf09e786b719eb9d96e099e63445562e8645bf885701fe1cda93ae3",
+    "datumY": 0,
+    "boxCount": 61,
+    "probeCount": 550,
+    "grid": [
+      11,
+      5,
+      10
+    ],
+    "min": [
+      -27.05,
+      0.16,
+      -17.08
+    ],
+    "max": [
+      -18.94,
+      3.03,
+      -9.82
+    ],
+    "bounces": 3,
+    "raysPerProbe": 512,
+    "seed": 1364144450,
+    "totalPrimarySamples": 563200,
+    "hemispherePDF": "cos(theta)/pi; BRDF rho/pi; path throughput multiplies linear rho",
+    "sky": "Upper hemisphere gradient without sun disk; lower escaped hemisphere is black; finite AABB yard reflects sky/sun",
+    "nextEventEstimation": "Directional source plus three range-limited inverse-square oil lamps, visibility tested at every diffuse hit",
+    "directSourceExclusion": "No next-event source evaluation at probes; sky contains no sun disk; emitters have no hittable geometry",
+    "scenarios": {
+      "day": {
+        "sun": {
+          "elevation": 46,
+          "azimuth": -0.82,
+          "intensity": 3.35,
+          "color": [
+            1,
+            0.8713671191987972,
+            0.665387298282272
+          ],
+          "direction": [
+            -0.5078965706459769,
+            0.7193398003386511,
+            -0.4739106721469835
+          ]
+        },
+        "sky": {
+          "zenith": [
+            0.0382043715953465,
+            0.21223075741405523,
+            0.4232676699860717
+          ],
+          "horizon": [
+            0.6307571363461468,
+            0.6866853124353135,
+            0.5972017883637634
+          ],
+          "intensity": 0.6,
+          "gradientExponent": 0.35
+        },
+        "lamps": [
+          {
+            "at": [
+              -26.55,
+              0.98,
+              -13.85
+            ],
+            "power": 0.48,
+            "color": [
+              1,
+              0.41254261348390375,
+              0.09084171118340768
+            ],
+            "range": 3.6,
+            "radius": 0.045
+          },
+          {
+            "at": [
+              -24.18,
+              2.05,
+              -9.32
+            ],
+            "power": 0.48,
+            "color": [
+              1,
+              0.41254261348390375,
+              0.09084171118340768
+            ],
+            "range": 3.6,
+            "radius": 0.045
+          },
+          {
+            "at": [
+              -21.1,
+              1.77,
+              -15.4
+            ],
+            "power": 0.14,
+            "color": [
+              1,
+              0.4851499400560704,
+              0.17464740365558504
+            ],
+            "range": 3.6,
+            "radius": 0.045
+          }
+        ]
+      },
+      "evening": {
+        "sun": {
+          "elevation": 19,
+          "azimuth": 0.64,
+          "intensity": 1.55,
+          "color": [
+            0.4286904966139066,
+            0.5775804404296506,
+            0.8148465722161012
+          ],
+          "direction": [
+            0.5646593830713743,
+            0.32556815445715664,
+            -0.758396438489011
+          ]
+        },
+        "sky": {
+          "zenith": [
+            0.006995410187265387,
+            0.018500220128379697,
+            0.04817182422688942
+          ],
+          "horizon": [
+            0.09758734714186246,
+            0.12743768043564743,
+            0.18782077230067787
+          ],
+          "intensity": 0.18,
+          "gradientExponent": 0.35
+        },
+        "lamps": [
+          {
+            "at": [
+              -26.55,
+              0.98,
+              -13.85
+            ],
+            "power": 4.5,
+            "color": [
+              1,
+              0.41254261348390375,
+              0.09084171118340768
+            ],
+            "range": 3.6,
+            "radius": 0.045
+          },
+          {
+            "at": [
+              -24.18,
+              2.05,
+              -9.32
+            ],
+            "power": 4.5,
+            "color": [
+              1,
+              0.41254261348390375,
+              0.09084171118340768
+            ],
+            "range": 3.6,
+            "radius": 0.045
+          },
+          {
+            "at": [
+              -21.1,
+              1.77,
+              -15.4
+            ],
+            "power": 4,
+            "color": [
+              1,
+              0.4851499400560704,
+              0.17464740365558504
+            ],
+            "range": 3.6,
+            "radius": 0.045
+          }
+        ]
+      }
+    }
+  },
+  "relocation": {
+    "method": "Nearest free projection onto expanded AABB faces, best-first over overlapping solids; coefficients stay in nominal grid slots",
+    "clearanceMeters": 0.06,
+    "count": 210,
+    "maximumDistanceMeters": 0.8610000000000007,
+    "meanDistanceMeters": 0.11675594657118903,
+    "placementSha256": "50bcaab59484a49251b81fe604ddfbf45737d7e74735185ac91fc147cfce88dc",
+    "examples": [
+      {
+        "slot": [
+          9,
+          0,
+          3
+        ],
+        "original": [
+          -19.751,
+          0.16,
+          -14.66
+        ],
+        "sampledAt": [
+          -18.89,
+          0.16,
+          -14.66
+        ],
+        "distanceMeters": 0.8610000000000007
+      },
+      {
+        "slot": [
+          9,
+          1,
+          3
+        ],
+        "original": [
+          -19.751,
+          0.8775,
+          -14.66
+        ],
+        "sampledAt": [
+          -18.89,
+          0.8775,
+          -14.66
+        ],
+        "distanceMeters": 0.8610000000000007
+      },
+      {
+        "slot": [
+          9,
+          0,
+          4
+        ],
+        "original": [
+          -19.751,
+          0.16,
+          -13.8533333
+        ],
+        "sampledAt": [
+          -18.89,
+          0.16,
+          -13.8533333
+        ],
+        "distanceMeters": 0.8610000000000007
+      },
+      {
+        "slot": [
+          9,
+          1,
+          4
+        ],
+        "original": [
+          -19.751,
+          0.8775,
+          -13.8533333
+        ],
+        "sampledAt": [
+          -18.89,
+          0.8775,
+          -13.8533333
+        ],
+        "distanceMeters": 0.8610000000000007
+      }
+    ]
+  },
+  "atlas": {
+    "width": 99,
+    "height": 50,
+    "bytesPerScenario": 19800,
+    "encoding": "Signed SH9 radiance RGB: round((coefficient/scale*.5+.5)*255), alpha=255; one maxAbs scale per coefficient/channel over all probes",
+    "pixelIndex": "((z*ny+y)*nx*9+c*nx+x)*4",
+    "interpolation": "Runtime trilinear probe sampling and cosine convolution"
+  },
+  "asset": {
+    "path": "vendor/witness-q01-gi-data.js",
+    "bytes": 54453,
+    "sha256": "cf436a107a2ef7f5bdad4cc11d1d118cde5c4271039f27e77102473384113261"
+  },
+  "selfTest": {
+    "passed": true,
+    "constantRadiance": 1,
+    "expectedIrradiance": 3.141592653589793,
+    "constantRadianceMaxIrradianceError": 0.00002166950501258924,
+    "shOrder": [
+      "constant",
+      "y",
+      "z",
+      "x",
+      "xy",
+      "yz",
+      "3z^2-1",
+      "xz",
+      "x^2-y^2"
+    ],
+    "lambertianCosinePDF": "passed",
+    "directSunExcluded": true,
+    "directLampsExcluded": true,
+    "actualRoofOcclusion": true,
+    "actualDoorwaySkyVisibility": true,
+    "lampBlockerOcclusion": true,
+    "solidProbeRelocation": true,
+    "representativeMeanIncomingRadianceRGB": {
+      "day": [
+        [
+          0.0256645521,
+          0.0214586461,
+          0.0156119613
+        ],
+        [
+          0.057478606,
+          0.0618579789,
+          0.0584045986
+        ],
+        [
+          0.192927765,
+          0.172935622,
+          0.13326654
+        ]
+      ],
+      "evening": [
+        [
+          0.0701520729,
+          0.0265442667,
+          0.00627159737
+        ],
+        [
+          0.0296915882,
+          0.0124235069,
+          0.00519349106
+        ],
+        [
+          0.0163335215,
+          0.00984245492,
+          0.00710160022
+        ]
+      ]
+    },
+    "threeComparison": {
+      "available": true,
+      "path": "tools/environment-kit/node_modules/three/src/math/SphericalHarmonics3.js",
+      "maximumDifference": 6.1400431539127e-7
+    }
+  },
+  "scenarios": {
+    "day": {
+      "seconds": 10.448953099999999,
+      "pixelSha256": "b36bc015fa30208d70974b8e392f544b036d3b8bef94e42cf9521ae642a9f899",
+      "maxQuantizationError": 0.003034037655656005,
+      "maxDecodedSixAxisIrradianceError": 0.004869008084814323,
+      "statistics": {
+        "transportRays": 1072323,
+        "shadowRays": 968695,
+        "primarySamples": 281600,
+        "primarySurfaceHitFraction": 0.9736541193181818,
+        "primaryVisibleSkyFraction": 0.023991477272727272,
+        "sunOcclusionFraction": 0.9231307544223599,
+        "lampOcclusionFraction": 0.44046787832624534,
+        "meanIncomingRadianceRGB": [
+          0.0318403928,
+          0.0262939864,
+          0.0194278713
+        ],
+        "meanIncomingRadianceBySourceRGB": {
+          "directSky": [
+            0.00233021132,
+            0.00448048747,
+            0.00661545715
+          ],
+          "bouncedSky": [
+            0.00241930528,
+            0.00395876491,
+            0.00398218578
+          ],
+          "bouncedSun": [
+            0.0220682072,
+            0.0162005119,
+            0.00855605791
+          ],
+          "bouncedLamps": [
+            0.005022669,
+            0.00165422208,
+            0.000274170424
+          ]
+        },
+        "meanIncomingRadianceByDiffuseDepthRGB": [
+          [
+            0.00233021132,
+            0.00448048747,
+            0.00661545715
+          ],
+          [
+            0.0190884284,
+            0.0150892063,
+            0.00978923417
+          ],
+          [
+            0.00715156272,
+            0.00480526133,
+            0.0023282472
+          ],
+          [
+            0.00327019037,
+            0.00191903128,
+            0.000694932734
+          ]
+        ],
+        "probeIncomingLuminance": [
+          0.000200227854,
+          0.0269774189,
+          0.197644659
+        ],
+        "sixAxisIrradianceLuminance": [
+          0.0000466866555,
+          0.0847521397,
+          0.994628808
+        ],
+        "finiteProbes": 550,
+        "nonzeroProbes": 550
+      }
+    },
+    "evening": {
+      "seconds": 6.302808700000002,
+      "pixelSha256": "1c3e8bb4b7d35510b427395756eae4e3fa926ddf148897dbb7046a46a382350d",
+      "maxQuantizationError": 0.014731927168802172,
+      "maxDecodedSixAxisIrradianceError": 0.026300756430456942,
+      "statistics": {
+        "transportRays": 1072323,
+        "shadowRays": 972295,
+        "primarySamples": 281600,
+        "primarySurfaceHitFraction": 0.9736541193181818,
+        "primaryVisibleSkyFraction": 0.023991477272727272,
+        "sunOcclusionFraction": 0.9716368949915954,
+        "lampOcclusionFraction": 0.44046787832624534,
+        "meanIncomingRadianceRGB": [
+          0.0701126382,
+          0.0255033746,
+          0.00613150606
+        ],
+        "meanIncomingRadianceBySourceRGB": {
+          "directSky": [
+            0.000111861683,
+            0.000178079983,
+            0.000333896644
+          ],
+          "bouncedSky": [
+            0.000116571913,
+            0.000153424589,
+            0.000194758338
+          ],
+          "bouncedSun": [
+            0.00110505607,
+            0.00111226533,
+            0.000965237722
+          ],
+          "bouncedLamps": [
+            0.0687791485,
+            0.0240596047,
+            0.00463761336
+          ]
+        },
+        "meanIncomingRadianceByDiffuseDepthRGB": [
+          [
+            0.000111861683,
+            0.000178079983,
+            0.000333896644
+          ],
+          [
+            0.0426884759,
+            0.0166684407,
+            0.00425334352
+          ],
+          [
+            0.0191130288,
+            0.006319265,
+            0.00120838343
+          ],
+          [
+            0.00819927188,
+            0.00233758896,
+            0.000335882461
+          ]
+        ],
+        "probeIncomingLuminance": [
+          0.0000350222113,
+          0.0335886552,
+          0.459967365
+        ],
+        "sixAxisIrradianceLuminance": [
+          0.00000602500588,
+          0.105522153,
+          3.34706304
+        ],
+        "finiteProbes": 550,
+        "nonzeroProbes": 550
+      }
+    }
+  },
+  "limitations": [
+    "Deterministic CPU diffuse path tracing of AABB volumes and material-average linear albedos, not full rendered triangles, individual mortar joints, textures, normal maps, specular transport, caustics or spectral rendering.",
+    "Truncated at three diffuse surface events with 512 primary directions per probe. Finite sampling and truncation leave noise and missing higher-order energy; no claim of converged physical radiometry.",
+    "The analytic sky brightness and linear material averages are authored approximations, not measured HDR/lux calibration. Evening directional intensity follows the game's blue moon artistic setting.",
+    "Only the exported bake scene occludes or reflects. Moving characters, doors, vegetation, fine props and external buildings are absent; dynamic direct sources/shadows remain realtime.",
+    "Lamps use a point-source next-event approximation with a 4.5 cm near-source bound and 3.6 m smooth cutoff. Their direct illumination is deliberately excluded from the SH field.",
+    "A coarse 11x5x10 SH9 volume smooths direction and position. Solid probes relocate to nearby air while retaining nominal atlas slots; interpolation near walls, stairs and openings can leak or blur transport.",
+    "Signed RGBA8 has quantization error and SH9 may ring near strong occlusion; runtime clamps reconstructed negative irradiance. Bake verification is computational evidence, not human visual acceptance."
+  ]
+}

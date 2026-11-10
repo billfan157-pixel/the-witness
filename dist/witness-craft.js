@@ -64,10 +64,32 @@
     const f=field(s);if(!f)return [];
     return spots(s,f);
   }
+  // Tính lại vị trí vật chủ giống hệt details(), nhưng không gọi details() vì nhánh
+  // lantern trong đó gọi ngược lại spots() — sẽ đệ quy vô hạn.
+  function hostAt(s,def){
+    const recent=!s.layer&&s.craft?.lastWork?.chapter===s.chapter?s.craft.lastWork.bond:null;
+    const bond=!s.layer?(s.pendingBond?.id||recent):null;
+    for(const sid of [owner(s),...(bond?[bond]:[])]){
+      const r=(scenes[sid]||[]).find(x=>x.encounter===def.id);
+      if(!r)continue;
+      const base=anchor(s,r.anchor);
+      return {id:'craft:'+sid+'-'+r.key,at:[Math.max(-34,Math.min(24,base[0]+r.offset[0])),Math.max(-26,Math.min(24,base[1]+r.offset[1]))]};
+    }
+    return null;
+  }
+  // Chỉ gặp có đủ anchor trên từng bước mới được neo; phần còn lại giữ bố cục cũ.
+  function hostOf(s,def){
+    if(def.type!=='sequence'||!(def.steps||[]).length)return null;
+    if(!def.steps.every(x=>Array.isArray(x.at)&&x.at.length===3&&x.at.every(Number.isFinite)))return null;
+    return hostAt(s,def);
+  }
   function spots(s,f){
     const d=f.def,p=f.payload,c=[Math.max(-25,Math.min(17,f.origin[0])),Math.max(-17,Math.min(18,f.origin[1]))],pts=[];
-    const point=(key,label,at,op,detail)=>pts.push({id:'field:'+key,key,label,at,op,detail,encounter:d.id});
-    if(d.type==='route'){
+    const point=(key,label,at,op,detail,extra)=>pts.push({id:'field:'+key,key,label,at,op,detail,encounter:d.id,...extra});
+    const host=hostOf(s,d);
+    if(host){
+      for(const x of d.steps)point(x.id,x.label,[host.at[0]+x.at[0],host.at[1]+x.at[2]],{kind:'step',value:x.id},x.detail||'',{elevation:x.at[1],hosted:host.id,obs:x.obs});
+    }else if(d.type==='route'){
       const minX=Math.min(...d.nodes.map(n=>n.x)),maxX=Math.max(...d.nodes.map(n=>n.x)),minY=Math.min(...d.nodes.map(n=>n.y)),maxY=Math.max(...d.nodes.map(n=>n.y));
       for(const n of d.nodes){const at=[c[0]+(n.x-minX)/Math.max(1,maxX-minX)*8-4,c[1]+(n.y-minY)/Math.max(1,maxY-minY)*6-3];point(n.id,n.label,at,{kind:'route',value:n.id},n.detail);}
     }else{
@@ -101,7 +123,7 @@
     const p=clone(f.payload),op=spot.op;
     if(op.kind==='step'){
       p.order||=[];const step=d.steps.find(x=>x.id===op.value),missing=(step.needs||[]).filter(x=>!p.order.includes(x));
-      if(missing.length)return {ok:false,message:step.label+': cần '+missing.map(id=>d.steps.find(x=>x.id===id).label.toLowerCase()).join(', ')+' trước.'};
+      if(missing.length)return {ok:false,refused:op.value,message:step.refuse||step.label+': cần '+missing.map(id=>d.steps.find(x=>x.id===id).label.toLowerCase()).join(', ')+' trước.'};
       if(!p.order.includes(op.value))p.order.push(op.value);
     }else if(op.kind==='route'){
       p.path||=[d.start];const last=p.path[p.path.length-1];
@@ -153,7 +175,7 @@
       const spots=fieldSpots(s),d=f.def,p=f.payload;
       let next=spots.find(x=>x.op.kind==='handoff'&&X.evaluate(s,d,p).ok);
       if(!next)next=spots.find(x=>x.op.kind==='step'&&!(p.order||[]).includes(x.op.value)&&(d.steps.find(y=>y.id===x.op.value)?.needs||[]).every(id=>(p.order||[]).includes(id)))||spots.find(x=>x.op.kind==='route'&&d.edges.some(e=>e.from===(p.path||[d.start]).at(-1)&&e.to===x.op.value)&&!(p.path||[]).includes(x.op.value))||spots[0];
-      for(const pt of spots)targets.push({id:pt.id,at:pt.at,name:pt.label,range:2.8,elevation:.8,main:pt.id===next?.id,symbol:pt.id===next?.id?'◆':'·',field:true});
+      for(const pt of spots)targets.push({id:pt.id,at:pt.at,name:pt.label,range:2.8,elevation:pt.elevation??.8,main:pt.id===next?.id,symbol:pt.id===next?.id?'◆':'·',field:true});
     }
     for(const work of workScenes(s)){
       if(!['allocation','arrangement','dispatch'].includes(work.def.type))continue;

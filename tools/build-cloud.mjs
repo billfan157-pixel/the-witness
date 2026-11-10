@@ -2,9 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { build } from 'esbuild';
 import { fileURLToPath } from 'node:url';
+import outputTools from './build-output.cjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const dist=path.join(root,'dist'),client=path.join(dist,'client'),server=path.join(dist,'server');
-fs.mkdirSync(client,{recursive:true});fs.mkdirSync(server,{recursive:true});
+const hosting=JSON.parse(fs.readFileSync(path.join(root,'.openai/hosting.json'),'utf8'));
+if(hosting.static||hosting.d1!=='DB')throw Error('Cloud build requires the DB binding and Worker hosting.');
+for(const name of ['dist/client','dist/server','dist/.openai'])outputTools.prepareOutput(root,name);
 // The existing static/offline builder remains usable independently.
 for(const entry of fs.readdirSync(dist,{withFileTypes:true})){
   if(['client','server','.openai'].includes(entry.name))continue;
@@ -12,8 +15,6 @@ for(const entry of fs.readdirSync(dist,{withFileTypes:true})){
 }
 await build({entryPoints:[path.join(root,'server/worker.mjs')],outfile:path.join(server,'index.js'),
   bundle:true,format:'esm',platform:'browser',target:'es2022',minify:true,legalComments:'none'});
-const hosting=JSON.parse(fs.readFileSync(path.join(root,'.openai/hosting.json'),'utf8'));
-if(hosting.static||hosting.d1!=='DB')throw Error('Cloud build requires the DB binding and Worker hosting.');
 fs.mkdirSync(path.join(dist,'.openai'),{recursive:true});
 fs.copyFileSync(path.join(root,'.openai/hosting.json'),path.join(dist,'.openai/hosting.json'));
 fs.cpSync(path.join(root,'drizzle'),path.join(dist,'.openai/drizzle'),{recursive:true});

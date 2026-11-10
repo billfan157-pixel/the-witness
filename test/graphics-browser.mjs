@@ -7,7 +7,7 @@ import {browserDriver,delay} from './browser-driver.mjs';
 const require=createRequire(import.meta.url), M=require('../witness-model.js'),D=require('../witness-content.js');
 const out=path.resolve('test/artifacts/graphics');
 const b=await browserDriver(out,19571);
-const report={scenes:[],checks:[],errors:[]};
+const report={build:JSON.parse(fs.readFileSync('dist/build-info.json')).revision,scenes:[],checks:[],errors:[]};
 try {
   await b.send('Emulation.setDeviceMetricsOverride',{width:1000,height:720,deviceScaleFactor:1,mobile:false});
   await b.send('Page.addScriptToEvaluateOnNewDocument',{source:`

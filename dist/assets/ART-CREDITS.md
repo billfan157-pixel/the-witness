@@ -118,6 +118,25 @@ The source commit is `6ff1eb358f6c1959ced77e79e6dd2406d9a71f49`.
 - `models/nhan-vat-3d.blend` and `models/nhan-vat-3d.glb` contain the editable
   representative Naor model and its skeleton.
 
+## Q01 Phase B environment
+
+`assets/architecture/phase-b/` contains CC0 Poly Haven comparison surfaces
+from `sandstone_blocks_05` and `stone_wall_03`. The generator, authors,
+official source URLs, pinned MD5/SHA-256 values, mortar-free crop quilt,
+OpenGL normal processing and output hashes are in its `sources.json`.
+These modern scans are artistic comparisons [H], not sampled Caesarea
+kurkar or a verified ancient concrete recipe.
+
+The curved quay, plastered store kit, door joinery, high ventilation slots,
+paving transitions and contact dressing are original project geometry in
+`witness-q01-environment.js`. Their layout is [H]; archaeological limits
+are recorded in `docs/environment-kit/research/q01-phase-b-materials.md`.
+
+`vendor/witness-q01-gi-data.js` is original, reproducible SH9 diffuse-light
+data produced by `tools/bake-q01-gi.cjs`; `gi-bake.json` records the proxy
+geometry, lighting inputs, occlusion checks, precision and limitations.
+No external archaeological photograph was copied into these assets.
+
 ## Cover
 
 `journey-cover.webp` was generated with the built-in ImageGen tool, then encoded

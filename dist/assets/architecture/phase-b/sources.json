@@ -1,0 +1,311 @@
+{
+  "schemaVersion": 1,
+  "retrieved": "2026-11-10",
+  "provider": "Poly Haven",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://polyhaven.com/license",
+  "generator": "tools/environment-kit/prepare-phase-b-materials.mjs",
+  "conventions": {
+    "albedo": "sRGB source Diffuse; linear-light quilt and gamma-aware resize; no recolour or added directional lighting",
+    "normal": "OpenGL tangent-space +Y; linear resize/blend then normalize; lossless 8-bit WebP",
+    "orm": "Linear RGB = AO, roughness, metalness; roughness minimum per family; B exactly 0; lossless WebP",
+    "uv": "Periodic edge texels; ashlar has no architectural mortar joints. tileMeters is an artistic recommendation, not a measured ancient dimension.",
+    "shader": "Albedo SRGBColorSpace; normal and ORM NoColorSpace. Keep roughness factor 1 to preserve minima."
+  },
+  "limitations": [
+    "Both families are modern CC0 comparison textures and [H] project processing, not archaeological images.",
+    "No exact Caesarea stone species, Roman concrete composition or first-century building plan is claimed.",
+    "Ashlar has blended crop detail; rubble is for exposed-core accents, not a substitute for separately modelled rubble silhouette.",
+    "Review with actual geometry, GI, scale, oblique camera angles and lite tier before art acceptance."
+  ],
+  "reviewImage": "assets/architecture/phase-b/material-review.webp",
+  "totals": {
+    "full": 7575138,
+    "lite": 2176260
+  },
+  "surfaces": [
+    {
+      "slot": "ashlar",
+      "asset": "sandstone_blocks_05",
+      "roughnessMin": 0.68,
+      "normalScale": 0.28,
+      "tileMeters": 1.5,
+      "interpretation": "Mortar-free stone-face quilt for separately modelled ashlar blocks and trim. Derived from a modern sandstone comparison; not an identification of Caesarea kurkar or a historic block dimension.",
+      "title": "Sandstone Blocks 05",
+      "authors": {
+        "Rob Tuytel": "All"
+      },
+      "source": "https://polyhaven.com/a/sandstone_blocks_05",
+      "api": {
+        "info": "https://api.polyhaven.com/info/sandstone_blocks_05",
+        "files": "https://api.polyhaven.com/files/sandstone_blocks_05"
+      },
+      "sourceResolution": "2k",
+      "sourceDimensionsMillimeters": [
+        3000,
+        3000
+      ],
+      "license": "CC0-1.0",
+      "processing": {
+        "type": "project-authored toroidal multi-face quilt",
+        "faceCrops": [
+          {
+            "left": 88,
+            "top": 90,
+            "width": 224,
+            "height": 224
+          },
+          {
+            "left": 530,
+            "top": 90,
+            "width": 224,
+            "height": 224
+          },
+          {
+            "left": 960,
+            "top": 90,
+            "width": 224,
+            "height": 224
+          },
+          {
+            "left": 1400,
+            "top": 90,
+            "width": 224,
+            "height": 224
+          },
+          {
+            "left": 720,
+            "top": 400,
+            "width": 224,
+            "height": 224
+          },
+          {
+            "left": 320,
+            "top": 725,
+            "width": 224,
+            "height": 224
+          },
+          {
+            "left": 1060,
+            "top": 725,
+            "width": 224,
+            "height": 224
+          },
+          {
+            "left": 40,
+            "top": 1050,
+            "width": 224,
+            "height": 224
+          }
+        ],
+        "patchPixels": 384,
+        "cellPixels": 256,
+        "linearLightAlbedoBlend": true,
+        "rotateOrMirror": false
+      },
+      "maps": {
+        "albedo": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/sandstone_blocks_05/sandstone_blocks_05_diff_2k.jpg",
+          "sourceBytes": 2302231,
+          "md5": "486e2b51beffc6c050d1e2b25fa47cbd",
+          "sha256": "46c0be03ddf94e2eee4cc4ce3aa5526dedfcb85f41e78ea95017640164596602"
+        },
+        "normal": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/sandstone_blocks_05/sandstone_blocks_05_nor_gl_2k.png",
+          "sourceBytes": 8440835,
+          "md5": "585dd95edff8637ac64e4f7999869bff",
+          "sha256": "4b88f10cedc4f41592bea30557a03ece78a99b4c575d8a1ed302743edc8b41cf"
+        },
+        "orm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/sandstone_blocks_05/sandstone_blocks_05_arm_2k.png",
+          "sourceBytes": 5161278,
+          "md5": "a2fffaca583158f6927b45d4ce04040e",
+          "sha256": "6f739bd8f3de442779680b7f5ea3c92cbfc4aeaedaa48a1261f44f93dfab1e5c"
+        }
+      },
+      "outputs": {
+        "full": {
+          "albedo": {
+            "path": "assets/architecture/phase-b/full/ashlar-albedo.webp",
+            "bytes": 809284,
+            "sha256": "8273ccb832402df81a1383feec2defbefd79e434bd16c251d298b932532fa8ca",
+            "width": 1024,
+            "height": 1024
+          },
+          "normal": {
+            "path": "assets/architecture/phase-b/full/ashlar-normal.webp",
+            "bytes": 1152590,
+            "sha256": "50e4ee60ae5aa504759889d38b34c3dfcd357bc3ea6b114a5c6a94a5c21d16a7",
+            "width": 1024,
+            "height": 1024
+          },
+          "orm": {
+            "path": "assets/architecture/phase-b/full/ashlar-orm.webp",
+            "bytes": 525976,
+            "sha256": "f379208dcfeea5d9a0fc59ef4a959dd973eb9d37967a8557214172d948e4d987",
+            "width": 1024,
+            "height": 1024
+          }
+        },
+        "lite": {
+          "albedo": {
+            "path": "assets/architecture/phase-b/lite/ashlar-albedo.webp",
+            "bytes": 260314,
+            "sha256": "18af7dcc4fb54f103ac88c86082ff4fa319a0fd90a6cfdeb019fb6b766d14c14",
+            "width": 512,
+            "height": 512
+          },
+          "normal": {
+            "path": "assets/architecture/phase-b/lite/ashlar-normal.webp",
+            "bytes": 400898,
+            "sha256": "8073175b33d7deba821551bdd0c8e7d88289f55598574de50448aae15bd24343",
+            "width": 512,
+            "height": 512
+          },
+          "orm": {
+            "path": "assets/architecture/phase-b/lite/ashlar-orm.webp",
+            "bytes": 187392,
+            "sha256": "0c24dc9c4f147ca2cf943c20cd344c739753013092cfd1023b474e3fe0672960",
+            "width": 512,
+            "height": 512
+          }
+        }
+      }
+    },
+    {
+      "slot": "rubble",
+      "asset": "stone_wall_03",
+      "roughnessMin": 0.72,
+      "normalScale": 0.42,
+      "tileMeters": 2.17,
+      "interpretation": "Coarse exposed mineral/aggregate comparison for small rubble-core and broken-edge patches. Modern scanned surface; not a claim of Roman concrete composition, binder, stone species or archaeological provenance.",
+      "title": "Stone Wall 03",
+      "authors": {
+        "eye-candy.xyz": "All"
+      },
+      "source": "https://polyhaven.com/a/stone_wall_03",
+      "api": {
+        "info": "https://api.polyhaven.com/info/stone_wall_03",
+        "files": "https://api.polyhaven.com/files/stone_wall_03"
+      },
+      "sourceResolution": "2k",
+      "sourceDimensionsMillimeters": [
+        2170.0000762939453,
+        2170.0000762939453
+      ],
+      "license": "CC0-1.0",
+      "processing": {
+        "type": "whole modern comparison surface, gamma-aware downsample; no tint or added lighting"
+      },
+      "maps": {
+        "albedo": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/stone_wall_03/stone_wall_03_diff_2k.jpg",
+          "sourceBytes": 4217106,
+          "md5": "fae0ef9ba98456fabc1c78e4a781a173",
+          "sha256": "d773961b86206ae005c7c81aeb99df14f828ecf116510cd8016448d4e8d61ab8"
+        },
+        "normal": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/stone_wall_03/stone_wall_03_nor_gl_2k.png",
+          "sourceBytes": 23397445,
+          "md5": "b303216d22a90cbb68f32f7a73bb208f",
+          "sha256": "279dfc333c35e03115538840b86fb320249cff9d5e8ea38e0065644274d60e66"
+        },
+        "orm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/stone_wall_03/stone_wall_03_arm_2k.png",
+          "sourceBytes": 16629364,
+          "md5": "ee65ea85315f7395575648414b9db83b",
+          "sha256": "d77f9535c2612cbf615044a3f3f222694c3a21ee8644d2b2240dd8317b2bf142"
+        }
+      },
+      "outputs": {
+        "full": {
+          "albedo": {
+            "path": "assets/architecture/phase-b/full/rubble-albedo.webp",
+            "bytes": 1642872,
+            "sha256": "0e1e9130dafe5edb2a7d7f4c6ec7b15ea3c6e12bc377c963aaf1edde10caa9fd",
+            "width": 1024,
+            "height": 1024
+          },
+          "normal": {
+            "path": "assets/architecture/phase-b/full/rubble-normal.webp",
+            "bytes": 2437246,
+            "sha256": "f953ef7fbe62f2e250cd42e7fdfa5d4927486cd0bf65e74b87944b018721e050",
+            "width": 1024,
+            "height": 1024
+          },
+          "orm": {
+            "path": "assets/architecture/phase-b/full/rubble-orm.webp",
+            "bytes": 1007170,
+            "sha256": "6610f15c619daa8af494397a052dffc9dc7f6027eb7fb07043a4fd4555b99b3a",
+            "width": 1024,
+            "height": 1024
+          }
+        },
+        "lite": {
+          "albedo": {
+            "path": "assets/architecture/phase-b/lite/rubble-albedo.webp",
+            "bytes": 430574,
+            "sha256": "9bdc72e80cbdec3ebf1c940cb5af807c17909b37bd74d739196600792cf1976b",
+            "width": 512,
+            "height": 512
+          },
+          "normal": {
+            "path": "assets/architecture/phase-b/lite/rubble-normal.webp",
+            "bytes": 631762,
+            "sha256": "ab40b54d39b88b2663edd269a4928234016cf1e6a02bf53cabd223d005ee80ce",
+            "width": 512,
+            "height": 512
+          },
+          "orm": {
+            "path": "assets/architecture/phase-b/lite/rubble-orm.webp",
+            "bytes": 265320,
+            "sha256": "c7d578ed949a0d69829ed6a84338193533ff7fd3ef41cf4548a0b9164830b656",
+            "width": 512,
+            "height": 512
+          }
+        }
+      }
+    }
+  ],
+  "validation": {
+    "images": 12,
+    "metallicNonzero": 0,
+    "maxNormalUnitLengthError": 0.006650333382466234,
+    "roughnessRanges": {
+      "ashlar/full": [
+        0.7764705882352941,
+        1
+      ],
+      "ashlar/lite": [
+        0.7764705882352941,
+        1
+      ],
+      "rubble/full": [
+        0.8431372549019608,
+        0.9254901960784314
+      ],
+      "rubble/lite": [
+        0.8431372549019608,
+        0.9176470588235294
+      ]
+    },
+    "edgeMeanAbsoluteDifference": {
+      "ashlar/full/albedo": 0.0009765625,
+      "ashlar/full/normal": 0.0013020833333333333,
+      "ashlar/full/orm": 0.0006510416666666666,
+      "ashlar/lite/albedo": 0.00390625,
+      "ashlar/lite/normal": 0.001953125,
+      "ashlar/lite/orm": 0.00390625,
+      "rubble/full/albedo": 0.012369791666666666,
+      "rubble/full/normal": 0.009114583333333334,
+      "rubble/full/orm": 0.0035807291666666665,
+      "rubble/lite/albedo": 0.034505208333333336,
+      "rubble/lite/normal": 0.038411458333333336,
+      "rubble/lite/orm": 0.006510416666666667
+    },
+    "visualReview": "Final albedo/normal/ORM sheet visually inspected on 2026-11-10; ashlar crops contain no architectural mortar joints. In-game acceptance remains pending.",
+    "sourceMapsMd5Verified": 6,
+    "outputHashesAndDimensionsVerified": 12
+  },
+  "generatorSha256": "bae9cfb4d30f5ff5a99caf4629b56f7341a8acecfeb633ea0aaf99e33becb11e"
+}

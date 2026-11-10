@@ -10,6 +10,7 @@
 
  function bevelBox(T,w,h,d,r=.02,seg=3,sharpTop=false){
   const g=new T.BoxGeometry(w,h,d,seg,seg,seg),p=g.attributes.position,n=g.attributes.normal;
+  if(root.WitnessQ01Environment?.enabled)g.setAttribute('kitProjection',n.clone());
   const half=new T.Vector3(w/2,h/2,d/2),q=new T.Vector3(),core=new T.Vector3(),dir=new T.Vector3();
   for(let i=0;i<p.count;i++){
    q.set(p.getX(i),p.getY(i),p.getZ(i));
@@ -49,14 +50,14 @@
  }
 
  function worldUV(T,g,ox,oz,jitter=0){
-  const p=g.attributes.position,n=g.attributes.normal,uv=g.attributes.uv;
+  const p=g.attributes.position,n=g.attributes.kitProjection||g.attributes.normal,uv=g.attributes.uv;
   for(let i=0;i<p.count;i++){
    const x=p.getX(i)+ox,y=p.getY(i),z=p.getZ(i)+oz;
    if(Math.abs(n.getY(i))>.5)uv.setXY(i,x/TILE+jitter,z/TILE+jitter);
    else if(Math.abs(n.getX(i))>.5)uv.setXY(i,z/TILE+jitter,y/TILE+jitter);
    else uv.setXY(i,x/TILE+jitter,y/TILE+jitter);
   }
-  return g;
+  g.deleteAttribute('kitProjection');return g;
  }
 
  function maskAttr(T,g,fn){
@@ -200,11 +201,12 @@
  function material(T,lite=false){
   let byTier=matCache.get(T);
   if(!byTier){byTier=new Map();matCache.set(T,byTier);}
-  const key=lite?'lite':'full';
+  const key=(root.WitnessQ01Environment?.enabled?'q01-b-':'base-')+(lite?'lite':'full');
   if(byTier.has(key))return byTier.get(key);
   const get=root.WitnessQ01?.surfaces(T,lite);
   const m=get?get('stone','#dfd0b2'):new T.MeshStandardMaterial({color:'#dfd0b2',roughness:.92});
   const clone=m.clone();clone.name='kit-limestone';
+  clone.onBeforeCompile=m.onBeforeCompile;clone.customProgramCacheKey=m.customProgramCacheKey;
   applyMaskShader(clone);
   byTier.set(key,clone);
   return clone;

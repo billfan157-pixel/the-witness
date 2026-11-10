@@ -1,4 +1,10 @@
 # THE WITNESS — Legacy of the Covenant
+
+**AI agent:** bắt đầu ở `AGENTS.md`, `docs/agent/README.md` và
+`docs/agent/status.md` từ gốc repository trước khi sửa hồ sơ.
+Markdown và contracts bên dưới giữ quyền sở hữu theo miền; bản xuất HTML/DOCX
+không là nguồn biên tập song song.
+
 ## Chứng Nhân: Di Sản Giao Ước
 
 “Across the ages, every life bears witness.”  
@@ -25,11 +31,11 @@ mở rộng; AI thực hiện build và nghiệm thu theo chất lượng.
 
 1. [Tổng quan sáng tạo và nghiên cứu](01-vision-research.md): luận đề sản phẩm, so sánh tham chiếu, phương pháp và phát hiện.
 2. [Game Design Document](02-game-design-document.md): vòng chơi, chiến đấu, điều tra, tiến triển, quan hệ, UI và phạm vi.
-3. [Narrative Bible](03-narrative-bible.md): cốt truyện xuyên suốt, ba tầng, chủ đề, hồi, nhánh và kết thúc.
+3. [Narrative Bible](03-narrative-bible.md): Kịch bản tổng hợp & Scene Bible v6.0 (cốt truyện xuyên suốt, ba tầng, chủ đề, hồi, nhánh, kết thúc và đặc tả scene systems).
 4. [World Bible](04-world-bible.md): địa lý, thời đại, đời sống, văn hóa, mỹ thuật và âm thanh.
-5. [Character Bible](05-character-bible.md): nhân vật trung tâm, bạn đồng hành, đối trọng và các vai Kinh Thánh.
-6. [Chiến dịch và thiết kế nhiệm vụ](06-campaign-quest-bible.md): ba chương trục, 12 cầu nối, hai Legend mở rộng, bốn Veil và sáu quest quan hệ.
-7. [Kịch bản vertical slice](07-vertical-slice-screenplay.md): mẫu 90 phút lấy L01 làm lõi, đo “Legends là lõi hay phụ”.
+5. [Character Bible](05-character-bible.md): nhân vật trung tâm, bạn đồng hành, đối trọng, các vai Kinh Thánh và quy tắc tri thức v6.0.
+6. [Chiến dịch và thiết kế nhiệm vụ](06-campaign-quest-bible.md): ba chương trục, 12 cầu nối, hai Legend mở rộng, bốn Veil, sáu quest quan hệ và tích hợp v6.0.
+7. [Kịch bản vertical slice](07-vertical-slice-screenplay.md): kịch bản phân cảnh chi tiết 9 nhịp (Beats 00–08) Prologue Q01 chuẩn One-Shot Camera và khảo cổ hiện trường 4 tầng.
 8. [Kinh Thánh và quy tắc chuyển thể](08-scripture-reference.md): ma trận phân đoạn, điều bất biến, quyền chủ động và giới hạn.
 9. [Sản xuất và kiến trúc hệ thống](09-production-technical-plan.md): cổng chất lượng, backlog, save, pipeline và rủi ro.
 10. [Nguồn nghiên cứu và sổ luận cứ](10-source-register.md): nguồn sơ cấp, mức xác minh, giới hạn, các việc cần nghiên cứu tiếp.
@@ -46,7 +52,7 @@ mở rộng; AI thực hiện build và nghiệm thu theo chất lượng.
 21. [Protocol playtest chiều sâu](19-depth-playtest.md): tiêu chí đo bằng người chơi thật, chưa chạy.
 22. [Thực thi từng cảnh](20-scene-implementation.md): hiện trường, 44 vật thể quan sát, sáu việc quan hệ, NPC và giới hạn 0.5.0.
 
-**Bản đọc liền mạch:** `THE-WITNESS-Design-Compendium.html` trong thư mục đầu ra; có mục lục, tìm kiếm và chế độ in. Markdown là nguồn biên tập chính. Bản đọc mới ở `outputs/THE-WITNESS-Design-v3.2/`; hợp đồng trục vẫn revision 3.0 để giữ tương thích, phụ lục có revision 3.2.
+**Bản đọc liền mạch:** `THE-WITNESS-Design-Compendium.html` trong thư mục đầu ra; có mục lục, tìm kiếm và chế độ in. Markdown là nguồn biên tập chính. Bản đọc được sinh khi cần bằng `tools/build-witness-docs.py` vào `outputs/THE-WITNESS-Design-v3.2/`, không được giữ như nguồn song song; hợp đồng trục vẫn revision 3.0 để giữ tương thích, phụ lục có revision 3.2.
 
 ## Quy tắc dùng hồ sơ
 

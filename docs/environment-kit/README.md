@@ -1,5 +1,15 @@
 # Cảnh mẫu Q01 đang chờ duyệt
 
+**AI agent:** bắt đầu từ [bản đồ nguồn chuẩn](../agent/README.md) và
+[trạng thái đối chiếu](../agent/status.md); dùng các hồ sơ môi trường dưới đây
+làm nguồn sở hữu, không tạo roadmap hoặc catalog song song.
+
+Giai đoạn B đã bổ sung bộ kiến trúc/vật liệu dùng chung, mép bến cong và GI
+tĩnh cho kho. Đọc [hồ sơ Phase B](phase-b.md),
+[nguồn bổ sung](research/q01-phase-b-materials.md) và kết quả toàn tuyến ở
+`validation/phase-b/verification.json`. Bộ ảnh kiểm gồm 17 vị trí chơi,
+hai góc nhìn, hai ánh sáng; trạng thái duyệt mỹ thuật vẫn tách khỏi kiểm thử.
+
 Bản cảnh mẫu bến–kho phía tây–Titus đã được sản xuất với hai ánh sáng.
 Đọc [hồ sơ cảnh](q01-gold-scene.md) và [nguồn vật liệu](research/q01-gold-materials.md).
 Trong Q01, Bản đồ dẫn tới cửa và sân mái; V đổi góc nhìn; nút trên thanh công cụ đổi ngày/tối.
@@ -32,7 +42,7 @@ vẫn đóng và không được tính là kiến trúc đã nghiệm thu.
 
 ## Sản xuất lại
 
-Chạy ở gốc dự án bằng Node 20 trở lên:
+Chạy ở gốc dự án bằng Node 22.13 trở lên (theo `package.json`):
 
 ```sh
 npm run setup:kit

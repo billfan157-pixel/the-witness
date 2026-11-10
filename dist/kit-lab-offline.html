@@ -4341,9 +4341,9 @@ function hS(s) {
     T.night=!!AdventureVisuals.atmosphere(T.layout.biome).night;
     if(T.layout.q01Gold&&globalThis.WitnessQ01){
       const clear=globalThis.WitnessQ01.clearLand,blocked=T.blocked;
-      T.obstacles=T.obstacles.filter(([x,z])=>!clear(x,z)&&z>=-22.4);g=T.obstacles;
-      T.cameraVolumes=T.cameraVolumes.filter(v=>!v.center||(!clear(v.center.x,v.center.z)&&v.center.z>=-22.4));
-      T.blocked=(x,z)=>clear(x,z)?false:blocked(x,z);
+      T.obstacles=T.obstacles.filter(([x,z,r])=>!clear(x,z,r)&&z>=-22.4);g=T.obstacles;
+      T.cameraVolumes=T.cameraVolumes.filter(v=>!v.center||(!clear(v.center.x,v.center.z,v.radius??v.r??1)&&v.center.z>=-22.4));
+      T.blocked=(x,z)=>globalThis.WitnessQ01Environment?.enabled&&z<globalThis.WitnessQ01Environment.shore(x)+.45?true:clear(x,z)?false:blocked(x,z);
     }
     let Ft = q && Ut(...q) ? q : T.layout.start;
     if (w = S("player", B, Ft), et = ni(Ft, T.layout.nodes[0]), G = -0.26, lt = 0.35, J = 7.7, fpPitch = 0, C = I = _t = mt = null, L = k = Y = z = false, D = 0, U = [0, 0], K = 0, Qt = 0, F = -1, yt = re = null, Vt = null, $t = "", B === "magdalene") {
@@ -4435,7 +4435,13 @@ function hS(s) {
     if(goal&&target?.approach){goal.x=target.approach[0];goal.z=target.approach[1];}
     const at=ar?[goal.x,goal.z,goal.y,goal.supportId]:B;
     if(q&&Math.hypot(ft[0]-B[0],ft[1]-B[1],ar?w.object.position.y-goal.y:0)<=nt&&(!target||canReach(target)))return C=null,q(),true;
-    const route=ar?ar.route(spatial(),goal,(from,to)=>cS(from,to,Ut,.18)):null;
+    const path=(from,to)=>{
+      if(!globalThis.WitnessQ01Environment?.enabled)return cS(from,to,Ut,.18);
+      const onGround=p=>ar.supports(...p).find(s=>!s.supportId.startsWith('q01-roof')&&!s.supportId.startsWith('q01-step'));
+      const isGoal=Math.hypot(to[0]-goal.x,to[1]-goal.z)<.01;
+      return globalThis.WitnessQ01Environment.findPath(from,to,{allowed:Ut,range:isGoal?nt:.12,accept:p=>!isGoal||!target||ar.reachable(onGround(p),targetSpatial(target)),sweep:(a,b)=>{const p=onGround(a),q=onGround(b);return !!(p&&q&&ar.walkLine(p,q));}});
+    };
+    const route=ar?ar.route(spatial(),goal,path):null;
     let Ft=ar?route?.map(p=>[p.x,p.z,p.y,p.supportId]):cS(ft,B,Ut,q?nt:.65);
     return Ft?.length ? (C = { path: Ft, onArrive: q, range: nt, at, target }, true) : false;
   }

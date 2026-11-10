@@ -9,10 +9,11 @@
   root.__registerWitnessAtmospheres(climates);
   const active=s=>!!s&&!s.layer&&root.WitnessModel.chapter(s).id==='Q01';
   const climate=s=>s?.settings?.q01Lighting==='evening'?'q01-evening':'q01-day';
-  function selectClimate(s){root.__registerWitnessAtmospheres({shore:active(s)?climates[climate(s)]:shoreClimate});}
-  const clearLand=(x,z)=>x>-30&&x<-17&&z>-22.4&&z<8;
-  const clearVegetation=(x,z)=>z<-22.4||clearLand(x,z);
+  function selectClimate(s){root.__registerWitnessAtmospheres({shore:active(s)?climates[climate(s)]:shoreClimate});if(root.WitnessQ01Environment)root.WitnessQ01Environment.enabled=active(s);}
+  const clearLand=(x,z,r=0)=>root.WitnessQ01Environment?.enabled?(r?root.WitnessQ01Environment.clearVolume(x,z,r):root.WitnessQ01Environment.clear(x,z)):x>-30&&x<-17&&z>-22.4&&z<8;
+  const clearVegetation=(x,z)=>z<(root.WitnessQ01Environment?.enabled?root.WitnessQ01Environment.shore(x)+.6:-22.4)||clearLand(x,z);
   function prepareGround(ground){
+    if(root.WitnessQ01Environment?.enabled){root.WitnessQ01Environment.terrain(ground);return;}
     const p=ground.geometry.attributes.position,splat=ground.geometry.attributes.terrainSplat;
     for(let i=0;i<p.count;i++){
       const x=p.getX(i),z=p.getZ(i);
@@ -40,12 +41,12 @@
   }
   function surfaces(T,lite=false){
     const maps=library(T,lite),cache=new Map();
-    return (family='plaster',color='#ffffff')=>{
+    const get=(family='plaster',color='#ffffff')=>{
       const key=family+color;if(cache.has(key))return cache.get(key);
       const d=maps[family];
       const m=new T.MeshStandardMaterial(d?{color,map:d.albedo,normalMap:d.normal,roughnessMap:d.orm,aoMap:d.orm,metalnessMap:d.orm,roughness:1,metalness:0,normalScale:new T.Vector2(family==='stone'||family==='floor'?.30:.18)}:{color,roughness:.9});
       m.name='q01-'+family;m.userData.q01Material=family;m.userData.tileMeters=tiles[family]||1;cache.set(key,m);return m;
-    };
+    };return root.WitnessQ01Environment?.enabled?root.WitnessQ01Environment.materials(T,lite,get):get;
   }
   function uvBox(T,w,h,d,x,y,z,tile=2){
     const g=new T.BoxGeometry(w,h,d,4,4,4),p=g.attributes.position,n=g.attributes.normal,uv=g.attributes.uv,r=Math.min(.014,w*.12,h*.12,d*.12);
@@ -120,10 +121,10 @@
       const nozzle=add(new T.ConeGeometry(.065*size,.15*size,10),ceramic,x,y,z+.14*size,'lamp-nozzle');nozzle.rotation.x=Math.PI/2;
       const flame=add(new T.SphereGeometry(1,8,8),new T.MeshBasicMaterial({color:'#ffcc76',toneMapped:false}),x,y+.09*size,z+.19*size,'oil-flame');
       flame.scale.set(.018*size,.04*size,.018*size);flame.userData.flameSize=size;flame.castShadow=false;flames.push(flame);
-      const light=new T.PointLight('#ffac55',0,6.5,2);light.position.set(x,y+.25*size,z+.13*size);group.add(light);lamps.push(light);
+      const light=new T.PointLight('#ffac55',0,root.WitnessQ01Environment?.enabled?3.6:6.5,2);light.position.set(x,y+.25*size,z+.13*size);group.add(light);lamps.push(light);
     }
     // Separate exposed plinth and plaster. All structure trim stays inside its collider envelope.
-    for(const p of architecture.parts.filter(p=>p.kind==='wall'&&p.id!=='lintel'&&!p.id.startsWith('parapet'))){
+    for(const p of architecture.parts.filter(p=>!root.WitnessQ01Environment?.enabled&&p.kind==='wall'&&p.id!=='lintel'&&!p.id.startsWith('parapet'))){
       const x=(p.min[0]+p.max[0])/2,z=(p.min[2]+p.max[2])/2,w=p.max[0]-p.min[0],d=p.max[2]-p.min[2];
       box('stone','#cbbd9e',x,base+.35,z,w+.012,.70,d+.012,'stone-plinth');
       box('stone','#dfd0b0',x,base+2.98,z,w+.025,.13,d+.025,'cornice');
@@ -131,9 +132,10 @@
     for(const x of [-24.025,-21.975])for(let i=0;i<6;i++)box('stone',i%2?'#d8c6a2':'#ddcbaa',x,base+.19+i*.38,-9.62,.14,.37,.34,'door-jamb');
     box('wood','#b7a58b',-23,base+2.37,-9.63,2.16,.14,.32,'door-lintel');
     for(const x of [-25.02,-20.98]){
-      box('wood','#9b866a',x,base+1.08,-9.88,1.40,2.13,.10,'open-door');
+      if(root.WitnessQ01Environment?.enabled)root.WitnessQ01Environment.doorLeaf({T,group,get,x,y:base,z:-9.88});
+      else box('wood','#9b866a',x,base+1.08,-9.88,1.40,2.13,.10,'open-door');
       architecture.solids.push({id:'q01-door-leaf-'+x,min:[x-.70,base+.015,-9.93],max:[x+.70,base+2.145,-9.83],kind:'door'});
-      for(const h of [.34,1.7])box('metal','#51473b',x,base+h,-9.95,1.20,.055,.025,'door-strap');
+      if(!root.WitnessQ01Environment?.enabled)for(const h of [.34,1.7])box('metal','#51473b',x,base+h,-9.95,1.20,.055,.025,'door-strap');
     }
     for(const z of [-11.25,-13.45,-15.65]){
       box('wood','#8c7b63',-24.05,base+2.88,z,6.3,.20,.17,'ceiling-beam');
@@ -141,7 +143,7 @@
     }
     for(const p of architecture.parts.filter(p=>p.id.startsWith('parapet')))box('stone','#dfd0b2',(p.min[0]+p.max[0])/2,p.max[1]-.04,(p.min[2]+p.max[2])/2,p.max[0]-p.min[0]+.025,.08,p.max[2]-p.min[2]+.025,'parapet-cap');
     // Uneven plaster edges expose the masonry, rather than a mechanically straight paint stripe.
-    for(const [left,right]of [[-27.48,-24.03],[-21.97,-18.52]]){
+    for(const [left,right]of (root.WitnessQ01Environment?.enabled?[]:[[-27.48,-24.03],[-21.97,-18.52]])){
       const vertices=[],uv=[],indices=[],n=18;
       for(let i=0;i<=n;i++){
         const x=left+(right-left)*i/n,bottom=base+.41+.10*Math.sin(i*1.7)+.045*Math.cos(i*3.9);
@@ -167,7 +169,7 @@
     for(let i=0;i<cp.count;i++)cp.setZ(i,.05*Math.cos(cp.getX(i)*18)+.04*Math.sin(cp.getY(i)*5));cg.computeVertexNormals();
     const drying=add(cg,cloth,-24.4,roof+.83,-13.17,'drying-linen');drying.rotation.x=-.30;
     // Inlays follow terrain; they do not introduce a raised impassable slab.
-    for(let i=0;i<9;i++)for(let j=0;j<4;j++){
+    if(!root.WitnessQ01Environment?.enabled)for(let i=0;i<9;i++)for(let j=0;j<4;j++){
       const x=-24.8+j*.92,z=-8.4+i*.96,g=new T.PlaneGeometry(.88,.92,2,2);g.rotateX(-Math.PI/2);
       const p=g.attributes.position,uv=g.attributes.uv;
       for(let k=0;k<p.count;k++){const px=x+p.getX(k),pz=z+p.getZ(k);p.setXYZ(k,px,height(px,pz)+.009,pz);uv.setXY(k,px/1.8,pz/1.8);}g.computeVertexNormals();g.setAttribute('uv1',uv.clone());
@@ -231,7 +233,7 @@
     const evening=state.settings.q01Lighting==='evening';
     for(const light of lamps)light.intensity=evening?4.5:.48;for(const flame of flames)flame.visible=evening;
     // Local bounce is an artistic approximation, not global illumination.
-    const bounce=new T.PointLight(evening?'#e4b780':'#c4d8e9',evening?1.2:2.8,9,2);bounce.position.set(-23,base+2.35,-11.5);group.add(bounce);
+    if(!root.WitnessQ01Environment?.enabled){const bounce=new T.PointLight(evening?'#e4b780':'#c4d8e9',evening?1.2:2.8,9,2);bounce.position.set(-23,base+2.35,-11.5);group.add(bounce);}
     batch(T,group);
     return {outdoorSolids,tick(time){
       for(let i=0;i<lamps.length;i++)lamps[i].intensity=(evening?4.5:.48)*(1+.055*Math.sin(time*5+i*1.7)+.025*Math.sin(time*11+i));

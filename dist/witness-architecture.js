@@ -24,7 +24,11 @@
   box('foundation',-23,base-.34,-13.5,9,.68,8,'#978b74','floor');surface('q01-room',[-27.22,-18.78,-17.22,-9.5],base);
   box('west-wall',-27.36,base+1.62,-13.5,.28,3.24,8);
   box('east-wall',-18.64,base+1.62,-13.5,.28,3.24,8);
-  box('back-wall',-23,base+1.62,-17.36,9,3.24,.28);
+  // Small high vents admit real daylight while remaining far too narrow/high
+  // for a standing capsule. Their frames and proxy bake share these openings.
+  box('back-wall-base',-23,base+1.075,-17.36,9,2.15,.28);
+  box('back-wall-head',-23,base+2.995,-17.36,9,.49,.28);
+  for(const [i,lo,hi]of [[0,-27.5,-26.325],[1,-25.275,-23.625],[2,-22.575,-18.5]])box('back-wall-pier-'+i,(lo+hi)/2,base+2.45,-17.36,hi-lo,.60,.28);
   box('door-left',-25.725,base+1.62,-9.64,3.55,3.24,.28);
   box('door-right',-20.275,base+1.62,-9.64,3.55,3.24,.28);
   box('lintel',-23,base+2.77,-9.64,1.9,.94,.28,'#ad9d80');
@@ -43,8 +47,8 @@
   for(let i=2;i<18;i++)box('stair-rail-'+i,-20.67,base+(i+.5)*.18+.72,-10.65-(i+.5)*.3,.10,.15,.32,'#7c6750','guard');
   solids.push({id:'drying-rack-volume',min:[-25.3,roof,-13.8],max:[-23.5,roof+1.25,-12.8],kind:'prop'});
   function supports(x,z){
-   const out=surfaces.filter(s=>inside(x,z,s.rect)).map(s=>point(x,s.y,z,s.id));
-   if(!inside(x,z,bounds))out.push(point(x,height(x,z),z));return out;
+   const out=surfaces.filter(s=>inside(x,z,s.rect)&&(!s.contains||s.contains(x,z))).map(s=>point(x,typeof s.y==='function'?s.y(x,z):s.y,z,s.id));
+   if(!inside(x,z,bounds)&&!out.some(s=>s.supportId==='q01-quay'))out.push(point(x,height(x,z),z));return out;
   }
   function collides(p,r=RADIUS,h=HEIGHT){
    for(const b of solids){
@@ -129,18 +133,20 @@
   const material=color=>{if(!materials.has(color))materials.set(color,new T.MeshStandardMaterial({color,roughness:.94}));return materials.get(color);};
   const lite=state?.settings?.graphics==='balanced'||!!root.WitnessKitOfflineQuality;
   const finish=root.WitnessQ01?.architectureMaterial(T,lite);
+  const phaseB=root.WitnessQ01Environment?.enabled,phaseBMaterials=phaseB?root.WitnessQ01.surfaces(T,lite):null;
   function mesh(name,x,y,z,w,h,d,color,finishMaterial){const mat=finishMaterial||material(color),g=root.WitnessQ01?root.WitnessQ01.uvBox(T,w,h,d,x,y,z,mat.userData.tileMeters||2):new T.BoxGeometry(w,h,d);const m=new T.Mesh(g,mat);m.name=name;m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;group.add(m);return m;}
   for(const p of physics.parts){
-   if(root.WitnessModularKit&&['wall','step','ceiling','floor'].includes(p.kind)){
+   if(phaseB){group.add(root.WitnessQ01Environment.partMesh(T,p,lite,phaseBMaterials));}
+   else if(root.WitnessModularKit&&['wall','step','ceiling','floor'].includes(p.kind)){
     group.add(root.WitnessModularKit.partMesh(T,p,lite));
    }else mesh(p.id,(p.min[0]+p.max[0])/2,(p.min[1]+p.max[1])/2,(p.min[2]+p.max[2])/2,p.max[0]-p.min[0],p.max[1]-p.min[1],p.max[2]-p.min[2],p.color,finish?.(p));
   }
-  if(root.WitnessModularKit)root.WitnessModularKit.mountGLB({T,scene,group,quality:state?.settings?.graphics}).catch(()=>{});
+  if(root.WitnessModularKit&&!phaseB)root.WitnessModularKit.mountGLB({T,scene,group,quality:state?.settings?.graphics}).catch(()=>{});
   // An ordinary drying rack is inspectable upstairs; it grants no evidence or quest credit.
   for(const x of [-25.25,-23.55])for(const z of [-13.75,-12.85])mesh('rack-post',x,physics.roof+.6,z,.07,1.2,.07,'#745d43');
   for(let i=0;i<7;i++)mesh('drying-line',-24.4,physics.roof+1.18,-13.75+i*.15,1.7,.025,.025,'#ac9872');
   mesh('entry-lamp-bracket',-24.15,physics.base+1.8,-9.4,.12,.25,.4,'#745d43');
-  group.userData={assetId:'CAE-STORE-GOLD-04',evidence:'H',access:['interior','stairs','roof'],artAccepted:false};
+  group.userData={assetId:phaseB?'CAE-STORE-PB-05':'CAE-STORE-GOLD-04',evidence:'H',access:['interior','stairs','roof'],artAccepted:false};
   scene.add(group);physics.group=group;scene.userData.architecture=physics;return physics;
  }
  function targets(physics){return [{id:'architecture:store-entry',at:[-23,-8.65],floorY:physics?physics.height(-23,-8.65):0,surfaceId:'world',name:'Kho phía tây · Lối lên mái',range:2.3,elevation:1.1,symbol:'↗'},

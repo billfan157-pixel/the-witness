@@ -1,5 +1,7 @@
 (function(root){
   'use strict';
+  // Cú giật của vật bị từ chối: app ghi, instance đang render tiêu thụ rồi tự tắt dần.
+  const jolts=new Map(),loadTests=new Map();
   function create({T,scene,height}){
     const C=root.WitnessCraft,X=root.WitnessDepth,stage=new T.Group(),materials=new Map(),entries=new Map(),work=new Map(),motions=[],ambient=[];
     stage.name='witness-crafted-scenes';scene.add(stage);let current=null,signature='';
@@ -170,12 +172,25 @@
       const g=group(stage,'crafted-'+kind),m={g,kind};
       if(kind==='cart'){
         const body=group(g,'cart-load');m.body=body;box(body,'#82613f',0,.76,0,2.15,.24,1.3);box(body,'#5c452d',0,.5,0,.13,.15,1.8);
+        box(g,'#423a2b',-.26,.02,-.82,.72,.015,.18,'stone');
+        box(body,'#6a4c2e',-.01,.88,0,1.8,.04,1.05);
+        for(const x of [-.75,.75])box(body,'#584027',x,.96,0,.08,.16,.98);
         for(const z of [-.76,.76]){const wheel=mesh(body,new T.TorusGeometry(.48,.065,10,40),'#60452c',[0,.47,z]);for(let i=0;i<4;i++){const spoke=box(body,'#7a5c3c',0,.47,z,.055,.89,.04);spoke.rotation.z=i*Math.PI/4;}cyl(body,'#51422e',0,.47,z,.10,.13);}
         for(const x of [-.85,.85])for(const z of [-.55,.55])box(body,'#684b31',x,1.04,z,.075,.46,.075);
-        m.vessels=[jar(body,-.42,.91,0),jar(body,.4,.91,0)];m.peg=group(g,'old-split-peg');const pin=cyl(m.peg,'#705237',0,.45,.87,.055,.44);pin.rotation.z=.22;box(m.peg,'#30291d',.015,.52,.9,.014,.19,.008);
+        m.vessels=[jar(body,-.42,1.04,0),jar(body,.4,1.04,0)];
+        m.peg=group(g,'old-split-peg');const pin=cyl(m.peg,'#705237',0,.45,.87,.055,.44);pin.rotation.z=.22;
+        box(m.peg,'#2b2217',.015,.52,.9,.014,.21,.01);
+        box(m.peg,'#90714b',-.02,.48,.86,.01,.14,.01);
+        const pegRest=group(g,'peg-rest-table');box(pegRest,'#684f35',1.5,.18,-.1,.48,.36,.42);box(pegRest,'#ded3b6',1.5,.37,-.1,.56,.025,.5,'linen');
         m.brace=box(g,'#b7a078',0,.32,-.05,1.6,.14,.32);m.brace.rotation.z=-.24;m.brace.visible=false;
         m.rope=cord(g,[[-1,.1,-1.3],[-.8,.7,-.6],[.2,1.14,.55],[1.35,.1,1.35]],.034);m.rope.visible=false;
         const wedge=box(g,'#9c8058',-.28,.12,-.83,.4,.18,.3);wedge.rotation.z=.16;m.wedge=wedge;
+        const stake=cyl(g,'#6b5335',1.35,.42,1.35,.075,.84);stake.rotation.z=.05;box(g,'#5d4830',1.35,.86,1.35,.11,.06,.11);m.stake=stake;
+        m.dustPuffs=[];
+        for(const pos of [[-.28,.14,-.83],[0,.45,.87],[-.1,.25,-.6]]){
+          const puff=mesh(g,new T.SphereGeometry(.14,10,8),'#d6cbaf',pos,'linen',{transparent:true,opacity:0,depthWrite:false});
+          puff.scale.set(0,0,0);m.dustPuffs.push({mesh:puff,basePos:pos});
+        }
       }else if(['paper','wetpaper','letter','copies','envelopes','ledger','private-record'].includes(kind)){
         table(g);m.pages=[];
         if(kind==='ledger'){
@@ -206,7 +221,22 @@
         if(kind==='padding'){const rim=mesh(g,new T.TorusGeometry(.66,.14,12,40),'#8c7c61',[0,.2,1.1],'stone');rim.rotation.x=Math.PI/2;const hole=mesh(g,new T.CircleGeometry(.56,32),'#232921',[0,.17,1.1],'stone');hole.rotation.x=-Math.PI/2;}
         if(kind==='strings'){m.line.visible=false;for(let i=0;i<3;i++)cord(g,[[-.65+i*.6,1.7,0],[-.55+i*.55,.8,.13],[-.3+i*.5,.12,.3]],.022,['#8c725b','#9d9c79','#797c74'][i]);}
       }else if(kind==='tracks'){
-        m.stones=[];for(let i=0;i<10;i++){const rock=mesh(g,new T.DodecahedronGeometry(.09+i%3*.025),'#7d7865',[-.8+(i%4)*.46,.07,Math.floor(i/4)*.53-.6],'stone');rock.scale.y=.45;m.stones.push(rock);}for(let side of [-.35,.35])cord(g,[[side,.025,-1],[side,.025,0],[side+.2,.025,1.3]],.035,'#625f49');
+        m.stones=[];
+        box(g,'#3d3326',0,.012,.1,1.7,.02,2.8,'stone');
+        for(const side of [-.38,.38]){
+          const strip=mesh(g,new T.PlaneGeometry(.14,2.7),'#2e2419',[side,.023,.1],'stone');strip.rotation.x=-Math.PI/2;
+          cord(g,[[side,.03,-1.25],[side,.03,0],[side+.12,.03,1.35]],.036,'#433729');
+          box(g,'#4f4231',side+(side>0?.09:-.09),.032,.1,.05,.025,2.7,'stone');
+          for(let j=0;j<8;j++){
+            const rib=box(g,'#221a11',side,.027,-1.05+j*.33,.12,.006,.045,'stone');
+            rib.rotation.y=.18;
+          }
+        }
+        const ruler=cyl(g,'#7a5f40',0,.068,.15,.02,1.2,'wood');ruler.rotation.z=Math.PI/2;
+        for(let i=0;i<12;i++){
+          const rock=mesh(g,new T.DodecahedronGeometry(.08+(i%3)*.03),'#706b5a',[-.9+(i%4)*.52,.055,Math.floor(i/4)*.58-.65],'stone');
+          rock.scale.y=.42;m.stones.push(rock);
+        }
       }else if(kind==='lantern'){m.lamp=lantern(g);}
       else if(kind==='roof'){
         for(const x of [-.85,.85])box(g,'#7d5d3d',x,.8,0,.13,1.6,.13);box(g,'#987e55',0,1.67,0,2,.14,.14);
@@ -232,9 +262,14 @@
       m.g.userData.read=detail.seen;m.g.userData.committed=done;
       if(m.kind==='cart'){
         const lowered=steps.includes('unload')||done,supported=steps.includes('brace')||steps.includes('support')||done;
-        m.body.rotation.z=supported?0:.15;m.brace.visible=supported;m.rope.visible=steps.some(x=>['lash','hold','signal'].includes(x))||done;m.wedge.visible=steps.includes('block')||done;
-        for(let i=0;i<m.vessels.length;i++)move(m.vessels[i],lowered?[-1.35+i*.6,.15,1.1]:[-.42+i*.82,.91,0],s.settings.motion==='calm');
-        move(m.peg,steps.includes('remove')||done&&detail.owner==='Q01'?[1.5,.45,-.1]:[0,0,0],s.settings.motion==='calm');
+        // Độ nghiêng do tick() sở hữu để còn cộng thêm nhịp cựa và cú giật khi bị từ chối.
+        m.loaded=!supported;m.brace.visible=supported;m.rope.visible=steps.some(x=>['lash','hold','signal'].includes(x))||done;m.wedge.visible=steps.includes('block')||done;
+        for(let i=0;i<m.vessels.length;i++)move(m.vessels[i],lowered?[-1.35+i*.6,.15,1.1]:[-.42+i*.82,1.04,0],s.settings.motion==='calm');
+        move(m.peg,steps.includes('remove')||done&&detail.owner==='Q01'?[1.5,.41,-.1]:[0,0,0],s.settings.motion==='calm');
+        if(m.peg){
+          const isRemoved=steps.includes('remove')||(done&&detail.owner==='Q01');
+          m.peg.rotation.z=isRemoved?0:(supported?0:.22);
+        }
       }
       if(m.kind==='paper'){const view=C.stores(s).views?.[detail.id];m.flap.rotation.x=view?.lift?-1.15:0;m.raking.intensity=view?.light===1?3.2:1.2;m.raking.position.set(view?.light===2?1.5:-1.6,view?.light===1?.95:1.5,.6);}
       if(m.kind==='wetpaper'&&m.unread)m.unread.visible=s.flags.paperIntegrity==='partial'||!s.flags.paperIntegrity;
@@ -251,7 +286,74 @@
     }
     function fieldModel(f){
       const g=group(stage,'field-work-'+f.def.id),obj={g,key:f.def.id,items:new Map(),nodes:new Map(),path:null};
-      for(const spot of f.spots){const n=group(g,'field-point-'+spot.key);ground(n,spot.at);const base=mesh(n,new T.CylinderGeometry(.46,.51,.1,40),'#8a785c',[0,.08,0],'stone');const plaque=text(n,[spot.label],0,.17,0,.82,.55);obj.nodes.set(spot.key,{g:n,base,plaque});}
+      for(const spot of f.spots){
+        const n=group(g,'field-point-'+spot.key);
+        if(spot.hosted){
+          // Neo vào bộ phận thật của vật: không bệ đá, không tấm biển, chỉ một vòng sáng
+          // đúng tầm cao của bộ phận đó để chính vật ấy là đích tương tác.
+          n.position.set(spot.at[0],height(...spot.at)+(spot.elevation||0),spot.at[1]);
+          const ring=mesh(n,new T.TorusGeometry(.13,.015,8,32),'#e6d6a6',[0,0,0],'bronze',{emissive:'#c8a24c',emissiveIntensity:.6,transparent:true,opacity:.92,depthWrite:false});
+          ring.rotation.x=Math.PI/2;ring.castShadow=false;ring.receiveShadow=false;
+          const pip=mesh(n,new T.SphereGeometry(.024,10,8),'#fff3d2',[0,0,0],'linen',{emissive:'#ffd894',emissiveIntensity:1.2});pip.castShadow=false;pip.receiveShadow=false;
+          obj.nodes.set(spot.key,{g:n,ring});
+        }else if(f.def.id==='Q03.TRACK'){
+          ground(n,spot.at);
+          const base=mesh(n,new T.CylinderGeometry(.42,.46,.07,32),'#786e58',[0,.035,0],'stone');
+          const plaque=text(n,[spot.label],0,.24,0,.72,.48);
+          obj.nodes.set(spot.key,{g:n,base,plaque});
+          if(spot.key==='yard'){
+            mesh(n,new T.CylinderGeometry(1.25,1.35,.025,18),'#3c3224',[0,.015,0],'stone');
+            for(const side of [-.38,.38]){
+              box(n,'#2b2216',side,.026,0,.11,.022,1.9,'stone');
+              box(n,'#493d2d',side+(side>0?.08:-.08),.034,0,.05,.03,1.9,'stone');
+            }
+            box(n,'#6d5438',-.65,.04,-.25,.55,.06,.95,'wood');
+            sack(n,-.65,.15,-.25);
+            for(let i=0;i<4;i++)mesh(n,new T.DodecahedronGeometry(.06+i*.015),'#645e4e',[-.68+i*.38,.045,.6-(i%2)*.4],'stone').scale.y=.5;
+          }else if(spot.key==='steps'){
+            for(let i=0;i<3;i++)box(n,'#847c69',0,.08+i*.1,-.28+i*.28,1.05,.1,.3,'stone');
+            box(n,'#6c6655',-.68,.42,0,.32,.82,.82,'stone');
+            box(n,'#6c6655',.68,.42,0,.32,.82,.82,'stone');
+            box(n,'#484234',-.51,.32,-.16,.09,.12,.12,'stone');
+            for(let i=0;i<3;i++)mesh(n,new T.DodecahedronGeometry(.05+i*.02),'#5a5445',[-.32+i*.22,.06,-.38],'stone').scale.y=.4;
+          }else if(spot.key==='well'){
+            mesh(n,new T.CylinderGeometry(.62,.68,.54,16,1,true),'#7e7766',[0,.27,0],'stone');
+            const water=mesh(n,new T.CircleGeometry(.57,16),'#1a2422',[0,.25,0],'stone');water.rotation.x=-Math.PI/2;
+            box(n,'#664c32',-.55,.7,0,.08,1.08,.08,'wood');
+            box(n,'#664c32',.55,.7,0,.08,1.08,.08,'wood');
+            box(n,'#75593a',0,1.22,0,1.28,.08,.08,'wood');
+            const drum=cyl(n,'#876b4a',0,.96,0,.08,.8);drum.rotation.z=Math.PI/2;
+            cord(n,[[-.2,.96,0],[-.2,.42,.1],[-.15,.06,.42]],.022,'#c2ab7f');
+            mesh(n,new T.SphereGeometry(.045,8,6),'#d6c49a',[-.15,.06,.42],'linen');
+            jar(n,.44,.38,.28);
+          }else if(spot.key==='wall'){
+            box(n,'#7b7463',-.76,.58,0,.32,1.15,2.45,'stone');
+            box(n,'#8c8572',-.76,1.18,0,.38,.08,2.5,'stone');
+            const gravel=mesh(n,new T.PlaneGeometry(1.5,2.45),'#999481',[.08,.018,0],'stone',{depthWrite:false});gravel.rotation.x=-Math.PI/2;
+            for(const side of [-.24,.48])cord(n,[[side,.026,-1.15],[side,.026,0],[side,.026,1.15]],.032,'#746f5e');
+            mesh(n,new T.CylinderGeometry(.11,.15,.36,8),'#8a836f',[.68,.18,-.75],'stone');
+          }else if(spot.key==='tie'){
+            cyl(n,'#5c432b',0,.5,0,.13,.98,'wood');
+            const groove=mesh(n,new T.TorusGeometry(.135,.018,8,24),'#312316',[0,.54,0],'wood');groove.rotation.x=Math.PI/2;
+            cord(n,[[0,.54,.14],[.14,.54,0],[0,.54,-.14],[-.14,.52,.05],[.1,.26,.2],[.28,.04,.36]],.024,'#8c7759');
+            const sackDep=mesh(n,new T.CircleGeometry(.32,16),'#413626',[-.44,.018,.1],'stone');sackDep.rotation.x=-Math.PI/2;
+            for(let i=0;i<3;i++)box(n,'#3b3223',.26+(i%2*.1),.02,-.3+i*.25,.08,.01,.18,'stone').rotation.y=i*.3;
+          }else if(spot.key==='porch'){
+            box(n,'#89816f',0,.11,0,1.95,.2,1.75,'stone');
+            box(n,'#644930',-.84,.92,-.68,.11,1.84,.11,'wood');
+            box(n,'#543d27',-.84,1.82,0,.11,.11,1.55,'wood');
+            for(let i=0;i<4;i++){
+              const ring=mesh(n,new T.RingGeometry(.14,.21,16),'#5e5647',[-.36+(i%2)*.68,.212,-.32+Math.floor(i/2)*.62],'stone');
+              ring.rotation.x=-Math.PI/2;
+            }
+            sack(n,.35,.29,-.32);sack(n,.38,.29,.3);
+            const slate=box(n,'#3c3329',-.74,.39,-.6,.26,.42,.035,'wood');
+            slate.rotation.y=.35;slate.rotation.z=-.12;
+          }
+        }else{
+          ground(n,spot.at);const base=mesh(n,new T.CylinderGeometry(.46,.51,.1,40),'#8a785c',[0,.08,0],'stone');const plaque=text(n,[spot.label],0,.17,0,.82,.55);obj.nodes.set(spot.key,{g:n,base,plaque});
+        }
+      }
       if(f.def.items)for(const [i,item]of f.def.items.entries()){
         const n=group(g,'field-item-'+item.id),lamp=(item.tags||[]).includes('light'),food=/^(meal|reserve|bowl)/.test(item.id);
         const ownsLamp=C.scenes[f.def.owner]?.some(r=>r.encounter===f.def.id&&r.kind==='lantern');
@@ -275,7 +377,22 @@
         for(const [id,visual]of m.items){const to=f.spots.find(x=>x.op.value===f.payload.assignments?.[id]),i=visual.index,at=to?[to.at[0]+(i%2?-.6:.6),to.at[1]+.5+Math.floor(i/2)*.1]:[f.origin[0]-2+(i%4)*.85,f.origin[1]+2+Math.floor(i/4)*.7];move(visual.g,[at[0],height(...at)+.1,at[1]],s.settings.motion==='calm');}
         if(f.def.type==='route'){
           if(m.path)disposeGroup(m.path);m.path=group(m.g,'chosen-footsteps');const route=(f.payload.path||[]).map(id=>f.spots.find(x=>x.key===id)?.at).filter(Boolean);
-          for(let i=1;i<route.length;i++){const a=route[i-1],b=route[i],len=Math.hypot(b[0]-a[0],b[1]-a[1]),n=Math.ceil(len/.32);for(let j=0;j<=n;j++){const t=j/n,x=a[0]+(b[0]-a[0])*t,z=a[1]+(b[1]-a[1])*t,foot=box(m.path,'#655f49',x+(j%2?.09:-.09),height(x,z)+.045,z,.09,.012,.2,'stone');foot.rotation.y=Math.atan2(b[0]-a[0],b[1]-a[1]);}}
+          for(let i=1;i<route.length;i++){
+            const a=route[i-1],b=route[i],len=Math.hypot(b[0]-a[0],b[1]-a[1]);
+            if(f.def.id==='Q03.TRACK'){
+              const angle=Math.atan2(b[0]-a[0],b[1]-a[1]),nx=Math.cos(angle)*.38,nz=-Math.sin(angle)*.38,n=Math.ceil(len/.28);
+              for(let j=0;j<=n;j++){
+                const t=j/n,cx=a[0]+(b[0]-a[0])*t,cz=a[1]+(b[1]-a[1])*t;
+                const lx=cx-nx,lz=cz-nz,rx=cx+nx,rz=cz+nz;
+                const leftRut=box(m.path,'#3e3424',lx,height(lx,lz)+.038,lz,.1,.014,.28,'stone');leftRut.rotation.y=angle;
+                const rightRut=box(m.path,'#3e3424',rx,height(rx,rz)+.038,rz,.1,.014,.28,'stone');rightRut.rotation.y=angle;
+                const footX=cx+(j%2?.06:-.06),footZ=cz;
+                const foot=box(m.path,'#584e3c',footX,height(footX,footZ)+.042,footZ,.08,.01,.16,'stone');foot.rotation.y=angle;
+              }
+            }else{
+              const n=Math.ceil(len/.32);for(let j=0;j<=n;j++){const t=j/n,x=a[0]+(b[0]-a[0])*t,z=a[1]+(b[1]-a[1])*t,foot=box(m.path,'#655f49',x+(j%2?.09:-.09),height(x,z)+.045,z,.09,.012,.2,'stone');foot.rotation.y=Math.atan2(b[0]-a[0],b[1]-a[1]);}
+            }
+          }
         }
         m.g.userData.committed=f.committed;m.g.userData.payload=clone(f.payload);
       }
@@ -283,10 +400,52 @@
     }
     function clone(v){return JSON.parse(JSON.stringify(v));}
     function tick(t,dt=.016){
-      for(const o of motions){const to=o.userData.targetPosition;if(!to)continue;o.position.lerp(new T.Vector3(...to),current?.settings?.motion==='calm'?1:Math.min(1,dt*6));}
+      const calm=current?.settings?.motion==='calm';
+      for(const o of motions){const to=o.userData.targetPosition;if(!to)continue;o.position.lerp(new T.Vector3(...to),calm?1:Math.min(1,dt*6));}
+      for(const [id,m] of entries){
+        if(m.kind!=='cart'||!m.body)continue;
+        let tilt=m.loaded?.18:0,pitch=m.loaded?-.045:0,dip=0;
+        const j=jolts.get(id);
+        if(j){
+          j.t+=dt;
+          if(j.t>=1.1){
+            jolts.delete(id);
+            if(m.dustPuffs)for(const p of m.dustPuffs){p.mesh.scale.set(0,0,0);p.mesh.material.opacity=0;}
+          }else{
+            const decay=1-j.t/1.1;
+            tilt+=j.amount*decay*Math.abs(Math.sin(j.t*22));
+            pitch+=j.amount*.45*decay*Math.sin(j.t*18);
+            if(m.dustPuffs){
+              const prog=Math.min(1,j.t/.75);
+              for(const p of m.dustPuffs){
+                p.mesh.scale.setScalar(prog*1.5);
+                p.mesh.material.opacity=(1-prog)*.6;
+                p.mesh.position.y=p.basePos[1]+prog*.15;
+              }
+            }
+          }
+        }
+        const lt=loadTests.get(id);
+        if(lt){
+          lt.t+=dt;
+          if(lt.t>=.75)loadTests.delete(id);
+          else{
+            dip=Math.sin(lt.t/.75*Math.PI)*.035;
+            tilt-=dip*.35;
+          }
+        }
+        if(m.loaded&&!calm){
+          tilt+=Math.sin(t*1.3)*.012+Math.sin(t*3.7)*.004;
+          pitch+=Math.sin(t*1.6)*.004;
+        }
+        m.body.rotation.z=tilt;
+        m.body.rotation.x=pitch;
+        m.body.position.y=.76-dip;
+      }
+      if(!calm)for(const m of work.values())for(const n of m.nodes.values())if(n.ring)n.g.scale.setScalar(1+Math.sin(t*2.3)*.09);
       for(const fn of ambient)fn(t);
     }
     return {update,tick,root:stage};
   }
-  root.WitnessCraftRenderer={create};if(typeof module!=='undefined')module.exports=root.WitnessCraftRenderer;
+  root.WitnessCraftRenderer={create,jolt:(id,amount=.14)=>{jolts.set(id,{amount,t:0});},testLoad:(id)=>{loadTests.set(id,{t:0});}};if(typeof module!=='undefined')module.exports=root.WitnessCraftRenderer;
 })(globalThis);

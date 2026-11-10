@@ -7,7 +7,8 @@ Tài liệu này điều chỉnh cách hiểu và triển khai bản Environment
 Đây là lộ trình làm việc chính thức cho việc build tài nguyên môi trường.
 Đọc cùng standards.md và look-bible.md; cập nhật catalog.csv khi thêm asset,
 progress.json khi có bằng chứng mới. Trạng thái tài liệu không thay thế bằng
-chứng runtime. Bản Word đi kèm là phiên bản cập nhật của tài liệu người dùng.
+chứng runtime. Markdown này là lộ trình hiện hành; bản Word mốc Phase 3 được
+giữ ở [khu lưu trữ](../archive/README.md), không là bản đồng bộ hiện tại.
 
 - AI thực hiện toàn bộ phần build dự án. Không lập kế hoạch phụ thuộc vào người
   dùng tự dựng model, làm UV, sửa cảnh hoặc lập trình.

@@ -17,12 +17,14 @@
 
   seq('Q01.LOAD','Q01',['brace'],'Gánh nào đang giữ gánh nào?',
     'Natan muốn thay chốt xe. Cần tạo một đường chịu lực mới trước khi tháo chốt cũ; dây chằng và phần hàng phía trên đều có vai trò riêng.',[
-      item('block','Chèn bánh xe','Bánh không còn trôi khi chuyển tải.'),
-      item('unload','Hạ hai vò trên cùng','Hạ trọng tâm, cần bánh đã được chèn.',{needs:['block']}),
-      item('brace','Đặt đòn kê dưới trục','Đòn kê nhận tải sau khi đã hạ hai vò.',{needs:['unload']}),
-      item('lash','Giữ dây chằng sang cọc','Dây ngăn xe nghiêng; có thể làm trước hoặc sau khi kê.',{needs:['block']}),
-      item('test','Thử tải bằng một nhịp ngắn','Chỉ thử khi cả đòn kê và dây chằng đã sẵn sàng.',{needs:['brace','lash']}),
-      item('remove','Tháo chốt cũ','Chỉ tháo sau khi đường chịu lực mới đã qua thử.',{needs:['test']})
+      // `at` là toạ độ cục bộ trong model 'cart' của witness-craft-renderer; `refuse` là
+      // điều thế giới làm khi luật chưa thoả, thay cho việc đọc luật ra cho người chơi.
+      item('block','Chèn bánh xe','Bánh không còn trôi khi chuyển tải.',{at:[-.28,.3,-.83],obs:0}),
+      item('unload','Hạ hai vò trên cùng','Hạ trọng tâm, cần bánh đã được chèn.',{needs:['block'],at:[-.1,1.02,0],obs:1,refuse:'Hai vò vừa nhấc lên thì cả thùng xe cựa theo dốc. Bánh xe vẫn còn lăn được.'}),
+      item('brace','Đặt đòn kê dưới trục','Đòn kê nhận tải sau khi đã hạ hai vò.',{needs:['unload'],at:[.8,.28,.1],refuse:'Đòn kê không lọt xuống dưới trục; hai vò trên cao còn đè thùng xe sát xuống.'}),
+      item('lash','Giữ dây chằng sang cọc','Dây ngăn xe nghiêng; có thể làm trước hoặc sau khi kê.',{needs:['block'],at:[1.35,.55,1.35],refuse:'Dây vừa căng thì bánh xe trôi một nhịp xuống dốc, sợi dây chùng lại.'}),
+      item('test','Thử tải bằng một nhịp ngắn','Chỉ thử khi cả đòn kê và dây chằng đã sẵn sàng.',{needs:['brace','lash'],at:[-1.15,.85,-.45],refuse:'Bạn tì vai vào thùng xe. Nó lún xuống, kêu răng rắc, và chưa có gì đỡ ở phía dưới.'}),
+      item('remove','Tháo chốt cũ','Chỉ tháo sau khi đường chịu lực mới đã qua thử.',{needs:['test'],at:[0,.5,.87],obs:2,refuse:'Chốt không nhúc nhích. Thùng xe cựa xuống và hai vò kêu khẽ vào nhau.'})
     ],['block','unload','brace','lash','test','remove'],{
       observations:[['Vết xước dưới bánh','Bánh còn có thể trôi theo dốc.'],['Vò nước ở tầng trên','Hai vò làm xe nghiêng về bên chưa có người đỡ.'],['Chốt đã nứt','Chốt vẫn đang chịu tải, chưa được rút.']],
       rules:['Thực hiện đủ sáu thao tác; quan hệ chịu tải quyết định thứ tự.','Kê trục và chằng dây có thể đổi thứ tự sau khi đã đáp ứng điều kiện.'],

@@ -24,7 +24,7 @@
   },onState(next){state=next;title=true;if(dialog)close();if(engine)launchWorld();}});
   globalThis.WitnessCloudSession=cloud;
   const initial=()=>state||M.fresh();
-  let fieldMessage='',fieldTested=false,fieldCache='',fieldNearest=null,fieldFocus=null;
+  let fieldMessage='',fieldTested=false,fieldCache='',fieldNearest=null,fieldFocus=null,fieldRefused=null,fieldRefusedCount=0;
   const assetUrl=f=>globalThis.AdventureCast?.asset?.(f)||'./assets/'+f;
   const SKILL_ICONS={
     observe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path d="M12 6v-2M12 20v-2"/></svg>',
@@ -63,7 +63,7 @@
     }
   });
   globalThis.WitnessAudioSession=audio;
-  const FeedbackAudio={click:()=>audio.ui('click'),choice:()=>audio.ui('choice'),page:()=>audio.ui('page'),seal:()=>audio.ui('seal'),accomplish:()=>audio.ui('accomplish'),material:(kind,at)=>audio.material(kind,at)};
+  const FeedbackAudio={click:()=>audio.ui('click'),choice:()=>audio.ui('choice'),page:()=>audio.ui('page'),seal:()=>audio.ui('seal'),accomplish:()=>audio.ui('accomplish'),material:(kind,at)=>audio.material(kind,at),effect:(id,at,opt={})=>audio.effect(id,{at:at?[at[0],.65,at[1]]:null,...opt})};
   const audioCaption=document.createElement('div');audioCaption.id='audio-caption';audioCaption.className='audio-caption';audioCaption.hidden=true;audioCaption.setAttribute('role','status');$('#game').append(audioCaption);
   function voiced(person,text,label){
     if(!dialog||!text)return;
@@ -240,6 +240,7 @@
   function onStatus(next){
     audio.tick(next,state);
     refreshField(next);
+    noteObservations(next);
     last=next;if(title||!state)return;
     if(next.spatial){state.spatialPositions??={};state.spatialPositions[M.chapter(state).id+'.'+(state.layer?.id||'mortal')]={schema:1,...next.spatial};}
     walking=!!next.walking;
@@ -253,8 +254,36 @@
     const interactBtn=$('#interact-button');
     if(interactBtn)interactBtn.classList.toggle('is-ready',!!target);
     if(target){
-      setText('#interact-label',target.name);
-      setText('#distance-label','Trong tầm · '+(state.pendingEscort?'Đi cùng':'E để tương tác'));
+      let label=target.name,subLabel='Trong tầm · '+(state.pendingEscort?'Đi cùng':'E để tương tác');
+      if(String(target.id).startsWith('field:')){
+        const spot=CRAFT.fieldSpots(state).find(x=>x.id===target.id);
+        if(spot){
+          const q01Hints={
+            block:{act:'Chèn nêm vào bánh xe',sub:'Bánh xe đang trôi nhẹ trên dốc đá · E để chèn'},
+            unload:{act:'Hạ hai vò trên cùng',sub:'Hai vò gốm kéo lệch trọng tâm xe · E để hạ'},
+            brace:{act:'Đặt đòn kê dưới trục',sub:'Gầm trục cần điểm đỡ chịu lực · E để kê'},
+            lash:{act:'Giữ dây chằng sang cọc',sub:'Dây neo ngăn thùng xe vặn nghiêng · E để buộc'},
+            test:{act:'Tì vai thử tải trọng',sub:'Kiểm tra độ vững của đòn kê · E để thử'},
+            remove:{act:'Tháo chốt nứt cũ',sub:'Rút chốt gỗ nứt khi đã hết tải · E để tháo'},
+            'handoff-work':{act:'Bàn giao phần việc',sub:'Về gặp Chú Natan đối chiếu kết quả · E để giao'}
+          };
+          const q03Hints={
+            yard:{act:'Khảo sát sân xuất',sub:'Vệt hai bánh lún sâu trong bùn dưới sức nặng 24 bao · E để chọn mốc'},
+            steps:{act:'Kiểm tra bậc hẹp',sub:'Khoảng hở 1.05m không vừa trục xe 1.75m; đá góc bị mẻ · E để kiểm tra'},
+            well:{act:'Khảo sát khu vực giếng',sub:'Bờ giếng đá có đoạn dây gai tươi bị cứa đứt · E để chọn mốc'},
+            wall:{act:'Khảo sát lối ven tường',sub:'Nền sỏi nén chịu lực tốt, đủ bề ngang cho xe vòng qua · E để chọn mốc'},
+            tie:{act:'Kiểm tra chỗ đổi dây',sub:'Cọc gỗ mòn ngấn ma sát dây gai; dấu tì cùng hướng vệt xe · E để chọn mốc'},
+            porch:{act:'Khảo sát hiên nhận',sub:'Nền đá có các vết tròn bụi do hạ bao xuống · E để nối về đích'},
+            'handoff-work':{act:'Bàn giao tuyến xe',sub:'Đối chiếu tuyến khảo sát thực tế với Chú Natan · E để giao'}
+          };
+          const curField=CRAFT.field(state);
+          const hint=curField?.def?.id==='Q03.TRACK'?q03Hints[spot.key]:q01Hints[spot.key];
+          if(hint){label=hint.act;subLabel=hint.sub;}
+          else if(spot.detail){subLabel=spot.detail+' · E để thực hiện';}
+        }
+      }
+      setText('#interact-label',label);
+      setText('#distance-label',subLabel);
       currentTarget=target.id;
     }else{
       const goal=next.guide?.at||node?.at;
@@ -529,15 +558,17 @@
     const panel=$('#field-work');if(!panel)return;
     const f=state&&CRAFT.field(state),visible=!!(f&&!title&&!dialog);
     panel.hidden=!visible;document.body.classList.toggle('field-active',visible);if(!visible)return;
+    const isCompact=!!state.settings?.fieldCompact;
+    panel.classList.toggle('is-compact',isCompact);
     if(snapshot?.position){
       const spots=CRAFT.fieldSpots(state).map(p=>({p,dist:Math.hypot(p.at[0]-snapshot.position[0],p.at[1]-snapshot.position[1])})).filter(x=>x.dist<2.8&&engine.within(x.p.id)).sort((a,b)=>a.dist-b.dist);
       fieldNearest=spots.find(x=>x.p.id===fieldFocus)?.p.id||spots.find(x=>x.p.id===snapshot.nearest?.id)?.p.id||spots[0]?.p.id||null;
     }
-    const key=JSON.stringify([f.def.id,f.payload,f.selected,fieldNearest,fieldMessage,fieldTested]);if(key===fieldCache)return;fieldCache=key;
+    const key=JSON.stringify([f.def.id,f.payload,f.selected,fieldNearest,fieldMessage,fieldTested,isCompact]);if(key===fieldCache)return;fieldCache=key;
     const top=panel.scrollTop,active=panel.contains(document.activeElement)?document.activeElement:null;
     const focus=active?{domId:active.id,button:active.matches('button[data-act]'),summary:active.tagName==='SUMMARY'?active.parentElement.className:null,...active.dataset}:null;
     const expanded=panel.dataset.encounter===f.def.id?[...panel.querySelectorAll('details[open]')].map(el=>el.className):[];
-    panel.dataset.encounter=f.def.id;panel.innerHTML=FUI.render(state,f,{near:fieldNearest,message:fieldMessage,tested:fieldTested});
+    panel.dataset.encounter=f.def.id;panel.innerHTML=FUI.render(state,f,{near:fieldNearest,message:fieldMessage,tested:fieldTested,compact:isCompact});
     for(const el of panel.querySelectorAll('details'))el.open=expanded.includes(el.className);
     panel.scrollTop=top;
     if(focus){
@@ -545,10 +576,32 @@
       target?.focus({preventScroll:true});
     }
   }
+  // Dấu quan sát chỉ hoá thành chữ sau khi người chơi đứng sát và nhìn đúng bộ phận
+  // mang dấu ấy. Trước đó nó chỉ là một phần của chiếc xe đang chịu tải.
+  function noteObservations(frame){
+    const f=state&&CRAFT.field(state);
+    if(!f||!Array.isArray(f.def.observations)||!frame?.position||title||dialog)return;
+    const cam=frame.audio?.camera,look=frame.audio?.look;
+    for(const spot of CRAFT.fieldSpots(state)){
+      if(spot.obs==null||!spot.hosted)continue;
+      const dx=spot.at[0]-frame.position[0],dz=spot.at[1]-frame.position[1],dist=Math.hypot(dx,dz);
+      if(dist>1.8)continue;
+      if(cam&&look){
+        const fx=look[0]-cam[0],fz=look[2]-cam[2],fl=Math.hypot(fx,fz);
+        if(fl>1e-4&&(fx*dx+fz*dz)/(fl*dist)<.55)continue;
+      }
+      const next=M.noteObservation(state,spot.obs,frame.position);
+      if(next===state)continue;
+      update(next);fieldCache='';fieldRefused=null;fieldRefusedCount=0;
+      const [name,text]=f.def.observations[spot.obs];
+      subline(name+' — '+text);FeedbackAudio.material('wood',spot.at);
+      return;
+    }
+  }
   function startField(id){
     try{
       checkpointPosition();const next=M.fieldStart(state,id);next.settings.workMode='field';close();
-      fieldMessage='Tới điểm trong cảnh, quan sát rồi nhấn E hoặc nút tương tác. Bạn vẫn có thể mở bảng để đối chiếu.';fieldTested=false;fieldNearest=null;fieldFocus=null;fieldCache='';update(next);engine?.cue?.('read');
+      fieldMessage='Tới điểm trong cảnh, quan sát rồi nhấn E hoặc nút tương tác. Bạn vẫn có thể mở bảng để đối chiếu.';fieldTested=false;fieldNearest=null;fieldFocus=null;fieldCache='';fieldRefused=null;fieldRefusedCount=0;update(next);engine?.cue?.('read');
     }catch(err){toast(err.message);}
   }
   function operateField(id,extra={}){
@@ -560,10 +613,71 @@
     try{
       const result=M.fieldAct(state,id,{position:last?.position||engine.at(),...extra});fieldNearest=id;fieldFocus=id;fieldMessage=result.message;fieldTested=!result.ok;fieldCache='';
       if(result.ok){
+        if(f.def.id==='Q01.LOAD'){
+          const q01Effects={
+            block:{effect:'wood-thud',line:'Đòn nêm đã chèn chặt gầm bánh. Bánh xe ngừng trôi theo dốc.'},
+            unload:{effect:'wood-thud',line:'Hai vò nặng được hạ xuống đất. Trọng tâm xe hạ thấp rõ rệt.'},
+            brace:{effect:'wood-brace',line:'Đòn kê luồn dưới gầm trục, đón lấy sức nặng của thân xe.'},
+            lash:{effect:'rope',line:'Sợi dây chằng siết chặt sang cọc neo. Thùng xe không còn lắc ngang.'},
+            test:{effect:'shoulder-test',test:true,line:'Tì vai thử tải: đường chịu lực mới đứng vững vàng, không còn tiếng gỗ răng rắc.'},
+            remove:{effect:'wood-slide',line:'Chốt nứt không còn gánh tải, rút ra nhẹ nhàng và đặt riêng lên tấm vải.'}
+          };
+          const stepData=q01Effects[spot.op.value];
+          if(stepData){
+            FeedbackAudio.effect(stepData.effect,spot.at);
+            if(stepData.test)globalThis.WitnessCraftRenderer?.testLoad?.(result.hosted||'craft:Q01-axle');
+            subline(stepData.line);
+          }
+        }else if(f.def.id==='Q03.TRACK'){
+          const q03Effects={
+            yard:{effect:'mud-squelch',line:'Vệt hai bánh in sâu ngập bùn đất. Trọng lượng 24 bao đè nặng từng tấc đất rời sân.'},
+            steps:{effect:'cart-block',line:'Khoảng hở hai trụ đá chỉ rộng 1.05m. Trục bánh xe rộng 1.75m va quẹt mẻ đá, không thể lọt qua!'},
+            well:{effect:'rope-friction',line:'Bên bờ giếng đá có đoạn dây thừng mới bị cứa đứt vội vã. Xe dừng ở đây một nhịp trước khi tiếp tục.'},
+            wall:{effect:'gravel-crunch',line:'Đoạn đường ven tường rải sỏi nén chặt. Vệt bánh xe lăn nhẹ nhàng, bề mặt đủ rộng cho xe vượt qua an toàn.'},
+            tie:{effect:'rope-friction',line:'Cọc gỗ tì đậm ngấn ma sát sợi gai. Dây buộc cũ mang vết hằn kéo đúng hướng vệt bánh xe lăn qua.'},
+            porch:{effect:'stone-steps',line:'Bậc hiên kho đá mang các vết nén tròn của đáy bao. Vệt bánh xe kết thúc ngay trước cửa nhận hàng.'}
+          };
+          const stepData=q03Effects[spot.op.value];
+          if(stepData){
+            FeedbackAudio.effect(stepData.effect,spot.at);
+            subline(stepData.line);
+          }
+          const draftPath=result.state.workshop?.drafts?.['Q03.TRACK']?.payload?.path||[];
+          if(draftPath[draftPath.length-1]==='porch'){
+            const evalRes=root.WitnessDepth?.evaluate?.(result.state,f.def,{path:draftPath});
+            if(evalRes&&evalRes.ok){
+              FeedbackAudio.effect('cart-rumble',spot.at);
+              subline('Tuyến đường xe đã liền mạch và đứng vững trước thực địa! Nghe rõ tiếng bánh xe lăn đều trên nền đá.');
+            }
+          }
+        }
         const kind=spot.op.kind==='route'?'gravel':['inference','dispatch'].includes(f.def.type)?'paper':f.def.type==='ledger'?'ceramic':f.def.id.includes('NET')||f.def.id.includes('RESCUE')||f.def.id.includes('CLOTH')?'rope':'wood';
-        fieldMessage=result.message+' '+({wood:'[Tiếng gỗ chịu tải và chạm khẽ]',rope:'[Tiếng sợi dây tì và được giữ]',paper:'[Tiếng giấy sột soạt]',ceramic:'[Tiếng bát và vật đếm chạm khẽ]',gravel:'[Tiếng bước chân trên nền đang khảo sát]'}[kind]);update(result.state);engine.pose(spot.op.kind==='station'?'offer':'tend');FeedbackAudio.material(kind,spot.at);
+        fieldMessage=result.message+' '+({wood:'[Tiếng gỗ chịu tải và chạm khẽ]',rope:'[Tiếng sợi dây tì và được giữ]',paper:'[Tiếng giấy sột soạt]',ceramic:'[Tiếng bát và vật đếm chạm khẽ]',gravel:'[Tiếng bước chân trên nền đang khảo sát]'}[kind]);update(result.state);engine.pose(spot.op.kind==='station'?'offer':'tend');
+        if(f.def.id!=='Q01.LOAD'&&f.def.id!=='Q03.TRACK')FeedbackAudio.material(kind,spot.at);
+        fieldRefused=null;fieldRefusedCount=0;
       }
-      else{refreshField();subline(CRAFT.response(state,f.def,false));}
+      else if(result.refused){
+        // Vật tự từ chối trước: thùng xe giật và gỗ kêu.
+        const host=CRAFT.details(state).find(x=>x.id===result.hosted);
+        globalThis.WitnessCraftRenderer?.jolt?.(result.hosted,.22);
+        FeedbackAudio.effect('wood-jolt',host?.at||spot.at);
+        if(f.def.id==='Q01.LOAD'){
+          const q01Refusals={
+            remove:'Thùng xe giật mạnh, tiếng gỗ nứt kêu răng rắc! Chốt đang bị kẹt cứng dưới tải nặng!',
+            unload:'Hai vò vừa nhấc lên thì cả thùng xe cựa theo dốc. Bánh xe vẫn còn lăn được!',
+            brace:'Đòn kê không lọt xuống dưới trục; hai vò trên cao còn đè thùng xe sát xuống!',
+            lash:'Dây vừa căng thì bánh xe trôi một nhịp xuống dốc, sợi dây chùng lại!',
+            test:'Bạn tì vai vào thùng xe: nó lún xuống kêu răng rắc, chưa có gì đỡ ở phía dưới!'
+          };
+          if(q01Refusals[result.refused])subline(q01Refusals[result.refused]);
+        }
+        if(fieldRefused===id)fieldRefusedCount++;else{fieldRefused=id;fieldRefusedCount=1;}
+        if(fieldRefusedCount>1)subline(CRAFT.response(state,f.def,false));
+      }
+      else{
+        if(f.def.id==='Q03.TRACK')FeedbackAudio.effect('cart-block',spot.at);
+        refreshField();subline(CRAFT.response(state,f.def,false));
+      }
     }catch(err){fieldMessage=err.message;fieldCache='';refreshField();guide(id,true);}
   }
   function finishField(){
@@ -571,6 +685,7 @@
     const point=last?.position||engine.at();if(!point||Math.hypot(point[0]-f.origin[0],point[1]-f.origin[1])>3.4){guide('field:handoff-work',true);return;}
     try{
       checkpointPosition();const next=M.fieldFinish(state,point),line=CRAFT.response(next,f.def,true);fieldMessage='';fieldCache='';fieldNearest=null;update(next);engine.pose('offer');engine.cue('read');pushLog(f.def.voice?.[0]||f.def.title,line);subline(line);toast('Phần việc đã có người nhận. Bạn có thể quan sát lại nơi vừa làm.');
+      if(f.def.id==='Q03.TRACK')FeedbackAudio.effect('cart-rumble',point);
       if(state.finished){ending();return;}if(state.layer){const src=state.layer.kind==='legend'?D.legends[state.layer.id]:D.veils[state.layer.id];if(state.layer.step===src.steps.length)layerConclusion();}
     }catch(err){fieldMessage=err.message;fieldTested=true;fieldCache='';refreshField();subline(CRAFT.response(state,f.def,false));}
   }
@@ -940,6 +1055,7 @@
       else if(act.startsWith('field-')){
         const f=CRAFT.field(state);
         if(act==='field-start')startField(id);
+        else if(act==='field-toggle-compact'&&f){state.settings.fieldCompact=!state.settings.fieldCompact;save();fieldCache='';refreshField();}
         else if(act==='field-exit'&&f){update(M.fieldStop(state));fieldCache='';subline('Bản nháp được giữ; bạn có thể quay lại điểm cùng làm.');}
         else if(act==='field-board'&&f){const a=f.a;state=M.fieldStop(state);state.settings.workMode='board';save();refresh();workshop(a);}
         else if(act==='field-go'){fieldFocus=id;guide(id,true);}

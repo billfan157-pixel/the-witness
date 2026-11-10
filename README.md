@@ -1,5 +1,12 @@
 # Chứng Nhân: Di Sản Giao Ước (UNSEALED WITNESS: Legacy of the Covenant)
 
+**Dành cho AI agent và người phát triển:** bắt đầu ở [AGENTS.md](AGENTS.md) và
+[bản đồ nguồn chuẩn](docs/agent/README.md), kiểm tra [trạng thái/độ lệch](docs/agent/status.md)
+trước khi thay đổi. Tạo file theo [chính sách repository](docs/agent/repository-policy.md).
+`npm run check:agents` kiểm nguồn, vị trí file, skill, liên kết quản trị và nguồn
+contracts; tự chạy trước `npm test` và `npm run build`. `npm run test:agents`
+kiểm hành vi của cơ chế quản trị bằng các repository tạm.
+
 **Cảnh mẫu Q01:** bến cảng, kho phía tây và Titus có bản sản xuất để duyệt
 ở cả góc nhìn thứ nhất/thứ ba và ánh sáng ngày/tối. Trong Q01, mở **Bản đồ →
 Khám phá kho phía tây** để đi qua phòng, cầu thang và mái; **V** đổi góc nhìn,
@@ -20,7 +27,7 @@ asset trước khi đóng gói. Không ghi cổng nghiệm thu đạt nếu thi�
 
 Bản **0.5.0 / hồ sơ thiết kế 3.2** đưa 31 phần việc vào thao tác trực tiếp tại hiện trường, gồm 25 tình huống chương và sáu nhiệm vụ quan hệ với 12 biến thể. Có 44 chi tiết 3D tại 27 chủ cảnh: tải xe, chốt nứt, mép giấy dán, đèn cuối đoàn, đường đi, các khoản hàng, phong bì và phần việc cùng NPC. Bản nháp giữ khi rời hoặc tải lại; chỉ bàn giao hợp lệ mới hoàn tất việc. Bảng đối chiếu vẫn có cùng luật và quyền hoàn tất.
 
-Bộ tài liệu bắt đầu ở [nghiên cứu chiều sâu](docs/the-witness/16-depth-research.md), [atlas 25 tình huống chương](docs/the-witness/17-encounter-atlas.md), [kịch bản chi tiết và thoại](docs/the-witness/18-scene-craft-and-dialogue.md), [protocol playtest](docs/the-witness/19-depth-playtest.md) và [thực thi từng cảnh 0.5.0](docs/the-witness/20-scene-implementation.md). Bản đọc đầy đủ và gói nguồn nằm trong `outputs/THE-WITNESS-Design-v3.2/`. Dàn dựng dùng các trạng thái có điều kiện; chưa là mô phỏng vật lý dây mềm, chất lỏng, đám đông hoặc âm học liên tục. Chưa có playtest người thật.
+Bộ tài liệu bắt đầu ở [nghiên cứu chiều sâu](docs/the-witness/16-depth-research.md), [atlas 25 tình huống chương](docs/the-witness/17-encounter-atlas.md), [kịch bản chi tiết và thoại](docs/the-witness/18-scene-craft-and-dialogue.md), [protocol playtest](docs/the-witness/19-depth-playtest.md) và [thực thi từng cảnh 0.5.0](docs/the-witness/20-scene-implementation.md). Bản đọc và gói nguồn có thể tạo bằng `python tools/build-witness-docs.py` vào `outputs/THE-WITNESS-Design-v3.2/`; các bản xuất cũ đã dọn, nguồn hiện hành ở `docs/the-witness/`. Dàn dựng dùng các trạng thái có điều kiện; chưa là mô phỏng vật lý dây mềm, chất lỏng, đám đông hoặc âm học liên tục. Chưa có playtest người thật.
 
 
 Nền 0.3.0 triển khai sâu kiến trúc v3.1 trên runtime 3D: **Kinh Thánh là cốt truyện chính (Legends 30% / 216 phút thiết kế)**, ba biến cố trọng tâm 7 cảnh (`S01–S07`) với vai **Nhân Chứng Vô Danh** cùng sự hiện diện trực quan của **Tầng Thánh (Sacred Tier)** trong không gian 3D, mở khóa trọn vẹn **4 kỹ năng RPG**, **Bộ dụng cụ 6 món**, **3 Tín điều Nhân chứng (Witness Tenets)**, **Bảng Đối Chiếu Chứng Cứ 3 Cột tương tác** và 12 cầu nối đời thường thế kỷ I tại Xêdarê.
