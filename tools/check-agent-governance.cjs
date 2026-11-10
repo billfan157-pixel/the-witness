@@ -239,6 +239,93 @@ function inspect(root) {
           !/^docs\/(?:archive\/|environment-kit\/validation\/)/.test(p) && fs.existsSync(resolve(p)) && !roles.has(p)) {
         fail('DOC_COVERAGE', 'Active document has no role/owner: ' + p);
       }
+      if (map.handoffs !== undefined) {
+        if (!Array.isArray(map.handoffs)) {
+          fail('HANDOFF_SCHEMA', 'Registry v2 requires a handoffs array');
+        } else {
+          const handoffIds = new Set();
+          const handoffTriggers = new Set();
+          const knownOwners = new Set([...roles.values()].map(r => r.owner));
+          for (const h of map.handoffs) {
+            if (!h || typeof h.id !== 'string' || !/^H[0-9]{2}$/.test(h.id) ||
+                typeof h.trigger !== 'string' || !/^[a-z0-9-]+$/.test(h.trigger) ||
+                typeof h.primaryTask !== 'string' || !Array.isArray(h.partnerTasks) ||
+                typeof h.when !== 'string' || !h.when.trim() ||
+                !Array.isArray(h.required) || !h.required.length ||
+                !Array.isArray(h.implementation) || !h.implementation.length ||
+                !Array.isArray(h.checks) || !h.checks.length ||
+                !Array.isArray(h.updates) || !h.updates.length ||
+                !Array.isArray(h.requiredOwners) || !h.requiredOwners.length) {
+              fail('HANDOFF_SCHEMA', 'Invalid handoff schema: ' + (h?.id || 'unknown'));
+              continue;
+            }
+            if (handoffIds.has(h.id)) fail('HANDOFF_DUPLICATE', 'Duplicate handoff ID: ' + h.id);
+            handoffIds.add(h.id);
+            if (handoffTriggers.has(h.trigger)) fail('HANDOFF_DUPLICATE', 'Duplicate handoff trigger: ' + h.trigger);
+            handoffTriggers.add(h.trigger);
+
+            if (!taskIds.has(h.primaryTask)) {
+              fail('HANDOFF_TASK', 'Unknown primary task: ' + h.primaryTask);
+            }
+            const partnerSet = new Set();
+            for (const p of h.partnerTasks) {
+              if (p === h.primaryTask) fail('HANDOFF_TASK', 'Partner task cannot be primary: ' + p);
+              if (!taskIds.has(p)) fail('HANDOFF_TASK', 'Unknown partner task: ' + p);
+              if (partnerSet.has(p)) fail('HANDOFF_TASK', 'Duplicate partner task: ' + p);
+              partnerSet.add(p);
+            }
+
+            for (const ref of h.required) {
+              checkReference(ref, 'HANDOFF_REF');
+              reached.add(ref.split('#')[0]);
+            }
+            for (const ref of h.updates) {
+              checkReference(ref, 'HANDOFF_UPDATE');
+            }
+
+            for (const owner of h.requiredOwners) {
+              if (!knownOwners.has(owner)) fail('HANDOFF_OWNER', 'Unknown owner in requiredOwners: ' + owner);
+              const represented = h.required.some(ref => roles.get(ref.split('#')[0])?.owner === owner);
+              if (!represented) fail('HANDOFF_OWNER', 'Owner ' + owner + ' has no representative in required references of ' + h.id);
+            }
+
+            for (const p of h.implementation) {
+              checkExists(p, 'HANDOFF_IMPL');
+            }
+
+            for (const chk of h.checks) {
+              if (!chk || typeof chk.command !== 'string' || !chk.command.trim() ||
+                  typeof chk.when !== 'string' || !chk.when.trim()) {
+                fail('HANDOFF_CHECK', h.id + ' requires command and condition');
+                continue;
+              }
+              const npm = /^npm (?:run ([\w:.-]+)|(test))$/.exec(chk.command);
+              const script = /^(?:node|python) ([\w./-]+)(?:\s|$)/.exec(chk.command);
+              if (npm) {
+                try {
+                  if (!JSON.parse(fs.readFileSync(resolve('package.json'), 'utf8')).scripts?.[npm[1] || npm[2]]) {
+                    fail('HANDOFF_CHECK', 'Missing npm script: ' + chk.command);
+                  }
+                } catch (e) { fail('HANDOFF_CHECK', e.message); }
+              } else if (script) {
+                checkExists(script[1], 'HANDOFF_CHECK');
+              } else {
+                fail('HANDOFF_CHECK', 'Unsupported check command: ' + chk.command);
+              }
+            }
+
+            const primary = map.tasks.find(t => t.id === h.primaryTask);
+            if (primary) {
+              try {
+                const skillContent = fs.readFileSync(resolve(primary.skill), 'utf8');
+                if (!skillContent.includes(h.id) && !skillContent.includes(h.trigger)) {
+                  fail('HANDOFF_ROUTE', 'Skill ' + primary.skill + ' must declare handoff ' + h.id + ' or trigger ' + h.trigger);
+                }
+              } catch (e) { fail('HANDOFF_ROUTE', e.message); }
+            }
+          }
+        }
+      }
     }
   }
   const present = new Set(files);
@@ -250,39 +337,86 @@ if (require.main === module) {
   const args = process.argv.slice(2);
   let requestedRoot;
   let taskId;
+  let handoffId;
   let invalid = false;
   let json = false;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--json' && !json) json = true;
     else if (args[i] === '--root' && requestedRoot === undefined && args[i + 1] && !args[i + 1].startsWith('--')) requestedRoot = args[++i];
     else if (args[i] === '--task' && taskId === undefined && args[i + 1] && !args[i + 1].startsWith('--')) taskId = args[++i];
+    else if (args[i] === '--handoff' && handoffId === undefined && args[i + 1] && !args[i + 1].startsWith('--')) handoffId = args[++i];
     else invalid = true;
   }
-  if (invalid) {
-    console.error('Usage: node tools/check-agent-governance.cjs [--root PATH] [--task TASK] [--json]');
+  if (invalid || (handoffId !== undefined && taskId === undefined)) {
+    console.error('Usage: node tools/check-agent-governance.cjs [--root PATH] [--task TASK [--handoff ID]] [--json]');
     process.exitCode = 2;
   } else {
     let report;
     try { report = inspect(requestedRoot === undefined ? path.resolve(__dirname, '..') : requestedRoot); }
     catch (e) { report = { errors: [{ code: 'CHECKER', detail: e.message }], warnings: [], checkedFiles: 0 }; }
     let context;
+    let handoff;
+    let readingOrder;
+    let implementation;
+    let checks;
+    let updates;
     if (taskId && !report.errors.length) {
-      const registry = JSON.parse(fs.readFileSync(path.join(requestedRoot || path.resolve(__dirname, '..'), 'docs/agent/registry.json'), 'utf8'));
-      context = registry.knowledge?.tasks.find(t => t.id === taskId);
+      const regPath = path.join(requestedRoot || path.resolve(__dirname, '..'), 'docs/agent/registry.json');
+      const registry = JSON.parse(fs.readFileSync(regPath, 'utf8'));
+      context = registry.knowledge?.tasks?.find(t => t.id === taskId);
       if (!context) report.errors.push({ code: 'TASK', detail: 'Unknown task: ' + taskId });
+      if (handoffId) {
+        handoff = registry.knowledge?.handoffs?.find(h => h.id === handoffId || h.trigger === handoffId);
+        if (!handoff) {
+          report.errors.push({ code: 'HANDOFF_UNKNOWN', detail: 'Unknown handoff: ' + handoffId });
+        } else if (handoff.primaryTask !== taskId) {
+          report.errors.push({ code: 'HANDOFF_MISMATCH', detail: 'Handoff ' + handoff.id + ' primary task is ' + handoff.primaryTask + ', but requested task is ' + taskId });
+        } else if (context) {
+          const dedupe = arr => [...new Set(arr)];
+          readingOrder = dedupe([...context.required, ...handoff.required]);
+          implementation = dedupe([...context.implementation, ...handoff.implementation]);
+          updates = dedupe([...context.updates, ...handoff.updates]);
+          const seenCmds = new Set();
+          checks = [];
+          for (const chk of [...context.checks, ...handoff.checks]) {
+            if (!seenCmds.has(chk.command)) {
+              seenCmds.add(chk.command);
+              checks.push(chk);
+            }
+          }
+        }
+      }
     }
-    if (json) console.log(JSON.stringify(context ? { ...report, context } : report, null, 2));
-    else if (context) {
+    if (json) {
+      if (report.errors.length) console.log(JSON.stringify(report, null, 2));
+      else if (context && handoff) console.log(JSON.stringify({ ...report, context, handoff, readingOrder, implementation, checks, updates }, null, 2));
+      else if (context) console.log(JSON.stringify({ ...report, context }, null, 2));
+      else console.log(JSON.stringify(report, null, 2));
+    } else if (context && handoff && !report.errors.length) {
+      console.log('Task: ' + context.id + '\nSkill: ' + context.skill);
+      console.log('Handoff: ' + handoff.id + ' (' + handoff.trigger + ')');
+      console.log('When: ' + handoff.when);
+      console.log('Partners: ' + handoff.partnerTasks.join(', '));
+      console.log('\nreadingOrder:');
+      for (const row of readingOrder) console.log('- ' + row);
+      console.log('\nimplementation:');
+      for (const row of implementation) console.log('- ' + row);
+      console.log('\nchecks:');
+      for (const row of checks) console.log('- ' + row.command + ' — ' + row.when);
+      console.log('\nupdates:');
+      for (const row of updates) console.log('- ' + row);
+    } else if (context && !report.errors.length) {
       console.log('Task: ' + context.id + '\nSkill: ' + context.skill);
       for (const key of ['required', 'details', 'implementation', 'checks', 'updates']) {
         console.log('\n' + key + (key === 'details' ? ' (load only when relevant)' : '') + ':');
         for (const row of context[key]) console.log('- ' + (typeof row === 'string' ? row : row.command + ' — ' + row.when));
       }
-    }
-    else {
+    } else {
       for (const issue of report.errors) console.error('FAIL [' + issue.code + '] ' + issue.detail);
       for (const issue of report.warnings) console.warn('WARN [' + issue.code + '] ' + issue.detail);
-      console.log(`${report.errors.length ? 'FAIL' : 'PASS'} agent governance: ${report.checkedFiles} files, ${report.skills || 0} skills, ${report.mirrors || 0} mirrors; ${report.errors.length} errors, ${report.warnings.length} warnings`);
+      if (!taskId) {
+        console.log(`${report.errors.length ? 'FAIL' : 'PASS'} agent governance: ${report.checkedFiles} files, ${report.skills || 0} skills, ${report.mirrors || 0} mirrors; ${report.errors.length} errors, ${report.warnings.length} warnings`);
+      }
     }
     process.exitCode = report.errors.length ? 1 : 0;
   }

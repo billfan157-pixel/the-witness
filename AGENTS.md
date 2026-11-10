@@ -12,6 +12,7 @@
 | Build, kiểm candidate, push/deploy được giao | [witness-release](.agents/skills/witness-release/SKILL.md) |
 
 Lấy tuyến đọc bằng `npm run agent:context -- <change|content|environment|release>`.
+Khi nhiệm vụ tác động đồng thời nhiều miền, chọn một skill chính và khai báo handoff H01–H05 tương ứng. Lấy context bằng `npm run agent:context -- <task> --handoff <id>`. Không tự mở rộng scope chỉnh sửa theo danh sách consumer. Tác vụ có nhiều trigger phải lập danh sách và kiểm đủ các trigger liên quan trước khi sửa.
 Quy trình sửa/kiểm/file/cập nhật sở hữu duy nhất tại [OPERATIONS](docs/OPERATIONS.md).
 Bất biến sản phẩm tại [PRODUCT](docs/PRODUCT.md); skill không chép lại các luật đó.
 

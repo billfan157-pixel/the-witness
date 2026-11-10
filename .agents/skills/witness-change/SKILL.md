@@ -6,6 +6,7 @@ description: Sửa lỗi, phát triển hoặc tổ chức mã nguồn THE WITNE
 # witness-change
 
 Tuyến máy kiểm được: `npm run agent:context -- change`.
+Khai báo handoff H03 (`state-save`: `npm run agent:context -- change --handoff H03`) khi thay schema, action list, support ID, restore hoặc lưu trữ offline/cloud. Khi chạm state/save migration, lưu ý: client restore và server cùng tiêu thụ state; support ID mới không thể được chấp nhận chỉ bằng việc đổi regex; thay đổi action list phải có phương án cho save đã hoàn thành hoặc đang dang dở; không tự đổi schema hoặc cloud namespace.
 Đọc [STATUS](../../../docs/STATUS.md#open), rồi:
 
 - [Vòng thay đổi, file và kiểm chứng](../../../docs/OPERATIONS.md#change)

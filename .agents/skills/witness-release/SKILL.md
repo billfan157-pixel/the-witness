@@ -6,6 +6,7 @@ description: Build và xác minh candidate THE WITNESS; commit/push hoặc tri�
 # witness-release
 
 Tuyến máy kiểm được: `npm run agent:context -- release`.
+Khai báo handoff H05 (`release-candidate`: `npm run agent:context -- release --handoff H05`) khi đóng gói/kiểm tra candidate Q01; phối hợp H04 (`visual-asset`) khi release có thay đổi asset hoặc GI. Phân biệt rõ: test scripted, visual approval, đo đạc thiết bị vật lý thực tế và production deployment.
 Đọc [STATUS](../../../docs/STATUS.md#open), rồi:
 
 - [Producer và đầu ra được phép dựng lại](../../../docs/ENGINEERING.md#pipeline)
