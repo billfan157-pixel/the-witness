@@ -1,0 +1,98 @@
+{
+  "documentRevision": 4,
+  "roadmap": "docs/environment-kit/roadmap.md",
+  "standards": "docs/environment-kit/standards.md",
+  "catalog": "docs/environment-kit/catalog.csv",
+  "updated": "2026-11-10",
+  "production": "AI",
+  "requiredScene": "Q01",
+  "extensionScene": "L04",
+  "deadlinePolicy": "quality-gated",
+  "gates": [
+    {
+      "id": "G0",
+      "status": "passed",
+      "passed": [
+        "working roadmap, standards, catalog and evidence vocabulary",
+        "12 repeatable pre-kit Q01/L04 baseline views",
+        "16 annotated regional references from 8 sources, with reconstruction and image-rights boundaries",
+        "physical laptop hardware identified and Intel Arc WebGL verified"
+      ],
+      "remaining": []
+    },
+    {
+      "id": "G1",
+      "status": "passed",
+      "passed": [
+        "reproducible 288-triangle GLB with three PBR quality variants",
+        "shared Three r187, KTX2 and Meshopt with local JS/WASM",
+        "SHA256, KTX2 mipmaps, transfer functions and authored collision coordinates",
+        "200 instances rendered on Intel Arc at 1920x1080; raw/full GPU comparison",
+        "independent subscriber cancellation, late scene close, retry and partial failure",
+        "shared live owners and 24 full/lite transitions return to GPU baseline",
+        "real service-worker cache and offline reload",
+        "cold full-quality standalone with all HTTP blocked; player standalone uses lighter pack"
+      ],
+      "remaining": []
+    },
+    {
+      "id": "G2",
+      "status": "passed",
+      "passed": [
+        "continuous Q01 doorway/interior/18-step stair/roof route in actual engine",
+        "third- and first-person walking and return; cold standalone with all HTTP blocked",
+        "roof and stair checkpoint reload preserves exact support and position",
+        "same-xz stacked floor interaction rejected",
+        "legacy mission model suite and capsule/terrain unit checks",
+        "independent Box3/raycast checks against rendered meshes on all seven recorded routes (1999 frames): zero camera, body and support errors",
+        "full campaign browser suite (21 checks), scene, spine, depth, craft, craft-details, field-keyboard, graphics tiers and kit cache/lifecycle/profile regressions pass on release build 1ca87a3f70b6",
+        "deterministic rebuild verified: player standalone byte-identical to the offline-tested file; evidence source hashes match",
+        "player standalone slimmed to active assets (12970545 bytes); test-driver profile cleanup fixes the ENOSPC regression failure; ART-CREDITS ledger completed for candidate surfaces"
+      ],
+      "remaining": []
+    },
+    {
+      "id": "G3",
+      "status": "awaiting_visual_review",
+      "passed": [
+        "playable Q01 scene candidate implemented; formal results in validation/q01-gold"
+      ],
+      "remaining": [
+        "user approval of first- and third-person day/evening image quality"
+      ]
+    },
+    {
+      "id": "G4",
+      "status": "in_progress",
+      "passed": [
+        "Q01 candidate and lighter standalone functional parity recorded",
+        "first- and third-person routes, graphics tiers and final cold-open standalone SHA recorded"
+      ],
+      "remaining": [
+        "Q01 art approval and human playtest",
+        "physical-device performance, LOD and draw-call optimization",
+        "L04 extension decision after Q01 acceptance"
+      ]
+    }
+  ],
+  "evidence": [
+    "docs/environment-kit/validation/kit-proof.json",
+    "docs/environment-kit/validation/lifecycle.json",
+    "docs/environment-kit/validation/hardware-profile.json",
+    "docs/environment-kit/research/references.json",
+    "docs/environment-kit/validation/phase3/model.json",
+    "docs/environment-kit/validation/phase3/browser.json",
+    "docs/environment-kit/validation/phase3/verification.json",
+    "docs/environment-kit/research/q01-gold-materials.md",
+    "docs/environment-kit/q01-gold-scene.md",
+    "docs/environment-kit/validation/q01-gold/verification.json"
+  ],
+  "limitations": [
+    "pipeline surface study is not accepted final art or exact Caesarea kurkar",
+    "headless actual laptop GPU excludes display presentation/input latency",
+    "no physical phone measurement or future complete-Q01 performance certification",
+    "reference board diagrams are original H illustrations; external photographs are linked only",
+    "Q01 scene art candidate is not yet user-approved; G3 remains open",
+    "historical comparisons do not establish the exact plan, colour or contents of the fictional warehouse"
+  ]
+}

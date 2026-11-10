@@ -37,7 +37,7 @@ Mỗi quest có ID bền, tiền điều kiện, trigger, objective, phương á
 * **Tầng:** L03 và V01 tự chọn. **Ra:** Q03 luôn mở sau route hợp lệ; liên kết sang đầu mối tuyến vận tải G17.
 
 ### Q03 — Con đường biến mất
-* **TÍCH HỢP v6:** Tuyến Antipatris trở thành bài toán đa cao độ: (A) đường xe chậm an toàn qua nền đất cứng; (B) tuyến vượt đá ngắn chỉ cho người đi bộ; (C) lối sửa cầu gỗ dùng dây/tời. Đọc dấu lún bùn bác bỏ lối bậc hẹp 1.05m không vừa trục xe 1.75m có vết mẻ đá va quẹt; có tuyến vượt thay thế nếu không có Titus/Damar.
+* **TÍCH HỢP v6:** Kịch bản phân cảnh 5 nhịp điện ảnh chi tiết tại [hồ sơ 07](07-vertical-slice-screenplay.md): Tuyến Antipatris bài toán đa cao độ: (A) Vượt rãnh đá dọn vật cản và đọc ma sát thừng gai; (B) Tuyến đường vòng sườn đồi thoai thoải qua trạm dừng chân an toàn; (C) Lối tắt kỹ thuật dùng `tools` vượt ghềnh cao. Đọc dấu bùn lún 24 bao bác bỏ lối bậc hẹp 1.05m không vừa trục xe 1.75m có vết mẻ đá va quẹt; sửa xe gãy trục cùng Amon chống softlock; đối chiếu độc lập E04 (24 xuất, 2 hỏng, 18 Galilê chờ Q05); Natan kể Biển Đỏ bên lửa trại mở cổng L01.
 * **Vào:** Q02 kết thúc.
 * **Mục tiêu:** Đi tuyến đường đồi ngoài thành, lần theo vệt bánh xe lún sâu dưới tải trọng 24 bao.
 * **Sự thật:** 24 bao rời bến, nhưng 2 bao bị hỏng trên đường có biên bản riêng; 18 bao đi Galilê (chỉ xác nhận trực tiếp ở Q05).
@@ -133,6 +133,7 @@ Mỗi chương Legends là một không gian thám hiểm cô đọng, mật đ�
   * *Thời lượng:* 50–60 phút tương tác hoặc khoảng 8 phút tóm tắt. Cổng Q03 $\rightarrow$ Q04. Sáu nhịp cốt lõi B01–B06.
   * *Vai điều khiển:* **Người Hộ Vệ Khóa Đuôi** (Caravan Rearguard Defender). Môsê đứng ở tiền phương theo lệnh Chúa giơ gậy rẽ biển.
   * *Cơ chế đặc thù (Caravan Cohesion & Terrain Reading):* Đọc hướng gió đông và dấu chân bãi triều; dùng kỹ năng *Thủ công* kích bánh xe lún bùn và lát ván qua sình lầy; dùng đèn bão duy trì liên lạc; dùng *Tự vệ* ngăn gia súc hoảng loạn dẫm đạp người già/trẻ nhỏ.
+  * *Kịch bản phân cảnh 5 nhịp điện ảnh:* Chi tiết tại [hồ sơ 07](07-vertical-slice-screenplay.md): Nhịp 01 Trại đêm gió lớn kiểm tra lều cuối; Nhịp 02 Tuyến đi cuối đoàn (triền cát cao vs khe đá thấp); Nhịp 03 Giải cứu xe tải sụp cát bằng đòn bẩy cộng hưởng từ Q03; Nhịp 04 Leo mỏm đá truyền tín hiệu đèn cọc tiêu sống; Nhịp 05 Đại cảnh vượt biển trên cát khô ráo và dư âm dội sang Q04.
 - **L02 / Đavít / 1 Samuel 24 [S06] (Trục bắt buộc Hồi II):**
   * *Thời lượng:* 45–50 phút tương tác hoặc khoảng 7 phút tóm tắt. Cổng Q06 $\rightarrow$ Q07. Năm nhịp cốt lõi B01–B05.
   * *Vai điều khiển:* **Người Trinh Sát Đội Đavít** (En Gedi Cave Scout). Đavít ở trung tâm biến cố cắt vạt áo Saun và kiềm chế không hại vua.
@@ -205,10 +206,17 @@ Mỗi quest kiểm tra vắng companion, thiếu tiền/chứng cứ, chọn ng�
 
 ---
 
-## 10. Năm Định hướng Nâng cấp Hệ thống Chiến dịch 3A (Strategic Pillars)
+## 10. Liên Kết 5 Trụ Cột Chiến Lược Vào Chuỗi Chiến Dịch (Campaign Integration)
 
-1. **Khảo cổ Hiện trường Đa tầng (3.1):** Nâng cấp hành trình truy vết E01–E12 thành giải mã công trình cổ đại và thử thách địa hình: hệ thống rãnh nước ngầm/hầm phân tầng cảng Sebastos (Q01–Q04), đọc dấu bánh xe lún bùn và đo khổ trục qua bậc đá hẹp hẻm đồi Antipatris (Q03), định hướng dây neo vượt lũ quét Wadi (Q08), và pháo đài thủ tục Giêrusalem với xưởng giấy/niêm sáp phân tích lý hóa mực và đất sét (Q09–Q10).
-2. **Khám phá Đồng hành — Companion-Driven Traversal (3.2):** Chiều sâu gameplay phi bạo lực dựa trên kỹ năng môi trường của 4 đồng hành: Titus (cơ học, đối trọng, sửa trục cầu cạn, mở khóa nặng), Lea (giám định bao bì sợi gai, vết khâu lệch bìa sổ, quy chuẩn văn thư La Mã), Damar (đọc luồng tuần tra Rufus, leo gờ đá, dò vết cát đá), Miriam (mở cửa bếp chung, xưởng dệt, xóm chài qua tương trợ xã hội).
-3. **Cộng hưởng Cơ chế Chơi — Mechanical Resonance (3.3):** Ba Legends trục rèn luyện ngôn ngữ cơ học áp dụng vào thế giới Mortal tuân thủ 100% Canon Lock: L01 (gió đêm, đèn hiệu, cứu xe lún) → dòng lũ wadi Q08 giữ E07; L02 (âm học vách đá dội lại, mảng sáng tối hang Đavít) → lẻn qua hành lang lính canh sân phụ ban đêm Q06–Q07; L04 (lao động tĩnh lặng rạng đông, máy quay cận cảnh) → ngôn ngữ điện ảnh ngày trở về cảng Q11–Q12.
-4. **Hệ thống World Callback Động theo Áp lực Hành chính (3.4):** Thế giới biến đổi vật lý theo 3 nấc Milestone Pressure (cổng niêm phong chì, trạm gác ngã ba mọc lên, buộc leo mái hoặc luồn rãnh ngầm) cùng hệ sinh thái NPC phản ứng theo nhân quả các lựa chọn đối xử với Yosef ở Q02 hay phân bổ tải đồ ở Q04.
-5. **Đạo diễn Interactive Set-Piece Đa tuyến cho Q12 (3.5):** Không chỉ ghép thẻ chứng cứ tĩnh, Q12 diễn ra thời gian thực: người chơi di chuyển qua bến cảng căng thẳng, ra hiệu Titus khóa cổng chặn tay sai Rufus, hướng dẫn nhân chứng chưa consent ẩn nấp an toàn, bước vào sảnh đối chất với máy quay chuyển mượt sang cận cảnh biểu cảm Hanan, Varro và nhân chứng khi đưa ra P01–P05.
+> [!NOTE]
+> Toàn bộ đặc tả chi tiết và quy chuẩn kiến trúc của 5 Trụ cột Chiến lược Scene Systems thuộc quyền sở hữu duy nhất của **[03 Narrative Bible — Phần II: Scene Systems v6.0](03-narrative-bible.md#phan-ii-scene-systems-c-v60-thiet-ke-canh-co-che-moi-tich-hop)**.
+
+Dưới đây là ma trận ánh xạ 5 Trụ cột Chiến lược vào tiến trình 12 nhiệm vụ cầu nối và 3 Legends trục:
+
+| Trụ cột Chiến lược | Ứng dụng cụ thể trong Chuỗi Chiến dịch Q01–Q12 & L01–L04 | Nguồn Master SSOT |
+|---|---|---|
+| **1. Khảo cổ Hiện trường Đa tầng** | • Q01–Q04: Hệ thống 4 tầng bến cảng Sebastos (`C0, C1, C-1, C+1`).<br>• Q03: Ba tuyến hình học Antipatris (`Tuyến A/B/C`), vết lún bùn 24 bao vs bậc hẹp 1.05m.<br>• Q08: Ba cao độ hẻm đá Wadi (`W0, W1, W2`), cứu Amon và giữ trọn vẹn E07.<br>• Q09–Q10: Bốn trạm pháo đài thủ tục Giêrusalem (`J0, J1, J2, J3`), đối chiếu hai bản sửa E08/E11. | [Doc 03 · Mục 14](03-narrative-bible.md#14-khao-co-hien-truong-da-tang-world-first-investigation) |
+| **2. Khám phá Đồng hành** | • Titus (cơ học/kết cấu): Q01, Q04, Q06, Q08.<br>• Lea (giám định văn thư/sợi gai): Q02, Q05, Q07, Q09, Q10.<br>• Damar (địa hình/leo trèo/né tuần tra): Q03, Q06, Q08, Q11, Q12.<br>• Miriam (cộng đồng/hậu cần/bảo vệ người): Q02, Q05, Q07, Q11, Q12.<br>• Quy trình tương tác 6 bước: `Spot → Propose → Prepare → Execute → Commit → Fallback`. | [Doc 03 · Mục 15](03-narrative-bible.md#15-companion-driven-traversal-bon-cach-doc-cung-mot-the-gioi) |
+| **3. Cộng hưởng Cơ chế Chơi** | • L01 (Xuất Hành 14 — bão cát/đèn bão/cứu xe sụp cát) $\rightarrow$ Q04 & Q08 lũ quét.<br>• L02 (1 Samuel 24 — âm học vách đá/mảng tối) $\rightarrow$ Q06 & Q07 hành lang đêm.<br>• L04 (Gioan 21 — nhịp chèo rạng đông/kéo lưới) $\rightarrow$ Q11 & Q12 đối chất ngày trở về. | [Doc 03 · Mục 16](03-narrative-bible.md#16-mechanical-resonance-legends-day-ngon-ngu-moi-truong) |
+| **4. World Callback Động** | • Bốn nấc Milestone Pressure (Cấp 0: Bình thường $\rightarrow$ Cấp 1: Rà sổ sau Q04 $\rightarrow$ Cấp 2: Trạm gác Rufus sau Q08 $\rightarrow$ Cấp 3: Kiểm soát gắt gao trước Q12).<br>• Nhân quả thế giới lưu giữ bền vững: nhánh Yosef Q02, tải đồ Q04, Amon Q08, consent Q09. | [Doc 03 · Mục 17](03-narrative-bible.md#17-dynamic-world-callback-ba-moc-ap-luc-hanh-chinh) |
+| **5. Q12 Interactive Set-Piece** | • Màn kết thời gian thực 6 nhịp (`B0 Chuẩn bị → B1 Tiếp cận → B2 Giữ an toàn → B3 Bàn giao → B4 Đối chất P01–P05 → B5 Hậu quả`).<br>• Ba Route kết thúc độc lập: Route A (Công khai), Route B (Che chở), Route C (Bảo vệ con người). | [Doc 03 · Mục 18](03-narrative-bible.md#18-q12-interactive-set-piece-da-tuyen) |

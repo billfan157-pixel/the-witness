@@ -1,0 +1,14 @@
+ID,name,region,evidence,priority,tri_budget,status,license,source,region_lock,access,art_accepted
+CAE-WALL-PIPELINE-01,Module tuong thu pipeline 4m,caesarea,H,P0,800,pipeline-prototype,project-authored,tools/environment-kit/build-kit.cjs,caesarea,closed,false
+CAE-WALL-PBR-02,Module tuong PBR KTX2 Meshopt 4m,caesarea,H,P0,800,pipeline-surface-study,CC0-1.0+project-authored,tools/environment-kit/compress-kit.mjs,caesarea,closed,false
+CAE-STORE-BLOCKOUT-03,Kho phia tay Q01 9x8m,caesarea,H,P0,3000,playable-blockout,project-authored,witness-architecture.js,caesarea,interior+stairs+roof,false
+CAE-STORE-GOLD-04,Kho phia tay Q01 look development,caesarea,H,P0,12000,art-review-candidate,CC0-1.0+project-authored,witness-architecture.js,caesarea,interior+stairs+roof,false
+CAE-HARBOR-DRESS-04,Ben va vat dung Q01,caesarea,H,P0,55000,art-review-candidate,CC0-1.0+project-authored,witness-q01.js,caesarea,walkable,false
+CAE-TITUS-HERO-04,Titus phuc trang lao dong Q01,caesarea,H,P0,70000,art-review-candidate,CC0-1.0+project-authored,witness-q01.js,caesarea,npc,false
+ENV-ARCH-WALL-05,Module tuong ashlar bo canh + mask weathering 4m,shared,H,P0,1200,modular-kit,project-authored+CC0-1.0,tools/environment-kit/build-arch-kit.mjs,shared,closed,false
+ENV-ARCH-COLUMN-05,Cot La Ma entasis flute 4m6,shared,H,P0,1500,modular-kit,project-authored+CC0-1.0,tools/environment-kit/build-arch-kit.mjs,shared,closed,false
+ENV-TERRAIN-HM-05,Heightmap 16-bit xoi mòn thuy luc Galilea Jerusalem Caesarea,shared,H,P0,0,eroded-heightmap,project-authored,tools/prepare-heightmaps.cjs,shared,world,false
+CAE-STORE-PB-05,Kho Q01 ashlar loi tho trat voi cua van va o thong sang,caesarea,H,P0,70000,art-review-candidate,project-authored+CC0-1.0,witness-q01-environment.js,caesarea,interior+stairs+roof,false
+CAE-QUAY-PB-05,Ke cong da mong mat dung da nap va tiep dat,caesarea,H,P0,40000,art-review-candidate,project-authored+CC0-1.0,witness-q01-environment.js,caesarea,walkable,false
+CAE-SURFACE-PB-05,Bo PBR ashlar rubble full1024 lite512 co nguon va hash,caesarea,H,P0,0,art-review-candidate,CC0-1.0,tools/environment-kit/prepare-phase-b-materials.mjs,caesarea,material,false
+CAE-GI-PB-05,SH9 GI tinh ngay toi 550 probe 512 ray 3 bounce,caesarea,H,P0,0,baked-proxy-GI,project-authored,tools/bake-q01-gi.cjs,caesarea,interior,false

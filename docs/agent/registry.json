@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "scope": "THE WITNESS repository governance; not a build manifest or proof of semantic acceptance",
   "baselineDate": "2026-11-10",
   "baselineHead": "ac01bccc0bceb02e56e15b2a0ebd4539bed740df",
@@ -156,6 +156,13 @@
       "kind": "mixed",
       "admission": true,
       "reason": "Pinned libraries and authored/generated integrations; consult architecture before editing"
+    },
+    {
+      "prefix": "local/",
+      "owner": "local-history",
+      "kind": "local-checkout",
+      "admission": false,
+      "reason": "Ignored complete historical checkouts and release files; not canonical source or deploy payload"
     }
   ],
   "knownFiles": [
@@ -194,7 +201,7 @@
     "docs/the-witness/11-chapter-dossiers.md",
     "docs/the-witness/12-continuity-and-state.md",
     "docs/the-witness/13-legends-spine-charter.md",
-    "docs/the-witness/14-input-and-ux-research.md",
+    "docs/the-witness/24-input-and-ux-research.md",
     "docs/the-witness/14-legends-depth-dossiers.md",
     "docs/the-witness/15-source-world-packets.md",
     "docs/the-witness/16-depth-research.md",
@@ -362,19 +369,34 @@
       "reason": "Single entrypoint for every agent working in this repository"
     },
     {
-      "path": "docs/agent/README.md",
-      "owner": "agent-governance",
-      "reason": "Authority map to existing canonical domain sources"
+      "path": "docs/ENGINEERING.md",
+      "owner": "documentation-v2",
+      "reason": "Điều hành một miền có phạm vi rõ; đọc phần liên quan theo task route"
     },
     {
-      "path": "docs/agent/architecture.md",
-      "owner": "agent-governance",
-      "reason": "Ownership and source-to-generated pipeline map"
+      "path": "docs/OPERATIONS.md",
+      "owner": "documentation-v2",
+      "reason": "Điều hành một miền có phạm vi rõ; đọc phần liên quan theo task route"
     },
     {
-      "path": "docs/agent/audit-2026-11-10.md",
-      "owner": "agent-governance",
-      "reason": "Dated baseline audit, scope and findings"
+      "path": "docs/PRODUCT.md",
+      "owner": "documentation-v2",
+      "reason": "Điều hành một miền có phạm vi rõ; đọc phần liên quan theo task route"
+    },
+    {
+      "path": "docs/README.md",
+      "owner": "documentation-v2",
+      "reason": "Điều hành một miền có phạm vi rõ; đọc phần liên quan theo task route"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "owner": "documentation-v2",
+      "reason": "Điều hành một miền có phạm vi rõ; đọc phần liên quan theo task route"
+    },
+    {
+      "path": "docs/STORY.md",
+      "owner": "documentation-v2",
+      "reason": "Điều hành một miền có phạm vi rõ; đọc phần liên quan theo task route"
     },
     {
       "path": "docs/agent/cleanup-record.json",
@@ -382,39 +404,9 @@
       "reason": "Auditable retirement and archive ledger with hashes, reasons and Git recovery objects"
     },
     {
-      "path": "docs/agent/decisions.md",
-      "owner": "agent-governance",
-      "reason": "Durable governance decisions in one maintained log"
-    },
-    {
       "path": "docs/agent/registry.json",
       "owner": "agent-governance",
       "reason": "Machine-readable source admission and integrity registry"
-    },
-    {
-      "path": "docs/agent/repository-policy.md",
-      "owner": "agent-governance",
-      "reason": "File admission, placement and retention policy"
-    },
-    {
-      "path": "docs/agent/status.md",
-      "owner": "agent-governance",
-      "reason": "Living design/runtime/evidence gap register"
-    },
-    {
-      "path": "docs/agent/verification.md",
-      "owner": "agent-governance",
-      "reason": "Risk-based verification commands and limits"
-    },
-    {
-      "path": "docs/agent/workflow.md",
-      "owner": "agent-governance",
-      "reason": "Change lifecycle and source update procedure"
-    },
-    {
-      "path": "docs/agent/worklog.md",
-      "owner": "agent-governance",
-      "reason": "Single multi-step work and handoff log"
     },
     {
       "path": "docs/archive/README.md",
@@ -430,6 +422,31 @@
       "path": "docs/archive/environment-roadmap-phase3.docx",
       "owner": "repository-maintenance",
       "reason": "Preserved Phase 3 Word milestone, no longer an active roadmap"
+    },
+    {
+      "path": "docs/archive/imports/THE WITNESS — Deep Review and AAA Graphics Upgrade Proposal.docx",
+      "owner": "supplied-reference",
+      "reason": "Original user-supplied historical/proposal Word source; provenance recorded in cleanup ledger"
+    },
+    {
+      "path": "docs/archive/imports/THE WITNESS — Environment Kit Roadmap (8 weeks).docx",
+      "owner": "supplied-reference",
+      "reason": "Original user-supplied historical/proposal Word source; provenance recorded in cleanup ledger"
+    },
+    {
+      "path": "docs/archive/imports/THE WITNESS — Tái thiết kế cốt truyện v4.docx",
+      "owner": "supplied-reference",
+      "reason": "Original user-supplied historical/proposal Word source; provenance recorded in cleanup ledger"
+    },
+    {
+      "path": "docs/archive/imports/UNSEALED_WITNESS_Narrative_Bible_C_Plus_v5.docx",
+      "owner": "supplied-reference",
+      "reason": "Original user-supplied historical/proposal Word source; provenance recorded in cleanup ledger"
+    },
+    {
+      "path": "docs/archive/imports/UNSEALED_WITNESS_Narrative_Scene_Bible_C_Plus_v6.docx",
+      "owner": "supplied-reference",
+      "reason": "Original user-supplied historical/proposal Word source; provenance recorded in cleanup ledger"
     },
     {
       "path": "docs/archive/reuse-gap-analysis-2026-11-07.md",
@@ -466,17 +483,14 @@
     "AGENTS.md",
     "README.md",
     "db/schema.ts",
-    "docs/agent/README.md",
-    "docs/agent/architecture.md",
-    "docs/agent/audit-2026-11-10.md",
+    "docs/ENGINEERING.md",
+    "docs/OPERATIONS.md",
+    "docs/PRODUCT.md",
+    "docs/README.md",
+    "docs/STATUS.md",
+    "docs/STORY.md",
     "docs/agent/cleanup-record.json",
-    "docs/agent/decisions.md",
     "docs/agent/registry.json",
-    "docs/agent/repository-policy.md",
-    "docs/agent/status.md",
-    "docs/agent/verification.md",
-    "docs/agent/workflow.md",
-    "docs/agent/worklog.md",
     "docs/archive/README.md",
     "docs/archive/character-research-htlc-2026-11-07.md",
     "docs/archive/environment-roadmap-phase3.docx",
@@ -490,7 +504,6 @@
     "docs/environment-kit/q01-gold-scene.md",
     "docs/environment-kit/roadmap.md",
     "docs/environment-kit/standards.md",
-    "docs/the-witness/01-vision-research.md",
     "docs/the-witness/02-game-design-document.md",
     "docs/the-witness/03-narrative-bible.md",
     "docs/the-witness/04-world-bible.md",
@@ -498,20 +511,14 @@
     "docs/the-witness/06-campaign-quest-bible.md",
     "docs/the-witness/07-vertical-slice-screenplay.md",
     "docs/the-witness/08-scripture-reference.md",
-    "docs/the-witness/09-production-technical-plan.md",
     "docs/the-witness/10-source-register.md",
     "docs/the-witness/11-chapter-dossiers.md",
     "docs/the-witness/12-continuity-and-state.md",
-    "docs/the-witness/13-legends-spine-charter.md",
-    "docs/the-witness/14-input-and-ux-research.md",
+    "docs/the-witness/24-input-and-ux-research.md",
     "docs/the-witness/14-legends-depth-dossiers.md",
     "docs/the-witness/15-source-world-packets.md",
-    "docs/the-witness/16-depth-research.md",
-    "docs/the-witness/17-encounter-atlas.md",
     "docs/the-witness/18-scene-craft-and-dialogue.md",
     "docs/the-witness/19-depth-playtest.md",
-    "docs/the-witness/20-scene-implementation.md",
-    "docs/the-witness/21-first-person-research.md",
     "docs/the-witness/22-graphics-rendering.md",
     "docs/the-witness/23-backend-and-cloud-saves.md",
     "docs/the-witness/README.md",
@@ -557,18 +564,858 @@
     ".agents/skills/witness-release/SKILL.md",
     "AGENTS.md",
     "README.md",
-    "docs/agent/README.md",
-    "docs/agent/architecture.md",
-    "docs/agent/audit-2026-11-10.md",
-    "docs/agent/decisions.md",
-    "docs/agent/repository-policy.md",
-    "docs/agent/status.md",
-    "docs/agent/verification.md",
-    "docs/agent/workflow.md",
-    "docs/agent/worklog.md",
+    "docs/ENGINEERING.md",
+    "docs/OPERATIONS.md",
+    "docs/PRODUCT.md",
+    "docs/README.md",
+    "docs/STATUS.md",
+    "docs/STORY.md",
     "docs/archive/README.md",
     "docs/environment-kit/README.md",
+    "docs/environment-kit/look-bible.md",
+    "docs/environment-kit/phase-3.md",
+    "docs/environment-kit/phase-b.md",
+    "docs/environment-kit/q01-gold-scene.md",
+    "docs/environment-kit/research/q01-gold-materials.md",
+    "docs/environment-kit/research/q01-phase-b-materials.md",
+    "docs/environment-kit/research/source-register.md",
+    "docs/environment-kit/roadmap.md",
+    "docs/environment-kit/standards.md",
+    "docs/the-witness/02-game-design-document.md",
+    "docs/the-witness/03-narrative-bible.md",
+    "docs/the-witness/04-world-bible.md",
+    "docs/the-witness/05-character-bible.md",
+    "docs/the-witness/06-campaign-quest-bible.md",
+    "docs/the-witness/07-vertical-slice-screenplay.md",
+    "docs/the-witness/08-scripture-reference.md",
+    "docs/the-witness/10-source-register.md",
+    "docs/the-witness/11-chapter-dossiers.md",
+    "docs/the-witness/12-continuity-and-state.md",
+    "docs/the-witness/24-input-and-ux-research.md",
+    "docs/the-witness/14-legends-depth-dossiers.md",
+    "docs/the-witness/15-source-world-packets.md",
+    "docs/the-witness/18-scene-craft-and-dialogue.md",
+    "docs/the-witness/19-depth-playtest.md",
+    "docs/the-witness/22-graphics-rendering.md",
+    "docs/the-witness/23-backend-and-cloud-saves.md",
     "docs/the-witness/README.md"
   ],
-  "retirementLedger": "docs/agent/cleanup-record.json"
+  "retirementLedger": "docs/agent/cleanup-record.json",
+  "knowledge": {
+    "version": 2,
+    "coreDocuments": [
+      "docs/README.md",
+      "docs/PRODUCT.md",
+      "docs/STORY.md",
+      "docs/ENGINEERING.md",
+      "docs/OPERATIONS.md",
+      "docs/STATUS.md"
+    ],
+    "roles": [
+      {
+        "path": "docs/ENGINEERING.md",
+        "role": "canonical",
+        "owner": "engineering",
+        "value": "Điều hành một miền có phạm vi rõ; đọc phần liên quan theo task route"
+      },
+      {
+        "path": "docs/environment-kit/look-bible.md",
+        "role": "specification",
+        "owner": "environment",
+        "value": "Hợp đồng cảnh/asset hoặc phạm vi nghiệm thu; giữ chi tiết riêng thay vì chép vào core"
+      },
+      {
+        "path": "docs/environment-kit/phase-3.md",
+        "role": "specification",
+        "owner": "environment",
+        "value": "Hợp đồng cảnh/asset hoặc phạm vi nghiệm thu; giữ chi tiết riêng thay vì chép vào core"
+      },
+      {
+        "path": "docs/environment-kit/phase-b.md",
+        "role": "specification",
+        "owner": "environment",
+        "value": "Hợp đồng cảnh/asset hoặc phạm vi nghiệm thu; giữ chi tiết riêng thay vì chép vào core"
+      },
+      {
+        "path": "docs/environment-kit/q01-gold-scene.md",
+        "role": "specification",
+        "owner": "environment",
+        "value": "Hợp đồng cảnh/asset hoặc phạm vi nghiệm thu; giữ chi tiết riêng thay vì chép vào core"
+      },
+      {
+        "path": "docs/environment-kit/README.md",
+        "role": "index",
+        "owner": "navigation",
+        "value": "Chỉ mục tương thích, không sở hữu quy tắc sản phẩm hoặc hiện trạng"
+      },
+      {
+        "path": "docs/environment-kit/research/q01-gold-materials.md",
+        "role": "research",
+        "owner": "environment",
+        "value": "Luận cứ và nguồn đọc có điều kiện; các claim/thông số cũ phải kiểm lại trước áp dụng"
+      },
+      {
+        "path": "docs/environment-kit/research/q01-phase-b-materials.md",
+        "role": "research",
+        "owner": "environment",
+        "value": "Luận cứ và nguồn đọc có điều kiện; các claim/thông số cũ phải kiểm lại trước áp dụng"
+      },
+      {
+        "path": "docs/environment-kit/research/source-register.md",
+        "role": "research",
+        "owner": "environment",
+        "value": "Luận cứ và nguồn đọc có điều kiện; các claim/thông số cũ phải kiểm lại trước áp dụng"
+      },
+      {
+        "path": "docs/environment-kit/roadmap.md",
+        "role": "specification",
+        "owner": "environment",
+        "value": "Hợp đồng cảnh/asset hoặc phạm vi nghiệm thu; giữ chi tiết riêng thay vì chép vào core"
+      },
+      {
+        "path": "docs/environment-kit/standards.md",
+        "role": "specification",
+        "owner": "environment",
+        "value": "Hợp đồng cảnh/asset hoặc phạm vi nghiệm thu; giữ chi tiết riêng thay vì chép vào core"
+      },
+      {
+        "path": "docs/OPERATIONS.md",
+        "role": "canonical",
+        "owner": "operations",
+        "value": "Điều hành một miền có phạm vi rõ; đọc phần liên quan theo task route"
+      },
+      {
+        "path": "docs/PRODUCT.md",
+        "role": "canonical",
+        "owner": "product",
+        "value": "Điều hành một miền có phạm vi rõ; đọc phần liên quan theo task route"
+      },
+      {
+        "path": "docs/README.md",
+        "role": "canonical",
+        "owner": "navigation",
+        "value": "Điều hành một miền có phạm vi rõ; đọc phần liên quan theo task route"
+      },
+      {
+        "path": "docs/STATUS.md",
+        "role": "canonical",
+        "owner": "status",
+        "value": "Điều hành một miền có phạm vi rõ; đọc phần liên quan theo task route"
+      },
+      {
+        "path": "docs/STORY.md",
+        "role": "canonical",
+        "owner": "story",
+        "value": "Điều hành một miền có phạm vi rõ; đọc phần liên quan theo task route"
+      },
+      {
+        "path": "docs/the-witness/02-game-design-document.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ thiết kế hệ thống và đề xuất scene v6, loại quyền sở hữu các bất biến đã đưa lên PRODUCT",
+        "limits": "Có nội dung trùng Narrative/charter và khác runtime; chỉ dùng phần hệ thống được ủy quyền"
+      },
+      {
+        "path": "docs/the-witness/03-narrative-bible.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ cốt truyện tổng hợp và thiết kế scene v6 làm chi tiết truyện",
+        "limits": "E11/E12/P05 chưa đồng bộ runtime; các bảng nhân vật/quest tóm tắt không ghi đè file sở hữu"
+      },
+      {
+        "path": "docs/the-witness/04-world-bible.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ địa lý, đời sống, ontology và art/world context riêng",
+        "limits": "Dữ kiện khảo cổ phải có nguồn/phạm vi, không tự chứng nhận toàn bộ phục dựng"
+      },
+      {
+        "path": "docs/the-witness/05-character-bible.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ hồ sơ động cơ, quan hệ và tri thức nhân vật",
+        "limits": "Sự thật vụ hàng và quyền biết đối chiếu 12, không nhân đôi bảng truth"
+      },
+      {
+        "path": "docs/the-witness/06-campaign-quest-bible.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ cấu trúc hồi, nhiệm vụ và nối chiến dịch; bảo toàn bản đang sửa",
+        "limits": "Thiết kế route/gate đối chiếu contract; không coi summary đã là implementation"
+      },
+      {
+        "path": "docs/the-witness/07-vertical-slice-screenplay.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ blocking/thoại/chuỗi Q01-Q03-L01 chi tiết, có thay đổi chưa commit",
+        "limits": "Thời lượng và one-shot là đặc tả, chưa chứng minh qua playtest"
+      },
+      {
+        "path": "docs/the-witness/08-scripture-reference.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ canon lock, thứ bậc nguồn, nhãn và quyền dịch thuật tập trung",
+        "limits": "Chưa phê chuẩn chuyên môn hoặc bản Việt để phát hành"
+      },
+      {
+        "path": "docs/the-witness/10-source-register.md",
+        "role": "research",
+        "owner": "content",
+        "value": "Một sổ nguồn/luận cứ, gộp nghiên cứu vision/depth để tránh ba nguồn giải thích song song",
+        "limits": "Nghiên cứu lịch sử không sở hữu hiện trạng; mỗi nguồn giữ giới hạn ban đầu"
+      },
+      {
+        "path": "docs/the-witness/11-chapter-dossiers.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ điều kiện, động cơ, route và callback từng Q, có việc chưa commit",
+        "limits": "ID/route triển khai lấy contract; phân biệt Q thiết kế với model hiện tại"
+      },
+      {
+        "path": "docs/the-witness/12-continuity-and-state.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ sự thật T01-T13, evidence/claim lineage và phạm vi tri thức tại một nơi",
+        "limits": "Truth/claim v6 còn lệch contract v3; không tự chọn bản mới hơn làm code"
+      },
+      {
+        "path": "docs/the-witness/24-input-and-ux-research.md",
+        "role": "research",
+        "owner": "content",
+        "value": "Gộp nghiên cứu input và góc nhìn thứ nhất, chỉ đọc khi cần căn cứ UX",
+        "limits": "Thông số đề xuất không phải cấu hình engine hiện hành"
+      },
+      {
+        "path": "docs/the-witness/14-legends-depth-dossiers.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ chuỗi scene/core, không gian và hai định dạng của ba Legends",
+        "limits": "Ngân sách phút còn lệch contract, cần quyết định riêng"
+      },
+      {
+        "path": "docs/the-witness/15-source-world-packets.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ sáu packet nguồn/thế giới và phạm vi review của Legends",
+        "limits": "Bảy vai duyệt chưa có xác nhận; không dùng packet như phê chuẩn"
+      },
+      {
+        "path": "docs/the-witness/18-scene-craft-and-dialogue.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ thoại và ngữ pháp cảm xúc không thể tái tạo chỉ từ code",
+        "limits": "Mốc biên tập 0.4; không sở hữu danh mục runtime hoặc title chapter hiện hành"
+      },
+      {
+        "path": "docs/the-witness/19-depth-playtest.md",
+        "role": "specification",
+        "owner": "content",
+        "value": "Giữ protocol đo bằng người thật, câu hỏi và ngưỡng chấp nhận có thể tái dùng",
+        "limits": "Là kế hoạch chưa chạy; khác kiểm phần mềm"
+      },
+      {
+        "path": "docs/the-witness/22-graphics-rendering.md",
+        "role": "specification",
+        "owner": "engineering",
+        "value": "Giữ tham chiếu kỹ thuật renderer chuyên biệt thay vì phình ENGINEERING",
+        "limits": "Mỗi claim phải đối chiếu module và report đúng build"
+      },
+      {
+        "path": "docs/the-witness/23-backend-and-cloud-saves.md",
+        "role": "specification",
+        "owner": "engineering",
+        "value": "Giữ hợp đồng API, auth/CAS/recovery và schema operations riêng do rủi ro dữ liệu",
+        "limits": "Không thay kết quả production hoặc diễn tập recovery thật"
+      },
+      {
+        "path": "docs/the-witness/README.md",
+        "role": "index",
+        "owner": "navigation",
+        "value": "Chỉ mục tương thích, không sở hữu quy tắc sản phẩm hoặc hiện trạng"
+      }
+    ],
+    "tasks": [
+      {
+        "id": "change",
+        "skill": ".agents/skills/witness-change/SKILL.md",
+        "required": [
+          "docs/STATUS.md#open",
+          "docs/OPERATIONS.md#change",
+          "docs/ENGINEERING.md#runtime"
+        ],
+        "details": [
+          "docs/the-witness/22-graphics-rendering.md",
+          "docs/the-witness/23-backend-and-cloud-saves.md"
+        ],
+        "implementation": [
+          "witness-model.js",
+          "witness-app.js",
+          "index.html",
+          "tools/build.cjs"
+        ],
+        "checks": [
+          {
+            "command": "npm run check:agents",
+            "when": "mọi thay đổi"
+          },
+          {
+            "command": "npm test",
+            "when": "model/luật"
+          },
+          {
+            "command": "npm run test:browser",
+            "when": "UI"
+          }
+        ],
+        "updates": [
+          "docs/ENGINEERING.md",
+          "docs/STATUS.md"
+        ]
+      },
+      {
+        "id": "content",
+        "skill": ".agents/skills/witness-content/SKILL.md",
+        "required": [
+          "docs/STATUS.md#open",
+          "docs/PRODUCT.md#invariants",
+          "docs/STORY.md#ownership",
+          "docs/OPERATIONS.md#verify"
+        ],
+        "details": [
+          "docs/the-witness/02-game-design-document.md",
+          "docs/the-witness/03-narrative-bible.md",
+          "docs/the-witness/04-world-bible.md",
+          "docs/the-witness/05-character-bible.md",
+          "docs/the-witness/06-campaign-quest-bible.md",
+          "docs/the-witness/07-vertical-slice-screenplay.md",
+          "docs/the-witness/08-scripture-reference.md",
+          "docs/the-witness/10-source-register.md",
+          "docs/the-witness/11-chapter-dossiers.md",
+          "docs/the-witness/12-continuity-and-state.md",
+          "docs/the-witness/24-input-and-ux-research.md",
+          "docs/the-witness/14-legends-depth-dossiers.md",
+          "docs/the-witness/15-source-world-packets.md",
+          "docs/the-witness/18-scene-craft-and-dialogue.md",
+          "docs/the-witness/19-depth-playtest.md"
+        ],
+        "implementation": [
+          "witness-content.js",
+          "witness-spine.js",
+          "witness-depth.js",
+          "witness-relationships.js",
+          "witness-craft.js",
+          "witness-model.js",
+          "docs/the-witness/campaign-contract.json",
+          "docs/the-witness/design-contract.json"
+        ],
+        "checks": [
+          {
+            "command": "python tools/validate-witness-contracts.py",
+            "when": "design/contract"
+          },
+          {
+            "command": "npm test",
+            "when": "nội dung được thực thi"
+          },
+          {
+            "command": "npm run test:backend",
+            "when": "schema/restore"
+          }
+        ],
+        "updates": [
+          "docs/STORY.md",
+          "docs/STATUS.md"
+        ]
+      },
+      {
+        "id": "environment",
+        "skill": ".agents/skills/witness-environment/SKILL.md",
+        "required": [
+          "docs/STATUS.md#open",
+          "docs/ENGINEERING.md#environment",
+          "docs/OPERATIONS.md#verify"
+        ],
+        "details": [
+          "docs/environment-kit/look-bible.md",
+          "docs/environment-kit/phase-3.md",
+          "docs/environment-kit/phase-b.md",
+          "docs/environment-kit/q01-gold-scene.md",
+          "docs/environment-kit/research/q01-gold-materials.md",
+          "docs/environment-kit/research/q01-phase-b-materials.md",
+          "docs/environment-kit/research/source-register.md",
+          "docs/environment-kit/roadmap.md",
+          "docs/environment-kit/standards.md",
+          "docs/the-witness/04-world-bible.md",
+          "docs/the-witness/24-input-and-ux-research.md"
+        ],
+        "implementation": [
+          "witness-world.js",
+          "witness-architecture.js",
+          "witness-q01-environment.js",
+          "tools/environment-kit/engine-runtime.js",
+          "witness-audio.js",
+          "assets/ART-CREDITS.md",
+          "docs/environment-kit/catalog.csv",
+          "docs/environment-kit/progress.json"
+        ],
+        "checks": [
+          {
+            "command": "npm run test:architecture",
+            "when": "collision/tầng"
+          },
+          {
+            "command": "node test/q01-env.cjs",
+            "when": "Q01"
+          },
+          {
+            "command": "npm run test:graphics",
+            "when": "renderer"
+          },
+          {
+            "command": "npm run test:kit-budget",
+            "when": "asset"
+          },
+          {
+            "command": "node tools/bake-q01-gi.cjs --check",
+            "when": "GI"
+          }
+        ],
+        "updates": [
+          "docs/ENGINEERING.md#environment",
+          "docs/environment-kit/phase-b.md",
+          "docs/STATUS.md"
+        ]
+      },
+      {
+        "id": "release",
+        "skill": ".agents/skills/witness-release/SKILL.md",
+        "required": [
+          "docs/STATUS.md#open",
+          "docs/ENGINEERING.md#pipeline",
+          "docs/OPERATIONS.md#verify"
+        ],
+        "details": [
+          "docs/environment-kit/standards.md",
+          "docs/the-witness/22-graphics-rendering.md",
+          "docs/the-witness/23-backend-and-cloud-saves.md"
+        ],
+        "implementation": [
+          "tools/build.cjs",
+          "tools/build-cloud.mjs",
+          "tools/build-output.cjs",
+          "package.json",
+          ".openai/hosting.json",
+          "db/schema.ts",
+          "server/worker.mjs"
+        ],
+        "checks": [
+          {
+            "command": "npm run test:build-output",
+            "when": "pipeline"
+          },
+          {
+            "command": "npm run build",
+            "when": "candidate"
+          },
+          {
+            "command": "npm run test:backend",
+            "when": "cloud/schema"
+          }
+        ],
+        "updates": [
+          "docs/STATUS.md",
+          "docs/ENGINEERING.md#pipeline"
+        ]
+      }
+    ],
+    "domains": [
+      {
+        "id": "product",
+        "authority": "docs/PRODUCT.md#invariants"
+      },
+      {
+        "id": "story",
+        "authority": "docs/STORY.md#ownership"
+      },
+      {
+        "id": "engineering",
+        "authority": "docs/ENGINEERING.md#runtime"
+      },
+      {
+        "id": "environment",
+        "authority": "docs/ENGINEERING.md#environment"
+      },
+      {
+        "id": "operations",
+        "authority": "docs/OPERATIONS.md#change"
+      },
+      {
+        "id": "status",
+        "authority": "docs/STATUS.md#open"
+      }
+    ],
+    "method": {
+      "criteria": [
+        "decision ownership",
+        "unique actionable detail",
+        "runtime/evidence agreement",
+        "duplication and reading cost",
+        "consumer and maintenance cost"
+      ],
+      "research": [
+        {
+          "url": "https://diataxis.fr/start-here/",
+          "application": "Separate goal-oriented procedure, reference, and research explanation"
+        },
+        {
+          "url": "https://agentskills.io/specification#progressive-disclosure",
+          "application": "Short skill entrypoints directly link required sources; load detail on demand"
+        }
+      ]
+    },
+    "evaluation": [
+      {
+        "path": "docs/agent/README.md",
+        "bytesBefore": 6314,
+        "action": "consolidated",
+        "replacement": "docs/README.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/agent/architecture.md",
+        "bytesBefore": 5611,
+        "action": "consolidated",
+        "replacement": "docs/ENGINEERING.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/agent/audit-2026-11-10.md",
+        "bytesBefore": 4286,
+        "action": "consolidated",
+        "replacement": "docs/agent/registry.json",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/agent/decisions.md",
+        "bytesBefore": 4378,
+        "action": "consolidated",
+        "replacement": "docs/STATUS.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/agent/repository-policy.md",
+        "bytesBefore": 5783,
+        "action": "consolidated",
+        "replacement": "docs/OPERATIONS.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/agent/status.md",
+        "bytesBefore": 3683,
+        "action": "consolidated",
+        "replacement": "docs/STATUS.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/agent/verification.md",
+        "bytesBefore": 5033,
+        "action": "consolidated",
+        "replacement": "docs/OPERATIONS.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/agent/workflow.md",
+        "bytesBefore": 4379,
+        "action": "consolidated",
+        "replacement": "docs/OPERATIONS.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/agent/worklog.md",
+        "bytesBefore": 5622,
+        "action": "consolidated",
+        "replacement": "docs/OPERATIONS.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/environment-kit/README.md",
+        "bytesBefore": 8319,
+        "action": "retained-by-role",
+        "replacement": "docs/environment-kit/README.md",
+        "reason": "Chỉ mục tương thích, không sở hữu quy tắc sản phẩm hoặc hiện trạng"
+      },
+      {
+        "path": "docs/environment-kit/look-bible.md",
+        "bytesBefore": 1589,
+        "action": "retained-by-role",
+        "replacement": "docs/environment-kit/look-bible.md",
+        "reason": "Hợp đồng cảnh/asset hoặc phạm vi nghiệm thu; giữ chi tiết riêng thay vì chép vào core"
+      },
+      {
+        "path": "docs/environment-kit/phase-3.md",
+        "bytesBefore": 6855,
+        "action": "retained-by-role",
+        "replacement": "docs/environment-kit/phase-3.md",
+        "reason": "Hợp đồng cảnh/asset hoặc phạm vi nghiệm thu; giữ chi tiết riêng thay vì chép vào core"
+      },
+      {
+        "path": "docs/environment-kit/phase-b.md",
+        "bytesBefore": 5272,
+        "action": "retained-by-role",
+        "replacement": "docs/environment-kit/phase-b.md",
+        "reason": "Hợp đồng cảnh/asset hoặc phạm vi nghiệm thu; giữ chi tiết riêng thay vì chép vào core"
+      },
+      {
+        "path": "docs/environment-kit/q01-gold-scene.md",
+        "bytesBefore": 6022,
+        "action": "retained-by-role",
+        "replacement": "docs/environment-kit/q01-gold-scene.md",
+        "reason": "Hợp đồng cảnh/asset hoặc phạm vi nghiệm thu; giữ chi tiết riêng thay vì chép vào core"
+      },
+      {
+        "path": "docs/environment-kit/research/q01-gold-materials.md",
+        "bytesBefore": 10158,
+        "action": "retained-by-role",
+        "replacement": "docs/environment-kit/research/q01-gold-materials.md",
+        "reason": "Luận cứ và nguồn đọc có điều kiện; các claim/thông số cũ phải kiểm lại trước áp dụng"
+      },
+      {
+        "path": "docs/environment-kit/research/q01-phase-b-materials.md",
+        "bytesBefore": 10591,
+        "action": "retained-by-role",
+        "replacement": "docs/environment-kit/research/q01-phase-b-materials.md",
+        "reason": "Luận cứ và nguồn đọc có điều kiện; các claim/thông số cũ phải kiểm lại trước áp dụng"
+      },
+      {
+        "path": "docs/environment-kit/research/source-register.md",
+        "bytesBefore": 6700,
+        "action": "retained-by-role",
+        "replacement": "docs/environment-kit/research/source-register.md",
+        "reason": "Luận cứ và nguồn đọc có điều kiện; các claim/thông số cũ phải kiểm lại trước áp dụng"
+      },
+      {
+        "path": "docs/environment-kit/roadmap.md",
+        "bytesBefore": 11992,
+        "action": "retained-by-role",
+        "replacement": "docs/environment-kit/roadmap.md",
+        "reason": "Hợp đồng cảnh/asset hoặc phạm vi nghiệm thu; giữ chi tiết riêng thay vì chép vào core"
+      },
+      {
+        "path": "docs/environment-kit/standards.md",
+        "bytesBefore": 4839,
+        "action": "retained-by-role",
+        "replacement": "docs/environment-kit/standards.md",
+        "reason": "Hợp đồng cảnh/asset hoặc phạm vi nghiệm thu; giữ chi tiết riêng thay vì chép vào core"
+      },
+      {
+        "path": "docs/the-witness/01-vision-research.md",
+        "bytesBefore": 10158,
+        "action": "consolidated",
+        "replacement": "docs/the-witness/10-source-register.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/the-witness/02-game-design-document.md",
+        "bytesBefore": 53720,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/02-game-design-document.md",
+        "reason": "Giữ thiết kế hệ thống và đề xuất scene v6, loại quyền sở hữu các bất biến đã đưa lên PRODUCT",
+        "limits": "Có nội dung trùng Narrative/charter và khác runtime; chỉ dùng phần hệ thống được ủy quyền"
+      },
+      {
+        "path": "docs/the-witness/03-narrative-bible.md",
+        "bytesBefore": 76939,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/03-narrative-bible.md",
+        "reason": "Giữ cốt truyện tổng hợp và thiết kế scene v6 làm chi tiết truyện",
+        "limits": "E11/E12/P05 chưa đồng bộ runtime; các bảng nhân vật/quest tóm tắt không ghi đè file sở hữu"
+      },
+      {
+        "path": "docs/the-witness/04-world-bible.md",
+        "bytesBefore": 24975,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/04-world-bible.md",
+        "reason": "Giữ địa lý, đời sống, ontology và art/world context riêng",
+        "limits": "Dữ kiện khảo cổ phải có nguồn/phạm vi, không tự chứng nhận toàn bộ phục dựng"
+      },
+      {
+        "path": "docs/the-witness/05-character-bible.md",
+        "bytesBefore": 17255,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/05-character-bible.md",
+        "reason": "Giữ hồ sơ động cơ, quan hệ và tri thức nhân vật",
+        "limits": "Sự thật vụ hàng và quyền biết đối chiếu 12, không nhân đôi bảng truth"
+      },
+      {
+        "path": "docs/the-witness/06-campaign-quest-bible.md",
+        "bytesBefore": 30945,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/06-campaign-quest-bible.md",
+        "reason": "Giữ cấu trúc hồi, nhiệm vụ và nối chiến dịch; bảo toàn bản đang sửa",
+        "limits": "Thiết kế route/gate đối chiếu contract; không coi summary đã là implementation"
+      },
+      {
+        "path": "docs/the-witness/07-vertical-slice-screenplay.md",
+        "bytesBefore": 61324,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/07-vertical-slice-screenplay.md",
+        "reason": "Giữ blocking/thoại/chuỗi Q01-Q03-L01 chi tiết, có thay đổi chưa commit",
+        "limits": "Thời lượng và one-shot là đặc tả, chưa chứng minh qua playtest"
+      },
+      {
+        "path": "docs/the-witness/08-scripture-reference.md",
+        "bytesBefore": 12830,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/08-scripture-reference.md",
+        "reason": "Giữ canon lock, thứ bậc nguồn, nhãn và quyền dịch thuật tập trung",
+        "limits": "Chưa phê chuẩn chuyên môn hoặc bản Việt để phát hành"
+      },
+      {
+        "path": "docs/the-witness/09-production-technical-plan.md",
+        "bytesBefore": 9547,
+        "action": "consolidated",
+        "replacement": "docs/ENGINEERING.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/the-witness/10-source-register.md",
+        "bytesBefore": 22057,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/10-source-register.md",
+        "reason": "Một sổ nguồn/luận cứ, gộp nghiên cứu vision/depth để tránh ba nguồn giải thích song song",
+        "limits": "Nghiên cứu lịch sử không sở hữu hiện trạng; mỗi nguồn giữ giới hạn ban đầu"
+      },
+      {
+        "path": "docs/the-witness/11-chapter-dossiers.md",
+        "bytesBefore": 40923,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/11-chapter-dossiers.md",
+        "reason": "Giữ điều kiện, động cơ, route và callback từng Q, có việc chưa commit",
+        "limits": "ID/route triển khai lấy contract; phân biệt Q thiết kế với model hiện tại"
+      },
+      {
+        "path": "docs/the-witness/12-continuity-and-state.md",
+        "bytesBefore": 19008,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/12-continuity-and-state.md",
+        "reason": "Giữ sự thật T01-T13, evidence/claim lineage và phạm vi tri thức tại một nơi",
+        "limits": "Truth/claim v6 còn lệch contract v3; không tự chọn bản mới hơn làm code"
+      },
+      {
+        "path": "docs/the-witness/13-legends-spine-charter.md",
+        "bytesBefore": 4369,
+        "action": "consolidated",
+        "replacement": "docs/PRODUCT.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/the-witness/24-input-and-ux-research.md",
+        "bytesBefore": 17882,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/24-input-and-ux-research.md",
+        "reason": "Gộp nghiên cứu input và góc nhìn thứ nhất, chỉ đọc khi cần căn cứ UX",
+        "limits": "Thông số đề xuất không phải cấu hình engine hiện hành"
+      },
+      {
+        "path": "docs/the-witness/14-legends-depth-dossiers.md",
+        "bytesBefore": 30655,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/14-legends-depth-dossiers.md",
+        "reason": "Giữ chuỗi scene/core, không gian và hai định dạng của ba Legends",
+        "limits": "Ngân sách phút còn lệch contract, cần quyết định riêng"
+      },
+      {
+        "path": "docs/the-witness/15-source-world-packets.md",
+        "bytesBefore": 21854,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/15-source-world-packets.md",
+        "reason": "Giữ sáu packet nguồn/thế giới và phạm vi review của Legends",
+        "limits": "Bảy vai duyệt chưa có xác nhận; không dùng packet như phê chuẩn"
+      },
+      {
+        "path": "docs/the-witness/16-depth-research.md",
+        "bytesBefore": 13881,
+        "action": "consolidated",
+        "replacement": "docs/the-witness/10-source-register.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/the-witness/17-encounter-atlas.md",
+        "bytesBefore": 83132,
+        "action": "on-demand-generated",
+        "replacement": "docs/STORY.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/the-witness/18-scene-craft-and-dialogue.md",
+        "bytesBefore": 25200,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/18-scene-craft-and-dialogue.md",
+        "reason": "Giữ thoại và ngữ pháp cảm xúc không thể tái tạo chỉ từ code",
+        "limits": "Mốc biên tập 0.4; không sở hữu danh mục runtime hoặc title chapter hiện hành"
+      },
+      {
+        "path": "docs/the-witness/19-depth-playtest.md",
+        "bytesBefore": 7754,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/19-depth-playtest.md",
+        "reason": "Giữ protocol đo bằng người thật, câu hỏi và ngưỡng chấp nhận có thể tái dùng",
+        "limits": "Là kế hoạch chưa chạy; khác kiểm phần mềm"
+      },
+      {
+        "path": "docs/the-witness/20-scene-implementation.md",
+        "bytesBefore": 15582,
+        "action": "on-demand-generated",
+        "replacement": "docs/STORY.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/the-witness/21-first-person-research.md",
+        "bytesBefore": 6591,
+        "action": "consolidated",
+        "replacement": "docs/the-witness/24-input-and-ux-research.md",
+        "reason": "Gộp thao tác/nghiên cứu trùng hoặc thay bản prose sinh bằng báo cáo theo nhu cầu; giữ Git object gốc"
+      },
+      {
+        "path": "docs/the-witness/22-graphics-rendering.md",
+        "bytesBefore": 3218,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/22-graphics-rendering.md",
+        "reason": "Giữ tham chiếu kỹ thuật renderer chuyên biệt thay vì phình ENGINEERING",
+        "limits": "Mỗi claim phải đối chiếu module và report đúng build"
+      },
+      {
+        "path": "docs/the-witness/23-backend-and-cloud-saves.md",
+        "bytesBefore": 9618,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/23-backend-and-cloud-saves.md",
+        "reason": "Giữ hợp đồng API, auth/CAS/recovery và schema operations riêng do rủi ro dữ liệu",
+        "limits": "Không thay kết quả production hoặc diễn tập recovery thật"
+      },
+      {
+        "path": "docs/the-witness/README.md",
+        "bytesBefore": 11307,
+        "action": "retained-by-role",
+        "replacement": "docs/the-witness/README.md",
+        "reason": "Chỉ mục tương thích, không sở hữu quy tắc sản phẩm hoặc hiện trạng"
+      }
+    ],
+    "baselineCommit": "be685e6aae2da0618da341c45651862407774a0b",
+    "results": {
+      "beforeActiveMarkdown": 44,
+      "afterActiveMarkdown": 34,
+      "coreDocuments": 6,
+      "retiredOrConsolidatedMarkdown": 16,
+      "netMarkdownReduction": 10,
+      "taskRoutes": 4,
+      "dirtyStoryFilesPreserved": [
+        "docs/the-witness/06-campaign-quest-bible.md",
+        "docs/the-witness/07-vertical-slice-screenplay.md",
+        "docs/the-witness/11-chapter-dossiers.md",
+        "docs/the-witness/14-legends-depth-dossiers.md",
+        "docs/the-witness/README.md"
+      ],
+      "evaluationCriteria": "Ownership, unique decision/detail, consistency, duplication/reading cost, and update consumers; no fabricated numerical quality scores"
+    }
+  }
 }

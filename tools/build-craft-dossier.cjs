@@ -60,7 +60,7 @@ const lines=[
  '',
  '## 7. Chủ sở hữu dữ liệu',
  '',
- '`witness-depth.js` giữ 25 luật chương; `witness-relationships.js` giữ sáu việc quan hệ và biến thể; `witness-craft.js` giữ chi tiết, vị trí và hành động tại cảnh; `witness-craft-renderer.js` dựng vật và phản ứng 3D; model giữ tiến độ và ranh giới ghi; app điều khiển giao diện/camera/âm thanh. [Hợp đồng cảnh](craft-contract.json) là chỉ mục triển khai. Chạy `node tools/build-craft-dossier.cjs` để cập nhật tài liệu này và chỉ mục từ các chủ sở hữu ấy.'
+ '`witness-depth.js` giữ 25 luật chương; `witness-relationships.js` giữ sáu việc quan hệ và biến thể; `witness-craft.js` giữ chi tiết, vị trí và hành động tại cảnh; `witness-craft-renderer.js` dựng vật và phản ứng 3D; model giữ tiến độ và ranh giới ghi; app điều khiển giao diện/camera/âm thanh. [Hợp đồng cảnh](../../docs/the-witness/craft-contract.json) là chỉ mục triển khai. Chạy `node tools/build-craft-dossier.cjs` để cập nhật tài liệu này và chỉ mục từ các chủ sở hữu ấy.'
 ];
-fs.writeFileSync(path.join(root,'docs/the-witness/20-scene-implementation.md'),lines.join('\n')+'\n');fs.writeFileSync(path.join(root,'docs/the-witness/craft-contract.json'),JSON.stringify(contract,null,2)+'\n');
+fs.mkdirSync(path.join(root,'outputs/reference'),{recursive:true});fs.writeFileSync(path.join(root,'outputs/reference/scene-implementation.md'),lines.join('\n')+'\n');fs.writeFileSync(path.join(root,'docs/the-witness/craft-contract.json'),JSON.stringify(contract,null,2)+'\n');
 console.log(JSON.stringify({physicalDetails:contract.physicalDetailCount,sceneOwners:owners.length,activities:31,relationshipVariants:12}));

@@ -27,7 +27,8 @@
     "test:architecture-browser": "node test/architecture-browser.mjs",
     "dev:cloud": "node tools/serve-cloud.mjs",
     "test:backend": "node --test test/backend.test.mjs test/cloud-client.test.cjs",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "agent:context": "node tools/check-agent-governance.cjs --task"
   },
   "engines": {
     "node": ">=22.13.0"

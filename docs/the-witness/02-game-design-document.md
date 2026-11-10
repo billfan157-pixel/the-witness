@@ -1,6 +1,6 @@
 # 02 • Game Design Document
 
-**Phụ lục chiều sâu 3.2 / runtime 0.4.0:** 25 bàn thao tác tại địa vật hiện hữu đã thay các xác nhận ngắn ở 12 Q, 5 L và 4 V. [Atlas 17](17-encounter-atlas.md) sở hữu đặc tả phản ánh luật đang chạy; [nghiên cứu 16](16-depth-research.md) giải thích căn cứ; [kịch bản 18](18-scene-craft-and-dialogue.md) tách dàn dựng đã có với phần tiếp theo. Các luật gồm tiền đề thao tác, phân người/vật, tuyến có kết nối/ngưỡng, nhiều khoản sổ, ghép nguồn và chia bản theo nơi nhận. Ba bố cục giấc mơ mở không có đáp án đạo đức. “Thử” chỉ phản hồi; “Thực hiện” qua model rồi ghi bước. Bản nháp lưu theo cảnh và ghi chú nằm đúng tầng, không cấp consent hoặc viết lại kết cục nguồn.
+**Phụ lục chiều sâu 3.2 / runtime 0.4.0:** 25 bàn thao tác tại địa vật hiện hữu đã thay các xác nhận ngắn ở 12 Q, 5 L và 4 V. [Atlas 17](../STORY.md) sở hữu đặc tả phản ánh luật đang chạy; [nghiên cứu 16](10-source-register.md) giải thích căn cứ; [kịch bản 18](18-scene-craft-and-dialogue.md) tách dàn dựng đã có với phần tiếp theo. Các luật gồm tiền đề thao tác, phân người/vật, tuyến có kết nối/ngưỡng, nhiều khoản sổ, ghép nguồn và chia bản theo nơi nhận. Ba bố cục giấc mơ mở không có đáp án đạo đức. “Thử” chỉ phản hồi; “Thực hiện” qua model rồi ghi bước. Bản nháp lưu theo cảnh và ghi chú nằm đúng tầng, không cấp consent hoặc viết lại kết cục nguồn.
 
 ## 1. Thông số nền
 
@@ -304,74 +304,29 @@ Nhờ đó, dù chiếm thời lượng tinh gọn 25–28%, Legends nắm giữ
 
 ## 19. Hệ Thống Scene Systems & Năm Định Hướng Nâng Cấp Thiết Kế 3A (v6.0)
 
-### 19.1 Mở rộng Không gian Điều tra: Khảo cổ Hiện trường Đa tầng (World-First Investigation)
-Chuyển hóa việc giải mã chứng cứ E01–E12 thành tương tác không gian kiến trúc và địa chất Cận Đông cổ đại:
-* **Cảng Sebastos (Q01–Q04, Q11–Q12) — 4 tầng thám hiểm:**
-  * `C0 · Cầu cảng:` Thuyền cập bến, dốc xe hàng Q01.LOAD, công nhân bốc dỡ, đường bánh xe, lịch trực.
-  * `C1 · Kho phía tây:` Ngăn chứa hàng, cửa khóa, đèn, giá hàng, xe kẹt, tuyến cứu hộ khói lửa; vết ám khói theo hướng gió.
-  * `C-1 · Rãnh bảo trì:` Rãnh thoát/tiêu nước hư cấu có cửa kiểm tra, lối nối ngầm giữa hai khu kho, bùn nước đọng, vết xước vật nặng.
-  * `C+1 · Sàn tời và mái:` Giàn gỗ chịu tải, trục quay đối trọng, giằng, lối mái và bến quan sát, 18 bậc thang.
-* **Tuyến đồi Antipatris (Q03) — 3 lựa chọn không gian hình học:**
-  * Tuyến A (đường xe an toàn qua nền đất cứng), Tuyến B (vượt đá ngắn chỉ cho người đi bộ), Tuyến C (sửa cầu gỗ dùng dây tời). Đọc dấu bánh xe lún bùn theo tải trọng (24 bao vs 18 bao), bác bỏ lối bậc hẹp 1.05m không vừa trục xe 1.75m có vết mẻ đá va quẹt.
-* **Wadi (Q08) — 3 vùng cao độ địa hình sống:**
-  * `W0 · Mép trên:` Vết lũ cũ, đá vôi phong hóa, điểm neo, dấu nước cảnh báo.
-  * `W1 · Bậc ngang:` Gờ hẹp, sỏi lỏng, khe dội tiếng, dây bọc bảo vệ.
-  * `W2 · Lòng khe:` Nước dâng theo phase scripted, vật trôi, Amon bị kẹt. Cứu Amon và E07 toàn vẹn nếu chuẩn bị đủ.
-* **Khu lưu trữ Giêrusalem (Q09–Q10) — Pháo đài thủ tục:**
-  * `J0 · Người mang thư:` Mốc bàn giao, gói bọc, dây buộc, ghi chú gửi.
-  * `J1 · Xưởng sao lục:` Hướng thớ papyrus, vết khâu/trét sửa, nét viết, lớp gấp (không dùng "nhà máy giấy" hiện đại).
-  * `J2 · Niêm và cất:` Dấu vỡ niêm sáp/đất sét bullae, vị trí dấu, thời điểm mở.
-  * `J3 · Bàn đối chiếu:` Đối chiếu hai bản sửa E08 (thật) và E11 (giả); phân tích chuỗi người giữ E12 để xác minh can thiệp của Varro.
+> [!IMPORTANT]
+> **Quyền Sở Hữu Chi Tiết & Single Source of Truth (SSOT):**  
+> Toàn bộ đặc tả kiến trúc, công thức tính toán, quy tắc cơ học, atlas vật chứng E01–E12 và ma trận bảo toàn cảnh hiện trường của 5 Trụ cột Chiến lược thuộc quyền sở hữu duy nhất của **[03 Narrative Bible — Phần II: Scene Systems v6.0](03-narrative-bible.md#phan-ii-scene-systems-c-v60-thiet-ke-canh-co-che-moi-tich-hop)**.  
+> Phần dưới đây chỉ đóng vai trò tóm lược kiến trúc hệ thống và liên kết điều hướng trong Game Design Document.
 
-### 19.2 Cơ chế Khám phá Đồng hành (Companion-Driven Traversal)
-Không có combat hay kỹ năng phép thuật, chiều sâu gameplay 3A được xây dựng trên năng lực tương tác môi trường của bốn đồng hành:
-* **Titus — Cơ học & Kết cấu:** Đọc chịu lực, nêm, trục, đòn bẩy, ròng rọc tay, sửa trục cầu cạn, mở cơ cấu khóa nặng (Q01, Q04, Q06, Q08).
-* **Lea — Giám định & Xuất xứ:** So mép sợi bao bì gai thô, đường khâu bìa sổ, nếp gấp văn bản, quy chuẩn văn thư Varro (Q02, Q05, Q09, Q10).
-* **Damar — Địa hình & Thâm nhập:** Đọc luồng tuần tra Rufus, gờ đá leo trèo, đường trốn, vùng sáng/tối, âm thanh lan (Q03, Q06, Q08, Q11, Q12).
-* **Miriam — Điểm tựa Cộng đồng & Hậu cần:** Mở cánh cửa vào các khu bếp chung, xưởng dệt, xóm chài khép kín; tiếp ca, bảo vệ người yếu thế (Q02, Q05, Q07, Q11, Q12).
-* **Quy trình tương tác 6 bước (Interaction Grammar):** `Nhận biết (Spot) → Thảo luận (Propose) → Chuẩn bị (Prepare) → Thực thi (Execute) → Bàn giao (Commit) → Khôi phục an toàn (Fallback)`.
-* **Bốn cặp phối hợp tiêu biểu:** Titus+Damar (giằng dây/gờ đá), Lea+Miriam (chia phần số liệu & ẩn danh), Titus+Lea (mở khóa kiểm kho & kiểm dấu niêm), Damar+Miriam (hộ tống an toàn qua lối yên).
+### 19.1 Bảng Tổng Hợp 5 Trụ Cột Chiến Lược Scene Systems
 
-### 19.3 Sự Cộng hưởng Cơ chế Chơi (Mechanical Resonance: Legends → Mortal)
-Mỗi chương Legends tuân thủ Canon Lock 100% nhưng dạy người chơi ngôn ngữ tương tác môi trường qua 4 lớp đồng bộ (cơ học, hình ảnh, âm thanh, cảm xúc):
-* **L01 (Xuất Hành 14) → Q04 & Q08:** Cơ chế gió đêm, đèn hiệu, cứu xe lún bùn (`L01.AXLE`/`L01.REARGUARD`) → Ứng dụng ngay vào phân ca/đèn/dây Q04 và nâng cấp thành neo vượt lũ Wadi Q08 để cứu Amon và giữ E07.
-* **L02 (1 Samuel 24) → Q06 & Q07:** Định vị âm học từ vách đá dội lại và di chuyển theo mảng sáng tối (`L02.ACOUSTICS`/`L02.RESTRAINT`). *Lưu ý continuity:* Q06 giới thiệu nền tảng cơ chế bằng vật thể TRƯỚC L02; L02 làm sâu sắc chủ đề kiềm chế quyền lực; Q07 ứng phó tình huống Lea; Q08/Q09/Q11 tái sử dụng stealth.
-* **L04 (Gioan 21) → Q11 & Q12:** Lao động nhóm, nhịp chèo trên hồ rạng đông (`L04.NET`/`L04.LANDING`) → Định hình ngôn ngữ điều phối và đối chất trách nhiệm tại Q11–Q12.
+| Trụ cột Chiến lược | Bản chất Hệ thống Gameplay | Phạm vi Áp dụng | Nguồn Chi tiết SSOT |
+|---|---|---|---|
+| **1. Khảo cổ Hiện trường Đa tầng** (*World-First Investigation*) | Chuyển hóa việc thu thập chứng cứ E01–E12 thành tương tác không gian kiến trúc và địa chất 3D: Cảng Sebastos 4 tầng (`C0, C1, C-1, C+1`), Đồi Antipatris 3 lựa chọn hình học (`Tuyến A/B/C`, vết lún bùn vs khổ trục 1.05m/1.75m), Wadi 3 cao độ sống (`W0, W1, W2`), Pháo đài thủ tục Giêrusalem 4 trạm (`J0, J1, J2, J3`). | Q01–Q12 | [Doc 03 · Mục 14](03-narrative-bible.md#14-khao-co-hien-truong-da-tang-world-first-investigation) |
+| **2. Khám phá Đồng hành** (*Companion-Driven Traversal*) | Chiều sâu thám hiểm không combat dựa trên năng lực vật lý của 4 đồng hành: Titus (kết cấu/đòn bẩy), Lea (giám định văn thư/vải gai), Damar (địa hình/leo trèo/né lính), Miriam (hậu cần/cộng đồng). Vận hành qua quy trình 6 bước: `Spot → Propose → Prepare → Execute → Commit → Fallback`. | Q01–Q12 | [Doc 03 · Mục 15](03-narrative-bible.md#15-companion-driven-traversal-bon-cach-doc-cung-mot-the-gioi) |
+| **3. Cộng hưởng Cơ chế Chơi** (*Mechanical Resonance*) | Các chương Legends tuân thủ Canon Lock 100% nhưng trực tiếp huấn luyện người chơi ngôn ngữ tương tác môi trường: L01 (gió đêm/cứu xe sụp cát) $\rightarrow$ Q04 & Q08 lũ quét; L02 (âm học vách đá/mảng tối) $\rightarrow$ Q06 & Q07 hành lang đêm; L04 (lao động tĩnh lặng/kéo lưới) $\rightarrow$ Q11 & Q12 ngày trở về cảng. | L01–L04 $\rightarrow$ Mortal | [Doc 03 · Mục 16](03-narrative-bible.md#16-mechanical-resonance-legends-day-ngon-ngu-moi-truong) |
+| **4. World Callback Động theo Áp lực** (*Milestone Pressure*) | Thế giới 3D biến đổi thực thể theo 4 nấc Áp lực Hành chính (Cấp 0: Bình thường; Cấp 1: Rà sổ/niêm chì; Cấp 2: Trạm gác Rufus/đóng đường chính; Cấp 3: Thiết quân luật bến cảng). Luật topology 3 lớp route (công khai, nghề nghiệp, bảo trì). | Hồi I, II, III | [Doc 03 · Mục 17](03-narrative-bible.md#17-dynamic-world-callback-ba-moc-ap-luc-hanh-chinh) |
+| **5. Interactive Set-Piece Đa tuyến** (*Q12 Climax*) | Màn kết Q12 diễn ra thời gian thực với 6 nhịp dàn dựng (`B0 Chuẩn bị → B1 Tiếp cận → B2 Giữ an toàn → B3 Bàn giao → B4 Đối chất P01–P05 → B5 Hậu quả`) và 3 Route kết thúc độc lập (`Route A Công khai`, `Route B Che chở`, `Route C Bảo vệ người`). | Q12 Finale | [Doc 03 · Mục 18](03-narrative-bible.md#18-q12-interactive-set-piece-da-tuyen) |
 
-### 19.4 Hệ thống World Callback Động theo Bốn Cấp Áp lực Hành chính
-Thế giới biến đổi trực quan theo từng nấc Milestone Pressure (không dùng đồng hồ đếm ngược game-over):
-* **Cấp 0 (Q01–Q03):** Kho bãi làm việc bình thường, các cửa bảo trì mở, đầu mối chưa lan.
-* **Cấp 1 (Sau Q04.COMMITTED):** Bắt đầu rà sổ sách; một cửa kho bị niêm chì; nhân viên tránh nói tên công khai; có tin rà soát lan sang Galilê.
-* **Cấp 2 (Sau Q08.COMMITTED, trước Q09):** Trạm gác Rufus mọc ở ngã ba đường; lối công khai sang trạm thư bị đóng; phải dùng lối mái, xưởng hoặc rãnh bảo trì C-1 từ Hồi I. Trạm chuyển thư Giêrusalem hạn chế tiếp nhận.
-* **Cấp 3 (Sau Q10+L04, trước Q11):** Bến cảng trong tình trạng kiểm soát nghiêm ngặt trước buổi tiếp nhận hồ sơ Q12.
-* **Bản đồ Callback hai chiều:** Lựa chọn `shelter/anonymous/consented` ở Q02, `food/tools` ở Q04, tuyến sửa Q03, bản gốc/sao Q06, lời hứa Lea Q07, cứu Amon Q08, consent Q09, nói đúng về cha Q10 đều để lại biến đổi vật lý bền vững tại hiện trường.
-* **Luật Topology Động:** 3 lớp route (công khai, nghề nghiệp, bảo trì). Niêm một route luôn mở ra route thay thế hợp lệ; bảo toàn persistence vật thể.
+### 19.2 Hệ Chứng Cứ E01–E12 & Bộ Lọc Mệnh Đề P01–P05
+Đặc tả chi tiết bộ lọc dữ liệu, cấu trúc vật chứng và các trigger đối chất hợp lệ được quy định tập trung tại **[Doc 03 · Mục 19](03-narrative-bible.md#19-atlas-vat-chung-e01e12-menh-de-p01p05)**:
+* **P01 (B06 sai lệch):** Cần `E02 + E03`.
+* **P02 (G17 thiếu 4 bao):** Cần `E04 + E05` (`24 - 2 - 18 = 4`).
+* **P03 (Trách nhiệm Haddai):** Cần `E01 + E08` trên nền `E04/E05`.
+* **P04 (Lệnh Hanan):** Cần `E06 + E09` hoặc `E10` độc lập.
+* **P05 (Varro can thiệp & bản giả):** Cần `E11 + E12` qua chuỗi người giữ độc lập.
 
-### 19.5 Đạo Diễn Chương Cuối (Q12) thành Interactive Set-Piece Đa Tuyến
-Q12 là không gian tiếp nhận hồ sơ/điều trần địa phương hư cấu dưới áp lực rà hành chính, dàn dựng thành trường đoạn hành động thời gian thực phối hợp suy luận:
-* **Sáu nhịp dàn dựng:**
-  * `B0 · Chuẩn bị:` Xem plan Q11, kiểm người nhận vai, E01–E12, nguồn hỗ trợ, đường rút, chỉnh sửa scope.
-  * `B1 · Tiếp cận:` Đi qua cảng đổi topology (đường công cộng, xưởng Titus, mái hay rãnh bảo trì).
-  * `B2 · Giữ an toàn:` Titus khóa cổng cơ học, Damar cảnh giới, Miriam tổ chức người chờ, Lea kiểm bìa/bản sao.
-  * `B3 · Bàn giao:` Đặt bản vật lý đúng nơi, tách số liệu và tên, xác nhận scope, giữ sổ gốc an toàn.
-  * `B4 · Đối chất:` Chọn mệnh đề P01–P05, đưa evidence đang sở hữu, kiểm lineage và điều avatar thực thấy. Camera cận mặt khi đủ dữ liệu, cận tay/giấy nếu còn tranh cãi.
-  * `B5 · Hậu quả:` Đưa người về an toàn, xử lý kẻ gây áp lực phi bạo lực, hoàn trả bản theo plan.
-* **Ba Route Kết thúc Khác biệt:**
-  * *Route A (Công khai có bảo vệ):* Chuẩn bị sân tiếp nhận, dẫn nhân chứng đồng ý đứng tên; công bố số liệu đối chất.
-  * *Route B (Lời chứng được che chở):* Chia gói theo người nhận, tách bảng số liệu–tên, trao ở hai tuyến kín và bảo toàn bản gốc.
-  * *Route C (Bảo vệ con người trước):* Tổ chức rút người trước, giao phần chứng cứ đủ scope, thừa nhận phần chưa đủ căn cứ.
-
-### 19.6 Atlas Vật Chứng E01–E12 & Bộ Lọc Claim P01–P05
-Mọi vật chứng đều có `sourceLineage`, `custodian`, `integrity`, và `consentScope`. Nguồn bản sao không làm tăng số nguồn độc lập.
-* **P01 — B06 sai lệch:** Yêu cầu `E02 + E03`.
-* **P02 — G17 thiếu 4 bao:** Yêu cầu `E04 + E05` (`24 - 2 - 18 = 4`).
-* **P03 — Trách nhiệm Haddai:** Yêu cầu `E01 + E08` trên nền `E04/E05`.
-* **P04 — Lệnh Hanan:** Yêu cầu `E06 + E09` hoặc `E10` độc lập.
-* **P05 — Varro can thiệp & đặt bản giả:** Yêu cầu `E11 + E12` với chuỗi người giữ độc lập.
-
-### 19.7 Ma Trận Bảo Toàn Cảnh Cũ → v6
-Bảo toàn tuyệt đối 100% 44 inspectable details và 31 activities từ tài liệu triển khai cũ (doc 20). Không loại bỏ bất kỳ prop before/after nào: xe/nêm/chốt Q01, mép dán B06 Q02, vết bánh Q03, đèn Q04, lưới Q05, nguồn bản sao Q06, giấy hẹn Q07, giấy ướt Q08, bìa tách Q09, bản sửa Q10, nồi/kệ Q11, người nhận Q12 và các props Legends.
-
-### 19.8 Gameplay & Engine Contract và Backlog P0–P5
-* **Schema độc lập engine:** Scene graph, Interactable, Investigation, Companion, Legends, Pressure, Q12 orchestration.
-* **Backlog sản xuất theo dọc:** P0 (Q01 kho 4 tầng + LOAD), P1 (Q03 địa hình + L01 echo + Q04 đóng kho), P2 (Q06 audio tutorial → L02 → Q07 Lea → Q08 wadi), P3 (Q09/Q10 thủ tục Giêrusalem + E08/E11/E12), P4 (Pressure overlays Cấp 0–3 + Q12 set-piece), P5 (Cinematic polish, crowds, optimization).
+### 19.3 Bảo Toàn Hiện Trường & Lộ Trình Triển Khai
+* **Bảo toàn hiện trường 100%:** Giữ nguyên vẹn 44 vật thể quan sát và 31 hoạt động thực địa ([Doc 03 · Mục 20](03-narrative-bible.md#20-ma-tran-bao-toan-canh-cu-v6)).
+* **Lộ trình phân kỳ sản xuất P0–P5:** Chi tiết backlog chia theo lát cắt dọc tại **[Doc 03 · Mục 21.2](03-narrative-bible.md#212-backlog-san-xuat-theo-doc-vertical-slices)**.

@@ -1,0 +1,527 @@
+{
+  "revision": "3.2",
+  "runtimeRelease": "0.5.0",
+  "defaultWorkMode": "field",
+  "boardAlternative": true,
+  "chapterActivities": 25,
+  "relationshipActivities": 6,
+  "totalActivities": 31,
+  "physicalDetailCount": 44,
+  "sceneOwnerCount": 27,
+  "owners": [
+    {
+      "id": "Q01",
+      "details": [
+        {
+          "id": "craft:Q01-axle",
+          "anchor": "load",
+          "kind": "cart",
+          "title": "Chốt nứt và đường tải",
+          "encounter": "Q01.LOAD"
+        },
+        {
+          "id": "craft:Q01-handovers",
+          "anchor": "natan",
+          "kind": "tools",
+          "title": "Bàn tay người tới ca sau",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "Q02",
+      "details": [
+        {
+          "id": "craft:Q02-patch",
+          "anchor": "register",
+          "kind": "paper",
+          "title": "Mép dán B06",
+          "encounter": "Q02.PALIMPSEST"
+        },
+        {
+          "id": "craft:Q02-pot",
+          "anchor": "rina",
+          "kind": "meal",
+          "title": "Nồi bữa ở đầu sân khác",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "Q03",
+      "details": [
+        {
+          "id": "craft:Q03-rut",
+          "anchor": "route",
+          "kind": "tracks",
+          "title": "Vệt bánh bị người qua lại xóa bớt",
+          "encounter": "Q03.TRACK"
+        },
+        {
+          "id": "craft:Q03-width",
+          "anchor": "bridge",
+          "kind": "plank",
+          "title": "Khoảng ngang để xe đi qua",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "Q04",
+      "details": [
+        {
+          "id": "craft:Q04-lamp",
+          "anchor": "people",
+          "kind": "lantern",
+          "title": "Đèn của người đi cuối",
+          "encounter": "Q04.NIGHTSHIFT"
+        },
+        {
+          "id": "craft:Q04-peg",
+          "anchor": "gatework",
+          "kind": "peg",
+          "title": "Chốt cũ trên mép bàn",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "Q05",
+      "details": [
+        {
+          "id": "craft:Q05-counts",
+          "anchor": "record",
+          "kind": "ledger",
+          "title": "Ba khoản có chỗ riêng",
+          "encounter": "Q05.RECONCILE"
+        },
+        {
+          "id": "craft:Q05-net",
+          "anchor": "net",
+          "kind": "net",
+          "title": "Mép lưới có người đang vá",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "Q06",
+      "details": [
+        {
+          "id": "craft:Q06-lineage",
+          "anchor": "token",
+          "kind": "copies",
+          "title": "Một gốc, những bản được chép",
+          "encounter": "Q06.LINEAGE"
+        },
+        {
+          "id": "craft:Q06-staff",
+          "anchor": "damar",
+          "kind": "staff",
+          "title": "Gậy được đặt khỏi lối rời",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "Q07",
+      "details": [
+        {
+          "id": "craft:Q07-seats",
+          "anchor": "sela",
+          "kind": "seats",
+          "title": "Hai chỗ ngồi và một lối ra",
+          "encounter": "Q07.PROMISE"
+        },
+        {
+          "id": "craft:Q07-scope",
+          "anchor": "miriam",
+          "kind": "letter",
+          "title": "Mảnh hẹn chỉ một ca",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "Q08",
+      "details": [
+        {
+          "id": "craft:Q08-rope",
+          "anchor": "anchor",
+          "kind": "rope",
+          "title": "Chỗ dây tì được bọc",
+          "encounter": "Q08.RESCUE"
+        },
+        {
+          "id": "craft:Q08-wet",
+          "anchor": "wrap",
+          "kind": "wetpaper",
+          "title": "Phần bản phụ qua nước",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "Q09",
+      "details": [
+        {
+          "id": "craft:Q09-envelopes",
+          "anchor": "keeper",
+          "kind": "envelopes",
+          "title": "Bản giao và bìa giữ riêng",
+          "encounter": "Q09.READBACK"
+        },
+        {
+          "id": "craft:Q09-door",
+          "anchor": "door",
+          "kind": "door",
+          "title": "Cánh cửa được phép khép",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "Q10",
+      "details": [
+        {
+          "id": "craft:Q10-letter",
+          "anchor": "letter",
+          "kind": "letter",
+          "title": "Lá thư còn chỗ sửa",
+          "encounter": "Q10.RESPONSIBILITY"
+        },
+        {
+          "id": "craft:Q10-pair",
+          "anchor": "compare",
+          "kind": "copies",
+          "title": "Hai nguồn ở hai phía bàn",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "Q11",
+      "details": [
+        {
+          "id": "craft:Q11-meal",
+          "anchor": "supplies",
+          "kind": "meal",
+          "title": "Bữa đã hẹn và kệ dự trữ",
+          "encounter": "Q11.SUPPLIES"
+        },
+        {
+          "id": "craft:Q11-shift",
+          "anchor": "planning",
+          "kind": "tools",
+          "title": "Dụng cụ để mở được ca sau",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "Q12",
+      "details": [
+        {
+          "id": "craft:Q12-exit",
+          "anchor": "public",
+          "kind": "seats",
+          "title": "Lối rời không đi qua Hanan",
+          "encounter": "Q12.RELEASE"
+        },
+        {
+          "id": "craft:Q12-copies",
+          "anchor": "copy1",
+          "kind": "envelopes",
+          "title": "Hai nơi nhận và phần chưa trao",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "L01",
+      "details": [
+        {
+          "id": "craft:L01-cart",
+          "anchor": "clear",
+          "kind": "cart",
+          "title": "Xe ở cuối đoàn",
+          "encounter": "L01.AXLE"
+        },
+        {
+          "id": "craft:L01-light",
+          "anchor": "gather",
+          "kind": "lantern",
+          "title": "Đốm sáng ở tầm người đi thấp",
+          "encounter": "L01.REARGUARD"
+        }
+      ]
+    },
+    {
+      "id": "L02",
+      "details": [
+        {
+          "id": "craft:L02-gravel",
+          "anchor": "approach",
+          "kind": "tracks",
+          "title": "Sỏi rời và vách bước êm",
+          "encounter": "L02.ACOUSTICS"
+        },
+        {
+          "id": "craft:L02-water",
+          "anchor": "return-group",
+          "kind": "rope",
+          "title": "Nước đặt cạnh chỗ chờ",
+          "encounter": "L02.RESTRAINT"
+        }
+      ]
+    },
+    {
+      "id": "L03",
+      "details": [
+        {
+          "id": "craft:L03-cloth",
+          "anchor": "cloth",
+          "kind": "padding",
+          "title": "Vải cũ ở chỗ dây tì",
+          "encounter": "L03.CLOTH"
+        },
+        {
+          "id": "craft:L03-rim",
+          "anchor": "ready",
+          "kind": "rope",
+          "title": "Phần dây còn được giữ ở miệng hố",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "L04",
+      "details": [
+        {
+          "id": "craft:L04-net",
+          "anchor": "net",
+          "kind": "net",
+          "title": "Hai mép lưới và lối chân",
+          "encounter": "L04.NET"
+        },
+        {
+          "id": "craft:L04-breakfast",
+          "anchor": "land",
+          "kind": "meal",
+          "title": "Lối lên bãi sỏi và bữa sáng",
+          "encounter": "L04.LANDING"
+        }
+      ]
+    },
+    {
+      "id": "L05",
+      "details": [
+        {
+          "id": "craft:L05-light",
+          "anchor": "remain",
+          "kind": "lantern",
+          "title": "Ánh đèn nhìn vào trong",
+          "encounter": "L05.REMAIN"
+        },
+        {
+          "id": "craft:L05-threshold",
+          "anchor": "call",
+          "kind": "door",
+          "title": "Một ngưỡng cửa còn tiếng người",
+          "encounter": null
+        }
+      ]
+    },
+    {
+      "id": "V01",
+      "details": [
+        {
+          "id": "craft:V01-pages",
+          "anchor": "place",
+          "kind": "pages",
+          "title": "Trang còn hơi ấm",
+          "encounter": "V01.PAGES"
+        }
+      ]
+    },
+    {
+      "id": "V02",
+      "details": [
+        {
+          "id": "craft:V02-balance",
+          "anchor": "share",
+          "kind": "balance",
+          "title": "Những khối bằng nhau",
+          "encounter": "V02.BALANCE"
+        }
+      ]
+    },
+    {
+      "id": "V03",
+      "details": [
+        {
+          "id": "craft:V03-strings",
+          "anchor": "release",
+          "kind": "strings",
+          "title": "Những sợi dây có thể nghỉ",
+          "encounter": "V03.STRINGS"
+        }
+      ]
+    },
+    {
+      "id": "V04",
+      "details": [
+        {
+          "id": "craft:V04-chair",
+          "anchor": "sit",
+          "kind": "memory",
+          "title": "Bàn còn một chỗ trống",
+          "encounter": "V04.TABLE"
+        }
+      ]
+    },
+    {
+      "id": "B01",
+      "details": [
+        {
+          "id": "craft:B01-meeting",
+          "anchor": "bond-work",
+          "kind": "seats",
+          "title": "Một chỗ nói còn lối ra",
+          "encounter": "B01.WORK"
+        }
+      ]
+    },
+    {
+      "id": "B02",
+      "details": [
+        {
+          "id": "craft:B02-roof",
+          "anchor": "bond-work",
+          "kind": "roof",
+          "title": "Mái hiên và ranh giới cửa nhà",
+          "encounter": "B02.WORK"
+        }
+      ]
+    },
+    {
+      "id": "B03",
+      "details": [
+        {
+          "id": "craft:B03-limits",
+          "anchor": "bond-work",
+          "kind": "private-record",
+          "title": "Dòng trống có lý do",
+          "encounter": "B03.WORK"
+        }
+      ]
+    },
+    {
+      "id": "B04",
+      "details": [
+        {
+          "id": "craft:B04-joint",
+          "anchor": "bond-work",
+          "kind": "joinery",
+          "title": "Mối nối do người nhận tự làm",
+          "encounter": "B04.WORK"
+        }
+      ]
+    },
+    {
+      "id": "B05",
+      "details": [
+        {
+          "id": "craft:B05-memories",
+          "anchor": "bond-work",
+          "kind": "memory",
+          "title": "Mối ván và hai lát cắt ký ức",
+          "encounter": "B05.WORK"
+        }
+      ]
+    },
+    {
+      "id": "B06",
+      "details": [
+        {
+          "id": "craft:B06-next",
+          "anchor": "bond-work",
+          "kind": "meal",
+          "title": "Bữa đang phục vụ và người nhận lượt sau",
+          "encounter": "B06.WORK"
+        }
+      ]
+    }
+  ],
+  "relationshipActivitiesCatalog": [
+    {
+      "id": "B01.WORK",
+      "owner": "B01",
+      "type": "allocation",
+      "revision": 1,
+      "choices": [
+        "speak_first",
+        "trace_object_first"
+      ]
+    },
+    {
+      "id": "B02.WORK",
+      "owner": "B02",
+      "type": "sequence",
+      "revision": 1,
+      "choices": [
+        "work_with_representative",
+        "supply_trusted_worker"
+      ]
+    },
+    {
+      "id": "B03.WORK",
+      "owner": "B03",
+      "type": "inference",
+      "revision": 1,
+      "choices": [
+        "private_record",
+        "alternative_source"
+      ]
+    },
+    {
+      "id": "B04.WORK",
+      "owner": "B04",
+      "type": "sequence",
+      "revision": 1,
+      "choices": [
+        "share_real_task",
+        "work_alone_with_limits"
+      ]
+    },
+    {
+      "id": "B05.WORK",
+      "owner": "B05",
+      "type": "inference",
+      "revision": 1,
+      "choices": [
+        "two_memories",
+        "repair_and_listen"
+      ]
+    },
+    {
+      "id": "B06.WORK",
+      "owner": "B06",
+      "type": "allocation",
+      "revision": 1,
+      "choices": [
+        "discuss_needs",
+        "temporary_rule_and_review"
+      ]
+    }
+  ],
+  "boundary": {
+    "fieldDraftCommitsQuest": false,
+    "inspectionGrantsEvidence": false,
+    "legendWritesMortalInventory": false,
+    "changesCanonicalOutcomes": false,
+    "griefArrangementHasCorrectAnswer": false,
+    "expertReview": "unassigned",
+    "humanPlaytest": "not yet run"
+  }
+}

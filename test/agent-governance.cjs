@@ -40,6 +40,22 @@ function fixture(name) {
   return { root, registry, save };
 }
 const expectCode = (f, code) => assert(inspect(f.root).errors.some(e => e.code === code), 'Expected ' + code);
+function knowledgeFixture(name) {
+  const f = fixture(name);
+  write(f.root, 'docs/core.md', '# Core\n<a id="entry"></a>\nCanonical guidance.\n');
+  write(f.root, 'docs/check.cjs', '// fixture checker\n');
+  write(f.root, '.agents/skills/example/SKILL.md', '---\nname: example\ndescription: A fixture skill.\n---\nRead [core](../../../docs/core.md#entry).\n');
+  f.registry.version = 2;
+  f.registry.knownFiles.push('docs/core.md', 'docs/check.cjs');
+  f.registry.requiredFiles.push('docs/core.md');
+  f.registry.knowledge = {
+    version: 2, coreDocuments: ['docs/core.md'],
+    roles: [{ path: 'docs/core.md', role: 'canonical', owner: 'engineering', value: 'Own the fixture contract' }],
+    domains: [{ id: 'engineering', authority: 'docs/core.md#entry' }], evaluation: [],
+    tasks: [{ id: 'change', skill: '.agents/skills/example/SKILL.md', required: ['docs/core.md#entry'], details: ['docs/core.md'], implementation: ['docs/check.cjs'], checks: [{ command: 'node docs/check.cjs', when: 'fixture change' }], updates: ['docs/core.md'] }]
+  };
+  f.save(); return f;
+}
 function test(name, run) { run(); checks++; console.log('PASS ' + name); }
 try {
   test('valid registry is read-only and accepts governed files', () => {
@@ -138,6 +154,30 @@ try {
     f.registry.knownFiles.push('docs/agent/retired.json'); f.save();
     write(f.root, 'docs/agent/retired.json', JSON.stringify({ version: 1, entries: [{ path: 'docs/old.md', replacement: 'docs/archive/old.md', action: 'archive', reason: 'Historical source', sha256: '0'.repeat(64), gitObject: '0'.repeat(40) }] }));
     expectCode(f, 'RETIREMENT');
+  });
+  test('knowledge routes return the same direct reading map used by skills', () => {
+    const f = knowledgeFixture('knowledge'); assert.deepEqual(inspect(f.root).errors, []);
+    const result = spawnSync(process.execPath, [path.resolve(__dirname, '../tools/check-agent-governance.cjs'), '--root', f.root, '--task', 'change', '--json'], { encoding: 'utf8', windowsHide: true });
+    assert.equal(result.status, 0); assert.deepEqual(JSON.parse(result.stdout).context.required, ['docs/core.md#entry']);
+  });
+  test('a skill cannot silently omit its required source or refer to a missing anchor', () => {
+    const f = knowledgeFixture('read-route');
+    f.registry.knowledge.tasks[0].required = ['docs/core.md#missing']; f.save();
+    expectCode(f, 'ROUTE_READ'); expectCode(f, 'ROUTE_REF');
+  });
+  test('duplicate authority and orphan documentation are rejected', () => {
+    const f = knowledgeFixture('authority');
+    f.registry.knowledge.domains.push({ id: 'other', authority: 'docs/core.md#entry' });
+    f.registry.admissions.push({ path: 'docs/orphan.md', owner: 'docs', reason: 'Missing role on purpose' });
+    write(f.root, 'docs/orphan.md', '# Unrouted document'); f.save();
+    expectCode(f, 'AUTHORITY'); expectCode(f, 'DOC_COVERAGE');
+  });
+  test('a route needs update targets and checks that actually exist', () => {
+    const f = knowledgeFixture('route-actions');
+    f.registry.knowledge.tasks[0].updates = []; f.save(); expectCode(f, 'TASK');
+    f.registry.knowledge.tasks[0].updates = ['docs/core.md'];
+    f.registry.knowledge.tasks[0].checks = [{ command: 'node docs/missing.cjs', when: 'change' }]; f.save();
+    expectCode(f, 'CHECK_COMMAND');
   });
   console.log(JSON.stringify({ status: 'passed', checks, scope: 'governance-checker-in-isolated-repositories' }));
 } finally {

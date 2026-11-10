@@ -1,26 +1,18 @@
 ---
 name: witness-change
-description: Phát triển, sửa lỗi hoặc tổ chức nguồn THE WITNESS theo nguồn sở hữu, kiểm soát file và cập nhật tài liệu; dùng trong repository này.
+description: Sửa lỗi, phát triển hoặc tổ chức mã nguồn THE WITNESS; đối chiếu nguồn kỹ thuật và cập nhật tài liệu cùng thay đổi.
 ---
 
-# Thay đổi có đối chiếu
+# witness-change
 
-Đọc `AGENTS.md`, `docs/agent/README.md`, `docs/agent/status.md`; dùng đường dẫn
-từ gốc repository. Quy trình chi tiết: `docs/agent/workflow.md`. Không nạp toàn
-bộ Bible nếu chỉ sửa một miền.
+Tuyến máy kiểm được: `npm run agent:context -- change`.
+Đọc [STATUS](../../../docs/STATUS.md#open), rồi:
 
-1. Xem status/diff file định chạm, xác định tiêu chí hành vi và nguồn sở hữu.
-   Giữ phần làm dở có sẵn; không reset hay tạo một bản project song song.
-2. Phân biệt lỗi thực thi với thiết kế chưa triển khai. Khi chạm A01, tra cả
-   Bible và contract/runtime, không tự giải quyết bằng đổi ID hay test expected.
-3. Sửa nguồn hiện có trước. File mới dùng admission theo
-   `docs/agent/repository-policy.md`; cập nhật caller và architecture khi cần.
-   Tra `docs/agent/cleanup-record.json` trước khi khôi phục file cũ; không tái
-   tạo nguồn đã nghỉ hoặc dùng nghiên cứu trong docs/archive như trạng thái mới.
-4. Chọn kiểm từ `docs/agent/verification.md`. Đọc skill content/environment/
-   release khi công việc đi vào miền tương ứng. Chỉ đọc skill cần dùng.
-5. Cập nhật nguồn sở hữu trong cùng thay đổi, chạy
-   `node tools/check-agent-governance.cjs`, rà diff và bàn giao kết quả/giới hạn.
+- [Vòng thay đổi, file và kiểm chứng](../../../docs/OPERATIONS.md#change)
+- [Điểm sửa và đường sinh](../../../docs/ENGINEERING.md#runtime)
 
-Yêu cầu nhỏ không cần file kế hoạch mới. Công việc nhiều bước dùng một mục trong
-`docs/agent/worklog.md`; quyết định bền vững ở decisions, trạng thái mở ở status.
+Xác định lỗi/hành vi cần đạt và caller; nếu việc đi vào truyện hoặc cảnh, đọc
+thêm skill content/environment. Sửa nguồn sở hữu, giữ diff sẵn; module mới cần
+index/build/standalone và admission. Chọn checks theo tác động, không sửa luật
+sản phẩm chỉ để test xanh. Cập nhật ENGINEERING khi đổi trách nhiệm/pipeline và
+STATUS khi trạng thái đổi; thay đổi chi tiết thì sửa nguồn chi tiết sở hữu.

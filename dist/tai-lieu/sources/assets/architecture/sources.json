@@ -1,0 +1,394 @@
+{
+  "schemaVersion": 1,
+  "retrieved": "2026-11-09",
+  "provider": "Poly Haven",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://polyhaven.com/license",
+  "conventions": {
+    "albedo": "sRGB source Diffuse; gamma-aware resize; no added directional lighting or colour tint",
+    "normal": "OpenGL tangent-space +Y, linear; resize then renormalize; near-lossless WebP",
+    "orm": "Linear RGB = ambient occlusion, roughness, metalness; B set to exactly zero; minimum roughness clamp recorded per surface",
+    "uv": "All surfaces tile; tileMeters is a world-space art-direction recommendation. It is not a measured architectural dimension.",
+    "quality": "full 1024 px and lite 512 px use the same source maps and UV scale",
+    "shader": "Set texture albedo colourSpace to SRGBColorSpace; normal and ORM to NoColorSpace. Keep roughness factor 1 unless deliberately tuning. Normal scale recommendations are per surface."
+  },
+  "limitations": [
+    "CC0 surfaces provide visual references, not proof of a first-century structure or exact local stone species",
+    "The selected plaster and floor have modern capture contexts; their reuse is artistic interpretation [H]",
+    "Geometry, UV scale, seam placement, indoor lighting and wear must still be authored and visually reviewed in the game"
+  ],
+  "totals": {
+    "full": 9244478,
+    "lite": 2194236
+  },
+  "surfaces": [
+    {
+      "slot": "stone",
+      "asset": "sandstone_blocks_05",
+      "roughnessMin": 0.65,
+      "normalScale": 0.35,
+      "tileMeters": 3,
+      "interpretation": "Pale warm sandstone ashlar comparison. Not a claim of exact Caesarea limestone/kurkar. The map contains joints; use at its world scale on broad faces, or select a stone face for geometric trim.",
+      "title": "Sandstone Blocks 05",
+      "authors": {
+        "Rob Tuytel": "All"
+      },
+      "source": "https://polyhaven.com/a/sandstone_blocks_05",
+      "api": {
+        "info": "https://api.polyhaven.com/info/sandstone_blocks_05",
+        "files": "https://api.polyhaven.com/files/sandstone_blocks_05"
+      },
+      "sourceDimensionsMillimeters": [
+        3000,
+        3000
+      ],
+      "license": "CC0-1.0",
+      "maps": {
+        "albedo": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "sourceBytes": 635678,
+          "md5": "2c3651fdf1071d7b60d82f0e86953968",
+          "sha256": "d17c322d9e793ab9fc198948a34f2632595560471ff8714f2b0e052bc75c9ee3"
+        },
+        "normal": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.png",
+          "sourceBytes": 2276305,
+          "md5": "ed87eb548e8780464a431b6107ed5c41",
+          "sha256": "a8937bd775fba9d9b1b1010b20b4906c9e4a9d6d368aaef8fd45d72afca4d88a"
+        },
+        "orm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/sandstone_blocks_05/sandstone_blocks_05_arm_1k.png",
+          "sourceBytes": 1364176,
+          "md5": "b88eab3e56002de9ef568486f8c1c252",
+          "sha256": "608dd0ec3aafda4d3851b352bdcf1ab9f12e11b59f2394f394313dad87740f30"
+        }
+      },
+      "outputs": {
+        "full": {
+          "albedo": {
+            "path": "assets/architecture/full/stone-albedo.webp",
+            "bytes": 380030,
+            "sha256": "bc3d7c527eb7fb9c406520a85fe363bcb75163fddabf4e402eec9410a3f86315",
+            "width": 1024,
+            "height": 1024
+          },
+          "normal": {
+            "path": "assets/architecture/full/stone-normal.webp",
+            "bytes": 1759034,
+            "sha256": "69dba474699a8a97a674b660efcd24453b173c2ed8c6d510dc7d5280bd3a58b9",
+            "width": 1024,
+            "height": 1024
+          },
+          "orm": {
+            "path": "assets/architecture/full/stone-orm.webp",
+            "bytes": 1018684,
+            "sha256": "5b4945bf7d92fa9655745b952ec46f3143de435980d824cf8502ea485389c078",
+            "width": 1024,
+            "height": 1024
+          }
+        },
+        "lite": {
+          "albedo": {
+            "path": "assets/architecture/lite/stone-albedo.webp",
+            "bytes": 84652,
+            "sha256": "173a27f6ee3bea7c13a8bafa8cff937c3479af8c3c8bf7c2ddadabf719701bb5",
+            "width": 512,
+            "height": 512
+          },
+          "normal": {
+            "path": "assets/architecture/lite/stone-normal.webp",
+            "bytes": 457692,
+            "sha256": "e1e26d2081acf06ca26fb286ed705bfc77156d0c4fc5a9fed74421b15406213e",
+            "width": 512,
+            "height": 512
+          },
+          "orm": {
+            "path": "assets/architecture/lite/stone-orm.webp",
+            "bytes": 277708,
+            "sha256": "8e40816a6cfaa67c3ab2b166c84a3b61ca7b31c3301644b061e04d003852ff73",
+            "width": 512,
+            "height": 512
+          }
+        }
+      }
+    },
+    {
+      "slot": "plaster",
+      "asset": "plastered_wall_04",
+      "roughnessMin": 0.8,
+      "normalScale": 0.18,
+      "tileMeters": 2,
+      "interpretation": "Quiet weathered bare-plaster comparison. A modern scanned surface is used as an artistic lime-plaster approximation, not an identified ancient finish.",
+      "title": "Plastered Wall 04",
+      "authors": {
+        "Rob Tuytel": "All"
+      },
+      "source": "https://polyhaven.com/a/plastered_wall_04",
+      "api": {
+        "info": "https://api.polyhaven.com/info/plastered_wall_04",
+        "files": "https://api.polyhaven.com/files/plastered_wall_04"
+      },
+      "sourceDimensionsMillimeters": [
+        3199.9998092651367,
+        3199.9998092651367
+      ],
+      "license": "CC0-1.0",
+      "maps": {
+        "albedo": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall_04/plastered_wall_04_diff_1k.jpg",
+          "sourceBytes": 299230,
+          "md5": "3a45e9e3ff0c6aa179371dff02bded1f",
+          "sha256": "52d789111bbe93d311c22e49d28b56256593c8f84c75742642403da857a36503"
+        },
+        "normal": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/plastered_wall_04/plastered_wall_04_nor_gl_1k.png",
+          "sourceBytes": 5213890,
+          "md5": "5f33be027d8410c023e22e84d27cd7b4",
+          "sha256": "1e20605dd01e0be550a9283773fe86aa3812f80bddc0819e90e28baf998ea163"
+        },
+        "orm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/plastered_wall_04/plastered_wall_04_arm_1k.png",
+          "sourceBytes": 486999,
+          "md5": "11655356f904dde97deaf0d96f61dee1",
+          "sha256": "73f6b7c327695c64ce05ba74af4fbc9dae14ee2016c9a0d10b4e348116786c3e"
+        }
+      },
+      "outputs": {
+        "full": {
+          "albedo": {
+            "path": "assets/architecture/full/plaster-albedo.webp",
+            "bytes": 14110,
+            "sha256": "add88db5522bba603cb29a91ce3f988a72dd52391c53d0567d5d303267049a79",
+            "width": 1024,
+            "height": 1024
+          },
+          "normal": {
+            "path": "assets/architecture/full/plaster-normal.webp",
+            "bytes": 602338,
+            "sha256": "013ec589d3dcf5badec336c75476cea7950aa249374f355a4573373b2b92d9d0",
+            "width": 1024,
+            "height": 1024
+          },
+          "orm": {
+            "path": "assets/architecture/full/plaster-orm.webp",
+            "bytes": 262610,
+            "sha256": "0a6c6b76a776160fe78a3addb8db6ecdb116168c166aa1d0df07ddbb25a58b0b",
+            "width": 1024,
+            "height": 1024
+          }
+        },
+        "lite": {
+          "albedo": {
+            "path": "assets/architecture/lite/plaster-albedo.webp",
+            "bytes": 3038,
+            "sha256": "91234944912b197d50b19e6f7c0aa8b5ed8dab1a7b68490931c84d6f5f3138c9",
+            "width": 512,
+            "height": 512
+          },
+          "normal": {
+            "path": "assets/architecture/lite/plaster-normal.webp",
+            "bytes": 134606,
+            "sha256": "a4956e927029b2de407efc75c50be7484867294ec2bb1b9e338df35058681fdd",
+            "width": 512,
+            "height": 512
+          },
+          "orm": {
+            "path": "assets/architecture/lite/plaster-orm.webp",
+            "bytes": 60242,
+            "sha256": "e34fc3930f720b7ca4f2cbabbfdf80a60f73c056400bad03ad900efc3f78d640",
+            "width": 512,
+            "height": 512
+          }
+        }
+      }
+    },
+    {
+      "slot": "wood",
+      "asset": "weathered_brown_planks",
+      "roughnessMin": 0.62,
+      "normalScale": 0.3,
+      "tileMeters": 1.8,
+      "interpretation": "Weathered timber comparison. Align the grain with beam length; do not imply a verified historical species.",
+      "title": "Weathered Brown Planks",
+      "authors": {
+        "Dimitrios Savva": "Photography",
+        "Rico Cilliers": "Processing"
+      },
+      "source": "https://polyhaven.com/a/weathered_brown_planks",
+      "api": {
+        "info": "https://api.polyhaven.com/info/weathered_brown_planks",
+        "files": "https://api.polyhaven.com/files/weathered_brown_planks"
+      },
+      "sourceDimensionsMillimeters": [
+        1799.9999523162842,
+        1799.9999523162842
+      ],
+      "license": "CC0-1.0",
+      "maps": {
+        "albedo": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/weathered_brown_planks/weathered_brown_planks_diff_1k.jpg",
+          "sourceBytes": 226049,
+          "md5": "e2fbdf7ed402e272e33e3f7ba707cf69",
+          "sha256": "94833feda44e025a9139f7b5723ea84e4f0258d3b54939a79e1013c133085e29"
+        },
+        "normal": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/weathered_brown_planks/weathered_brown_planks_nor_gl_1k.png",
+          "sourceBytes": 6305092,
+          "md5": "1224e8e9f59141c9d59cea836e52e7a2",
+          "sha256": "17e74f7e4742f6b7f385b1ca57637fd448247bb1dcfcee3dbd58f4de8d32b1b2"
+        },
+        "orm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/weathered_brown_planks/weathered_brown_planks_arm_1k.png",
+          "sourceBytes": 4284758,
+          "md5": "4dd1dc8ea3aa2d306f753a43fe43b51c",
+          "sha256": "c11070d29e192569511e53e371e9782ce560ce3643fad615d1c2ca9d185d22c8"
+        }
+      },
+      "outputs": {
+        "full": {
+          "albedo": {
+            "path": "assets/architecture/full/wood-albedo.webp",
+            "bytes": 236620,
+            "sha256": "bf84bcbc2bfd9678c79941268e249e26321ecc2d176a75d4befbb6b0ad464038",
+            "width": 1024,
+            "height": 1024
+          },
+          "normal": {
+            "path": "assets/architecture/full/wood-normal.webp",
+            "bytes": 1213814,
+            "sha256": "a7113fb14335b80dd8c75da85c212fe267b7d1f59813efca59da25d6151a68ab",
+            "width": 1024,
+            "height": 1024
+          },
+          "orm": {
+            "path": "assets/architecture/full/wood-orm.webp",
+            "bytes": 996936,
+            "sha256": "dc8455dcad4cbaf7978bb36661f455669ed2691c42b6cd7b26e7f7935cea59c1",
+            "width": 1024,
+            "height": 1024
+          }
+        },
+        "lite": {
+          "albedo": {
+            "path": "assets/architecture/lite/wood-albedo.webp",
+            "bytes": 50780,
+            "sha256": "e5d59daed79a251ddc7bb6ec6e05a9ef85d286f9d3f93b40beca394b778dc9a8",
+            "width": 512,
+            "height": 512
+          },
+          "normal": {
+            "path": "assets/architecture/lite/wood-normal.webp",
+            "bytes": 211964,
+            "sha256": "96b68ee0d532a20caec93e8982ccbc9eecbedc38895a194fd58dc595ca149e86",
+            "width": 512,
+            "height": 512
+          },
+          "orm": {
+            "path": "assets/architecture/lite/wood-orm.webp",
+            "bytes": 233012,
+            "sha256": "322ccf49ea20ab9679a6427f339012dbe1ee5ef17334d02154b2dffb41c1de29",
+            "width": 512,
+            "height": 512
+          }
+        }
+      }
+    },
+    {
+      "slot": "floor",
+      "asset": "monastery_stone_floor",
+      "roughnessMin": 0.72,
+      "normalScale": 0.4,
+      "tileMeters": 1.8,
+      "interpretation": "Muted worn stone slab comparison. The source name identifies its modern capture context, not the historical identity of this game building.",
+      "title": "Monastery Stone Floor",
+      "authors": {
+        "Amal Kumar": "All"
+      },
+      "source": "https://polyhaven.com/a/monastery_stone_floor",
+      "api": {
+        "info": "https://api.polyhaven.com/info/monastery_stone_floor",
+        "files": "https://api.polyhaven.com/files/monastery_stone_floor"
+      },
+      "sourceDimensionsMillimeters": [
+        1799.9999523162842,
+        1799.9999523162842
+      ],
+      "license": "CC0-1.0",
+      "maps": {
+        "albedo": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/monastery_stone_floor/monastery_stone_floor_diff_1k.jpg",
+          "sourceBytes": 766525,
+          "md5": "8e748f767d8e478438ef748833365754",
+          "sha256": "8e52ec982469ce9da312cefe3126c1dff05b7150234971bc6dff6e31c3c584ae"
+        },
+        "normal": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/monastery_stone_floor/monastery_stone_floor_nor_gl_1k.png",
+          "sourceBytes": 5752153,
+          "md5": "6c71df7edca7120a011c03d5d3866355",
+          "sha256": "5e22b0c576d40db57c03dab34fb973522dcea9ff662b10e1f65bbf7f76759f9f"
+        },
+        "orm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/monastery_stone_floor/monastery_stone_floor_arm_1k.png",
+          "sourceBytes": 4155974,
+          "md5": "fbf01c48b7af8378d9cf66cd37a2bfc2",
+          "sha256": "ba22d614fb27c5bf7b8073e57b6b98d30fa26618cd1781ac298700ec027ce13d"
+        }
+      },
+      "outputs": {
+        "full": {
+          "albedo": {
+            "path": "assets/architecture/full/floor-albedo.webp",
+            "bytes": 232140,
+            "sha256": "6d1de16f3fa278e46c2e8913b0caf74f073b75fe9ffe51d14c1fe1b28be90b0b",
+            "width": 1024,
+            "height": 1024
+          },
+          "normal": {
+            "path": "assets/architecture/full/floor-normal.webp",
+            "bytes": 1559840,
+            "sha256": "56c776b49cf5525f0b40f8541dcc079deacfd396ee1321cff8d2f0c26b085355",
+            "width": 1024,
+            "height": 1024
+          },
+          "orm": {
+            "path": "assets/architecture/full/floor-orm.webp",
+            "bytes": 968322,
+            "sha256": "9736f9133e6494df4492ac2adfd732a23a096cc73068fb38c6fde7fb54799eb0",
+            "width": 1024,
+            "height": 1024
+          }
+        },
+        "lite": {
+          "albedo": {
+            "path": "assets/architecture/lite/floor-albedo.webp",
+            "bytes": 44278,
+            "sha256": "f6e442d0784311bb68d0b3dd82ebaaf32ffb321b45982bb864ad9cd452853f49",
+            "width": 512,
+            "height": 512
+          },
+          "normal": {
+            "path": "assets/architecture/lite/floor-normal.webp",
+            "bytes": 379960,
+            "sha256": "26aff27b0eb3c1feb753c1cad9e654cf3975c519d2175e55e90b8bbc5856e9b8",
+            "width": 512,
+            "height": 512
+          },
+          "orm": {
+            "path": "assets/architecture/lite/floor-orm.webp",
+            "bytes": 256304,
+            "sha256": "ed20559bc92c830ef14a608e68f415dad2153ae6b3e58d4ce17acf0a7bf403bc",
+            "width": 512,
+            "height": 512
+          }
+        }
+      }
+    }
+  ],
+  "reviewImage": "assets/architecture/material-review.webp",
+  "validation": {
+    "images": 24,
+    "metallicNonzero": 0,
+    "maxNormalUnitLengthError": 0.01911384994512577,
+    "review": "Final albedo/normal/ORM contact sheet visually inspected"
+  }
+}

@@ -2,7 +2,7 @@
 
 **Phụ lục biên tập 3.2 • 08/11/2026.** Toàn bộ thoại dưới đây của người hư cấu là [H]. Không có lời mới gán cho nhân vật Kinh Thánh. Mỗi hồ sơ tách **đã chơi được** khỏi **dàn dựng tiếp**; phần sau là đặc tả sản xuất, không là tính năng được tính vào bản 0.4.0. Dữ kiện G17/B06 và ai biết gì tuân hồ sơ 12.
 
-**Cập nhật thực thi 0.5.0:** phần đã dựng tiếp, vật thể cụ thể, sáu việc quan hệ và giới hạn còn lại được ghi ở [20 • Thực thi từng cảnh](20-scene-implementation.md). Các mục dưới giữ mốc biên tập 0.4.0 để đối chiếu, không phải danh sách tính năng còn thiếu của bản mới.
+**Cập nhật thực thi 0.5.0:** phần đã dựng tiếp, vật thể cụ thể, sáu việc quan hệ và giới hạn còn lại được ghi ở [20 • Thực thi từng cảnh](../STORY.md). Các mục dưới giữ mốc biên tập 0.4.0 để đối chiếu, không phải danh sách tính năng còn thiếu của bản mới.
 
 ## 1. Quy tắc viết và dàn dựng
 

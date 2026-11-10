@@ -54,6 +54,22 @@ try {
     write('docs/the-witness/README.md', 'new source');
     assert.throws(() => verifiedDossier(root), /Stale dossier source/);
   });
+  test('modern reader validates nested repository source paths', () => {
+    const modern = JSON.stringify({ documentVersion: '3.0', depthExpansion: { revision: '3.2' }, documentationRoot: '..', documentFiles: ['README.md'] });
+    write('docs/the-witness/design-contract.json', modern); write('docs/README.md', '# Current core');
+    const modernNames = ['docs/README.md', ...names.filter(p => p.endsWith('.json')).map(p => 'docs/the-witness/' + p)];
+    const sourceSha256 = {};
+    for (const p of modernNames) { const bytes = fs.readFileSync(path.join(root, p)); sourceSha256[p] = crypto.createHash('sha256').update(bytes).digest('hex'); write(folder + '/sources/' + p, bytes); }
+    write(folder + '/validation.json', JSON.stringify({ format: 2, sourceSha256 }));
+    assert.equal(verifiedDossier(root), path.join(root, folder));
+    write('assets/material/sources.json', '{"license":"CC0"}');
+    const ledger = fs.readFileSync(path.join(root, 'assets/material/sources.json'));
+    write(folder + '/sources/assets/material/sources.json', ledger);
+    sourceSha256['assets/material/sources.json'] = crypto.createHash('sha256').update(ledger).digest('hex');
+    write(folder + '/validation.json', JSON.stringify({ format: 2, sourceSha256 }));
+    assert.equal(verifiedDossier(root), path.join(root, folder), 'Linked provenance ledger is supported');
+    write('docs/README.md', '# Changed core'); assert.throws(() => verifiedDossier(root), /Stale dossier source/);
+  });
   console.log(JSON.stringify({ status: 'passed', checks }));
 } finally {
   const resolved = fs.realpathSync(root);

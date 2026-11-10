@@ -37,10 +37,14 @@ function verifiedDossier(root) {
   const guidance = 'Rebuild the reader with tools/build-witness-docs.py or remove the stale generated export.';
   try {
     const report = JSON.parse(fs.readFileSync(path.join(folder, 'validation.json'), 'utf8'));
-    const files = [...contract.documentFiles, 'design-contract.json', 'campaign-contract.json', 'depth-contract.json', 'craft-contract.json'];
+    const modern = report.format === 2;
+    const docBase = contract.documentationRoot === '..' ? 'docs/' : 'docs/the-witness/';
+    const expected = modern ? [...contract.documentFiles.map(f => docBase + f), ...['design', 'campaign', 'depth', 'craft'].map(n => 'docs/the-witness/' + n + '-contract.json')] : [...contract.documentFiles, 'design-contract.json', 'campaign-contract.json', 'depth-contract.json', 'craft-contract.json'];
+    const files = modern ? Object.keys(report.sourceSha256 || {}) : expected;
+    if (expected.some(f => !files.includes(f))) throw Error('Reader source manifest is incomplete');
     for (const file of files) {
-      if (path.basename(file) !== file) throw Error('Invalid dossier source path');
-      const bytes = fs.readFileSync(path.join(source, file));
+      if (modern ? (!/^(?:docs|assets)\//.test(file) || file.includes('\\') || file.split('/').some(p => !p || p === '.' || p === '..')) : path.basename(file) !== file) throw Error('Invalid dossier source path');
+      const bytes = fs.readFileSync(path.join(modern ? root : source, file));
       const hash = crypto.createHash('sha256').update(bytes).digest('hex');
       if (report.sourceSha256?.[file] !== hash || !bytes.equals(fs.readFileSync(path.join(folder, 'sources', file)))) {
         throw Error('Stale dossier source: ' + file);

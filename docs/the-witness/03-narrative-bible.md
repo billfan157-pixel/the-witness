@@ -415,6 +415,8 @@ Nhìn thấy bất thường → tự tiếp cận → đặt giả thuyết →
 
 ---
 
+<a id="phan-ii"></a>
+<a id="phan-ii-scene-systems-c-v60-thiet-ke-canh-co-che-moi-tich-hop"></a>
 # PHẦN II · SCENE SYSTEMS C+ v6.0 (THIẾT KẾ CẢNH & CƠ CHẾ MỚI TÍCH HỢP)
 
 > **QUY TẮC ĐỌC VÀ ƯU TIÊN:**  
@@ -422,6 +424,7 @@ Nhìn thấy bất thường → tự tiếp cận → đặt giả thuyết →
 
 ---
 
+<a id="14-khao-co-hien-truong-da-tang-world-first-investigation"></a>
 ## 14 • KHẢO CỔ HIỆN TRƯỜNG ĐA TẦNG — WORLD-FIRST INVESTIGATION
 
 ### 14.1 Luật thiết kế chứng cứ không gian
@@ -430,6 +433,7 @@ Nhìn thấy bất thường → tự tiếp cận → đặt giả thuyết →
 * Một chỗ mang dấu cháy không tự chứng minh người đốt; một vết giày không xác định danh tính; một loại sáp không xác định cùng bàn tay đóng. Trạng thái “contested/partial” vẫn có gameplay.
 * Độ lớn bản đồ tăng bằng tuyến dọc, lối vòng, tầm nhìn và tầng chức năng, không tăng bằng khoảng đất trống.
 
+<a id="142-xedare--sebastos--bon-tang-tham-hiem-q01q04-tro-lai-q11q12"></a>
 ### 14.2 Xêdarê / Sebastos — bốn tầng thám hiểm (Q01–Q04, trở lại Q11–Q12)
 | Tầng | Chức năng đời sống / gameplay | Dấu và sự thật có thể thu |
 |---|---|---|
@@ -440,6 +444,7 @@ Nhìn thấy bất thường → tự tiếp cận → đặt giả thuyết →
 
 *Bộ cảnh Q01 v6:* (a) tàu cập và nguy cơ xe; (b) Natan trao sổ có đường khâu đáng ngờ; (c) cháy cục bộ, cứu người bằng xe/nêm/dây; (d) thấy cửa bảo trì và một đường rời khả nghi; (e) chọn hỏi người hoặc tự khảo sát; (f) kết bằng câu hỏi về Haddai, không phán Rufus là hung thủ. Sau Q04, đối chiếu vị trí kho và thời điểm đóng cửa; sau Q11 quay lại dùng lối cũ trong môi trường đã niêm.
 
+<a id="143-tuyen-antipatris-q03--doc-hinh-hoc-thay-cho-di-toi-marker"></a>
 ### 14.3 Tuyến Antipatris Q03 — đọc hình học thay cho “đi tới marker”
 Không gian có 3 lựa chọn: (A) đường xe chậm an toàn qua nền đất cứng; (B) tuyến vượt đá ngắn chỉ cho người đi bộ; (C) lối sửa cầu gỗ dùng dây/tời. Đội khảo sát phải xác định giả thuyết “xe chở hàng có thể qua đây hay không” bằng chiều ngang bánh, độ dốc và dấu cào, không chỉ bằng icon. Không cho xe lớn đi qua bậc thang hẹp rồi dùng nó làm chứng cứ.
 * **Beat 1:** Nhìn vệt bánh, dấu chân và vệt đất bị nước xóa. Lea phân biệt lớp bao/điểm vá; Damar đọc dấu theo hướng đi; người chơi tự kiểm vật lý.
@@ -467,6 +472,7 @@ Chia thành J0 sân người chuyển thư, J1 xưởng sao lục/sửa bản pa
 
 ---
 
+<a id="15-companion-driven-traversal-bon-cach-doc-cung-mot-the-gioi"></a>
 ## 15 • COMPANION-DRIVEN TRAVERSAL — BỐN CÁCH ĐỌC CÙNG MỘT THẾ GIỚI
 
 | Đồng hành | Ngôn ngữ tương tác 3D | Scene nổi bật / Giới hạn |
@@ -476,6 +482,7 @@ Chia thành J0 sân người chuyển thư, J1 xưởng sao lục/sửa bản pa
 | **Damar — Địa hình** | Nhìn tuyến canh, dấu bước, gờ đá, đường trốn, vùng sáng/tối và chỗ âm thanh lan. | Q03/Q06/Q08/Q11/Q12. Không một mình hạ lính, không bắt companion tham gia cưỡng ép nhân chứng. |
 | **Miriam — Cộng đồng** | Tiếp cận bếp/sân/chỗ nghỉ qua quan hệ và công việc cụ thể; tổ chức chăm sóc, tiếp ca, bảo vệ người yếu. | Q02/Q05/Q07/Q11/Q12. Không “thuyết phục bằng điểm”; NPC giữ quyền từ chối và quyền hạn tên riêng. |
 
+<a id="151-interaction-grammar-dung-chung"></a>
 ### 15.1 Interaction grammar dùng chung
 1. **Nhận biết (spot):** Nhân vật chỉ hướng/đặt câu hỏi, không khoanh đỏ đáp án. Avatar có thể tự phát hiện trước.
 2. **Thảo luận (propose):** 1–3 phương án có đánh đổi hiển thị trên vật thể hoặc hội thoại in-world.
@@ -492,6 +499,7 @@ Chia thành J0 sân người chuyển thư, J1 xưởng sao lục/sửa bản pa
 
 ---
 
+<a id="16-mechanical-resonance-legends-day-ngon-ngu-moi-truong"></a>
 ## 16 • MECHANICAL RESONANCE — LEGENDS DẠY NGÔN NGỮ MÔI TRƯỜNG
 
 > **CANON LOCK & PROGRESSION:**  
@@ -503,6 +511,7 @@ Chia thành J0 sân người chuyển thư, J1 xưởng sao lục/sửa bản pa
 | **Q06 → L02 → Q07** | `L02.ACOUSTICS` / `L02.RESTRAINT`: mặt sỏi, tiếng dội, bóng tối, giữ người khỏi xung đột. | Q07 phản ứng tình huống Lea, Q08 đọc gờ và tiếng đá; Q09/Q11 tái sử dụng stealth. **Q06 đã giới thiệu nền tảng TRƯỚC L02.** |
 | **Q10 → L04 → Q11** | `L04.NET` / `L04.LANDING`: lao động nhóm, nhịp thuyền, khoảng lặng, quan sát người. | Q11 điều phối chuyển hàng và bữa chung; Q12 chuyển giọng camera từ cảnh người lao động sang lời chứng mang trách nhiệm. |
 
+<a id="161-bridge-echo-thanh-bon-lop-dong-bo"></a>
 ### 16.1 Bridge Echo thành bốn lớp đồng bộ
 * **Mechanical:** Cùng grammar (neo/đèn/đường/nhịp nhóm) nhưng tình huống và mức khó khác, không copy puzzle.
 * **Visual:** Motif gió trên dây L01 → dây Q04/Q08; mảng sáng L02 → hành lang Q09; bếp than/bình minh L04 → ca sáng Q11/Q12.
@@ -511,6 +520,7 @@ Chia thành J0 sân người chuyển thư, J1 xưởng sao lục/sửa bản pa
 
 ---
 
+<a id="17-dynamic-world-callback-ba-moc-ap-luc-hanh-chinh"></a>
 ## 17 • DYNAMIC WORLD CALLBACK — BA MỐC ÁP LỰC HÀNH CHÍNH
 
 Áp lực là biến cố nội dung đạt mốc, không phải ngày đếm ngược giả lập.
@@ -534,6 +544,7 @@ Mỗi hub có 3 lớp route: **công khai**, **nghề nghiệp**, **bảo trì**
 
 ---
 
+<a id="18-q12-interactive-set-piece-da-tuyen"></a>
 ## 18 • Q12 — INTERACTIVE SET-PIECE ĐA TUYẾN
 
 Q12 là không gian tiếp nhận hồ sơ/điều trần địa phương hư cấu dưới áp lực rà hành chính, không phải phiên tòa lịch sử đích danh Festus.
@@ -551,6 +562,7 @@ Q12 là không gian tiếp nhận hồ sơ/điều trần địa phương hư c�
 
 ---
 
+<a id="19-atlas-vat-chung-e01e12-menh-de-p01p05"></a>
 ## 19 • ATLAS VẬT CHỨNG E01–E12 & MỆNH ĐỀ P01–P05
 
 Mọi hiện vật có `sourceLineage` và `consentScope`, nguồn copy không tăng `independentSourceCount`.
@@ -576,6 +588,7 @@ Mọi hiện vật có `sourceLineage` và `consentScope`, nguồn copy không t
 
 ---
 
+<a id="20-ma-tran-bao-toan-canh-cu-v6"></a>
 ## 20 • MA TRẬN BẢO TOÀN CẢNH CŨ → v6
 
 | Phân đoạn | Mục cũ PHẢI giữ | Nâng cấp v6 không được lấn át |
@@ -615,6 +628,7 @@ Mọi hiện vật có `sourceLineage` và `consentScope`, nguồn copy không t
 * **Pressure:** `milestoneId`, `overlaySet`, `affectedRoutes`, `NPCSchedules`, `reversibleCutscenes`. Không đếm giờ thật.
 * **Q12 orchestration:** `endingRoute`, `consentSnapshot`, `claimSnapshot`, `rolesCommitted`, `handoffReceipts`.
 
+<a id="212-backlog-san-xuat-theo-doc-vertical-slices"></a>
 ### 21.2 Backlog sản xuất theo dọc (Vertical Slices)
 * **P0:** Q01 kho 4 lớp (C0, C1, C-1, C+1) + LOAD + cứu hộ + nguyên nhân cháy giới hạn.
 * **P1:** Q03 route geology (3 tuyến A/B/C) + L01 mechanical echo + Q04 phản hồi đóng kho.

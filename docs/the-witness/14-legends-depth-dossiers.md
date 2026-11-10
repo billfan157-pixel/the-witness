@@ -37,6 +37,8 @@ Blockout gồm **A — mép trại hậu phương**, **B — tuyến vách đá 
 
 ### Chuỗi scene và hành động chi tiết
 
+*(Chi tiết kịch bản phân cảnh 5 nhịp điện ảnh Nhịp 01–05, thiết kế âm thanh diegetic, tương tác cơ học giải cứu xe tải cộng hưởng từ Q03 và hiệu ứng cọc tiêu ánh sáng xem tại [hồ sơ 07](07-vertical-slice-screenplay.md)).*
+
 | Scene / phút | Việc người chơi thực hiện (Nhân chứng vô danh) [H] | Biến cố Kinh Thánh quan sát được [K] | Điểm lưu |
 |---|---|---|---|
 | L01.S01 / 8 | Nhận còi hiệu và đèn bão; đi tuần tra mép trại A; kiểm tra các gia đình chậm chân | Tiếng chiến xa Ai Cập vọng từ xa; cột mây dời ra phía sau che chắn (B01) | Lưu trại A |

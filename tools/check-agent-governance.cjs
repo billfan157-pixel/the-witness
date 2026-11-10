@@ -31,7 +31,7 @@ function inspect(root) {
     fail('REGISTRY', e.message);
     return { errors, warnings, checkedFiles: 0 };
   }
-  if (registry.version !== 1) fail('SCHEMA', 'Unsupported registry version');
+  if (![1, 2].includes(registry.version)) fail('SCHEMA', 'Unsupported registry version');
   const arrays = ['rootFiles', 'groups', 'knownFiles', 'admissions', 'requiredFiles', 'skills', 'mirrors', 'linkDocuments'];
   for (const key of arrays) {
     if (!Array.isArray(registry[key])) fail('SCHEMA', key + ' must be an array');
@@ -166,6 +166,81 @@ function inspect(root) {
       }
     } catch (e) { fail('LINK', p + ': ' + e.message); }
   }
+  if (registry.version === 2) {
+    const map = registry.knowledge;
+    if (!map || map.version !== 2 || !['coreDocuments', 'roles', 'tasks', 'domains', 'evaluation'].every(k => Array.isArray(map[k]))) {
+      fail('KNOWLEDGE', 'Registry v2 requires a complete knowledge map');
+    } else {
+      const roles = new Map();
+      const allowedRoles = new Set(['canonical', 'specification', 'research', 'index']);
+      for (const row of map.roles) {
+        if (!validPath(row.path) || !allowedRoles.has(row.role) || !row.owner?.trim() || !row.value?.trim()) {
+          fail('DOC_ROLE', 'Document needs path, role, owner and retained value'); continue;
+        }
+        if (roles.has(row.path)) fail('DOC_ROLE', 'Ambiguous role: ' + row.path);
+        roles.set(row.path, row);
+        checkExists(row.path, 'DOC_ROLE');
+      }
+      const checkReference = (ref, code) => {
+        if (typeof ref !== 'string') { fail(code, 'Reference must be a string'); return; }
+        const [file, anchor] = ref.split('#');
+        if (!roles.has(file)) { fail(code, 'Unclassified documentation reference: ' + ref); return; }
+        try {
+          const body = fs.readFileSync(resolve(file), 'utf8');
+          if (anchor && !body.includes('id="' + anchor + '"')) fail(code, 'Missing explicit anchor: ' + ref);
+        } catch (e) { fail(code, ref + ': ' + e.message); }
+      };
+      for (const p of map.coreDocuments) {
+        if (roles.get(p)?.role !== 'canonical') fail('CORE', p + ' is not canonical');
+        if (!required.has(p)) fail('CORE', p + ' is not required');
+      }
+      for (const row of roles.values()) if (row.role === 'canonical' && !map.coreDocuments.includes(row.path)) fail('CORE', 'Undeclared core: ' + row.path);
+      const domainIds = new Set(), authorities = new Set();
+      for (const domain of map.domains) {
+        if (!domain.id || domainIds.has(domain.id)) fail('AUTHORITY', 'Duplicate/missing domain');
+        if (authorities.has(domain.authority)) fail('AUTHORITY', 'Conflicting ownership: ' + domain.authority);
+        domainIds.add(domain.id); authorities.add(domain.authority); checkReference(domain.authority, 'AUTHORITY');
+      }
+      const taskIds = new Set(), routedSkills = new Set(), reached = new Set(['docs/README.md']);
+      for (const task of map.tasks) {
+        if (!/^[a-z0-9-]+$/.test(task.id || '') || taskIds.has(task.id)) fail('TASK', 'Duplicate/invalid task: ' + task.id);
+        taskIds.add(task.id);
+        if (!registry.skills.includes(task.skill) || routedSkills.has(task.skill)) fail('TASK', 'Missing/duplicate skill route: ' + task.skill);
+        routedSkills.add(task.skill);
+        if (!['required', 'details', 'implementation', 'checks', 'updates'].every(k => Array.isArray(task[k]) && task[k].length)) {
+          fail('TASK', task.id + ' requires reading, implementation, checks and updates'); continue;
+        }
+        let skillLinks = [];
+        try {
+          skillLinks = [...fs.readFileSync(resolve(task.skill), 'utf8').matchAll(/\]\(([^)]+)\)/g)].map(m => {
+            const [file, anchor] = m[1].split('#');
+            return path.posix.normalize(path.posix.join(path.posix.dirname(task.skill), file)) + (anchor ? '#' + anchor : '');
+          });
+        } catch (e) { fail('TASK', e.message); }
+        for (const ref of task.required) if (!skillLinks.includes(ref)) fail('ROUTE_READ', task.skill + ' must directly link ' + ref);
+        for (const ref of [...task.required, ...task.details, ...task.updates]) {
+          checkReference(ref, 'ROUTE_REF'); reached.add(ref.split('#')[0]);
+        }
+        for (const p of task.implementation) checkExists(p, 'IMPLEMENTATION');
+        for (const check of task.checks) {
+          if (!check.command?.trim() || !check.when?.trim()) { fail('CHECK_COMMAND', task.id + ' requires command and condition'); continue; }
+          const npm = /^npm (?:run ([\w:.-]+)|(test))$/.exec(check.command);
+          const script = /^(?:node|python) ([\w./-]+)(?:\s|$)/.exec(check.command);
+          if (npm) {
+            try { if (!JSON.parse(fs.readFileSync(resolve('package.json'), 'utf8')).scripts?.[npm[1] || npm[2]]) fail('CHECK_COMMAND', 'Missing npm script: ' + check.command); }
+            catch (e) { fail('CHECK_COMMAND', e.message); }
+          } else if (script) checkExists(script[1], 'CHECK_COMMAND');
+          else fail('CHECK_COMMAND', 'Unsupported check command: ' + check.command);
+        }
+      }
+      for (const p of registry.skills) if (!routedSkills.has(p)) fail('TASK', 'Unrouted skill: ' + p);
+      for (const row of roles.values()) if (!reached.has(row.path) && row.role !== 'index') fail('DOC_COVERAGE', 'No task reaches ' + row.path);
+      for (const p of files) if (p.startsWith('docs/') && p.endsWith('.md') &&
+          !/^docs\/(?:archive\/|environment-kit\/validation\/)/.test(p) && fs.existsSync(resolve(p)) && !roles.has(p)) {
+        fail('DOC_COVERAGE', 'Active document has no role/owner: ' + p);
+      }
+    }
+  }
   const present = new Set(files);
   for (const p of known) if (!present.has(p) && !retired.has(p)) warnings.push({ code: 'BASELINE_REMOVED', detail: p + ' no longer in Git inventory; review consumers before pruning registry' });
   return { errors, warnings, checkedFiles: files.length, skills: registry.skills.length, mirrors: registry.mirrors.length };
@@ -174,21 +249,36 @@ function inspect(root) {
 if (require.main === module) {
   const args = process.argv.slice(2);
   let requestedRoot;
+  let taskId;
   let invalid = false;
   let json = false;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--json' && !json) json = true;
     else if (args[i] === '--root' && requestedRoot === undefined && args[i + 1] && !args[i + 1].startsWith('--')) requestedRoot = args[++i];
+    else if (args[i] === '--task' && taskId === undefined && args[i + 1] && !args[i + 1].startsWith('--')) taskId = args[++i];
     else invalid = true;
   }
   if (invalid) {
-    console.error('Usage: node tools/check-agent-governance.cjs [--root PATH] [--json]');
+    console.error('Usage: node tools/check-agent-governance.cjs [--root PATH] [--task TASK] [--json]');
     process.exitCode = 2;
   } else {
     let report;
     try { report = inspect(requestedRoot === undefined ? path.resolve(__dirname, '..') : requestedRoot); }
     catch (e) { report = { errors: [{ code: 'CHECKER', detail: e.message }], warnings: [], checkedFiles: 0 }; }
-    if (json) console.log(JSON.stringify(report, null, 2));
+    let context;
+    if (taskId && !report.errors.length) {
+      const registry = JSON.parse(fs.readFileSync(path.join(requestedRoot || path.resolve(__dirname, '..'), 'docs/agent/registry.json'), 'utf8'));
+      context = registry.knowledge?.tasks.find(t => t.id === taskId);
+      if (!context) report.errors.push({ code: 'TASK', detail: 'Unknown task: ' + taskId });
+    }
+    if (json) console.log(JSON.stringify(context ? { ...report, context } : report, null, 2));
+    else if (context) {
+      console.log('Task: ' + context.id + '\nSkill: ' + context.skill);
+      for (const key of ['required', 'details', 'implementation', 'checks', 'updates']) {
+        console.log('\n' + key + (key === 'details' ? ' (load only when relevant)' : '') + ':');
+        for (const row of context[key]) console.log('- ' + (typeof row === 'string' ? row : row.command + ' — ' + row.when));
+      }
+    }
     else {
       for (const issue of report.errors) console.error('FAIL [' + issue.code + '] ' + issue.detail);
       for (const issue of report.warnings) console.warn('WARN [' + issue.code + '] ' + issue.detail);

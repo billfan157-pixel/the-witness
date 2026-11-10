@@ -20,7 +20,12 @@ def validate_contracts(source):
             raise AssertionError(message)
 
     check(campaign['documentVersion'] == design['documentVersion'] == '3.0', 'v3 document versions')
-    check(len(design['documentFiles']) == len(set(design['documentFiles'])) == 21, 'explicit v3 spine and depth document manifest')
+    documentation_root = source.parent if design.get('documentationRoot') == '..' else source
+    declared = design['documentFiles']
+    check(bool(declared) and len(declared) == len(set(declared)), 'unique documentation manifest')
+    check(all((documentation_root / name).is_file() for name in declared), 'all declared documentation exists')
+    for name in declared:
+        check((documentation_root / name).resolve().is_relative_to(documentation_root.resolve()), 'documentation stays inside its root')
     depth = json.loads((source / 'depth-contract.json').read_text(encoding='utf-8'))
     check(depth['revision'] == design['depthExpansion']['revision'] == '3.2', 'depth revision')
     check(depth['runtimeRelease'] == design['depthExpansion']['runtimeRelease'] == '0.5.0', 'depth release')
@@ -199,7 +204,7 @@ def validate_contracts(source):
     check(slice_spec['humanPlaytestStatus']==slice_spec['study']['status']=='not-run', 'no fabricated study results')
     checks.append('90-minute slice/71-minute summary targets, excerpt isolation and planned unrun study')
 
-    all_text = '\n'.join((source/name).read_text(encoding='utf-8') for name in design['documentFiles'])
+    all_text = '\n'.join((documentation_root/name).read_text(encoding='utf-8') for name in design['documentFiles'])
     for stale in ['Skip cả L/V', 'Skipping Legends and Veils never', 'Skip records completion', 'Cả hai được bỏ qua mà không mất lối cứu người', 'Bỏ qua L không chặn']:
         check(stale not in all_text+'\n'+json.dumps(campaign)+'\n'+json.dumps(design), 'obsolete invariant removed: '+stale)
     for lid in order:
