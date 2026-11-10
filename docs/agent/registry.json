@@ -1416,6 +1416,245 @@
         "docs/the-witness/README.md"
       ],
       "evaluationCriteria": "Ownership, unique decision/detail, consistency, duplication/reading cost, and update consumers; no fabricated numerical quality scores"
-    }
+    },
+    "handoffs": [
+      {
+        "id": "H01",
+        "trigger": "q01-geometry",
+        "primaryTask": "environment",
+        "partnerTasks": [
+          "content",
+          "change"
+        ],
+        "when": "Thay geometry, tầng, lối đi, mái, gác lửng hoặc tương tác vật lý Q01",
+        "required": [
+          "docs/STORY.md#ownership",
+          "docs/the-witness/03-narrative-bible.md",
+          "docs/the-witness/07-vertical-slice-screenplay.md",
+          "docs/the-witness/12-continuity-and-state.md",
+          "docs/environment-kit/standards.md",
+          "docs/ENGINEERING.md#save"
+        ],
+        "implementation": [
+          "witness-architecture.js",
+          "witness-world.js",
+          "witness-model.js",
+          "test/architecture.cjs",
+          "test/architecture-browser.mjs"
+        ],
+        "checks": [
+          {
+            "command": "npm run test:architecture",
+            "when": "Thay support, collision hoặc tuyến đi lại"
+          },
+          {
+            "command": "npm run test:architecture-browser",
+            "when": "Thay hình học và controller trong build thực"
+          }
+        ],
+        "updates": [
+          "docs/ENGINEERING.md#environment",
+          "docs/STATUS.md"
+        ],
+        "requiredOwners": [
+          "story",
+          "content",
+          "environment",
+          "engineering"
+        ]
+      },
+      {
+        "id": "H02",
+        "trigger": "q01-gameplay",
+        "primaryTask": "content",
+        "partnerTasks": [
+          "environment",
+          "change"
+        ],
+        "when": "Thay Beat 00–08, thêm cứu hộ, NPC, vật chứng, hành động Q01.COMMITTED hoặc callback",
+        "required": [
+          "docs/STORY.md#ownership",
+          "docs/the-witness/03-narrative-bible.md",
+          "docs/the-witness/06-campaign-quest-bible.md",
+          "docs/the-witness/07-vertical-slice-screenplay.md",
+          "docs/the-witness/12-continuity-and-state.md",
+          "docs/environment-kit/standards.md",
+          "docs/ENGINEERING.md#runtime",
+          "docs/ENGINEERING.md#save"
+        ],
+        "implementation": [
+          "witness-content.js",
+          "witness-model.js",
+          "witness-world.js",
+          "witness-architecture.js",
+          "server/api.mjs"
+        ],
+        "checks": [
+          {
+            "command": "npm test",
+            "when": "Thay đổi model, content logic hoặc progression"
+          },
+          {
+            "command": "npm run test:character",
+            "when": "Thay đổi thoại, NPC hoặc hành vi nhân vật"
+          }
+        ],
+        "updates": [
+          "docs/the-witness/06-campaign-quest-bible.md",
+          "docs/the-witness/07-vertical-slice-screenplay.md",
+          "docs/STATUS.md"
+        ],
+        "requiredOwners": [
+          "story",
+          "content",
+          "environment",
+          "engineering"
+        ]
+      },
+      {
+        "id": "H03",
+        "trigger": "state-save",
+        "primaryTask": "change",
+        "partnerTasks": [
+          "content",
+          "release"
+        ],
+        "when": "Thay schema/content version, support ID, world-state, action progression, restore hoặc lưu trữ offline/cloud",
+        "required": [
+          "docs/ENGINEERING.md#save",
+          "docs/STORY.md#contracts",
+          "docs/the-witness/12-continuity-and-state.md",
+          "docs/the-witness/23-backend-and-cloud-saves.md",
+          "docs/OPERATIONS.md#verify"
+        ],
+        "implementation": [
+          "witness-model.js",
+          "witness-cloud.js",
+          "server/api.mjs",
+          "docs/the-witness/campaign-contract.json",
+          "test/campaign.cjs",
+          "test/backend.test.mjs",
+          "test/cloud-client.test.cjs"
+        ],
+        "checks": [
+          {
+            "command": "npm test",
+            "when": "Thay đổi model hoặc save schema contract"
+          },
+          {
+            "command": "npm run test:backend",
+            "when": "Thay đổi cloud sync, auth hoặc API server"
+          }
+        ],
+        "updates": [
+          "docs/ENGINEERING.md#save",
+          "docs/STATUS.md"
+        ],
+        "requiredOwners": [
+          "engineering",
+          "story",
+          "content",
+          "operations"
+        ]
+      },
+      {
+        "id": "H04",
+        "trigger": "visual-asset",
+        "primaryTask": "environment",
+        "partnerTasks": [
+          "change",
+          "release"
+        ],
+        "when": "Thay lighting, GI, renderer, texture/mesh, hiệu ứng khói/cháy, animation hoặc cache/bundle offline",
+        "required": [
+          "docs/ENGINEERING.md#environment",
+          "docs/ENGINEERING.md#pipeline",
+          "docs/environment-kit/standards.md",
+          "docs/environment-kit/phase-b.md",
+          "docs/the-witness/22-graphics-rendering.md",
+          "docs/OPERATIONS.md#verify"
+        ],
+        "implementation": [
+          "witness-q01.js",
+          "witness-q01-environment.js",
+          "witness-architecture.js",
+          "witness-world.js"
+        ],
+        "checks": [
+          {
+            "command": "npm run test:graphics",
+            "when": "Thay đổi renderer, shader hoặc ánh sáng GI"
+          },
+          {
+            "command": "npm run test:kit-cache",
+            "when": "Thay đổi cache asset hoặc offline bundle"
+          },
+          {
+            "command": "npm run test:kit-lifecycle",
+            "when": "Thay đổi vòng đời load/unload tài nguyên 3D"
+          }
+        ],
+        "updates": [
+          "docs/environment-kit/standards.md",
+          "docs/STATUS.md"
+        ],
+        "requiredOwners": [
+          "engineering",
+          "environment",
+          "operations"
+        ]
+      },
+      {
+        "id": "H05",
+        "trigger": "release-candidate",
+        "primaryTask": "release",
+        "partnerTasks": [
+          "change",
+          "content",
+          "environment"
+        ],
+        "when": "Đóng gói candidate Q01, kiểm tra bản web/standalone/cloud, chuẩn bị duyệt G3/G4 hoặc báo cáo nghiệm thu",
+        "required": [
+          "docs/STATUS.md#validation",
+          "docs/OPERATIONS.md#verify",
+          "docs/ENGINEERING.md#pipeline",
+          "docs/ENGINEERING.md#save",
+          "docs/STORY.md#ownership",
+          "docs/environment-kit/standards.md",
+          "docs/the-witness/23-backend-and-cloud-saves.md"
+        ],
+        "implementation": [
+          "witness-q01.js",
+          "witness-model.js",
+          "witness-architecture.js",
+          "server/api.mjs"
+        ],
+        "checks": [
+          {
+            "command": "npm run test:build-output",
+            "when": "Kiểm tra tính toàn vẹn của gói build candidate"
+          },
+          {
+            "command": "npm run test:architecture-browser",
+            "when": "Xác minh va chạm và controller trên môi trường browser"
+          },
+          {
+            "command": "npm run test:backend",
+            "when": "Xác minh API và save database trước khi phát hành"
+          }
+        ],
+        "updates": [
+          "docs/STATUS.md",
+          "docs/OPERATIONS.md#verify"
+        ],
+        "requiredOwners": [
+          "status",
+          "operations",
+          "engineering",
+          "story",
+          "environment"
+        ]
+      }
+    ]
   }
 }

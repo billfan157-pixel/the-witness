@@ -47,6 +47,12 @@ Không sao chép bản HEAD cũ đè lên chúng để “chuẩn hóa”.
   chưa đo đạc, không thay thế lẫn nhau. Không tuyên bố v6 đã chạy, Phase B đã nghiệm thu,
   G3 đã duyệt hay dự án sẵn sàng phát hành.
 - **Phát hiện hậu PR-01 (PR-01.1):** Rà soát và khóa sai lệch: E01 thuộc Q04 thay vì Q03 (P02 cần E04 + E05); B06 tại Q01 là quan sát hiện tượng sơ bộ, không dùng pseudo-fields (`observation.b06_scraped`, `evidence.patch`); ánh sáng outro Q01 chuyển rạng sáng (chưa có preset runtime `dawn`/`night`); làm rõ hiện trạng Phase B/G3 và bản chất chưa đo của các ngân sách thời lượng.
+- **D011 — Conditional cross-domain handoffs (PR-02).** Bổ sung cơ chế handoff
+  có điều kiện H01–H05 trong `registry.knowledge.handoffs` cho các tác vụ giao thoa
+  giữa 3D environment, content kịch bản, change/save và release. Handoff bổ sung
+  tuyến đọc bắt buộc, consumer đối chiếu tác động và bài kiểm bắt buộc khi trigger
+  được kích hoạt. Handoff là cơ chế đọc/kiểm liên miền có cấu trúc, không phải bằng
+  chứng semantic correctness và tuyệt đối không cho phép tự ý mở rộng phạm vi chỉnh sửa.
 
 Nguồn và phép đánh giá từng file, vị trí thay thế, hash gốc và luận cứ phương
 pháp nằm trong `registry.knowledge`. Mốc trước ở Git và cleanup-record; không
