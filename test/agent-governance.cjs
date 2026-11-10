@@ -52,9 +52,57 @@ function knowledgeFixture(name) {
     version: 2, coreDocuments: ['docs/core.md'],
     roles: [{ path: 'docs/core.md', role: 'canonical', owner: 'engineering', value: 'Own the fixture contract' }],
     domains: [{ id: 'engineering', authority: 'docs/core.md#entry' }], evaluation: [],
-    tasks: [{ id: 'change', skill: '.agents/skills/example/SKILL.md', required: ['docs/core.md#entry'], details: ['docs/core.md'], implementation: ['docs/check.cjs'], checks: [{ command: 'node docs/check.cjs', when: 'fixture change' }], updates: ['docs/core.md'] }]
+    tasks: [{ id: 'change', skill: '.agents/skills/example/SKILL.md', required: ['docs/core.md#entry'], details: ['docs/core.md'], implementation: ['docs/check.cjs'], checks: [{ command: 'node docs/check.cjs', when: 'fixture change' }], updates: ['docs/core.md'] }],
+    handoffs: []
   };
   f.save(); return f;
+}
+function handoffFixture(name) {
+  const f = knowledgeFixture(name);
+  write(f.root, 'docs/story.md', '# Story\n<a id="ownership"></a>\nStory ownership.\n');
+  write(f.root, 'docs/screenplay.md', '# Screenplay\nScreenplay blocking.\n');
+  write(f.root, 'docs/env.md', '# Environment\nEnvironment standards.\n');
+  write(f.root, 'docs/save.md', '# Save\n<a id="save"></a>\nSave specs.\n');
+  write(f.root, 'docs/check-arch.cjs', '// arch check\n');
+  write(f.root, '.agents/skills/env/SKILL.md', '---\nname: env\ndescription: Environment skill.\n---\nRead [core](../../../docs/core.md#entry).\nH01 (q01-geometry) handoff available.\n');
+  write(f.root, '.agents/skills/content/SKILL.md', '---\nname: content\ndescription: Content skill.\n---\nRead [core](../../../docs/core.md#entry).\nH02 (q01-gameplay) handoff available.\n');
+
+  f.registry.skills.push('.agents/skills/env/SKILL.md', '.agents/skills/content/SKILL.md');
+  f.registry.knownFiles.push(
+    'docs/story.md', 'docs/screenplay.md', 'docs/env.md', 'docs/save.md', 'docs/check-arch.cjs',
+    '.agents/skills/env/SKILL.md', '.agents/skills/content/SKILL.md'
+  );
+  f.registry.knowledge.roles.push(
+    { path: 'docs/story.md', role: 'specification', owner: 'story', value: 'Story spec' },
+    { path: 'docs/screenplay.md', role: 'specification', owner: 'content', value: 'Screenplay spec' },
+    { path: 'docs/env.md', role: 'specification', owner: 'environment', value: 'Environment spec' },
+    { path: 'docs/save.md', role: 'specification', owner: 'engineering', value: 'Save spec' }
+  );
+  f.registry.knowledge.tasks.push(
+    { id: 'environment', skill: '.agents/skills/env/SKILL.md', required: ['docs/core.md#entry'], details: ['docs/core.md'], implementation: ['docs/check.cjs'], checks: [{ command: 'node docs/check.cjs', when: 'env change' }], updates: ['docs/core.md'] },
+    { id: 'content', skill: '.agents/skills/content/SKILL.md', required: ['docs/core.md#entry'], details: ['docs/core.md'], implementation: ['docs/check.cjs'], checks: [{ command: 'node docs/check.cjs', when: 'content change' }], updates: ['docs/core.md'] }
+  );
+  f.registry.knowledge.handoffs = [
+    {
+      id: 'H01',
+      trigger: 'q01-geometry',
+      primaryTask: 'environment',
+      partnerTasks: ['content', 'change'],
+      when: 'geometry change',
+      required: [
+        'docs/story.md#ownership',
+        'docs/screenplay.md',
+        'docs/env.md',
+        'docs/save.md#save'
+      ],
+      implementation: ['docs/check.cjs'],
+      checks: [{ command: 'node docs/check-arch.cjs', when: 'test geometry' }],
+      updates: ['docs/core.md'],
+      requiredOwners: ['story', 'content', 'environment', 'engineering']
+    }
+  ];
+  f.save();
+  return f;
 }
 function test(name, run) { run(); checks++; console.log('PASS ' + name); }
 try {
@@ -178,6 +226,171 @@ try {
     f.registry.knowledge.tasks[0].updates = ['docs/core.md'];
     f.registry.knowledge.tasks[0].checks = [{ command: 'node docs/missing.cjs', when: 'change' }]; f.save();
     expectCode(f, 'CHECK_COMMAND');
+  });
+
+  const repoRoot = path.resolve(__dirname, '..');
+  const cliScript = path.resolve(__dirname, '../tools/check-agent-governance.cjs');
+  const runCli = args => spawnSync(process.execPath, [cliScript, ...args], { encoding: 'utf8', windowsHide: true });
+
+  // Nhóm test dương tính
+  test('1. registry with five valid handoffs is accepted', () => {
+    const report = inspect(repoRoot);
+    assert.deepEqual(report.errors, []);
+    const reg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'docs/agent/registry.json'), 'utf8'));
+    assert.equal(reg.knowledge?.handoffs?.length, 5);
+  });
+  test('2. CLI without handoff preserves legacy output', () => {
+    const res = runCli(['--root', repoRoot, '--task', 'content', '--json']);
+    assert.equal(res.status, 0);
+    const data = JSON.parse(res.stdout);
+    assert.equal(data.context.id, 'content');
+    assert.equal(data.handoff, undefined);
+  });
+  test('3. CLI H01 returns environment context with story/content/engineering sources', () => {
+    const res = runCli(['--root', repoRoot, '--task', 'environment', '--handoff', 'H01', '--json']);
+    assert.equal(res.status, 0);
+    const data = JSON.parse(res.stdout);
+    assert.equal(data.handoff.id, 'H01');
+    assert(data.readingOrder.includes('docs/the-witness/03-narrative-bible.md'));
+    assert(data.readingOrder.includes('docs/the-witness/07-vertical-slice-screenplay.md'));
+    assert(data.readingOrder.includes('docs/ENGINEERING.md#save'));
+  });
+  test('4. CLI H02 preserves canon/continuity requirements', () => {
+    const res = runCli(['--root', repoRoot, '--task', 'content', '--handoff', 'H02', '--json']);
+    assert.equal(res.status, 0);
+    const data = JSON.parse(res.stdout);
+    assert.equal(data.handoff.id, 'H02');
+    assert(data.readingOrder.includes('docs/the-witness/12-continuity-and-state.md'));
+    assert(data.readingOrder.includes('docs/PRODUCT.md#invariants'));
+  });
+  test('5. CLI H03 includes restore/cloud/backend consumers', () => {
+    const res = runCli(['--root', repoRoot, '--task', 'change', '--handoff', 'H03', '--json']);
+    assert.equal(res.status, 0);
+    const data = JSON.parse(res.stdout);
+    assert.equal(data.handoff.id, 'H03');
+    assert(data.implementation.includes('witness-cloud.js'));
+    assert(data.implementation.includes('test/backend.test.mjs'));
+    assert(data.implementation.includes('server/api.mjs'));
+  });
+  test('6. CLI H04 includes GI/asset/offline checks', () => {
+    const res = runCli(['--root', repoRoot, '--task', 'environment', '--handoff', 'H04', '--json']);
+    assert.equal(res.status, 0);
+    const data = JSON.parse(res.stdout);
+    assert.equal(data.handoff.id, 'H04');
+    assert(data.checks.some(c => c.command === 'npm run test:graphics'));
+    assert(data.checks.some(c => c.command === 'npm run test:kit-cache'));
+    assert(data.checks.some(c => c.command === 'npm run test:kit-lifecycle'));
+  });
+  test('7. CLI H05 has candidate and release check conditions', () => {
+    const res = runCli(['--root', repoRoot, '--task', 'release', '--handoff', 'H05', '--json']);
+    assert.equal(res.status, 0);
+    const data = JSON.parse(res.stdout);
+    assert.equal(data.handoff.id, 'H05');
+    assert(data.checks.some(c => c.command === 'npm run test:build-output'));
+    assert(data.checks.some(c => c.command === 'npm run test:architecture-browser'));
+    assert(data.checks.some(c => c.command === 'npm run test:backend'));
+  });
+  test('8. --json has deterministic deduplicated reading order', () => {
+    const res = runCli(['--root', repoRoot, '--task', 'environment', '--handoff', 'H01', '--json']);
+    assert.equal(res.status, 0);
+    const data = JSON.parse(res.stdout);
+    assert(Array.isArray(data.readingOrder));
+    assert.equal(new Set(data.readingOrder).size, data.readingOrder.length);
+  });
+  test('9. checker does not modify registry or working tree', () => {
+    const regFile = path.join(repoRoot, 'docs/agent/registry.json');
+    const before = fs.readFileSync(regFile);
+    inspect(repoRoot);
+    const after = fs.readFileSync(regFile);
+    assert(before.equals(after));
+  });
+
+  // Nhóm test âm tính bắt buộc
+  test('10. duplicate H01 is rejected', () => {
+    const f = handoffFixture('dup-h01');
+    f.registry.knowledge.handoffs.push({ ...f.registry.knowledge.handoffs[0] });
+    f.save();
+    expectCode(f, 'HANDOFF_DUPLICATE');
+  });
+  test('11. duplicate trigger is rejected', () => {
+    const f = handoffFixture('dup-trigger');
+    f.registry.knowledge.handoffs.push({ ...f.registry.knowledge.handoffs[0], id: 'H02' });
+    f.save();
+    expectCode(f, 'HANDOFF_DUPLICATE');
+  });
+  test('12. unknown primary task is rejected', () => {
+    const f = handoffFixture('bad-primary');
+    f.registry.knowledge.handoffs[0].primaryTask = 'unknown-task';
+    f.save();
+    expectCode(f, 'HANDOFF_TASK');
+  });
+  test('13. partner task cannot be primary or unknown', () => {
+    const f = handoffFixture('bad-partner');
+    f.registry.knowledge.handoffs[0].partnerTasks = ['environment'];
+    f.save();
+    expectCode(f, 'HANDOFF_TASK');
+  });
+  test('14. missing file or anchor in required is rejected', () => {
+    const f = handoffFixture('missing-req');
+    f.registry.knowledge.handoffs[0].required = ['docs/missing.md'];
+    f.save();
+    expectCode(f, 'HANDOFF_REF');
+  });
+  test('15. missing required owner is rejected', () => {
+    const f = handoffFixture('missing-owner');
+    f.registry.knowledge.handoffs[0].requiredOwners.push('nonexistent');
+    f.save();
+    expectCode(f, 'HANDOFF_OWNER');
+    f.registry.knowledge.handoffs[0].requiredOwners = ['story', 'content', 'environment', 'engineering', 'status'];
+    f.save();
+    expectCode(f, 'HANDOFF_OWNER');
+  });
+  test('16. missing implementation file is rejected', () => {
+    const f = handoffFixture('missing-impl');
+    f.registry.knowledge.handoffs[0].implementation = ['docs/missing.js'];
+    f.save();
+    expectCode(f, 'HANDOFF_IMPL');
+  });
+  test('17. unsupported or missing check command is rejected', () => {
+    const f = handoffFixture('bad-check');
+    f.registry.knowledge.handoffs[0].checks = [{ command: 'node docs/missing.cjs', when: 'change' }];
+    f.save();
+    expectCode(f, 'HANDOFF_CHECK');
+  });
+  test('18. primary skill missing handoff declaration is rejected', () => {
+    const f = handoffFixture('missing-route');
+    write(f.root, '.agents/skills/env/SKILL.md', '---\nname: env\ndescription: Env skill.\n---\nRead [core](../../../docs/core.md#entry).\n');
+    expectCode(f, 'HANDOFF_ROUTE');
+  });
+  test('19. CLI mismatch between handoff and primary task returns exit code 1', () => {
+    const res = runCli(['--root', repoRoot, '--task', 'content', '--handoff', 'H01', '--json']);
+    assert.equal(res.status, 1);
+    assert(JSON.parse(res.stdout).errors.some(e => e.code === 'HANDOFF_MISMATCH'));
+  });
+  test('20. CLI unknown handoff returns exit code 1', () => {
+    const res = runCli(['--root', repoRoot, '--task', 'content', '--handoff', 'H99', '--json']);
+    assert.equal(res.status, 1);
+    assert(JSON.parse(res.stdout).errors.some(e => e.code === 'HANDOFF_UNKNOWN'));
+  });
+  test('21. CLI with --handoff but missing --task returns exit code 2', () => {
+    const res = runCli(['--handoff', 'H01']);
+    assert.equal(res.status, 2);
+  });
+  test('22. handoffs retain core contract references', () => {
+    const reg = JSON.parse(fs.readFileSync(path.join(repoRoot, 'docs/agent/registry.json'), 'utf8'));
+    const h1 = reg.knowledge.handoffs.find(h => h.id === 'H01');
+    const h2 = reg.knowledge.handoffs.find(h => h.id === 'H02');
+    const h3 = reg.knowledge.handoffs.find(h => h.id === 'H03');
+    const h4 = reg.knowledge.handoffs.find(h => h.id === 'H04');
+    const h5 = reg.knowledge.handoffs.find(h => h.id === 'H05');
+    assert(h1.required.includes('docs/the-witness/03-narrative-bible.md'));
+    assert(h1.required.includes('docs/the-witness/07-vertical-slice-screenplay.md'));
+    assert(h2.required.includes('docs/the-witness/12-continuity-and-state.md'));
+    assert(h2.required.includes('docs/environment-kit/standards.md'));
+    assert(h3.required.includes('docs/the-witness/23-backend-and-cloud-saves.md'));
+    assert(h3.implementation.includes('witness-cloud.js'));
+    assert(h4.checks.some(c => c.command === 'npm run test:graphics'));
+    assert(h5.checks.some(c => c.command === 'npm run test:build-output'));
   });
   console.log(JSON.stringify({ status: 'passed', checks, scope: 'governance-checker-in-isolated-repositories' }));
 } finally {
