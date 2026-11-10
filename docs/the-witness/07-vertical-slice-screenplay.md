@@ -2,8 +2,8 @@
 
 **Tác phẩm:** *Unsealed Witness: Legacy of the Covenant (Chứng Nhân: Di Sản Giao Ước)*  
 **Phân đoạn:** Bộ Kịch Bản Phân Cảnh Chi Tiết Trục Mở Màn & Cổng Hồi I (Prologue Q01, Chapter Q03, Legend L01)  
-**Thời lượng dự kiến:** Ước tính thiết kế 90 phút slice (Q01 ~32–40 phút, Q03 ~25 phút, L01 ~25–30 phút); đây là mục tiêu nhịp độ chưa đo đạc bằng playtest người thật, không hoán đổi với ngân sách 145m hay 216m của campaign.
-**Chuẩn mực thiết kế:** One-Shot Camera cho phân cảnh prologue, Khảo cổ Hiện trường Đa tầng, Không chiến đấu lấy mạng (Zero-Combat Tension), Tương tác Vật thể & Cơ học Thực tế, Canon Lock 100%. Tài liệu không khẳng định hình học 4 tầng độc lập đã nghiệm thu runtime.
+**Thời lượng dự kiến:** Đây là bộ đặc tả đầy đủ Q01/Q03/L01 với ngân sách từng scene chưa playtest (tổng nhịp chi tiết: Q01 ~40–45 phút, Q03 ~36–46 phút, L01 ~48–58 phút, cộng 124–149 phút chưa tính Q02). Mục tiêu demo tuyển chọn khoảng 90 phút là một phương án biên tập riêng, chưa có scene selection và chưa xác nhận tính liên tục campaign. Không được bỏ Q02 hoặc tự cấp cổng để khớp thời lượng demo.
+**Chuẩn mực thiết kế:** One-Shot Camera cho phân cảnh prologue, Khảo cổ Hiện trường Đa tầng, Không chiến đấu lấy mạng (Zero-Combat Tension), Tương tác Vật thể & Cơ học Thực tế, Canon Lock 100%. Vỏ kho, tuyến cửa–nội thất–18 bậc thang–mái đã tồn tại và từng được kiểm trong phạm vi G2/Phase 3 trên candidate tương ứng. Các mở rộng C1 gác lửng, C-1 rãnh bảo trì, cứu hộ và yêu cầu hình ảnh v6 chưa được nghiệm thu. G3 còn chờ duyệt trực quan, G4 còn đang thực hiện.
 
 ---
 
@@ -103,7 +103,7 @@ flowchart TD
 ### Phân cảnh 04: Giải Quyết Bằng Vật Thể (Gameplay Môi trường Đa tuyến)
 * **Thời lượng:** ~8–10 phút
 * **Cấu trúc Hiện trường Bốn Vùng Chức Năng Cao Độ (Four Functional Elevation Zones):**
-  Kho phía tây được tổ chức theo 4 vùng chức năng cao độ (không phải bốn tầng nhà độc lập xếp chồng), tái sử dụng tối đa vỏ kho đá, thang 18 bậc và sân mái Phase B đã nghiệm thu:
+  Kho phía tây được tổ chức theo 4 vùng chức năng cao độ (không phải bốn tầng nhà độc lập xếp chồng). Vỏ kho, tuyến cửa–nội thất–18 bậc thang–mái đã tồn tại và từng được kiểm trong phạm vi G2/Phase 3 trên candidate tương ứng. Các mở rộng C1 gác lửng, C-1 rãnh bảo trì, cứu hộ và yêu cầu hình ảnh v6 là thiết kế đề xuất chưa được nghiệm thu hình học hay va chạm (G3 còn chờ duyệt trực quan, G4 còn đang thực hiện):
   1. `C0 · Cầu cảng & Sân hàng:` Dốc xe hàng Q01.LOAD, đường bánh xe, thợ bốc dỡ ngoài trời.
   2. `C1 · Kho trệt & Gác lửng cứu hộ:` Ngăn chứa trệt ngổn ngang kiện hàng và thùng dầu, gác lửng gỗ bị khói bao vây cục bộ có Simeon và phụ việc mắc kẹt.
   3. `C-1 · Rãnh bảo trì ngầm:` Rãnh tiêu nước đá dưới nền có nắp kiểm tra nối sang khu cảng, bùn nước đọng và vết xước vật nặng (lối ngầm khảo sát và đường luồn cáp).
@@ -139,14 +139,14 @@ flowchart TD
 ```
 
 * **Tuyến giải quyết 1 — Tương tác Cơ học & Đối trọng (Phối hợp cùng Titus):**
-  * Người chơi quan sát độ dốc 5 độ của mặt sàn kho lát đá hướng về phía khung cửa sập phụ.
+  * Người chơi quan sát độ dốc mặt sàn kho lát đá hướng về phía khung cửa sập phụ (thông số thiết kế đề xuất sàn nghiêng ~5°, chưa xác minh qua đo đạc geometry).
   * Tiếp cận chiếc xe thồ bánh sắt chất đầy bao cát dằn tàu: người chơi dùng xà beng nạy chốt hãm bánh xe gỗ.
-  * Tận dụng gia tốc trọng trường, Người Chứng và Titus cùng dùng vai tì đẩy chiếc xe lao xuống rãnh trượt, chèn cứng chiếc xe vào khung cửa đang có nguy cơ sập, tạo thành một bệ đỡ chịu lực kiên cố.
-  * Titus móc sợi dây cáp tời vào dầm trên, người chơi kéo ròng rọc dây thừng kéo tung cửa thoát hiểm phụ dẫn thẳng lên chiếu nghỉ cầu thang gác lửng.
+  * Tận dụng gia tốc trọng trường, Người Chứng và Titus cùng dùng vai tì đẩy chiếc xe lao xuống rãnh trượt, chèn cứng chiếc xe vào khung cửa đang có nguy cơ sập, tạo thành một bệ đỡ chịu lực kiên cố (cơ cấu cơ học đề xuất, cần kiểm thử va chạm capsule và khả năng di chuyển).
+  * Titus móc sợi dây cáp tời vào dầm trên, người chơi kéo ròng rọc dây thừng kéo tung cửa thoát hiểm phụ dẫn thẳng lên chiếu nghỉ cầu thang gác lửng (đường nối gác lửng–mái và thoát khói là giả định thiết kế chưa đo line-of-sight).
 * **Tuyến giải quyết 2 — Điều phối Sức người & Đòn bẩy (Social/Manual Coordination):**
   * Thay vì vận hành ròng rọc, người chơi quay ra cửa ngách hô hoán, dùng uy tín gia đình Haddai để thuyết phục hai người phu khuân vác đang chần chừ chạy vào trợ giúp.
   * Ba người cùng lách qua làn khói, dùng một thanh gỗ chốt dài luồn dưới thanh xà đang đè, cùng ghé vai hô nhịp *"Một... Hai... Nâng!"* để nhấc bổng thanh đà nghiêng sang một bên, giải phóng lối đi cầu thang bộ.
-* **Kết quả:** Cả hai phương án đều giải cứu thành công người thợ già và đứa bé thoát ra hành lang thông lên sân mái mà không bên nào bị thương tổn.
+* **Kết quả:** Cả hai phương án đều giải cứu thành công người thợ già và đứa bé thoát ra hành lang thông lên sân mái mà không bên nào bị thương tổn (tuyến thoát ra sân mái ngoài trời là đề xuất thiết kế, cần xác minh kết nối hình học).
 
 ---
 
@@ -154,12 +154,12 @@ flowchart TD
 * **Thời lượng:** ~3 phút
 * **Không gian:** Sân mái hở (Roof Terrace) nhìn bao quát ra con hẻm phía sau kho bến và khu bến thuyền nhỏ.
 * **Khoảnh khắc trên cao:**
-  Đẩy cánh cửa gỗ bung ra sân mái lộng gió biển, làn không khí mát lạnh xua tan khói ngạt. Người già và đứa trẻ được Titus dìu xuống cầu thang đá an toàn ngoài trời.
+  Đẩy cánh cửa gỗ bung ra sân mái lộng gió biển, làn không khí mát lạnh xua tan khói ngạt. Người già và đứa trẻ được Titus dìu ra vị trí an toàn.
   Người Chứng tiến lại gần lan can đá ở mép sân mái nhìn xuống con hẻm khuất phía sau kho chứa ngay trước khi tiếng chuông đội cứu hộ dập lửa của cảng xông tới.
 * **Ghi nhận Hiện trường Khách quan (Limited Field Observation):**
-  Từ độ cao 8 mét, nhìn xuyên qua làn khói xám bốc nghi ngút và ánh lửa bập bùng:
+  Từ điểm nhìn sân mái (cao độ thiết kế ước tính ~8m, chưa đo line-of-sight thực tế), nhìn xuyên qua làn khói xám bốc nghi ngút và ánh lửa bập bùng:
   * Một bóng người đang vội vã chạy lướt qua góc hẻm, trèo qua hàng rào cọc gỗ dẫn ra phía mạn tàu nhỏ của đội thuyền tuần.
-  * **Sự thật nền ngầm (Backing Truth):** Đây là người của Rufus vừa thực hiện thu hồi vội vã các cuộn hồ sơ kiểm kê có chữ ký giả nhưng sơ suất làm đổ đèn dầu gây cháy.
+  * **Sự thật tác giả (T10):** Vụ cháy phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus; chưa có bằng chứng tại Q01 cho phép người chơi xác định thủ phạm.
   * **Giới hạn nhận thức người chơi:** Trò chơi không hiện tên thủ phạm, không có "phân tích khuôn mặt". Người chơi chỉ có thể ghi lại vào sổ tay bốn thuộc tính quan sát có giới hạn:
     1. *Hướng di chuyển:* Thoát về phía bến tàu tuần phía bắc.
     2. *Thời điểm rời đi:* Ngay trước khi đội chữa cháy xông vào cửa trước 2 phút.
@@ -223,12 +223,12 @@ flowchart TD
   * Cột xà gãy cháy sém nằm nghiêng đúng vị trí đã bị đòn bẩy nhấc qua.
   * Mặt sàn đá loang lổ vết bồ hóng đen và những vũng bùn tro đã đông cứng.
 * **Phát hiện Dấu vết Chuyển tiếp (Preliminary B06 Observation):**
-  Timeline ánh sáng tiến triển theo nhịp kịch bản: Beat 00–02 hoàng hôn (day/sunset) → Beat 03–06 chạng vạng tối lúc cháy kho (evening) → Beat 07 nửa đêm tại xưởng Natan (night) → Beat 08 rạng sáng hôm sau (dawn) tương thích với hai kịch bản bake GI tĩnh `day` và `evening` của engine.
+  Timeline ánh sáng tiến triển theo nhịp kịch bản: Beat 00–02 chiều muộn/hoàng hôn (cần kiểm tra khả năng biểu đạt bằng preset hiện có) → Beat 03–06 chạng vạng/tối khi cháy kho (preset `q01-evening` chỉ là mốc kỹ thuật đại diện) → Beat 07 đêm tại xưởng Natan (chưa có preset `night` được xác minh) → Beat 08 rạng sáng hôm sau (chưa có preset `dawn` được xác minh). Engine (`witness-q01.js`) hiện chỉ có hai preset kỹ thuật `q01-day` và `q01-evening` với dữ liệu GI nướng tĩnh; các trạng thái ban đêm và rạng sáng là yêu cầu mỹ thuật cho tương lai, chưa phải tính năng runtime đã nghiệm thu.
   Người chơi soi đèn dầu vào góc bàn kiểm nhận bị lửa táp sém một góc. Dưới đáy một khay gỗ bị lật úp, người chơi phát hiện một mảnh giấy da ghi nhận xuất kho mang mã hiệu **B06**:
   * Mặt giấy có vết cạo cơ học rõ rệt: con số lượng hàng đã bị cạo mỏng bề mặt bột đá vôi để viết đè lên.
   * *Giới hạn chứng cứ nghiêm ngặt:* Quan sát này chỉ là ghi nhận hiện tượng vật lý sơ bộ tại hiện trường Q01, **chưa cấp vật chứng E02 vào sổ tay điều tra**. Việc thu thập, kiểm tra mép dán và thẩm định chính thức E02 thuộc phạm vi Q02. Mệnh đề P01 yêu cầu đủ cả E02 và E03, tuyệt đối không tự suy đoán nguyên nhân hay quy kết thủ phạm. B06 hoàn toàn tách biệt với G17.
 * **Khép lại Trường đoạn (Cinematic Outro):**
-  Máy quay từ từ nâng cao dần, lướt qua khung vì kèo mái kho bị cháy thủng toang hoác, bay vút lên bầu trời đêm lộng gió nhìn bao quát toàn cảnh vịnh cảng Sebastos. Cảng biển chìm dần vào làn sương đêm tĩnh mịch, chỉ còn le lói ánh đuốc của đội lính gác La Mã đi tuần dọc theo bờ kè đá.
+  Máy quay từ từ nâng cao dần, lướt qua khung vì kèo mái kho bị cháy thủng toang hoác, bay vút lên bầu trời sớm mai ửng hồng ánh bình minh nhìn bao quát toàn cảnh vịnh cảng Sebastos. Cảng biển thức giấc trong làn sương sớm tinh khôi, ánh nắng đầu ngày rọi chiếu lên những vết cháy đen còn bốc khói mỏng và mặt nước vịnh phẳng lặng.
   Âm thanh lắng lại chỉ còn tiếng chuông xa xăm và câu hỏi trọng tâm dẫn dắt bước sang Q02:  
   **"Ai đang làm hồ sơ thay đổi, và vì sao nhân chứng sợ nói?"**
 
@@ -307,23 +307,27 @@ flowchart TD
 * **Thời lượng:** ~6–8 phút
 * **Không gian:** Bên thùng xe hàng đã được kê nêm vững vàng, dưới bóng râm của vách đá.
 * **Màn Đối Chiếu Độc Lập Giấy và Người (Forensic Cross-Examination):**
-  Khi chiếc xe đã được cố định, người chơi bước vào màn đối chiếu trực tiếp giữa lời kể miệng của Amon và tờ biên nhận thực tế trên tay để thu thập chứng cứ độc lập mang mã hiệu **E04** (Bản chép hành trình vận chuyển):
-  * *Mắt xích Sự Thật Nền (Ground Truth):* Quá trình kiểm tra độc lập giữa tài liệu văn bản và lời khai nhân chứng tại hiện trường đã xác nhận một sự thật nền tảng cốt lõi:
-    1. **Xuất bến:** Lô hàng G17 thực sự đã xuất đủ **24 bao** tại kho cảng Sebastos (Xêdarê) đúng như chữ ký trong biên nhận gốc của Haddai.
+  Khi chiếc xe đã được cố định, người chơi bước vào màn đối chiếu trực tiếp giữa lời kể miệng của Amon và sổ chép hành trình vận chuyển thực tế để thu thập chứng cứ độc lập mang mã hiệu **E04** (Bản chép hành trình vận chuyển):
+  * *Mắt xích Sự Thật Nền (Ground Truth):* Quá trình kiểm tra độc lập giữa tài liệu vận tải E04 và lời khai nhân chứng tại hiện trường xác nhận dữ liệu vận chuyển:
+    1. **Xuất bến:** Dữ liệu vận chuyển E04 ghi nhận lô hàng G17 xuất **24 bao** tại kho cảng Sebastos (Xêdarê); việc xác thực biên nhận gốc và chữ ký của Haddai chỉ được tiến hành sau đó tại Q04 (vật chứng E01), avatar tại Q03 chưa thể biết trước tính xác thực của chữ ký.
     2. **Hư hại trên đường:** Trong quá trình vượt đèo đá hiểm trở, chính chiếc xe này đã gặp sự cố lật nghiêng làm rách vỡ đúng **2 bao** bột mì. Amon đã đích thân lập biên bản hư hại riêng biệt có xác nhận của trạm kiểm soát địa phương.
-* **Kỷ Luật Suy Luận & Sơ Đồ Ranh Giới Tri Thức Q03 (E04 vs E05):**
+* **Kỷ Luật Suy Luận & Sơ Đồ Ranh Giới Tri Thức Q03 (E04, E01, E05):**
   Kịch bản giữ vững kỷ luật điều tra và ranh giới tri thức nghiêm ngặt:
   * Trò chơi tuyệt đối **không cho phép nhân vật tự suy diễn 4 bao thất lạc đi về đâu** vào thời điểm này.
-  * E04 chỉ xác nhận 24 bao xuất bến và 2 bao hư hại trên đèo. Con số **18 bao** tiếp tục hành trình đến điểm chia Galilê hoàn toàn chưa được kiểm chứng tại Q03 và buộc phải chờ người chơi đến điểm chia ở Q05 (vật chứng E05).
+  * Q03/E04: dữ liệu vận chuyển cho biết 24 bao xuất và 2 bao hỏng.
+  * Q04/E01: xác thực biên nhận gốc và chữ ký Haddai (chưa có ở Q03).
+  * Q05/E05: xác nhận 18 bao thực nhận tại Galilê (chưa có ở Q03).
+  * Mệnh đề P02 chỉ có thể xác lập khi có đủ E04 và E05 độc lập: 24 xuất - 2 hỏng - 18 thực nhận = 4 bao chưa được giải trình.
 
 ```
-  [XUẤT BẾN SEBASTOS]             [ĐÈO ĐÁ ANTIPATRIS (Q03)]            [SÂN CHIA GALILÊ (Q05)]
-  24 bao xuất kho (E01) --------> 2 bao hỏng có biên bản (E04) ------> 18 bao thực nhận (E05)
-                                          │                                       │
-                                          v                                       v
-                                  [RANH GIỚI TRI THỨC Q03]               [XÁC THỰC TẠI Q05]
-                                  Biết: 24 xuất, 2 hỏng.                 Biết: 18 đến nơi.
-                                  CHƯA BIẾT: 18 bao có đến hay không?    (24 - 2 - 18 = 4 thiếu -> P02)
+  [DỮ LIỆU VẬN CHUYỂN (Q03/E04)]       [XÁC THỰC BIÊN NHẬN (Q04/E01)]       [XÁC NHẬN THỰC NHẬN (Q05/E05)]
+  24 xuất bến, 2 hỏng có biên bản       Biên nhận gốc & chữ ký Haddai        18 bao thực nhận tại Galilê
+                │                                     │                                    │
+                └─────────────────────────────────────┼────────────────────────────────────┘
+                                                      v
+                                    [ĐIỀU KIỆN XÁC LẬP MỆNH ĐỀ P02]
+                                    Cần E04 + E05 độc lập và đầy đủ:
+                                    24 xuất - 2 hỏng - 18 thực nhận = 4 bao chưa giải trình
 ```
 
 ---

@@ -4,7 +4,7 @@
 
 Mỗi quest có ID bền, tiền điều kiện, trigger, objective, phương án giải, trạng thái kết, hệ quả, nguồn và đường phục hồi. “Người chơi chọn” chỉ có nghĩa khi thay việc có thể làm hoặc việc xảy ra tiếp. Tất cả Q/B là [H]. L/V dùng quy tắc nguồn của hồ sơ 08. Thời lượng là mục tiêu blockout, không phải kết quả playtest.
 
-**V3 & V6:** ba Legend bắt buộc là trục; 12 Q là cầu nối nhiều scene, mục tiêu 26–40 phút/Q. [Hồ sơ 14](14-legends-depth-dossiers.md) sở hữu scene/level Legends, [hồ sơ 11](11-chapter-dossiers.md) sở hữu Q và [hồ sơ 12](12-continuity-and-state.md) sở hữu độc quyền sự thật nền, điều kiện vật chứng/mệnh đề và đồng thuận nhân chứng; hồ sơ 06 chỉ là tham chiếu diễn giải. Tuyến mẫu hợp đồng 720 phút (Legends 216 phút trần kỹ thuật) và đề xuất biên kịch tinh gọn ~580–600 phút (Legends 145 phút) đều là ước tính thiết kế chưa qua đo đạc playtest người thật, không thay thế lẫn nhau. Không bỏ trắng L01/L02/L04 để đi tiếp.
+**V3 & V6:** ba Legend bắt buộc là trục; 12 Q là cầu nối nhiều scene, mục tiêu 26–40 phút/Q. [Hồ sơ 14](14-legends-depth-dossiers.md) sở hữu scene/level Legends, [hồ sơ 11](11-chapter-dossiers.md) sở hữu Q và [hồ sơ 12](12-continuity-and-state.md) sở hữu độc quyền sự thật nền, điều kiện vật chứng/mệnh đề và đồng thuận nhân chứng; hồ sơ 06 chỉ là tham chiếu diễn giải. Tuyến mẫu hợp đồng 720 phút (Legends 216 phút baseline budget target chưa qua playtest) và đề xuất biên kịch tinh gọn ~580–600 phút (Legends 145 phút) đều là ước tính thiết kế chưa qua đo đạc playtest người thật, không thay thế lẫn nhau. Không bỏ trắng L01/L02/L04 để đi tiếp.
 
 | Hồi | Chuẩn bị | Legend bắt buộc / cổng | Tiếp nối | Mở rộng tự chọn |
 |---|---|---|---|---|
@@ -23,14 +23,14 @@ Mỗi quest có ID bền, tiền điều kiện, trigger, objective, phương á
 * *Beat 02 (Natan & 3D Close Inspection):* Nhận sổ gia đình; xoay vật thể 3D dưới ánh sáng xiên phát hiện vết ẩm lạnh và đường khâu gáy lệch bất thường; khóa suy diễn tại chỗ.
 * *Beat 03 (Cháy kho phía tây & Titus):* Đà gỗ gãy, chuông báo dập dồn, khói đen bốc lên; gặp Titus — thợ sửa trục/ròng rọc; tập trung cứu hộ người mắc kẹt, loại bỏ combat giả tạo.
 * *Beat 04 (Hiện trường bốn vùng chức năng C0/C1/C-1/C+1 & Đa tuyến vật lý):* Tuyến 1 (Cơ học cùng Titus): tháo chốt xe hàng nặng C0 trượt chèn cửa sập, tời cáp ròng rọc C+1 mở lối phụ lên gác lửng C1. Tuyến 2 (Sức người): gọi hai thợ cảng hợp lực đòn bẩy nâng xà sồi đè ngang cầu thang.
-* *Beat 05 (Góc nhìn giới hạn từ sân mái C+1):* Bung cửa sân mái lộng gió; nhìn xuống hẻm khuất sau kho ghi nhận 4 thuộc tính giới hạn của bóng người tháo chạy (hướng bến tàu tuần, thời điểm, áo choàng ngắn viền da, cự ly làm mờ mặt; tai nạn đổ đèn của Rufus T10).
+* *Beat 05 (Góc nhìn giới hạn từ sân mái C+1):* Bung cửa sân mái lộng gió; nhìn xuống hẻm khuất sau kho ghi nhận 4 thuộc tính giới hạn của bóng người tháo chạy (hướng bến tàu tuần, thời điểm, áo choàng ngắn viền da, cự ly làm mờ mặt; sự thật tác giả T10: vụ cháy phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus, chưa có bằng chứng tại Q01 cho phép người chơi xác định thủ phạm).
 * *Beat 06 (Yosef & Mầm Consent):* Xuống đất ngổn ngang tro tàn; Yosef thì thầm về hồ sơ bị ém nhẹm và khẩn nài không được gọi tên anh giữa đám đông để bảo toàn mạng sống.
 * *Beat 07 (Lựa chọn tài nguyên & Cảnh thoại Natan A):* Quyết định `lodging` (bàn riêng) vs `meal` (góp dầu bếp chung). Đối diện quá khứ tại xưởng Natan: câu nói về chữ ký vội của Haddai; Người Chứng đối mặt ký ức mình từng thấy cha ký trước biên nhận nhưng im lặng vì sợ mất việc (T05).
-* *Beat 08 (Dấu vết B06 & Kho sau cháy bền vững):* Hiện trường giữ nguyên trạng thái sau cháy; tìm thấy tờ B06 có vết cạo sửa mực (quan sát hiện tượng sơ bộ, chưa cấp E02); camera nâng cao qua mái cháy sém nhìn ra vịnh sương đêm mở ra câu hỏi vào Q02: *"Ai đang làm hồ sơ thay đổi và vì sao nhân chứng sợ nói?"*.
-**Ra:** `ledger.found=true`; `observation.b06_scraped=true`; cờ `Q01.COMMITTED=true`; mở Q02.
+* *Beat 08 (Dấu vết B06 & Kho sau cháy bền vững):* Hiện trường giữ nguyên trạng thái sau cháy; tìm thấy tờ B06 có vết cạo sửa mực (quan sát hiện tượng sơ bộ, chưa cấp E02); camera nâng cao qua mái cháy sém nhìn ra vịnh sương sớm đầu ngày mở ra câu hỏi vào Q02: *"Ai đang làm hồ sơ thay đổi và vì sao nhân chứng sợ nói?"*.
+**Ra:** Ghi nhận quan sát sơ bộ B06 ở cấp thiết kế; giữ sổ đã nhận từ Natan; sau khi hoàn tất hành động thuộc lodging hoặc meal, ghi sự kiện `Q01.COMMITTED` và mở Q02. Không cấp E02 trong Q01 (chưa có pseudo-field `observation.b06_scraped` trong runtime).
 
 ### Q02 — Những tên không được đọc
-* **TÍCH HỢP v6:** Mép dán B06 được thu thập và thẩm định chính thức thành vật chứng E02 (`evidence.patch`) dưới ánh xiên tại khu sao chép sát bến; kết hợp E03 để xác lập P01 (không suy đoán nguyên nhân hay quy kết thủ phạm). Miriam dẫn vào sân bữa bằng công việc hỗ trợ, không dùng điểm quan hệ để ép Yosef. B06 luôn tách biệt G17.
+* **TÍCH HỢP v6:** Mép dán B06 được thu thập qua hành động `patch` và thẩm định chính thức thành vật chứng E02 dưới ánh xiên tại khu sao chép sát bến (không gọi hành động `patch` là evidence ID); kết hợp E03 để xác lập P01 (không suy đoán nguyên nhân hay quy kết thủ phạm). Miriam dẫn vào sân bữa bằng công việc hỗ trợ, không dùng điểm quan hệ để ép Yosef. B06 luôn tách biệt G17.
 * **Vào:** Có sổ gia đình, đã gặp Miriam.
 * **Mục tiêu:** Xác minh đợt thiếu 2 bao của bữa chung B06 hôm nay và bảo vệ Yosef.
 * **Ba route:** `shelter` (đưa Yosef và mẹ vào nơi an toàn trước), `anonymous` (bỏ định danh qua trung gian), `consented` (lắng nghe nhu cầu, giải tỏa áp lực, bố trí người bảo vệ và chỉ nhận lời chứng tự nguyện).
@@ -176,7 +176,7 @@ Mỗi quest kiểm tra vắng companion, thiếu tiền/chứng cứ, chọn ng�
 - **T07:** Sự cố thiếu 2 bao bữa chung tại Xêdarê (`B06` trong Q02) là sự việc xảy ra ở hiện tại, cho thấy quy trình sửa sổ để trục lợi vẫn đang tiếp diễn.
 - **T08:** Điểm lưu giữ bản sửa là Giêrusalem; người giữ sân Galilê chỉ nhận 18 bao; Rina ở Xêdarê chỉ làm chứng cho đợt B06 mà bà trực tiếp trải qua.
 - **T09:** Varro là nhân vật hư cấu kiểm soát thủ tục niêm phong chứng từ tại cảng Xêdarê; đặt làm Bản sửa giả (E11) quy hết tội chiếm đoạt cho Haddai và kéo người làm chứng thành đồng phạm.
-- **T10:** Rufus phụ trách đội bảo vệ thuê; vụ cháy kho tại Q01 là sự cố ngoài ý muốn trong một lần thu hồi tài liệu vội vã.
+- **T10:** Rufus phụ trách đội bảo vệ thuê; vụ cháy kho tại Q01 phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus; chưa có bằng chứng tại Q01 cho phép người chơi xác định thủ phạm.
 - **T11:** Lea có hai trách nhiệm riêng biệt: từng xóa một tên để cứu người; sau đó dưới áp lực sinh kế gia đình đã tiết lộ một phần lịch trình di chuyển.
 - **T12:** Amon rời bỏ tuyến sau khi bị đe dọa, được cứu sống tại wadi Q08 và có thể trực tiếp làm chứng về lộ trình G17 nếu an toàn.
 - **T13:** Hai bản sửa đối lập: Bản sửa thật của Haddai (E08) gửi Giêrusalem vs Bản sửa giả của Varro (E11) làm sai lệch sự thật.

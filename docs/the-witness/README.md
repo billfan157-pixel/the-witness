@@ -1,6 +1,6 @@
 # THE WITNESS — Legacy of the Covenant
 
-> **Chỉ mục hồ sơ chi tiết.** Nguồn điều hành và quyền sở hữu hiện tại ở [docs/README](../README.md); chỉ tra các Bible bên dưới khi task route yêu cầu. Các mô tả phiên bản cũ không tự xác nhận runtime hiện tại.
+> **Chỉ mục hồ sơ chi tiết.** Nguồn điều hành và quyền sở hữu hiện tại ở [docs/README](../README.md); chỉ tra các Bible bên dưới khi task route yêu cầu. v6 là đặc tả thiết kế mục tiêu, runtime/save contract v3 đang thực thi. Phase B/Gate G3 chưa có phê chuẩn mỹ thuật cuối cùng. Các mô tả phiên bản cũ không tự xác nhận runtime hiện tại.
 
 
 **AI agent:** bắt đầu ở `AGENTS.md`, `docs/README.md` và
@@ -93,4 +93,4 @@ Các mã S01…S32 dẫn đến hồ sơ 10. V3 đọc lại ba pericope trục 
 
 ## Trạng thái chuyên môn
 
-Đã có nguồn công khai, sáu packet và tiêu chí dựng thử. Bảy vị trí duyệt đều **chưa phân công**, chưa có phê chuẩn chuyên môn hay playtest v3. Kiểm JSON/bản đọc chỉ kiểm thiết kế. Thời lượng 216/720 phút là khung trần hợp đồng kỹ thuật v3, 145/580 phút là đích nhịp độ biên kịch v6; cả hai chưa qua đo đạc playtest người thật. Kiểm chơi 0.1.0 trước đây không chứng minh các gate mới. Chưa khóa lời thu âm, tạo hình lịch sử, kinh phí hoặc ngày phát hành.
+Đã có nguồn công khai, sáu packet và tiêu chí dựng thử. Bảy vị trí duyệt đều **chưa phân công**, chưa có phê chuẩn chuyên môn hay playtest v3. Kiểm JSON/bản đọc chỉ kiểm thiết kế. Thời lượng 216/720 phút là baseline blockout target của hợp đồng kỹ thuật v3 chưa đo, 145/580 phút là đích nhịp độ biên kịch v6; cả hai chưa qua đo đạc playtest người thật. Kiểm chơi 0.1.0 trước đây không chứng minh các gate mới. Chưa khóa lời thu âm, tạo hình lịch sử, kinh phí hoặc ngày phát hành.

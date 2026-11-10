@@ -27,7 +27,7 @@ Hạn chế sao chép cùng bảng chứng cứ/cốt truyện sang nhiều Bibl
 
 Các contract ở `docs/the-witness/`:
 
-- `campaign-contract.json`: ID, route, core/gate, callback và ngân sách v3.
+- `campaign-contract.json`: ID, route, core/gate, callback và ngân sách v3 (216/720 phút là baseline blockout target của hợp đồng chưa đo).
 - `design-contract.json`: thiết kế progression, scope và manifest tài liệu xuất.
 - `depth-contract.json`, `craft-contract.json`: chỉ mục sinh từ module encounter/
   craft. Khi đổi runtime, chạy đúng producer; không sửa số đếm bằng tay để khớp.
@@ -60,6 +60,6 @@ Atlas encounter và bảng triển khai cảnh được tạo khi cần bằng
 `outputs/reference/`. Chúng là hình chiếu của code, không phải nguồn luật thứ hai.
 Các tool vẫn cập nhật hai contract sinh tương ứng để kiểm đối chiếu.
 
-Nghiên cứu thị giác/điều khiển ở hồ sơ 14-input và nguồn 10 chỉ cung cấp luận cứ;
+Nghiên cứu thị giác/điều khiển ở [hồ sơ 24](the-witness/24-input-and-ux-research.md) và nguồn 10 chỉ cung cấp luận cứ;
 thông số camera hiện tại lấy từ engine. Các snapshot trong archive và lịch sử Git
 không được dùng để ghi đè hồ sơ đang sở hữu nội dung.

@@ -13,7 +13,7 @@ theo; số đo/evidence và gate vẫn ở nguồn sở hữu. Code đang dùng 
 | A02 | Q01 G3 awaiting_visual_review; G4 in_progress | Duyệt góc gameplay, giữ artAccepted false nếu chưa có xác nhận |
 | A05 | Report Phase B được nhắc nhưng chưa có trong checkout khi audit; gold/phase3 là mốc cũ | Kiểm file/hash/build trước khi dùng claim; không tạo báo cáo giả |
 | A07 | Chưa kiểm lại production trong các tác vụ quản trị | Không suy deploy từ build/push; kiểm live riêng khi được giao |
-| A08 | Thời lượng: GDD v6 nhắm 145 phút Legends (~10h), contract giữ trần 216/720 phút | Giữ 216m làm trần kỹ thuật cho contract/validator, 145m làm đích nhịp biên kịch v6 (khoảng dôi là buffer thám hiểm); chỉ khóa cam kết phát hành sau playtest người thật |
+| A08 | Thời lượng: GDD v6 nhắm 145 phút Legends (~580m campaign), contract giữ baseline 216/720 phút | 216/720m là unmeasured-blockout-target của hợp đồng v3, 145/580m là đích nhịp biên kịch v6 (chênh lệch ~71m là độ co giãn thiết kế, không phải buffer đã nghiệm thu); chỉ khóa cam kết phát hành sau playtest người thật |
 | A09 | GDD v6 nhấn zero lethal combat, runtime vẫn có bốn skill và sân luyện | Không tự xóa defend/training hoặc diễn giải thành combat giết người; quyết định gameplay cần scope rõ |
 
 Các file chapter/screenplay/campaign/Legends có thay đổi chưa commit từ công
@@ -46,6 +46,7 @@ Không sao chép bản HEAD cũ đè lên chúng để “chuẩn hóa”.
   32m hay 40–45m Q01, 145/216m Legends và 580/720m chiến dịch đều là ước tính thiết kế
   chưa đo đạc, không thay thế lẫn nhau. Không tuyên bố v6 đã chạy, Phase B đã nghiệm thu,
   G3 đã duyệt hay dự án sẵn sàng phát hành.
+- **Phát hiện hậu PR-01 (PR-01.1):** Rà soát và khóa sai lệch: E01 thuộc Q04 thay vì Q03 (P02 cần E04 + E05); B06 tại Q01 là quan sát hiện tượng sơ bộ, không dùng pseudo-fields (`observation.b06_scraped`, `evidence.patch`); ánh sáng outro Q01 chuyển rạng sáng (chưa có preset runtime `dawn`/`night`); làm rõ hiện trạng Phase B/G3 và bản chất chưa đo của các ngân sách thời lượng.
 
 Nguồn và phép đánh giá từng file, vị trí thay thế, hash gốc và luận cứ phương
 pháp nằm trong `registry.knowledge`. Mốc trước ở Git và cleanup-record; không

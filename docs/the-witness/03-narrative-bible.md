@@ -104,7 +104,7 @@ Mục này là sự thật trong thế giới hư cấu `[H]`. Tất cả không
 * **T07:** B06 là một lượt bữa chung khác, đang thiếu hai bao tại Xêdarê. Có dấu sửa ghi nhận, nhưng chưa có căn cứ tự động nối thiếu B06 với bốn bao G17.
 * **T08:** E04/E05/E06 và lời chứng đúng phạm vi cho thấy tuyến G17, không có một nguồn duy nhất đủ kết luận toàn bộ mạng lưới. Giêrusalem giữ nguồn thư, không phải điểm nhận 18 bao G17.
 * **T09:** Varro là nhân vật hư cấu có ảnh hưởng tới khâu hồ sơ/niêm xác nhận ở cảng. Ông biết và hưởng lợi từ việc ghi nhận sai; đặt làm bản sửa giả quy hết trách nhiệm cho Haddai và gán người làm chứng thành đồng phạm.
-* **T10:** Rufus phụ trách một đội canh/hộ tống thuê hoặc được phân công trong mạng lưới hư cấu, không mặc định là chỉ huy quân đội La Mã. Một lần thu hồi hồ sơ vội gây ra biến cố cháy kho ngoài dự tính; việc che giấu sau đó là có chủ đích.
+* **T10:** Rufus phụ trách một đội canh/hộ tống thuê hoặc được phân công trong mạng lưới hư cấu, không mặc định là chỉ huy quân đội La Mã. Đây là sự thật tác giả: vụ cháy phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus, việc che giấu sau đó là có chủ đích; avatar tại Q01 chỉ quan sát hiện tượng thực địa, chưa thể quy kết vai trò hay danh tính Rufus.
 * **T11:** Lea từng xóa một tên khỏi bản ghi nhằm bảo vệ một người; về sau bị uy hiếp về sinh kế của người thân nên tiết lộ một phần lịch trình nhóm. Hai việc có thời điểm khác nhau, tạo trách nhiệm riêng, không được gọi gộp là phản bội vô cớ.
 * **T12:** Amon rời khỏi tuyến sau khi bị đe dọa. Người khác tin anh chết/mất tích, nhưng thực tế anh sống, có thể được tìm lại qua tuyến cứu hộ Q08; sự hiện diện ở hồi cuối phụ thuộc diễn biến và sự an toàn.
 * **T13:** Một bản sửa thật và một bản sửa giả có đường truyền tài liệu khác nhau. Bản thật xác nhận lỗi ký trước, không toàn tri về Varro; bản giả nhận mọi tội và tự tiện nêu tên người khác. Bằng chứng giả không đồng nghĩa mọi sự thật trên bản thật là vô hiệu.
@@ -153,7 +153,7 @@ L03 (Gr 38 [S07]), L05 (Cv 16 [S11]), bốn Inner Veil và sáu nhiệm vụ qua
 ## 06 • HỒ SƠ NHIỆM VỤ CHI TIẾT Q01–Q12
 
 ### Q01 — Bến không chờ người về
-* **TÍCH HỢP v6:** Chuẩn hóa bến kho phía tây thành bốn vùng chức năng cao độ (không phải bốn tầng nhà độc lập): cầu cảng/sân hàng C0 → kho trệt và gác lửng cứu hộ C1 → rãnh bảo trì ngầm C-1 → sàn tời và sân mái C+1. Giữ nguyên tương tác Q01.LOAD (chèn bánh/nêm gỗ), lựa chọn sinh hoạt lodging/meal, cờ Q01.COMMITTED và các callback sẵn có. Dấu cháy là tai nạn ngoài ý muốn của người bên Rufus (T10), không chứng minh âm mưu từ trước. Vết mực B06 quan sát được ở cuối Q01 chỉ là ghi nhận hiện tượng sơ bộ; việc thu thập và xác minh vật chứng E02 thuộc về Q02.
+* **TÍCH HỢP v6:** Chuẩn hóa bến kho phía tây thành bốn vùng chức năng cao độ (không phải bốn tầng nhà độc lập): cầu cảng/sân hàng C0 → kho trệt và gác lửng cứu hộ C1 → rãnh bảo trì ngầm C-1 → sàn tời và sân mái C+1. Giữ nguyên tương tác Q01.LOAD (chèn bánh/nêm gỗ), lựa chọn sinh hoạt lodging/meal, cờ Q01.COMMITTED và các callback sẵn có. Dấu cháy phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus (sự thật tác giả T10; avatar tại Q01 chỉ ghi nhận 4 thuộc tính quan sát giới hạn, chưa thể suy luận danh tính hay vai trò của Rufus). Vết mực B06 quan sát được ở cuối Q01 chỉ là ghi nhận hiện tượng sơ bộ; việc thu thập và xác minh vật chứng E02 thuộc về Q02.
 * **Bối cảnh:** Xêdarê — bến / kho phía tây.
 * **Xung đột:** Cứu người khỏi kho cháy, nhận sổ, bắt đầu nghi ngờ thao túng hồ sơ.
 * **Gameplay:** Khám phá theo vùng cao độ, thao tác xe có tải, làm quen NPC, đọc dấu cháy và thẩm định giới hạn điều nhìn thấy.
@@ -435,11 +435,11 @@ Nhìn thấy bất thường → tự tiếp cận → đặt giả thuyết →
 
 <a id="142-xedare--sebastos--bon-tang-tham-hiem-q01q04-tro-lai-q11q12"></a>
 ### 14.2 Xêdarê / Sebastos — bốn vùng chức năng cao độ (Q01–Q04, trở lại Q11–Q12)
-*Lưu ý kiến trúc:* Bốn vùng chức năng cao độ (không phải bốn tầng nhà độc lập xếp chồng), tái sử dụng tối đa vỏ kho đá, thang 18 bậc và sân mái Phase B đã nghiệm thu:
+*Lưu ý kiến trúc:* Bốn vùng chức năng cao độ (không phải bốn tầng nhà độc lập xếp chồng). Vỏ kho, tuyến cửa–nội thất–18 bậc thang–mái đã tồn tại và từng được kiểm trong phạm vi G2/Phase 3 trên candidate tương ứng; gác lửng C1, rãnh ngầm C-1 và các yêu cầu hình ảnh v6 là thiết kế đề xuất chưa được nghiệm thu (G3 còn chờ visual review, G4 còn đang thực hiện):
 | Vùng | Chức năng đời sống / gameplay | Dấu và sự thật có thể thu |
 |---|---|---|
 | **C0 · Cầu cảng & Sân hàng** | Thuyền cập bến, dốc xe hàng, bến cập/đường quay, xe Q01.LOAD và công nhân bốc dỡ. | Đường xe/bánh, lịch trực, hướng kéo; không xác nhận người chủ mưu. |
-| **C1 · Kho trệt + Gác lửng** | Ngăn chứa trệt, thùng hàng, cửa khóa, đèn, giá hàng; gác lửng gỗ nơi Simeon kẹt và tuyến cứu người khỏi khói. | Vết ám khói từ hướng gió, tro trên bề mặt, vị trí chốt; dấu cháy là tai nạn ngoài ý muốn của người bên Rufus (T10). |
+| **C1 · Kho trệt + Gác lửng** | Ngăn chứa trệt, thùng hàng, cửa khóa, đèn, giá hàng; gác lửng gỗ nơi Simeon kẹt và tuyến cứu người khỏi khói. | Vết ám khói từ hướng gió, tro trên bề mặt, vị trí chốt; dấu cháy phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus (sự thật tác giả T10; avatar tại Q01 chỉ quan sát hiện tượng, chưa thể suy luận danh tính hoặc vai trò của Rufus). |
 | **C-1 · Rãnh bảo trì ngầm** | Rãnh tiêu nước đá dưới nền có nắp kiểm tra, rãnh ngầm kỹ thuật, nước đọng và bùn. | Dấu di chuyển sau cháy, vết xước kéo vật nặng; lối ngầm dự phòng cho áp lực cấp 2. |
 | **C+1 · Sàn tời và Sân mái** | Giàn tời chịu tải chữ A, trục quay đối trọng trên cao, sân mái hở thoát hiểm và điểm quan sát hẻm sau. | Đường kéo ròng rọc; nhìn bóng người chạy trốn (Beat 05) với 4 thuộc tính giới hạn, không có HUD đỏ. |
 
