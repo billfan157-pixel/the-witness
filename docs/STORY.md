@@ -16,8 +16,11 @@
 | Bản văn, chuyển thể, nguồn nghiên cứu | [08 Scripture](the-witness/08-scripture-reference.md) / [10 Sources](the-witness/10-source-register.md) | Từng claim cần nhãn, nguồn, giới hạn |
 
 Không đọc tất cả các hàng. Chọn hàng theo phần đang sửa; nguồn kia chỉ cần khi
-thay đổi đi qua ranh giới sở hữu. Hạn chế sao chép cùng bảng chứng cứ/cốt truyện
-sang nhiều Bible; file tổng hợp dẫn link tới bảng sở hữu.
+thay đổi đi qua ranh giới sở hữu. Hồ sơ 12 sở hữu độc quyền sự thật nền, điều kiện
+chứng cứ/mệnh đề, lineage và consent; các phần tóm tắt trong hồ sơ 03 và 06 chỉ là
+hình chiếu tham chiếu phái sinh, không sở hữu luật riêng. Phân biệt quan sát vật lý
+sơ bộ B06 ở Q01 với việc xác lập E02 ở Q02; giữ ranh giới E04/Q03 với E05/Q05.
+Hạn chế sao chép cùng bảng chứng cứ/cốt truyện sang nhiều Bible; file tổng hợp dẫn link tới bảng sở hữu.
 
 <a id="contracts"></a>
 ## Dữ liệu và ranh giới thực thi
@@ -29,8 +32,11 @@ Các contract ở `docs/the-witness/`:
 - `depth-contract.json`, `craft-contract.json`: chỉ mục sinh từ module encounter/
   craft. Khi đổi runtime, chạy đúng producer; không sửa số đếm bằng tay để khớp.
 
-Code thực thi là content/spine/depth/relationships/craft/model. Chưa có chuyển
-đổi toàn bộ E11/E12/P05 của v6 vào runtime. Cần đọc A01 trước mọi việc thêm quest,
+Code thực thi là content/spine/depth/relationships/craft/model. Narrative Bible v6
+là nguồn thiết kế cốt truyện mới chính thức, nhưng phải tuân thủ tuyệt đối các bất biến
+trong PRODUCT (Canon Lock, Dual-Tier Persona, không mana/phép lạ, Legends không truyền
+dữ liệu sang Mortal). Chưa có chuyển đổi toàn bộ E11/E12/P05 của v6 vào runtime; các
+ID/claim này được hoãn cho tới đợt nâng cấp toàn diện. Cần đọc A01/D010 trước mọi việc thêm quest,
 vật chứng, claim hoặc thay cổng. Version truyện, game, tài liệu và save khác miền.
 
 <a id="authoring"></a>

@@ -2,8 +2,8 @@
 
 **Tác phẩm:** *Unsealed Witness: Legacy of the Covenant (Chứng Nhân: Di Sản Giao Ước)*  
 **Phân đoạn:** Bộ Kịch Bản Phân Cảnh Chi Tiết Trục Mở Màn & Cổng Hồi I (Prologue Q01, Chapter Q03, Legend L01)  
-**Thời lượng dự kiến:** 90 phút gameplay khám phá liền mạch (Vertical Slice Specification)  
-**Chuẩn mực thiết kế:** One-Shot Camera (góc máy điện ảnh liền mạch, không cắt cảnh đen), Khảo cổ Hiện trường Đa tầng (Multi-layered Physical Archaeology), Không chiến đấu lấy mạng (Zero-Combat Tension), Tương tác Vật thể & Cơ học Thực tế, Canon Lock 100%.
+**Thời lượng dự kiến:** Ước tính thiết kế 90 phút slice (Q01 ~32–40 phút, Q03 ~25 phút, L01 ~25–30 phút); đây là mục tiêu nhịp độ chưa đo đạc bằng playtest người thật, không hoán đổi với ngân sách 145m hay 216m của campaign.
+**Chuẩn mực thiết kế:** One-Shot Camera cho phân cảnh prologue, Khảo cổ Hiện trường Đa tầng, Không chiến đấu lấy mạng (Zero-Combat Tension), Tương tác Vật thể & Cơ học Thực tế, Canon Lock 100%. Tài liệu không khẳng định hình học 4 tầng độc lập đã nghiệm thu runtime.
 
 ---
 
@@ -102,34 +102,40 @@ flowchart TD
 
 ### Phân cảnh 04: Giải Quyết Bằng Vật Thể (Gameplay Môi trường Đa tuyến)
 * **Thời lượng:** ~8–10 phút
-* **Cấu trúc Hiện trường 4 Tầng v6.0 (Four-Layer Physical Archaeology):**
-  Kho phía tây được thiết kế theo cấu trúc không gian ba chiều La Mã thực tế gồm 4 lớp cao độ:
-  1. `C0 · Cầu cảng:` Dốc xe hàng Q01.LOAD, đường bánh xe, thợ bốc dỡ.
-  2. `C1 · Kho phía tây (Tầng trệt & Gác lửng):` Ngăn chứa ngổn ngang kiện hàng và thùng dầu, gác lửng gỗ bị lửa bao vây cục bộ có Simeon và phụ việc mắc kẹt.
-  3. `C-1 · Rãnh bảo trì ngầm:` Rãnh tiêu nước hư cấu có cửa kiểm tra nối sang khu kho lân cận, bùn nước đọng và vết xước vật nặng (lối thoát phụ có thể khảo sát).
-  4. `C+1 · Sàn tời và Sân mái (Roof Terrace):` Giàn gỗ chịu tải, trục quay đối trọng, cầu thang 18 bậc dẫn ra sân mái lộng gió.
+* **Cấu trúc Hiện trường Bốn Vùng Chức Năng Cao Độ (Four Functional Elevation Zones):**
+  Kho phía tây được tổ chức theo 4 vùng chức năng cao độ (không phải bốn tầng nhà độc lập xếp chồng), tái sử dụng tối đa vỏ kho đá, thang 18 bậc và sân mái Phase B đã nghiệm thu:
+  1. `C0 · Cầu cảng & Sân hàng:` Dốc xe hàng Q01.LOAD, đường bánh xe, thợ bốc dỡ ngoài trời.
+  2. `C1 · Kho trệt & Gác lửng cứu hộ:` Ngăn chứa trệt ngổn ngang kiện hàng và thùng dầu, gác lửng gỗ bị khói bao vây cục bộ có Simeon và phụ việc mắc kẹt.
+  3. `C-1 · Rãnh bảo trì ngầm:` Rãnh tiêu nước đá dưới nền có nắp kiểm tra nối sang khu cảng, bùn nước đọng và vết xước vật nặng (lối ngầm khảo sát và đường luồn cáp).
+  4. `C+1 · Sàn tời và Sân mái (Roof Terrace):` Giàn tời chịu tải chữ A, trục quay đối trọng trên cao, chiếu nghỉ và cầu thang 18 bậc dẫn ra sân mái lộng gió.
   
   Khói đen dày đặc cuộn tròn sát trần nhà, buộc người chơi phải cúi thấp người để quan sát và di chuyển. Lối cầu thang chính lên gác lửng bị một thanh đà chịu lực bằng gỗ sồi đang cháy sém đè ngang.
 
 ```
-       [C+1: SÀN TỜI & SÂN MÁI]  <--- Quan sát bóng người tháo chạy (Beat 05)
-               ^
-         [CẦU THANG GỖ 18 BẬC]
-               ^
-  +-------------------------------+
-  |   C1: GÁC LỬNG TẦNG HAI       |  <--- Người mắc kẹt (Simeon & phụ việc)
-  +-------------------------------+
-       /                     \
-  [TUYẾN 1: CƠ HỌC]        [TUYẾN 2: SỨC NGƯỜI]
-  Tháo chốt xe hàng nặng    Gọi 2 thợ cảng
-  Lợi dụng sàn nghiêng      Hợp lực đòn bẩy gỗ
-  Kích hoạt ròng rọc        Dọn thanh xà chắn
-       \                     /
-  +-------------------------------+
-  |   C0: TẦNG TRỆT KHO BẾN       |  <--- Bắt đầu cứu hộ cùng Titus
-  +-------------------------------+
-               |
-  [C-1: RÃNH BẢO TRÌ NGẦM TIÊU NƯỚC] <--- Lối ngầm nối sang khu cảng (v6)
+       [C+1: SÀN TỜI & SÂN MÁI PHẲNG]  <--- Quan sát bóng người tháo chạy (Beat 05)
+                     ^
+       [CẦU THANG 18 BẬC (ĐOẠN TRÊN)]
+                     ^
+  +-------------------------------------+
+  |   C1: GÁC LỬNG CỨU HỘ BÊN TRONG     |  <--- Người mắc kẹt (Simeon & phụ việc)
+  +-------------------------------------+
+        /                         \
+  [TUYẾN 1: CƠ HỌC]            [TUYẾN 2: SỨC NGƯỜI]
+  Tháo chốt xe hàng nặng C0     Gọi 2 thợ cảng ở cửa ngách
+  Lợi dụng sàn trệt nghiêng 5°  Hợp lực đòn bẩy gỗ dài
+  Kích hoạt ròng rọc C+1        Dọn thanh xà sồi chắn thang
+        \                         /
+  +-------------------------------------+
+  |   C1: MẶT SÀN TRỆT KHO CHỨA HÀNG    |  <--- Bắt đầu cứu hộ cùng Titus
+  +-------------------------------------+
+                     ^
+    (Lối cửa chính thông ra mặt bằng cảng)
+                     v
+  +-------------------------------------+
+  |   C0: CẦU CẢNG & SÂN HÀNG NGOÀI TRỜI|  <--- Xe hàng Q01.LOAD, dốc bốc dỡ
+  +-------------------------------------+
+                     |
+  [C-1: RÃNH BẢO TRÌ TIÊU NƯỚC DƯỚI NỀN]|  <--- Lối rãnh ngầm, vết xước kéo hòm
 ```
 
 * **Tuyến giải quyết 1 — Tương tác Cơ học & Đối trọng (Phối hợp cùng Titus):**
@@ -216,10 +222,11 @@ flowchart TD
   * Chiếc xe hàng bánh sắt vẫn nằm chèn cứng ở khung cửa ngách.
   * Cột xà gãy cháy sém nằm nghiêng đúng vị trí đã bị đòn bẩy nhấc qua.
   * Mặt sàn đá loang lổ vết bồ hóng đen và những vũng bùn tro đã đông cứng.
-* **Phát hiện Vật chứng Chuyển tiếp (Evidence Inspection):**
-  Người chơi soi đèn dầu vào góc bàn kiểm nhận bị lửa táp sém một góc. Dưới đáy một khay gỗ bị lật úp, người chơi tìm thấy một mảnh giấy da ghi nhận xuất kho mang mã hiệu **B06**:
+* **Phát hiện Dấu vết Chuyển tiếp (Preliminary B06 Observation):**
+  Timeline ánh sáng tiến triển theo nhịp kịch bản: Beat 00–02 hoàng hôn (day/sunset) → Beat 03–06 chạng vạng tối lúc cháy kho (evening) → Beat 07 nửa đêm tại xưởng Natan (night) → Beat 08 rạng sáng hôm sau (dawn) tương thích với hai kịch bản bake GI tĩnh `day` và `evening` của engine.
+  Người chơi soi đèn dầu vào góc bàn kiểm nhận bị lửa táp sém một góc. Dưới đáy một khay gỗ bị lật úp, người chơi phát hiện một mảnh giấy da ghi nhận xuất kho mang mã hiệu **B06**:
   * Mặt giấy có vết cạo cơ học rõ rệt: con số lượng hàng đã bị cạo mỏng bề mặt bột đá vôi để viết đè lên.
-  * *Giới hạn chứng cứ:* Chưa thể xác định ai là người cạo sửa, và chưa có bất kỳ cơ sở nào để quy kết nó liên quan tới vụ án lô G17 ở các chương sau. Mảnh giấy chỉ xác nhận: *Việc gian lận giấy tờ ở kho này là có thật.*
+  * *Giới hạn chứng cứ nghiêm ngặt:* Quan sát này chỉ là ghi nhận hiện tượng vật lý sơ bộ tại hiện trường Q01, **chưa cấp vật chứng E02 vào sổ tay điều tra**. Việc thu thập, kiểm tra mép dán và thẩm định chính thức E02 thuộc phạm vi Q02. Mệnh đề P01 yêu cầu đủ cả E02 và E03, tuyệt đối không tự suy đoán nguyên nhân hay quy kết thủ phạm. B06 hoàn toàn tách biệt với G17.
 * **Khép lại Trường đoạn (Cinematic Outro):**
   Máy quay từ từ nâng cao dần, lướt qua khung vì kèo mái kho bị cháy thủng toang hoác, bay vút lên bầu trời đêm lộng gió nhìn bao quát toàn cảnh vịnh cảng Sebastos. Cảng biển chìm dần vào làn sương đêm tĩnh mịch, chỉ còn le lói ánh đuốc của đội lính gác La Mã đi tuần dọc theo bờ kè đá.
   Âm thanh lắng lại chỉ còn tiếng chuông xa xăm và câu hỏi trọng tâm dẫn dắt bước sang Q02:  
@@ -304,10 +311,20 @@ flowchart TD
   * *Mắt xích Sự Thật Nền (Ground Truth):* Quá trình kiểm tra độc lập giữa tài liệu văn bản và lời khai nhân chứng tại hiện trường đã xác nhận một sự thật nền tảng cốt lõi:
     1. **Xuất bến:** Lô hàng G17 thực sự đã xuất đủ **24 bao** tại kho cảng Sebastos (Xêdarê) đúng như chữ ký trong biên nhận gốc của Haddai.
     2. **Hư hại trên đường:** Trong quá trình vượt đèo đá hiểm trở, chính chiếc xe này đã gặp sự cố lật nghiêng làm rách vỡ đúng **2 bao** bột mì. Amon đã đích thân lập biên bản hư hại riêng biệt có xác nhận của trạm kiểm soát địa phương.
-* **Kỷ Luật Suy Luận & Ranh Giới Nghiêm Ngặt:**
-  Kịch bản giữ vững kỷ luật điều tra nghiêm ngặt:
+* **Kỷ Luật Suy Luận & Sơ Đồ Ranh Giới Tri Thức Q03 (E04 vs E05):**
+  Kịch bản giữ vững kỷ luật điều tra và ranh giới tri thức nghiêm ngặt:
   * Trò chơi tuyệt đối **không cho phép nhân vật tự suy diễn 4 bao thất lạc đi về đâu** vào thời điểm này.
-  * Con số **18 bao** tiếp tục hành trình đến điểm chia Galilê chỉ mới là thông tin một chiều từ lời kể của Amon, chưa có bằng chứng vật chất độc lập xác nhận và buộc phải chờ người chơi kiểm chứng trực tiếp tại làng chài ở chương Q05.
+  * E04 chỉ xác nhận 24 bao xuất bến và 2 bao hư hại trên đèo. Con số **18 bao** tiếp tục hành trình đến điểm chia Galilê hoàn toàn chưa được kiểm chứng tại Q03 và buộc phải chờ người chơi đến điểm chia ở Q05 (vật chứng E05).
+
+```
+  [XUẤT BẾN SEBASTOS]             [ĐÈO ĐÁ ANTIPATRIS (Q03)]            [SÂN CHIA GALILÊ (Q05)]
+  24 bao xuất kho (E01) --------> 2 bao hỏng có biên bản (E04) ------> 18 bao thực nhận (E05)
+                                          │                                       │
+                                          v                                       v
+                                  [RANH GIỚI TRI THỨC Q03]               [XÁC THỰC TẠI Q05]
+                                  Biết: 24 xuất, 2 hỏng.                 Biết: 18 đến nơi.
+                                  CHƯA BIẾT: 18 bao có đến hay không?    (24 - 2 - 18 = 4 thiếu -> P02)
+```
 
 ---
 

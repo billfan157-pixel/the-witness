@@ -4,7 +4,7 @@
 
 Mỗi quest có ID bền, tiền điều kiện, trigger, objective, phương án giải, trạng thái kết, hệ quả, nguồn và đường phục hồi. “Người chơi chọn” chỉ có nghĩa khi thay việc có thể làm hoặc việc xảy ra tiếp. Tất cả Q/B là [H]. L/V dùng quy tắc nguồn của hồ sơ 08. Thời lượng là mục tiêu blockout, không phải kết quả playtest.
 
-**V3:** ba Legend bắt buộc là trục; 12 Q là cầu nối nhiều scene, mục tiêu 26–40 phút/Q. [Hồ sơ 14](14-legends-depth-dossiers.md) sở hữu scene/level Legends, [hồ sơ 11](11-chapter-dossiers.md) sở hữu Q và [hồ sơ 12](12-continuity-and-state.md) sở hữu sự thật hư cấu. Tuyến mẫu 720 phút, Legends 216 phút; chưa đo. Không bỏ trắng L01/L02/L04 để đi tiếp.
+**V3 & V6:** ba Legend bắt buộc là trục; 12 Q là cầu nối nhiều scene, mục tiêu 26–40 phút/Q. [Hồ sơ 14](14-legends-depth-dossiers.md) sở hữu scene/level Legends, [hồ sơ 11](11-chapter-dossiers.md) sở hữu Q và [hồ sơ 12](12-continuity-and-state.md) sở hữu độc quyền sự thật nền, điều kiện vật chứng/mệnh đề và đồng thuận nhân chứng; hồ sơ 06 chỉ là tham chiếu diễn giải. Tuyến mẫu hợp đồng 720 phút (Legends 216 phút trần kỹ thuật) và đề xuất biên kịch tinh gọn ~580–600 phút (Legends 145 phút) đều là ước tính thiết kế chưa qua đo đạc playtest người thật, không thay thế lẫn nhau. Không bỏ trắng L01/L02/L04 để đi tiếp.
 
 | Hồi | Chuẩn bị | Legend bắt buộc / cổng | Tiếp nối | Mở rộng tự chọn |
 |---|---|---|---|---|
@@ -22,15 +22,15 @@ Mỗi quest có ID bền, tiền điều kiện, trigger, objective, phương á
 * *Beat 01 (Bóng người lạ):* Bố cục hẻm đá đóng khung bóng người lạ dò xét xưởng Natan; lẩn đi khi bị nhìn; không marker chỉ định; tự do bám theo hoặc hỏi thợ cưa gỗ.
 * *Beat 02 (Natan & 3D Close Inspection):* Nhận sổ gia đình; xoay vật thể 3D dưới ánh sáng xiên phát hiện vết ẩm lạnh và đường khâu gáy lệch bất thường; khóa suy diễn tại chỗ.
 * *Beat 03 (Cháy kho phía tây & Titus):* Đà gỗ gãy, chuông báo dập dồn, khói đen bốc lên; gặp Titus — thợ sửa trục/ròng rọc; tập trung cứu hộ người mắc kẹt, loại bỏ combat giả tạo.
-* *Beat 04 (Hiện trường kho 3 tầng & Đa tuyến vật lý):* Tuyến 1 (Cơ học cùng Titus): tháo chốt xe hàng nặng trượt chèn cửa sập, tời cáp mở lối phụ. Tuyến 2 (Sức người): gọi hai thợ cảng hợp lực đòn bẩy nâng xà sồi đè ngang cầu thang.
-* *Beat 05 (Góc nhìn giới hạn từ sân mái):* Bung cửa sân mái lộng gió; nhìn xuống hẻm khuất sau kho ghi nhận 4 thuộc tính giới hạn của bóng người tháo chạy (hướng bến tàu tuần, thời điểm, áo choàng ngắn viền da, cự ly làm mờ mặt).
+* *Beat 04 (Hiện trường bốn vùng chức năng C0/C1/C-1/C+1 & Đa tuyến vật lý):* Tuyến 1 (Cơ học cùng Titus): tháo chốt xe hàng nặng C0 trượt chèn cửa sập, tời cáp ròng rọc C+1 mở lối phụ lên gác lửng C1. Tuyến 2 (Sức người): gọi hai thợ cảng hợp lực đòn bẩy nâng xà sồi đè ngang cầu thang.
+* *Beat 05 (Góc nhìn giới hạn từ sân mái C+1):* Bung cửa sân mái lộng gió; nhìn xuống hẻm khuất sau kho ghi nhận 4 thuộc tính giới hạn của bóng người tháo chạy (hướng bến tàu tuần, thời điểm, áo choàng ngắn viền da, cự ly làm mờ mặt; tai nạn đổ đèn của Rufus T10).
 * *Beat 06 (Yosef & Mầm Consent):* Xuống đất ngổn ngang tro tàn; Yosef thì thầm về hồ sơ bị ém nhẹm và khẩn nài không được gọi tên anh giữa đám đông để bảo toàn mạng sống.
 * *Beat 07 (Lựa chọn tài nguyên & Cảnh thoại Natan A):* Quyết định `lodging` (bàn riêng) vs `meal` (góp dầu bếp chung). Đối diện quá khứ tại xưởng Natan: câu nói về chữ ký vội của Haddai; Người Chứng đối mặt ký ức mình từng thấy cha ký trước biên nhận nhưng im lặng vì sợ mất việc (T05).
-* *Beat 08 (Dấu vết B06 & Kho sau cháy bền vững):* Hiện trường giữ nguyên trạng thái sau cháy; tìm thấy tờ B06 có vết cạo sửa mực; camera nâng cao qua mái cháy sém nhìn ra vịnh sương đêm mở ra câu hỏi vào Q02: *"Ai đang làm hồ sơ thay đổi và vì sao nhân chứng sợ nói?"*.  
-**Ra:** `ledger.found=true`; `evidence.b06_scraped=found`; mở Q02.
+* *Beat 08 (Dấu vết B06 & Kho sau cháy bền vững):* Hiện trường giữ nguyên trạng thái sau cháy; tìm thấy tờ B06 có vết cạo sửa mực (quan sát hiện tượng sơ bộ, chưa cấp E02); camera nâng cao qua mái cháy sém nhìn ra vịnh sương đêm mở ra câu hỏi vào Q02: *"Ai đang làm hồ sơ thay đổi và vì sao nhân chứng sợ nói?"*.
+**Ra:** `ledger.found=true`; `observation.b06_scraped=true`; cờ `Q01.COMMITTED=true`; mở Q02.
 
 ### Q02 — Những tên không được đọc
-* **TÍCH HỢP v6:** Mép dán B06 được quan sát in-world dưới ánh xiên tại khu sao chép sát bến. Miriam dẫn vào sân bữa bằng công việc hỗ trợ, không dùng điểm quan hệ để ép Yosef. B06 luôn tách biệt G17.
+* **TÍCH HỢP v6:** Mép dán B06 được thu thập và thẩm định chính thức thành vật chứng E02 (`evidence.patch`) dưới ánh xiên tại khu sao chép sát bến; kết hợp E03 để xác lập P01 (không suy đoán nguyên nhân hay quy kết thủ phạm). Miriam dẫn vào sân bữa bằng công việc hỗ trợ, không dùng điểm quan hệ để ép Yosef. B06 luôn tách biệt G17.
 * **Vào:** Có sổ gia đình, đã gặp Miriam.
 * **Mục tiêu:** Xác minh đợt thiếu 2 bao của bữa chung B06 hôm nay và bảo vệ Yosef.
 * **Ba route:** `shelter` (đưa Yosef và mẹ vào nơi an toàn trước), `anonymous` (bỏ định danh qua trung gian), `consented` (lắng nghe nhu cầu, giải tỏa áp lực, bố trí người bảo vệ và chỉ nhận lời chứng tự nguyện).
