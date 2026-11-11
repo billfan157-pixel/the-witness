@@ -12,7 +12,7 @@
 | Blocking, thoại, trình tự slice Q01/Q03/L01 | [07 Screenplay](the-witness/07-vertical-slice-screenplay.md) | Không mặc định thay campaign save đang chơi |
 | Scene Legends / nguồn và thế giới của scene | [14 Legends](the-witness/14-legends-depth-dossiers.md) / [15 Packets](the-witness/15-source-world-packets.md) | Core/order/revision ở contract; canon ở 08 |
 | Địa lý, văn hóa và mỹ thuật chung | [04 World](the-witness/04-world-bible.md) | Source register và chuẩn môi trường |
-| Thoại/chi tiết cảm xúc bổ sung | [18 Craft & dialogue](the-witness/18-scene-craft-and-dialogue.md) | Là mốc biên tập 0.4; không sở hữu danh mục runtime mới |
+| Thoại/chi tiết cảm xúc bổ sung | [18 Craft & dialogue](the-witness/18-scene-craft-and-dialogue.md) | Giữ mốc runtime 0.4, bổ sung đích v6 có nhãn chưa triển khai; không sở hữu danh mục runtime |
 | Bản văn, chuyển thể, nguồn nghiên cứu | [08 Scripture](the-witness/08-scripture-reference.md) / [10 Sources](the-witness/10-source-register.md) | Từng claim cần nhãn, nguồn, giới hạn |
 
 Không đọc tất cả các hàng. Chọn hàng theo phần đang sửa; nguồn kia chỉ cần khi
@@ -36,8 +36,13 @@ Code thực thi là content/spine/depth/relationships/craft/model. Narrative Bib
 là nguồn thiết kế cốt truyện mới chính thức, nhưng phải tuân thủ tuyệt đối các bất biến
 trong PRODUCT (Canon Lock, Dual-Tier Persona, không mana/phép lạ, Legends không truyền
 dữ liệu sang Mortal). Chưa có chuyển đổi toàn bộ E11/E12/P05 của v6 vào runtime; các
-ID/claim này được hoãn cho tới đợt nâng cấp toàn diện. Cần đọc A01/D010 trước mọi việc thêm quest,
+ID/claim này đã được chọn trong thiết kế, còn chờ triển khai và kiểm tương thích đầy đủ. Cần đọc A01/D010 trước mọi việc thêm quest,
 vật chứng, claim hoặc thay cổng. Version truyện, game, tài liệu và save khác miền.
+
+Trường `character` của contract nhận diện nhân vật trung tâm trình thuật/khóa
+nguồn; không phải chỉ dẫn điều khiển nhân vật ấy. Runtime `witness-content.js`
+và `witness-spine.js` đã có `witnessRole` cho Nhân Chứng Vô Danh ở ba Legend trục.
+Không đổi `character` thành một tên vai chơi để sửa nhãn trong tài liệu.
 
 Q01 v6 đã có state foundation trong runtime (`witness-q01-state.js` + `sceneProgress.Q01`
 của model, PR-03): 9 Beat, hai route cứu hộ và hậu quả thế giới được ghi nhớ/validate,

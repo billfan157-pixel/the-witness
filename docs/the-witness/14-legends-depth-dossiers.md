@@ -1,12 +1,12 @@
 # 14 • Hồ sơ chiều sâu Legends — Ba chương trục truyện
 
-**V3.0 • Thiết kế [H] có ràng buộc nguồn • Chưa được thẩm định chuyên gia hoặc playtest**
+**Thiết kế truyện v6 • Rà soát 11/11/2026 • [H] có ràng buộc nguồn • Chưa được thẩm định chuyên gia hoặc playtest**
 
-Hồ sơ này là nguồn scene/level cho L01, L02, L04, có độ chi tiết tương ứng các cầu nối Q trong [hồ sơ 11](11-chapter-dossiers.md). Mã beat, cổng và thời lượng phải khớp [campaign-contract](campaign-contract.json). [Packet 15](15-source-world-packets.md) quyết định phần nào có căn cứ để dựng. Tất cả kích thước, đường đi, thao tác và nhân vật nền dưới đây là bố cục nghệ thuật [H]; không gọi là phục dựng chính xác.
+Hồ sơ này là nguồn scene/level cho L01, L02, L04, có độ chi tiết tương ứng các cầu nối Q trong [hồ sơ 11](11-chapter-dossiers.md). Giữ ID, thứ tự core và cổng của [campaign-contract](campaign-contract.json); các bảng scene dưới đây là đích dàn dựng v6, không tự thay receipt/checkpoint runtime. Thời lượng thiết kế lấy [GDD mục 16](02-game-design-document.md#16-ngan-sach-chieu-sau-va-tai-can-bang-thoi-luong-pacing--duration-rebalancing): 55 + 48 + 42 = 145 phút. Baseline v3 và khoảng cách triển khai theo [STATUS A08](../STATUS.md#open). [Packet 15](15-source-world-packets.md) quyết định phần nào có căn cứ để dựng. Tất cả kích thước, đường đi, thao tác và nhân vật nền dưới đây là bố cục nghệ thuật [H]; không gọi là phục dựng chính xác.
 
 ## 1. Hợp đồng trải nghiệm chung
 
-Người chơi điều khiển nhân vật Kinh Thánh trong một chương chuyển thể có ranh giới. Không tạo bản sao của Người Chứng trong quá khứ. Đầu chương hiện tên sách, phân đoạn, nhãn chuyển thể và nút chọn định dạng; không hiện như phụ bản thưởng. Journal xếp tên Legend và câu hỏi hành trình ở đầu; công việc Mortal hiện dưới nhãn “Chuẩn bị / Tiếp nối”.
+Người chơi điều khiển **Nhân Chứng Vô Danh [H]**, một vai phụ ở rìa hiện trường chuyển thể; các nhân vật Kinh Thánh giữ hành động, lời và kết cục theo bản văn. Vai phụ không thay Môsê, Đavít, Phêrô hoặc trở thành một môn đệ được nguồn xác định. Không tạo bản sao của Người Chứng trong quá khứ. Đầu chương hiện tên sách, phân đoạn, nhãn chuyển thể và nút chọn định dạng; không hiện như phụ bản thưởng. Journal xếp tên Legend và câu hỏi hành trình ở đầu; công việc Mortal hiện dưới nhãn “Chuẩn bị / Tiếp nối”.
 
 Mỗi chương có bảy scene, một đồ thị không gian, ít nhất hai cách khám phá có công năng, một đoạn yên và một trở lại đời thường có việc làm. Đường khác đổi thứ tự quan sát hoặc thao tác; chúng hội tụ ở diễn tiến bản văn. Không ghi lựa chọn “đúng đạo” hoặc mở lịch sử thay thế. Nhánh khám phá không đưa vật Kinh Thánh vào túi avatar.
 
@@ -21,7 +21,7 @@ Mỗi chương có bảy scene, một đồ thị không gian, ít nhất hai c�
 **Nguồn:** S05, Xh 14,1–31. **Vào:** Q03 đã commit. **Ra:** `GATE.L01` mở Q04.  
 **Tầng Thánh (Canon Lock 100%):** Môsê đứng ở tiền phương theo lệnh Đức Chúa giơ gậy trên biển; cột mây/lửa chắn giữa quân Ai Cập và dân Israel.  
 **Vai điều khiển (Player Agency):** **Người Hộ Vệ Khóa Đuôi** — một thanh niên bọc hậu của chi tộc Giuđa; sử dụng trọn vẹn 4 kỹ năng (Quan sát, Thủ công, Giao tiếp, Tự vệ).  
-**Ngân sách:** 50–60 phút tương tác (tinh gọn, mật độ cao) hoặc khoảng 8 phút tóm tắt.
+**Ngân sách thiết kế v6:** 55 phút tương tác (khoảng hiệu chỉnh 50–60 phút) hoặc khoảng 8 phút tóm tắt; chưa đo bằng người chơi thật.
 
 **Trọng tâm đức tin:** Sáng kiến cứu thoát của Thiên Chúa trước sự bế tắc tuyệt đối của con người.  
 **Xung đột trải nghiệm [H]:** Nỗi sợ hãi tột cùng của đoàn người yếu thế khi nghe tiếng chiến xa Ai Cập đuổi sát phía sau; áp lực giữ vững trật tự bọc hậu giữa cuồng phong gió đông.  
@@ -41,15 +41,15 @@ Blockout gồm **A — mép trại hậu phương**, **B — tuyến vách đá 
 
 | Scene / phút | Việc người chơi thực hiện (Nhân chứng vô danh) [H] | Biến cố Kinh Thánh quan sát được [K] | Điểm lưu |
 |---|---|---|---|
-| L01.S01 / 8 | Nhận còi hiệu và đèn bão; đi tuần tra mép trại A; kiểm tra các gia đình chậm chân | Tiếng chiến xa Ai Cập vọng từ xa; cột mây dời ra phía sau che chắn (B01) | Lưu trại A |
-| L01.S02 / 16 | Khảo sát 2 tuyến A–C (bằng phẳng nhưng dễ lún) và B–C (ven đá dốc nhưng nền cứng); dùng kỹ năng *Thủ công* kích bánh xe lún, đặt ván gỗ | Dân chúng sợ hãi kêu cầu; Môsê trấn an dân: "Đừng sợ! Hãy đứng vững..." (B02) | Lưu điểm C |
-| L01.S03 / 14 | Điều phối các cụm gia đình tại C; dùng *Giao tiếp* trấn an trẻ nhỏ; dùng *Tự vệ* chặn đàn cừu hoảng loạn chen lấn lối đi hẹp | Môsê tiến ra bờ biển D cầu khẩn Thiên Chúa; lệnh nhổ trại tiến lên (B03) | Checkpoint D |
-| L01.S04 / 10 | Đứng từ bãi triều D; cảm nhận cơn gió đông dữ dội nổi lên suốt đêm; quan sát mặt nước rẽ đôi mở ra hành lang cạn | Cử chỉ Môsê giơ gậy trên biển; nước rẽ thành bờ tường hai bên tả hữu (B03–B04) | Lưu cửa biển |
-| L01.S05 / 18 | Dẫn cụm gia đình khóa đuôi bước vào lòng biển E; thăm dò gờ bùn trơn; soi đèn hiệu giữ khoảng cách giữa các xe thồ | Toàn thể đoàn dân Israel đi ráo chân giữa lòng biển suốt canh tư (B04) | Lưu giữa biển |
-| L01.S06 / 10 | Hỗ trợ đẩy chiếc xe thồ cuối cùng lên bờ F; nhìn lại phía sau thấy chiến xa Pharaô lao vào lòng biển và bị trật bánh | Nước biển ập lại vùi lấp chiến xa Ai Cập; sự giải thoát hoàn tất (B05) | Lưu bờ F |
-| L01.S07 / 4 | Đứng trên bờ cao F cùng cộng đoàn nhìn lại biển lặng; tiếp nhận bài ca tạ ơn; lưu commit | Lời ca tạ ơn của Môsê và toàn dân; niềm kính sợ Thiên Chúa (B06) | Commit L01 |
+| L01.S01 / 5 | Nhận tín hiệu và đèn [H]; đi tuần mép trại A; kiểm các gia đình chậm chân | Quân Ai Cập truy đuổi, dân ở trại ven biển (B01, tiếp ở S02) | Lưu trại A |
+| L01.S02 / 10 | Khảo sát hai tuyến A–C/B–C; kích bánh xe lún, đặt ván; giữ hai cách đi có công năng | Dân sợ hãi; Môsê trấn an dân (B01–B02) | Lưu điểm C |
+| L01.S03 / 10 | Điều phối các gia đình tại C; trấn an trẻ; giữ khoảng trống cho người và đàn vật | Khoảng thao tác [H] trong tình thế đã trình bày; không thêm lời nguồn | Checkpoint D |
+| L01.S04 / 7 | Tập kết tại D; quan sát từ bên lề, không thao tác để kích phép lạ | Lệnh tiến lên; cột mây ngăn hai đoàn; Môsê đưa tay, biển mở theo hành động của Đức Chúa (B03, mở đầu B04) | Lưu cửa biển |
+| L01.S05 / 12 | Dẫn nhóm khóa đuôi trên nền khô; dùng đèn giữ cự ly xe; không tìm đủ vật để được qua | Dân đi trên đất khô; quân Ai Cập đuổi theo và lâm cảnh rối loạn (B04) | Lưu giữa biển |
+| L01.S06 / 7 | Hỗ trợ xe cuối lên bờ F; nhường góc nhìn cho phần kết nguồn | Môsê đưa tay theo lệnh Đức Chúa; biển trở lại, cuộc truy đuổi chấm dứt (B05) | Lưu bờ F |
+| L01.S07 / 4 | Cùng nhóm đứng nhìn lại; giữ khoảng yên rồi tiếp tục | Israel được cứu, kính sợ và tin Đức Chúa cùng Môsê (14,30–31; B06) | Commit L01 |
 
-Các phút bao gồm quan sát có mục đích, thao tác và phần trình bày. Không kéo dài bằng chạy vòng, tìm đủ chum hoặc chờ AI. Mục tiêu sơ bộ 60/80 phút có hoạt động khám phá/thao tác/điều hướng có quyết định; cần đo lại ở blockout. Nếu cảnh không có đủ việc đáng làm, giảm thời lượng và sửa ngân sách toàn hồi thay vì tăng khoảng cách trống.
+Tổng bảng: **5 + 10 + 10 + 7 + 12 + 7 + 4 = 55 phút**. Co phần tuần tra/khảo sát lặp, giữ hai tuyến, core và khoảng yên. Các phút gồm quan sát, thao tác và phần trình bày; không kéo dài bằng chạy vòng, tìm đủ chum hoặc chờ AI. Không suy tỷ lệ hoạt động thực từ dự toán; cần đo ở blockout/playtest. Bài ca Môsê thuộc Xh 15, ngoài phân đoạn L01 đang khóa; không gán bài ca cho B06 hoặc tự thêm nó vào core.
 
 ### Canon lock và quyền chủ động
 
@@ -65,7 +65,11 @@ Không xác định Pharaô, tọa độ hay năm Xuất Hành bằng asset. Kh�
 
 **Chồng lớp:** gió qua vải ở trại nối tiếng gió qua mái kho; vị trí tay buông gậy cắt sang tay đặt dây. Đây là montage. Chế độ giảm chuyển động dùng hai ảnh tĩnh và thẻ địa điểm/thời đại.
 
-**Tiếp nối Q04:** mở ba vị trí khảo sát đường ra, một điểm bàn giao và lượt kiểm người cuối đoàn. Nội dung được mở bằng tiến độ cho cả hai định dạng; người chơi vẫn chọn `food` hoặc `tools` và thực hiện việc đã nhận. Không biến bằng chứng E01 thành phần thưởng của L01. Bỏ Natan khỏi đội hiện tại không khóa chương: có bản kể trong journal được gắn rõ là tư liệu trình bày của game.
+**Tiếp nối Q04 & Cơ chế Mở khóa Nhận thức (Knowledge-Gating):**
+L01 không ban tặng vật phẩm hay kỹ năng siêu nhiên sang Mortal World (bảo toàn Invariant 2 của [PRODUCT](../PRODUCT.md#invariants)). Thay vào đó, L01 đóng vai trò là trường học nhận thức cho chính người chơi:
+1. *Quy tắc chắn đèn bấc trước gió nghịch:* Cách cầm đèn hạ thấp trọng tâm, dùng vạt áo hoặc khiên gỗ chắn luồng khí lùa từ biển để giữ ngọn lửa không bị thổi tắt và không hắt bóng lên vách cao.
+2. *Quy tắc dò nền đá nén dưới bùn lún:* Quan sát độ phản chiếu ánh sáng của mặt nước và lớp cát mịn để phân biệt bùn lầy nguy hiểm với dải đá sỏi nén chặt chịu được tải trọng.
+3. *Vận dụng không marker tại Q04:* Khi trở lại bến cảng Sebastos trong đêm siết kiểm tra (Q04), hệ thống **tuyệt đối không hiển thị waypoint hay nút bấm Phương án Thứ Ba trên giao diện UI**. Người chơi phải tự vận dụng tri thức nhận thức đã học ở L01: quan sát luồng gió biển đập vào chân tường kho C1, che ngọn đèn bấc để di chuyển trong bóng tối, và lần theo gờ đá nén để luồn vào rãnh thông gió bảo trì C-1 mà lính tuần bỏ quên. Hành động tự thân này kích hoạt Phương án Thứ Ba (The Third Way) một cách tự nhiên và đầy thuyết phục.
 
 ### Tóm tắt, chi phí và tiêu chí nhận
 
@@ -82,14 +86,14 @@ Nhận greybox khi người mới tìm hai lối A–C, hiểu không thao tác 
 **Nguồn:** S06, 1 Sm 24 toàn chương. **Vào:** Q06 đã commit, kể cả route `reconstruct`. **Ra:** `GATE.L02` mở Q07.  
 **Tầng Thánh (Canon Lock 100%):** Đavít cùng các cận vệ ẩn nấp trong đáy hang; Saun vào hang một mình; Đavít tiến lại cắt vạt áo Saun rồi lương tâm cắn rứt; Đavít ngăn cản các người theo mình không được hại vua; Đavít bước ra ánh sáng cúi lạy và đối thoại với Saun.  
 **Vai điều khiển (Player Agency):** **Người Trinh Sát Đội Đavít** — một chiến binh đi theo Đavít nhiều năm; mở khóa trọn vẹn 4 kỹ năng RPG.  
-**Ngân sách:** 45–50 phút tương tác (tập trung âm học & kiềm chế) hoặc khoảng 7 phút tóm tắt.
+**Ngân sách thiết kế v6:** 48 phút tương tác (khoảng hiệu chỉnh 45–50 phút) hoặc khoảng 7 phút tóm tắt; chưa đo bằng người chơi thật.
 
 **Xung đột trải nghiệm [H]:** Mối thù sâu sắc giữa nghĩa quân Đavít và quân triều đình; sự cám dỗ tột cùng muốn ra tay hạ sát Saun để chấm dứt chuỗi ngày trốn chạy; thử thách kiềm chế bản thân và giữ trật tự nội bộ.  
 **Exploration Loop đặc thù: Thám hiểm Âm thanh, Ánh sáng & Kiềm chế Đồng đội (Acoustic Stealth & Group Restraint):**
 - *Khảo sát địa hình En Ghêđi:* Trèo qua các vách đá dựng đứng, khe suối cạn và hốc đá vôi [En Gedi](https://static.parks.org.il/wp-content/uploads/2022/12/engedi-eng.pdf) để dẫn đường.
 - *Âm học hang tối (Acoustic Stealth):* Lắng nghe tiếng bước chân, tiếng giáp sắt và tiếng vọng âm thanh của quân lính Saun bên ngoài và trước cửa hang.
-- *Thanh kiềm chế đồng đội (Group Restraint System):* Đồng đội trong hang muốn rút gươm xông ra; người chơi phải dùng di chuyển lén lút, tiếp cận thì thầm, dùng kỹ năng *Giao tiếp* và *Tự vệ* để giữ tay kiếm của họ, ngăn chặn một cuộc thảm sát trước khi Đavít hành động.
-- *Hộ tống và lộ diện:* Tìm lộ trình đưa Đavít từ đáy hang ra miệng hang đầy nắng, giữ cự ly đối thoại an toàn giữa hai bên.
+- *Giữ khoảng cách với toán phụ [H]:* Dùng lời thì thầm, tín hiệu và đường lùi để người nóng nảy tự đồng ý hạ tay; không khóa/siết người, không có thước đo đức hạnh. Chính Đavít ngăn quân mình hại Saun theo bản văn.
+- *Cảnh giới và lộ diện:* Giữ nhóm phụ ở vị trí an toàn, quan sát Đavít tự bước ra đối thoại; không cần người chơi hộ tống mới xảy ra biến cố nguồn.
 
 ### Không gian có thể chơi
 
@@ -99,15 +103,15 @@ Nhận greybox khi người mới tìm hai lối A–C, hiểu không thao tác 
 
 | Scene / phút | Việc người chơi thực hiện (Trinh sát hang) [H] | Biến cố Kinh Thánh quan sát được [K] | Điểm lưu |
 |---|---|---|---|
-| L02.S01 / 8 | Do thám vách đá A ngoài En Ghêđi; phát hiện dấu vết 3.000 quân Saun đang sục sạo; đưa tín hiệu cho nhóm rút vào hang B | Toán lính tinh nhuệ của Saun lùng sục khắp các "mỏm đá sơn dương" (B01) | Lưu khe A |
-| L02.S02 / 16 | Khảo sát các ngách hang C và gờ đá D; dùng kỹ năng *Thủ công* giăng dây định hướng trong tối; ghi nhớ các hốc vang tiếng | Đavít và các cận vệ ngồi ẩn sâu trong lòng hang tối (B01) | Lưu đáy hang C |
-| L02.S03 / 14 | Saun bước vào hang một mình; đồng đội sôi sục đòi ám sát; người chơi dùng *Giao tiếp* thì thầm và *Tự vệ* ghìm tay kiếm của đồng đội giữ im lặng | Đồng đội giục Đavít: "Chính là ngày Đức Chúa phán nộp kẻ thù vào tay ông..." (B01) | Lưu trước tiếp cận |
-| L02.S04 / 10 | Hộ tống Đavít bò men theo bóng tối gờ D áp sát Saun; chứng kiến Đavít chỉ cắt vạt áo choàng rồi lùi lại trong sự cắn rứt lương tâm | Đavít cắt vạt áo Saun; sau đó lòng ông áy náy vì đã phạm tới đấng được xức dầu (B02) | Checkpoint vạt áo |
-| L02.S05 / 8 | Quay lại E; tiếp tục can thiệp ngăn chặn các chiến binh xông lên; bảo đảm kỷ luật đoàn kết theo lệnh thủ lĩnh | Đavít nghiêm khắc bảo quân mình: "Xin Đức Chúa giữ tôi đừng tra tay hại chúa thượng tôi..." (B03) | Lưu điểm E |
-| L02.S06 / 10 | Đứng cảnh giới tại miệng hang B; theo dõi Đavít bước ra bãi đá F, gọi lớn tiếng và cúi mình sấp mặt xuống đất tạ lỗi vua | Cuộc đối thoại xúc động giữa Đavít và Saun; Saun khóc và thừa nhận sự công chính của Đavít (B04–B05) | Lưu miệng hang B |
-| L02.S07 / 4 | Hộ tống Đavít và toàn đội rút lui an toàn theo vách đá G; giữ khoảng cách tôn trọng lời thề cam kết | Saun trở về nhà, Đavít và người của ông trở lên nơi ẩn náu (B05); commit L02 | Commit L02 |
+| L02.S01 / 5 | Do thám vách đá A; báo nhóm phụ rút vào B; không suy được quân số từ dấu chân | Saun tìm Đavít với ba nghìn người theo nguồn (B01) | Lưu khe A |
+| L02.S02 / 10 | Khảo sát ngách C và gờ D; giăng dây định hướng; giữ hai tuyến âm học có công năng | Đavít và người của ông ở sâu trong hang; Saun đi vào (B01) | Lưu đáy hang C |
+| L02.S03 / 8 | Giữ nhóm phụ yên, quan sát từ khoảng cách; không đi thay hoặc ra lệnh cho Đavít | Người của Đavít thúc giục; Đavít cắt vạt áo rồi áy náy (B02) | Checkpoint vạt áo |
+| L02.S04 / 7 | Thì thầm với một người phụ [H], để họ tự lùi về điểm dây; không quyết định việc tha Saun | Đavít ngăn người của mình hại vua; Saun rời hang (B03) | Lưu điểm E |
+| L02.S05 / 6 | Chuẩn bị nước, người nối tín hiệu và đường về cho nhóm phụ | Khoảng thao tác [H] sau B03; không đặt thêm cổng cho hành động của Đavít | Lưu trước cửa hang |
+| L02.S06 / 8 | Cảnh giới từ B; giữ khoảng yên nghe cuộc đối thoại | Đavít bước ra, cúi mình và trình bày; Saun đáp lại (B04, đầu B05) | Lưu miệng hang B |
+| L02.S07 / 4 | Đi cùng toán phụ về G; giữ khoảng nghe và quan sát đoạn kết, không quyết định lời thề của Đavít | Đavít thề; Saun trở về nhà, Đavít và người của ông về nơi ẩn náu (B05) | Commit L02 |
 
-Mục tiêu 48/70 phút hoạt động có mục đích. Cảnh đối diện giữ thời gian nghe, không cắt thành vài nút đáp án để đủ tỷ lệ “tương tác”. Nếu thoại theo bản dịch dài hơn, thay ước lượng thật và cân đối lại toàn hồi.
+Tổng bảng: **5 + 10 + 8 + 7 + 6 + 8 + 4 = 48 phút**. Co khảo sát lặp và phần chờ của toán phụ; giữ lời nguồn, hai tuyến và đoạn rút lui. Không suy tỷ lệ hoạt động thực từ dự toán. Nếu thoại theo bản dịch dài hơn, đo lại và cân đối toàn hồi.
 
 ### Canon lock, căng thẳng và lỗi thao tác
 
@@ -121,7 +125,10 @@ Tấm áo không là trophy, người chơi không được chọn làm ngơ tr�
 
 **Phản tư:** “Điều gì làm bạn dừng lại khi đã ở rất gần?” Cho phép phản đối cách liên hệ hoặc chưa trả lời; không gán động cơ từ dữ liệu bấm nút. **Chồng lớp:** đường sáng ở miệng hang nối khe cửa xưởng; âm bước chân trở về trên nền thật. Không mang mảnh áo ra ngoài lớp chuyển thể.
 
-**Q07:** người chơi đọc lại lời hứa đúng người/đúng việc rồi tự giữ, thương lượng hoặc bàn giao có người nhận. L02 chỉ mở ngữ cảnh để nói về giới hạn, không tự làm `PromiseKept`. Damar không được kể như Đavít; hành vi sai ở Q06 vẫn có callback và lối sửa riêng. Cả route chơi lẫn tóm tắt đều còn ba phương án Q07 nếu các điều kiện Mortal tương ứng đúng.
+**Q07 & Cơ chế Mở khóa Nhận thức (Knowledge-Gating sang Q07):**
+L02 huấn luyện người chơi quy tắc đọc môi trường thính giác đặc thù:
+1. *Quy tắc Điểm mù Âm thanh Vách đá (Acoustic Blindspot):* Cấu trúc vòm đá vôi phản xạ tiếng gió rít bên ngoài nhưng tạo ra vùng lặng âm thanh tuyệt đối (dead zone) dọc theo vết nứt thạch nhũ nơi tiếng bước chân bị triệt tiêu hoàn toàn bởi tiếng giọt nước nhỏ đều.
+2. *Vận dụng không marker tại Q07:* Khi trở về xưởng thuộc da của Lea trong bầu không khí ngột ngạt nghi kỵ, thay vì một lựa chọn menu cứng nhắc, người chơi quan sát không gian 3D, nhận diện điểm mù âm thanh giữa các giàn phơi da nặng và vách đá xưởng để tiếp cận góc riêng tư. Điều này tạo không gian an toàn không sợ bị tai vách mạch rừng nghe lén, giúp Lea trải lòng thú nhận việc bị đe dọa sinh kế gia đình (T11) mà không bị dồn vào chân tường, mở ra Phương án Thứ Ba độc quyền mà không có marker dẫn đường.
 
 ### Tóm tắt và tiêu chí nhận
 
@@ -134,35 +141,35 @@ Asset: một bộ đá/hang có giới hạn cao độ, ánh sáng gián tiếp 
 ### Câu chuyện, vị trí và đường cảm xúc
 
 **Nguồn:** S09, Ga 21,1–19. **Vào:** Q10 đã commit. **Ra:** `GATE.L04` mở Q11.  
-**Tầng Thánh (Canon Lock 100%):** Các Tông đồ chài lưới suốt đêm không bắt được gì; rạng đông Đức Kitô Phục Sinh đứng trên bãi biển; môn đệ Gioan nhận ra: "Chúa đó!"; Phêrô khoác áo nhảy xuống biển bơi vào; mẻ lưới 153 con cá lớn không rách; bữa ăn bánh và cá nướng bên bếp than; Chúa Giêsu hỏi Phêrô ba lần "Con có yêu mến Thầy không?" và trao sứ vụ "Hãy theo Thầy".  
+**Tầng Thánh (Canon Lock 100%):** Nhóm môn đệ đánh cá trắng tay trong đêm; rạng sáng Đức Giêsu đứng trên bờ. Sau lời chỉ dẫn và mẻ cá, người môn đệ được Đức Giêsu yêu mến nhận ra Người; Phêrô xuống nước. Phêrô kéo lưới có 153 cá lớn lên bờ mà lưới không rách. Giữ bữa ăn, ba câu hỏi và lời trao nhiệm vụ/theo Thầy cho Phêrô. Đây là tóm tắt nguồn, không phải bản lời thoại được duyệt để thu âm.
 **Vai điều khiển (Player Agency):** **Người Phụ Lưới Hồ Galilê** — người thợ phụ cùng đồng hành trên thuyền chài; vận dụng trọn vẹn 4 kỹ năng RPG.  
-**Ngân sách:** 40–45 phút tương tác (lắng đọng, giàu cảm xúc) hoặc khoảng 8 phút tóm tắt.
+**Ngân sách thiết kế v6:** 42 phút tương tác (khoảng hiệu chỉnh 40–45 phút) hoặc khoảng 8 phút tóm tắt; chưa đo bằng người chơi thật.
 
 **Trọng tâm đức tin:** Sự hiện diện đầy yêu thương và tha thứ của Đấng Phục Sinh, trao lại trách nhiệm cho những con người từng vấp ngã.  
 **Xung đột trải nghiệm [H]:** Nỗi đau đớn, mất phương hướng và cảm giác tội lỗi của các môn đệ sau cuộc khổ nạn; sự mệt mỏi thể xác sau đêm dài quăng quật trên sóng lạnh mà không có kết quả.  
 **Exploration Loop đặc thù: Phối hợp Thao tác Thuyền/Lưới & Đọc Dấu hiệu Mặt nước (Seamanship & Relational Observation):**
-- *Cơ chế điều khiển thuyền cổ [Ginosar](https://yigal-allon-centre.org.il/en/the-museum/the-ancient-boat/):* Điều phối nhịp chèo đôi, đọc hướng gió đêm từ hẻm núi thổi xuống hồ, duy trì thăng bằng thuyền gỗ 8.2m.
+- *Thao tác thuyền tham chiếu [Ginosar](https://yigal-allon-centre.org.il/en/the-museum/the-ancient-boat/):* Điều phối phần việc phụ, đọc hướng gió và giữ thăng bằng. Thuyền khảo cổ khoảng 8 m là tham chiếu vật thể theo packet 15; bố trí gameplay là [H], không gọi là chính thuyền Phêrô.
 - *Chuẩn bị mép lưới [H], không chốt cấu tạo từ Ga 21:* Thả lưới, thăm dò độ chìm của phao chì, gỡ mắt lưới mắc đá ngầm, cùng kéo lưới trong bóng đêm.
 - *Đọc dấu hiệu mặt nước:* Quan sát gợn sóng đêm, luồng lạch cá theo mùa và ánh bình minh hé rạng trên rặng núi phía đông.
-- *Lao tác cộng đồng:* Cùng hợp lực kéo mẻ lưới 153 con cá lớn cập bãi cát; gom củi và giữ than hồng cho bữa ăn bên bờ hồ.
+- *Lao tác cộng đồng [H]:* Chuẩn bị mép dây và nơi nhận ở bờ; quan sát bếp than đã có sẵn theo nguồn. Không yêu cầu người chơi nhóm bếp mới xảy ra bữa ăn.
 
 ### Không gian có thể chơi
 
-**A — bến neo thuyền lúc hoàng hôn**, **B — lòng thuyền cổ Ginosar**, **C — vị trí buông lưới ngoài khơi đêm**, **D — tuyến chèo xuôi về bờ lúc rạng đông**, **E — bãi cát có bếp than hồng**, **F — dải bờ hồ nơi Phêrô bước theo Thầy**. A↔B làm quen thao tác; B→C trải nghiệm đêm trắng tay; C→D đón nhận tiếng gọi; D→E hợp lực kéo lưới; E↔F khoảng lặng đối thoại và trao sứ vụ.
+**A — bến neo thuyền lúc hoàng hôn**, **B — khu thao tác thuyền sáng tác, tham chiếu S31**, **C — vị trí buông lưới ngoài khơi đêm**, **D — tuyến về bờ lúc rạng đông**, **E — bãi có bếp than**, **F — dải bờ dàn dựng phần theo Thầy [H]**. A↔B làm quen; B→C đêm trắng tay; C→D tiếng gọi và nhận ra Chúa; D→E về bờ; E↔F nghe trao nhiệm vụ. Vai phụ không tăng số người trong nhóm được Ga 21,2 liệt kê; chi tiết vị trí/góc nhìn phải được duyệt như chuyển thể, không là căn tính mới được nguồn xác nhận.
 
 ### Chuỗi scene và hành động chi tiết
 
 | Scene / phút | Việc người chơi thực hiện (Phụ việc thuyền) [H] | Biến cố Kinh Thánh quan sát được [K] | Điểm lưu |
 |---|---|---|---|
-| L04.S01 / 6 | Kiểm tra chốt chèo, dây neo và xếp lưới lên khoang thuyền B tại bến A; chuẩn bị đèn dầu | Simon Phêrô bảo: "Tôi đi đánh cá đây." Các môn đệ nói: "Chúng tôi cùng đi với anh." (B01) | Lưu bến A |
-| L04.S02 / 16 | Cùng các Tông đồ chèo ra vùng nước C; thả lưới rê; chờ đợi; kéo lên trống không; dùng kỹ năng *Thủ công* gỡ phần lưới rối [H] và thả lại; không biến lưới không rách trong mẻ cá nguồn thành nhánh thất bại | Đêm ấy các ông không bắt được con cá nào; sự im lặng trĩu nặng của các môn đệ (B01) | Lưu giữa hồ C |
-| L04.S03 / 10 | Khi trời vừa sáng, đứng ở mũi thuyền quan sát bờ D; nghe tiếng một người lạ cất tiếng hỏi; truyền lời cho các môn đệ | Người lạ đứng trên bờ hỏi: "Này các chú, không có gì ăn ư?" Các ông đáp: "Không." (B02) | Lưu rạng đông |
-| L04.S04 / 12 | Thao tác thả lưới mạn phải thuyền theo lời chỉ dẫn; lưới nặng trĩu cá; chứng kiến Phêrô nhảy xuống biển bơi vào bờ | Thả lưới bên phải mạn thuyền thì không sao kéo lên nổi vì nhiều cá; Người môn đệ được yêu mến nhận ra Chúa (B02–B03) | Checkpoint kéo lưới |
-| L04.S05 / 10 | Cùng các môn đệ chèo thuyền vào bờ E; kéo mẻ lưới vào bãi; đếm cá (153 con cá lớn); phụ xếp cá bên bếp than | Thấy sẵn bếp than có cá đặt trên đó và bánh; lưới chứa 153 con cá lớn mà không rách (B03) | Lưu bờ hồ E |
-| L04.S06 / 8 | Ngồi giữ khoảng cách cung kính bên bếp than; đón nhận bánh và cá nướng; chứng kiến cuộc trò chuyện ba lần yêu thương | Đức Giêsu trao bánh và cá: "Hãy đến mà ăn"; Ngài hỏi Phêrô ba lần: "Con có yêu mến Thầy không?" (B04) | Lưu bữa ăn |
+| L04.S01 / 4 | Kiểm chốt chèo, dây neo và mép lưới [H] ở bến; làm quen thao tác phụ | Phêrô cùng nhóm môn đệ đi đánh cá (B01) | Lưu bến A |
+| L04.S02 / 9 | Chuẩn bị dây, gỡ rối mép lưới [H]; một lượt phối hợp đủ, không kéo dài bằng chờ cá | Nhóm không bắt được gì trong đêm; không gán nội tâm suy đoán thành lời nguồn (B01) | Lưu giữa hồ C |
+| L04.S03 / 5 | Quan sát bờ lúc sáng, lắng nghe; không thay người đáp lời nguồn | Đức Giêsu hỏi và chỉ dẫn thả lưới; nhóm chưa nhận ra Người (đầu B02) | Lưu rạng đông |
+| L04.S04 / 7 | Giữ phần dây phụ gọn, chứng kiến; thao tác người chơi không làm mẻ cá xảy ra | Các môn đệ thả lưới bên phải; người môn đệ được yêu nhận ra Chúa; Phêrô xuống nước (B02) | Checkpoint kéo lưới |
+| L04.S05 / 6 | Phối hợp phần nhận dây ở bờ [H]; không có mục tiêu nhập/đếm đủ 153 | Bếp than, bánh và cá; Phêrô kéo lưới lên bờ, 153 cá lớn và lưới không rách (B03) | Lưu bờ hồ E |
+| L04.S06 / 7 | Lùi ra rìa bữa ăn; giao diện công việc hạ xuống, giữ khoảng nghe | Đức Giêsu trao bánh/cá (B03), rồi hỏi và trao nhiệm vụ cho Phêrô (B04) | Lưu bữa ăn |
 | L04.S07 / 4 | Quan sát Phêrô đứng dậy bước theo Chúa dọc dải bờ F; ghi nhớ lời trao phó sứ vụ; commit L04 | Lời báo trước và mệnh lệnh tối hậu: "Hãy theo Thầy!" (B05); hoàn tất ba chương trục | Commit L04 |
 
-Mục tiêu 44/66 phút có hoạt động khám phá/thao tác; bữa ăn và lời nguồn cần khoảng lặng. Chỉ giữ vật tương tác khi nó giúp hiểu công việc, không gian hoặc cùng làm với người khác. Một chiếc lưới có vài điểm quan sát đáng đọc tốt hơn hàng chục nút loot giống nhau.
+Tổng bảng: **4 + 9 + 5 + 7 + 6 + 7 + 4 = 42 phút**. Co lượt chèo/thả lưới lặp; giữ đêm trắng tay, nhận ra Chúa, bữa ăn, lời trao nhiệm vụ và đoạn theo. Không suy tỷ lệ hoạt động thực từ dự toán. Vai phụ và bố trí thuyền là [H], không thêm một Tông đồ vào nhóm nguồn. Chỉ giữ vật tương tác khi giúp hiểu công việc/không gian; không biến 153 thành collectible hoặc câu đố.
 
 ### Canon lock và ranh giới nhân vật
 
@@ -176,7 +183,10 @@ Tạo hình, biểu cảm và giọng Đức Giêsu là một quyết định ch
 
 **Phản tư:** “Bạn sẵn lòng nhận việc gì, và cần ai cùng nhận?” Không bắt avatar nói mình được tha thứ, cũng không ép một lời tuyên xưng để qua cổng. **Chồng lớp:** tiếng vật đặt lên nền gỗ nối thao tác đặt bát ở nhà chung; thẻ địa điểm đưa trở lại Giêrusalem. Không một con cá/chùm sáng hiện ở đời thực để xác nhận phép lạ.
 
-**Q11–Q12:** nhận vai có người thật đồng ý, đi thử đường giao và hoàn tất việc chăm người/giữ bản. L04 là cao trào bản văn của hồi III; Q11–Q12 là đoạn đáp lại và hậu truyện có gameplay. Hanan không biến thành boss cuối. Thành công đời thường không xác nhận avatar đã đạt tình yêu hay ơn cứu độ. Người chơi còn được công bố, bảo mật hoặc đưa người đi tùy nguồn và đồng thuận.
+**Q11–Q12 & Cơ chế Mở khóa Nhận thức (Knowledge-Gating sang Hồi III):**
+L04 truyền thụ cho người chơi quy tắc đọc dòng chảy ngầm và sức căng mạn thuyền:
+1. *Quy tắc Dòng chảy & Độ chùng Mạn thuyền:* Nhận biết các dòng xoáy ngầm tĩnh lặng qua vệt gợn sóng ngược triều và cảm nhận sự phân bổ trọng lượng mạn thuyền khi chịu tải nặng.
+2. *Vận dụng không marker tại Q11–Q12:* Trong đêm trở lại bến cảng Sebastos bị thiết quân luật gắt gao (Q11–Q12), người chơi tự áp dụng quy tắc này để điều hướng thuyền nhỏ luồn lách qua các bãi cọc ngầm và vùng nước xoáy mà tàu tuần tra La Mã tránh né, tiếp cận an toàn chân cầu cảng C0 mà không cần bất kỳ mũi tên HUD chỉ dẫn nào.
 
 ### Tóm tắt và tiêu chí nhận
 
@@ -188,6 +198,6 @@ Asset: một thuyền khu vực chơi nhỏ, bộ lưới/dây có thao tác ổ
 
 Mỗi lần mở game ở checkpoint, màn tiếp tục hiển thị **Legend hiện tại → việc chuẩn bị/tiếp nối**. Hồi tưởng cuối dùng ba mốc nguồn theo thứ tự, sau đó mới nối các hành động Mortal thực sự đã làm. Không đưa ảnh Veil thành tư liệu Kinh Thánh. Mốc B đã xem không đồng nghĩa NPC đã biết điều người chơi xem; `unlockedBridgeContext` chỉ cho phép một cuộc nói chuyện, `ReflectionShared` mới truyền nội dung được chọn.
 
-Ngân sách cinematic lớn dành trước cho bờ/vượt biển, hang/đối diện, thuyền/bữa sáng. Kho, cứu hộ và công bố dùng không gian mô-đun và blocking tiết chế. Nếu phải cắt phạm vi, giảm tuyến kho và Veil trước khi bỏ một beat của ba chương trục. Mọi cắt giảm thời lượng phải cập nhật con số 216/720 và thử lại sức nặng Legends; không giữ nhãn 30% bằng thời gian chờ.
+Ngân sách cinematic lớn dành trước cho bờ/vượt biển, hang/đối diện, thuyền/bữa sáng. Kho, cứu hộ và công bố dùng không gian mô-đun và blocking tiết chế. Nếu phải cắt phạm vi, giảm tuyến kho và Veil trước khi bỏ một beat của ba chương trục. Thay thời lượng thiết kế phải cập nhật bảng GDD v6 và tổng scene tại đây; thay baseline contract là một đợt triển khai riêng có kiểm tương thích. Không giữ tỷ trọng bằng thời gian chờ.
 
 **Tình trạng giao sản xuất:** thiết kế để dựng thử, không là screenplay thu âm hoàn chỉnh. Bản dịch, câu nguồn, asset lịch sử và người duyệt chưa khóa. Mọi cổng chuyên môn, kiểm thực thi và đo người chơi đều còn phải chạy; kiểm dữ liệu tài liệu chỉ chứng minh cấu trúc có thể kiểm tra.

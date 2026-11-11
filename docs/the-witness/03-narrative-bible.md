@@ -5,18 +5,18 @@
 # (CHỨNG NHÂN: DI SẢN GIAO ƯỚC)
 ## KỊCH BẢN TỔNG HỢP & SCENE BIBLE C+ · v6.0
 **Bí ẩn không gian đa tầng • Đồng hành tương tác • Ba Legends cộng hưởng • World callbacks**  
-*Ngày cập nhật: 10/11/2026 | Tình trạng: đặc tả biên tập + thiết kế sản xuất, tích hợp repository chính thức*
+*Rà soát biên tập: 11/11/2026 | Tình trạng: thiết kế v6 hiện hành, triển khai runtime còn từng phần*
 
 > **Tuyên ngôn trải nghiệm:**  
 > Người chơi đến vì một bí ẩn. Ở lại vì con người và những nơi chốn đáng khám phá. Ra về sau ba trải nghiệm Kinh Thánh có sức nặng riêng — và một quyết định làm chứng mà không ai có thể thực hiện thay họ.
 
-Bản tổng hợp giữa: (1) kịch bản C đề xuất trong trao đổi; (2) tài liệu người dùng cung cấp “THE WITNESS — Tái thiết kế cốt truyện v4”; (3) hồ sơ truyện và thiết kế nhiệm vụ hiện hành của repository. Nội dung mới đều là đề xuất sáng tác [H], không tự coi đã phê duyệt hoặc đã có trong game.  
-**Phiên bản v6.0-draft** • Phần I: cốt truyện C+ kế thừa • Phần II: thiết kế cảnh và cơ chế mới tích hợp.
+Bản tổng hợp giữa: (1) kịch bản C trong trao đổi; (2) tài liệu người dùng cung cấp “THE WITNESS — Tái thiết kế cốt truyện v4”; (3) hồ sơ truyện và thiết kế nhiệm vụ của repository. D010 chọn v6 làm đích thiết kế hiện hành. Nội dung sáng tác [H] không là bản văn Kinh Thánh; việc chọn thiết kế không chứng minh đã triển khai hoặc đã qua thẩm định chuyên môn.
+**Phiên bản thiết kế v6.0** • Phần I: cốt truyện C+ kế thừa • Phần II: thiết kế cảnh và cơ chế mới tích hợp.
 
 ---
 
 ## THÔNG TIN ĐỌC NHANH
-Tài liệu này là story bible chi tiết và đặc tả kịch bản v6, tiết lộ toàn bộ cốt truyện để phục vụ biên kịch và thiết kế cảnh. **Hồ sơ 12 Continuity là nguồn sở hữu duy nhất** của sự thật nền vụ hàng, logic điều kiện chứng cứ/mệnh đề, chuỗi lưu giữ (lineage) và đồng thuận (consent); nội dung trong hồ sơ này chỉ là tham chiếu diễn giải phái sinh. Mọi ước tính thời lượng (90m slice, 32m hay 40–45m Q01, 145m hay 216m Legends, 580m hay 720m chiến dịch) đều là các mục tiêu biên kịch/khung kỹ thuật chưa qua đo đạc playtest người thật và không thay thế lẫn nhau. Tài liệu không tự tuyên bố runtime v6 đã chạy, Phase B đã nghiệm thu, Gate G3 đã duyệt hay dự án sẵn sàng phát hành.
+Tài liệu này là story bible chi tiết và đặc tả kịch bản v6, tiết lộ toàn bộ cốt truyện để phục vụ biên kịch và thiết kế cảnh. **Hồ sơ 12 Continuity là nguồn sở hữu duy nhất** của sự thật nền vụ hàng, logic điều kiện chứng cứ/mệnh đề, chuỗi lưu giữ (lineage) và đồng thuận (consent); nội dung trong hồ sơ này chỉ là tham chiếu diễn giải phái sinh. Đích thời lượng v6 lấy GDD mục 16, phạm vi mẫu/đặc tả lấy hồ sơ 07; baseline v3 và khoảng cách triển khai theo [STATUS](../STATUS.md#open). Tất cả vẫn là dự toán chưa đo bằng người chơi thật. Tài liệu không tự tuyên bố runtime v6 đã chạy, Phase B đã nghiệm thu, Gate G3 đã duyệt hay dự án sẵn sàng phát hành.
 
 ### Trục sáng tạo
 | Thành tố | Quyết định v6.0 |
@@ -95,13 +95,13 @@ Cảng Sebastos, cảnh quan Xêdarê, tuyến đường tới Galilê/Giêrusal
 
 ## 03 • SỰ THẬT NỀN — SPOILER CHO BIÊN KỊCH
 Mục này là sự thật trong thế giới hư cấu `[H]`. Tất cả không tự động là điều avatar hay NPC biết. Mỗi điểm tiết lộ phải có nguồn và đường tiếp cận riêng trong game.
-* **T01:** Lô G17 xuất 24 bao tại Xêdarê. Hai bao hư hại có ghi riêng trên đường Amon; 18 bao tới điểm chia tại Galilê; bốn bao vào sân phụ. Công thức bất biến: `24 = 2 + 18 + 4`.
-* **T02:** Haddai ký trước biên nhận “đã nhận đủ” khi chưa kiểm xong, muốn tránh gián đoạn bữa đang chờ. Ông chịu trách nhiệm về lỗi này, không tự động chịu tội chiếm đoạt.
-* **T03:** Hanan trực tiếp chỉ dẫn chuyển bốn bao sang sân phụ, ngoài tuyến phân phối. Ông có động cơ dự phòng thật nhưng về sau dùng hàng để tạo sự lệ thuộc. Varro giúp che đậy bằng thủ tục và hưởng lợi.
-* **T04:** Haddai phát hiện bất nhất, tìm cách sửa và gửi một bản chính thức qua đường chuyển thư về Giêrusalem; tài liệu bị ngăn hoặc thất lạc có chủ đích. Ông mất do bệnh, không có bí ẩn giết cha.
+* **T01:** Lô G17 xuất 24 bao ngũ cốc và thảo dược cứu trợ tại Xêdarê dành cho đợt rét độc và mùa dịch mùa đông năm trước tại vùng ven hồ Galilê. Hai bao hư hại có ghi riêng trên đường Amon; 18 bao tới điểm chia tại Galilê; bốn bao vào sân phụ của Hanan. Sự thiếu hụt 4 bao cứu trợ thiết yếu này đã trực tiếp đẩy một gia đình dân nghèo ở bờ đông Galilê vào thảm cảnh kiệt quệ cơ cực (mẹ già qua đời vì thiếu thuốc, con thơ đói lả phải đi làm tôi tớ trừ nợ). Công thức bất biến `24 = 2 + 18 + 4` mang trọn vẹn sức nặng sinh mạng, máu và nước mắt của người cùng khổ.
+* **T02:** Haddai ký trước biên nhận “đã nhận đủ” khi chưa kiểm xong vì muốn tránh gián đoạn bữa ăn cứu đói đang chờ của bà con giữa mùa đông giá rét. Khi phát hiện 4 bao bị tước đoạt gây ra thảm cảnh, ông cắn rứt lương tâm tột cùng: tự nhịn bớt khẩu phần lương thực của bản thân để san sẻ, thức trắng đêm lao lực rà soát hồ sơ tìm manh mối. Ông chịu trách nhiệm về lỗi ký trước, không tự động chịu tội chiếm đoạt.
+* **T03:** Hanan trực tiếp chỉ dẫn chuyển bốn bao sang sân phụ, ngoài tuyến phân phối. Ông có động cơ dự phòng thật nhưng về sau biến hàng để tạo sự lệ thuộc và quyền lực ngầm bến bãi. Varro giúp che đậy bằng thủ tục và hưởng lợi.
+* **T04:** Haddai phát hiện bất nhất, dầm mưa rét đêm ngày tìm cách sửa và gửi bản sửa thật (E08) chính thức qua đường chuyển thư về Giêrusalem; tài liệu bị ngăn hoặc thất lạc có chủ đích. Chính sự lao lực quá độ trong mùa đông và nỗi dày vò tinh thần khiến ông kiệt sức, nhiễm bệnh phổi nặng rồi qua đời [H]; không có bí ẩn giết cha nhưng cái chết của ông gắn liền với món nợ công lý của 4 bao hàng.
 * **T05:** Avatar tận mắt biết tại thời điểm ký chưa kiểm đủ, nhưng chọn im lặng vì sợ mất việc. Sự thật này được chia sẻ với người chơi từ Hồi I, không giấu thành “tội bất ngờ”.
 * **T06:** Natan giữ sổ gia đình, bìa và biên nhận có chữ ký gốc; Q04 trao phần đã làm khô. Dấu khâu bất thường ở gáy được gieo sớm, nhưng nội dung chỉ mở khi có cách bảo tồn/đối chiếu tại Q10.
-* **T07:** B06 là một lượt bữa chung khác, đang thiếu hai bao tại Xêdarê. Có dấu sửa ghi nhận, nhưng chưa có căn cứ tự động nối thiếu B06 với bốn bao G17.
+* **T07:** B06 là một lượt bữa chung khác, đang thiếu hai bao tại Xêdarê. Dù B06 không chứng minh được vụ G17 năm trước (giữ nguyên bất biến P01), Yosef tại góc sân bữa Q02 nhìn thấy avatar săm soi vết cạo mép đã xúc động tiết lộ: chính Haddai lúc sinh thời từng đứng ở đúng góc sân này dưới bóng cây vả để chất vấn về một vết cạo mực tương tự; thủ pháp dán đè mép giấy của B06 chính là "chữ ký nghề nghiệp" của kẻ đang nắm giữ hồ sơ cảng. Điều này gắn chặt B06 với nỗi đau mất cha của avatar mà không phá vỡ logic pháp lý.
 * **T08:** E04/E05/E06 và lời chứng đúng phạm vi cho thấy tuyến G17, không có một nguồn duy nhất đủ kết luận toàn bộ mạng lưới. Giêrusalem giữ nguồn thư, không phải điểm nhận 18 bao G17.
 * **T09:** Varro là nhân vật hư cấu có ảnh hưởng tới khâu hồ sơ/niêm xác nhận ở cảng. Ông biết và hưởng lợi từ việc ghi nhận sai; đặt làm bản sửa giả quy hết trách nhiệm cho Haddai và gán người làm chứng thành đồng phạm.
 * **T10:** Rufus phụ trách một đội canh/hộ tống thuê hoặc được phân công trong mạng lưới hư cấu, không mặc định là chỉ huy quân đội La Mã. Đây là sự thật tác giả: vụ cháy phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus, việc che giấu sau đó là có chủ đích; avatar tại Q01 chỉ quan sát hiện tượng thực địa, chưa thể quy kết vai trò hay danh tính Rufus.
@@ -162,7 +162,8 @@ L03 (Gr 38 [S07]), L05 (Cv 16 [S11]), bốn Inner Veil và sáu nhiệm vụ qua
 * **Callback:** Người được cứu thoát an toàn; kho có trạng thái sau cháy; Q01.COMMITTED mở Q02.
 
 ### Q02 — Những tên không được đọc
-* **TÍCH HỢP v6:** Thu thập và thẩm định chính thức vật chứng E02 (mép dán/sửa B06) dưới ánh xiên tại khu sao chép; kết hợp lời chứng E03 của Rina để xác lập P01 (B06 không khớp; không suy ra T03, không quy kết nguyên nhân hay thủ phạm). Miriam dẫn vào sân bữa bằng công việc hỗ trợ, không dùng điểm quan hệ để ép Yosef. B06 luôn tách biệt G17.
+* **TÍCH HỢP v6:** Thu thập và thẩm định chính thức vật chứng E02 (mép dán/sửa B06) dưới ánh xiên tại khu sao chép; kết hợp lời chứng E03 của Rina để xác lập P01 (B06 không khớp; không suy ra T03, không quy kết nguyên nhân hay thủ phạm). Miriam dẫn vào sân bữa bằng công việc hỗ trợ, không dùng điểm quan hệ để ép Yosef. B06 luôn tách biệt G17 về mặt pháp lý logic.
+* **Sợi dây cảm xúc nối vào nỗi đau nhân vật chính:** Khi thấy avatar tỉ mỉ săm soi mép cạo B06, Yosef hạ giọng tiết lộ trong xúc động: chính Haddai lúc sinh thời từng đứng ở đúng góc sân bữa này dưới bóng cây vả để chất vấn về một vết cạo mực tương tự; thủ pháp cạo mỏng thớ giấy rồi dán đè mép của B06 chính là "chữ ký nghề nghiệp" của kẻ đang nắm giữ hồ sơ cảng. Chi tiết này biến Q02 thành cuộc tiếp nối di nguyện nghẹn ngào của cha.
 * **Bối cảnh:** Xêdarê — sân bữa / cổng phụ.
 * **Xung đột:** B06 có dấu sửa; Yosef sợ bị lộ tên.
 * **Gameplay:** Quan sát mép dán dưới ánh xiên, hỏi người giữ bữa, kiểm khoảng cách/đường gặp kín, chuẩn bị nơi an toàn.
@@ -181,6 +182,7 @@ L03 (Gr 38 [S07]), L05 (Cv 16 [S11]), bốn Inner Veil và sáu nhiệm vụ qua
 
 ### Q04 — Đêm kho đóng cửa
 * **TÍCH HỢP v6:** Cảnh đóng kho tái sử dụng lối thoát nước và cầu nổi đã nhìn thấy ở Q01; L01 củng cố cách phối hợp nhóm/đèn/dây. Giữ quyết định food/tools và kiểm chữ ký E01 ở mốc Q04.
+* **Cơ chế Mở khóa Nhận thức (Knowledge-Gating từ L01):** Không cấp nút bấm Phương án Thứ Ba tự động trên UI. Người chơi tự vận dụng bài học nhận thức từ L01 (quy tắc chắn đèn bấc trước gió nghịch và dò nền đá nén ngầm dưới bùn) để quan sát luồng gió biển đập vào chân tường kho C1, che ngọn đèn bấc để không lộ bóng, và lần theo gờ đá luồn vào rãnh thông gió tầng lửng bảo trì C-1 mà lính tuần bỏ quên. Hành động tự thân không marker này kích hoạt Phương án Thứ Ba phân tải an toàn.
 * **Bối cảnh:** Xêdarê — kho sau biến cố.
 * **Xung đột:** Kiểm người, phân tải, mở lối an toàn và đối chiếu bìa thư của Haddai.
 * **Gameplay:** Đi qua kho đã đổi trạng thái, phân ca, xử lý then phụ, đèn và dụng cụ; có echo của L01 qua việc giữ người cuối.
@@ -208,6 +210,7 @@ L03 (Gr 38 [S07]), L05 (Cv 16 [S11]), bốn Inner Veil và sáu nhiệm vụ qua
 
 ### Q07 — Một lời hứa còn thiếu
 * **TÍCH HỢP v6:** Giữ Q07.PROMISE và nhiệm vụ của Miriam/Sela đầy đủ; thêm cú lật về Lea vào đoạn giữa chương, với nhánh tìm hiểu, sửa tổn hại và không ép tha thứ. L02 làm sâu cách kiềm chế, không tự nâng skill.
+* **Cơ chế Mở khóa Nhận thức (Knowledge-Gating từ L02):** Thay vì một lựa chọn menu đối đầu bộc phát, người chơi tự vận dụng bài học nhận thức L02 về **Điểm mù Âm thanh Vách đá (Acoustic Blindspot)**: quan sát không gian 3D, nhận diện góc khuất sau các giàn phơi da nặng và vách đá xưởng nơi tiếng gió và dòng nước rỉ triệt tiêu âm thanh bước chân. Việc tiếp cận góc này tạo không gian an toàn không sợ bị tai vách mạch rừng nghe lén, giúp Lea trải lòng thú nhận việc bị đe dọa sinh kế gia đình (T11) và mở ra Phương án Thứ Ba hòa giải mà không cần marker chỉ dẫn.
 * **Bối cảnh:** Làng chài / điểm nghỉ tuyến đồi.
 * **Xung đột:** Lea thú nhận từng tiết lộ một phần lịch trình dưới áp lực liên quan người thân.
 * **Gameplay:** Hội thoại có bằng chứng, kiểm tra người biết gì, đồng hành với Damar/Miriam để tổ chức phương án an toàn.
@@ -322,15 +325,15 @@ Không nhân vật nào biết tức thì tất cả những gì người chơi 
 | **E08** | Bản sửa thực của Haddai | Q10 / đường chuyển thư | Haddai nhận ký trước và xin đối chiếu; không toàn tri Varro. |
 | **E09** | Người trực tiếp nghe lệnh | Q09 / consent | Nội dung người ấy thực nghe, chỉ dùng đúng scope. |
 | **E10** | Sổ ca và người giữ cổng | Q11 / Mattai | Nguồn độc lập bổ trợ lệnh sân phụ nếu xuất xứ đúng. |
-| **E11** *(mới)* | Bản sửa giả quy tội | Q10 / bản xuất hiện | Có văn bản giả khi kiểm đủ; không tự chứng minh người đặt làm. |
-| **E12** *(mới)* | Dấu đường chuyển thư/nguồn của bản giả | Q09–Q11 / trạm, thầy chép, người bàn giao | Nếu đủ độc lập, giúp suy luận ai can thiệp niêm và ra lệnh (Varro). |
+| **E11** *(thiết kế v6)* | Bản sửa giả quy tội | Q10 / bản xuất hiện | Có văn bản giả khi kiểm đủ; không tự chứng minh người đặt làm. |
+| **E12** *(thiết kế v6)* | Hồ sơ đường chuyển bản giả | Q09–Q11 / trạm, người giữ, người bàn giao | Chỉ đủ quy kết khi có mắt xích độc lập trực tiếp nối Varro với việc chỉ đạo, theo hồ sơ 12. |
 
 ### 9.1 Các mệnh đề phải kiểm chứng
 * **P01 — B06 có sai lệch giữa ghi nhận và thực nhận:** `E02 + E03`, không kéo sang G17.
 * **P02 — G17 thiếu bốn bao chưa được giải trình ở điểm chia:** `E04 + E05`, phân biệt hai bao hư hại.
 * **P03 — Haddai ký trước nhưng chưa đủ cơ sở buộc ông chiếm toàn bộ hàng:** `E01 + E08` và nền `E04/E05`.
-* **P04 — Hanan chỉ dẫn chuyển bốn bao ra sân phụ:** `E06 + E09` hoặc `E10` có độc lập thực sự và đúng scope.
-* **P05 (đề xuất) — Varro can thiệp chứng từ/đặt bản giả:** Cần `E11 + E12` với chuỗi người giữ và nguồn độc lập; nếu chưa đủ thì chỉ được nêu nghi vấn hay hành vi có bằng chứng nhỏ hơn.
+* **P04 — Hanan chỉ dẫn chuyển bốn bao ra sân phụ:** `E06 + (E09 hoặc E10)` có độc lập thực sự, nền `E04/E05` và đúng scope; không dùng riêng E10 bỏ qua E06.
+* **P05 (thiết kế v6) — Varro can thiệp chứng từ/đặt bản giả:** Theo điều kiện và giới hạn ở [hồ sơ 12, mục 3](12-continuity-and-state.md#3-so-chung-cu-va-dieu-co-the-ket-luan). E11/E12/P05 đã thuộc thiết kế hiện hành nhưng chưa được triển khai vào contract/runtime v3.
 
 ### 9.2 Ba cú twist phải công bằng
 * **Q04:** Chữ ký của Haddai là thật. Người chơi đã biết từ sớm khả năng này, được kiểm bằng giấy gốc và người giữ; không cần cho Natan giấu vô lý.
@@ -378,7 +381,7 @@ Nhìn thấy bất thường → tự tiếp cận → đặt giả thuyết →
 ### 12.1 Ma trận giữ – sửa – thêm
 * **Giữ nguyên:** Q01–Q12, L01/L02/L04, ID cổng, chủ đề, 4 kỹ năng RPG, 6 bond quest; công thức G17: 24 = 2 + 18 + 4; B06 tách biệt; P01–P04; nguồn consent; Mortal/Legends/Veil tách quyền ghi; tính chuyển engine của asset GLB/dữ liệu.
 * **Cần cập nhật:** Scene beats, mở đầu cold-open, dialogue, tuyến lộ chứng cứ, đối chiếu bản sửa thật/giả và thông điệp Hồi III, presenter cho khám phá 3D và thay đổi thế giới, scene state/quest data dùng schema có version.
-* **Mới / chờ duyệt:** Varro/Rufus, tình tiết cháy kho/Lea báo tin/Amon mất tích, E11/E12 và P05, áp lực hành chính theo milestone (không đồng hồ đếm ngược game-over), art packet mới và duyệt lịch sử/Kinh Thánh.
+* **Đã chọn trong thiết kế v6, còn phải triển khai/kiểm:** Varro/Rufus, cháy kho/Lea báo tin/Amon mất tích, E11/E12/P05 và áp lực milestone. Q01 mới có state foundation, không đồng nghĩa cả tuyến này đã chạy. Art packet, bản dịch và thẩm định lịch sử/Kinh Thánh vẫn cần duyệt riêng; theo [STATUS](../STATUS.md#open).
 
 ### 12.2 Thứ tự sửa repository khuyến nghị
 1. Đóng băng baseline và sao lưu state/fixture của bản hiện tại.
@@ -435,7 +438,7 @@ Nhìn thấy bất thường → tự tiếp cận → đặt giả thuyết →
 
 <a id="142-xedare--sebastos--bon-tang-tham-hiem-q01q04-tro-lai-q11q12"></a>
 ### 14.2 Xêdarê / Sebastos — bốn vùng chức năng cao độ (Q01–Q04, trở lại Q11–Q12)
-*Lưu ý kiến trúc:* Bốn vùng chức năng cao độ (không phải bốn tầng nhà độc lập xếp chồng). Vỏ kho, tuyến cửa–nội thất–18 bậc thang–mái đã tồn tại và từng được kiểm trong phạm vi G2/Phase 3 trên candidate tương ứng; gác lửng C1, rãnh ngầm C-1 và các yêu cầu hình ảnh v6 là thiết kế đề xuất chưa được nghiệm thu (G3 còn chờ visual review, G4 còn đang thực hiện):
+*Lưu ý kiến trúc:* Bốn vùng chức năng cao độ, không phải bốn tầng nhà độc lập xếp chồng. Bảng dưới mô tả đích dàn dựng v6; trạng thái triển khai và nghiệm thu tra [STATUS](../STATUS.md#open), cấu trúc đang chạy tra [ENGINEERING](../ENGINEERING.md#environment).
 | Vùng | Chức năng đời sống / gameplay | Dấu và sự thật có thể thu |
 |---|---|---|
 | **C0 · Cầu cảng & Sân hàng** | Thuyền cập bến, dốc xe hàng, bến cập/đường quay, xe Q01.LOAD và công nhân bốc dỡ. | Đường xe/bánh, lịch trực, hướng kéo; không xác nhận người chủ mưu. |
@@ -565,7 +568,7 @@ Q12 là không gian tiếp nhận hồ sơ/điều trần địa phương hư c�
 
 <a id="19-atlas-vat-chung-e01e12-menh-de-p01p05"></a>
 ## 19 • ATLAS VẬT CHỨNG E01–E12 & MỆNH ĐỀ P01–P05
-*(Nguồn sở hữu duy nhất: [Hồ sơ 12 Continuity](12-continuity-and-state.md). Mục này chỉ là tham chiếu diễn giải; E11/E12/P05 là đề xuất v6 hiện đang hoãn ở runtime v3).*
+*(Nguồn sở hữu duy nhất: [Hồ sơ 12 Continuity](12-continuity-and-state.md). Mục này chỉ là tham chiếu diễn giải; đối chiếu kỹ thuật runtime v3 xem tại [PRODUCTION_STATUS_AND_CHANGELOG.md](PRODUCTION_STATUS_AND_CHANGELOG.md)).*
 
 Mọi hiện vật có `sourceLineage` và `consentScope`, nguồn copy không tăng `independentSourceCount`.
 * **E01 (Q04):** Biên nhận gốc, chữ ký trong bìa do Natan bàn giao. *Có:* Haddai ký. *KHÔNG:* chứng minh ông cất 4 bao.
@@ -578,15 +581,15 @@ Mọi hiện vật có `sourceLineage` và `consentScope`, nguồn copy không t
 * **E08 (Q10):** Bản sửa thật của Haddai. *Có:* ông nhận ký sớm. *KHÔNG:* toàn tri về Varro.
 * **E09 (Q09):** Người nghe lệnh trực tiếp, scope. *Có:* câu người đó thực nghe. *KHÔNG:* điều họ không thấy.
 * **E10 (Q11):** Sổ ca và Mattai nhận lệnh. *Có:* nguồn độc lập củng cố P04 sau kiểm provenance.
-* **E11 (Q10 — Đề xuất v6 hoãn ở v3):** Bản sửa giả nhận tội thay và nêu tên người khác. *Có:* tồn tại bản giả. *KHÔNG:* ai đặt làm từ một nét mực.
-* **E12 (Q09–Q11 — Đề xuất v6 hoãn ở v3):** Mốc thư, người bàn giao, dấu niêm/trạm. *Có:* nguồn xuất xứ củng cố can thiệp. *KHÔNG:* tự buộc Varro nếu chỉ là một nhánh.
+* **E11 (Q10):** Bản sửa giả nhận tội thay và nêu tên người khác. *Có:* bản quy tội được đối chiếu với nguồn khác. *KHÔNG:* ai đặt làm từ một nét mực.
+* **E12 (Q09–Q11):** Mốc thư, người bàn giao, dấu niêm/trạm. *Có:* nguồn xuất xứ với từng chặng đã kiểm. *KHÔNG:* tự buộc Varro nếu chỉ có dấu dùng chung hoặc các bản cùng gốc.
 
 ### 19.1 Bộ lọc claim và trigger hợp lệ
 * **P01 — B06 sai lệch:** Yêu cầu `E02 + E03`. Chưa đủ: chỉ nêu “có sửa”, không nhập G17, không suy đoán nguyên nhân hoặc quy kết thủ phạm.
 * **P02 — G17 thiếu 4 ở nơi nhận:** Yêu cầu `E04 + E05` (`24 - 2 - 18 = 4`). Chưa đủ: hiện số chưa giải trình; giữ ranh giới tri thức E04/Q03 không biết dữ liệu E05/Q05.
 * **P03 — Trách nhiệm Haddai:** Yêu cầu `E01 + E08` và nền G17. Nhận chữ ký nhưng giới hạn hành vi chuyển hàng.
-* **P04 — Lệnh Hanan:** Yêu cầu `E06 + E09` hoặc `E10` độc lập. Chưa đủ: có quyền nghi vấn sân phụ, không gọi Hanan đã bị chứng minh.
-* **P05 — Varro sửa hồ sơ/đặt giả (Đề xuất v6 hoãn ở v3):** Yêu cầu `E11 + E12 + nguồn độc lập`. Chưa đủ: chỉ kết luận bản giả có vấn đề, chưa đủ quy kết Varro.
+* **P04 — Lệnh Hanan:** Yêu cầu `E06 + (E09 hoặc E10)` độc lập, nền `E04/E05` và scope đúng theo hồ sơ 12. Chưa đủ: chỉ nêu điều đã kiểm về sân phụ, không gọi Hanan đã bị chứng minh.
+* **P05 — Varro sửa hồ sơ/đặt giả:** Dùng đúng điều kiện E11/E12, nguồn độc lập và scope của hồ sơ 12; không thêm một luật claim riêng tại đây. Chưa đủ: chỉ nêu điều bất thường đã kiểm, chưa quy kết Varro.
 
 ---
 
@@ -650,12 +653,7 @@ Mọi hiện vật có `sourceLineage` và `consentScope`, nguồn copy không t
 * **Felix–Festus:** `[K]` Cv 24–25; `[C]` Niên đại kế nhiệm tranh luận; `[H]` Áp lực theo milestone, không dùng hạn 21 ngày lịch sử; Q12 không nhận phiên tòa Festus.
 * **Xh 14, 1 Sm 24, Ga 21:** `[K]` Cốt truyện và chủ thể hành động thuộc bản văn canon lock.
 
-### 22.2 Changelog v6.0
-* **v6.0-draft (10/11/2026):**
-  1. Chuyển E01–E12 thành địa vật / chain-of-custody khảo cổ hiện trường đa tầng (Sebastos C0–C+1, Antipatris 3 tuyến, Wadi W0–W2, Giêrusalem J0–J3).
-  2. Companion-driven traversal với 6 bước interaction grammar và cơ chế fallback an toàn (Titus, Lea, Damar, Miriam).
-  3. Bridge Echo thành Mechanical Resonance theo đúng cổng `Q03→L01→Q04`, `Q06→L02→Q07`, `Q10→L04→Q11`.
-  4. Milestone Pressure Cấp 0–3 và hệ thống Dynamic World Callback hai chiều với 3 lớp route topology.
-  5. Đạo diễn Q12 thành Interactive Set-Piece đa tuyến B0–B5 phối hợp điều phối không gian và đối chất P01–P05 thời gian thực.
-  6. Ma trận bảo toàn cảnh cũ → v6 bảo đảm 100% 44 inspectable details và 31 activities từ doc 20 không bị mất mát.
-  7. Gameplay & engine contract với schema độc lập, backlog dọc P0–P5 và tiêu chuẩn đo kiểm hiệu năng thực tế.
+### 22.2 Quản trị Phiên bản & Tiến độ Kỹ thuật (Changelog)
+Chi tiết lịch sử tiến hóa phiên bản (v1 $\rightarrow$ v6), phân tích khoảng cách runtime v3 / thiết kế v6, các cổng chất lượng G2/G3/G4 và nhật ký kỹ thuật được lưu trữ tập trung tại:  
+$\rightarrow$ **[PRODUCTION_STATUS_AND_CHANGELOG.md](PRODUCTION_STATUS_AND_CHANGELOG.md)**.  
+Narrative Bible (03) duy trì vai trò là bộ tài liệu kịch bản và luật thiết kế truyện hiện hành chính thức.

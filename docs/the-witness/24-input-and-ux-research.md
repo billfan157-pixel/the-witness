@@ -320,3 +320,30 @@ Tài liệu nền cho chế độ góc nhìn thứ nhất (phím V) của **UNSE
 - Bản đồ cầm tay diegetic trong thế giới 3D thay bản đồ toàn màn hình (theo Firewatch).
 - Điều chỉnh FOV tùy ý trong tùy chỉnh; vignette khi chạy.
 - Kiểm chứng playtest người thật về say camera theo protocol 12 người hiện có.
+
+---
+
+## 7. Nghiên cứu Góc máy Cận cảnh Xúc giác (Tactile Diorama) & Bàn Đối chiếu Thực thể 3D
+
+### 7.1 "Góc máy Cận cảnh Xúc giác" (Tactile Diorama Inspector) cho 25 Bàn Thao Tác
+
+Để thu hẹp khoảng cách giữa runtime 0.4.0 và kịch bản v6.0 mà không làm bùng nổ ngân sách lập trình vật lý (soft-body ropes, real-time fluid dynamics):
+1. **Thiết kế chuyển tiếp Camera (Smooth Dolly-in):** Khi tương tác với địa vật (xe tải, ròng rọc, cọc neo, bàn giấy), camera tự động trượt mượt mà từ góc nhìn thứ ba/thứ nhất vào góc cận cảnh (tọa độ focus cách cụm cơ cấu 0.8m – 1.2m, FOV hạ từ 45 xuống 30 để tạo độ phẳng điện ảnh và tập trung thị giác).
+2. **Tương tác 3D cục bộ (Diorama Interaction):** Lấy cảm hứng từ *The Room* và *Sherlock Holmes*, người chơi không điều khiển toàn thân nhân vật mà điều khiển bàn tay/con trỏ trực tiếp trên cụm chi tiết 3D: xoay góc nhìn cục bộ quanh trục xe, kéo nêm gỗ chèn vào bánh, luồn dây qua khe ròng rọc, tách mép giấy da cạo mực.
+3. **Thiết kế âm thanh vi mô (Micro-tactile Audio Palette):** Âm thanh đóng vai trò 50% cảm giác xúc giác (tactile feedback). Sử dụng thư viện âm thanh foley cận cảnh:
+   - `mud-squelch`: tiếng bùn nhão hút dính bánh xe khi nâng kích.
+   - `rope-friction`: tiếng sợi thừng gai cọ xát ken két trên rãnh gỗ khô.
+   - `wood-creak`: tiếng gỗ sồi rạn nứt dưới tải trọng tăng dần.
+   - `parchment-rustle`: tiếng sột soạt của thớ giấy da cổ khi lật hoặc miết nhẹ.
+4. **Cinematic Kết quả (Result Playback):** Sau khi hoàn tất thao tác logic, kích hoạt đoạn hoạt cảnh ngắn 2–3 giây toàn cảnh xác nhận kết quả (bánh xe lăn êm qua bùn, cổng hạ chốt, kiện hàng phân tải), sau đó camera trả mượt về góc nhìn tự do.
+
+### 7.2 Trực quan hóa Sổ tay Đối chiếu thành Bàn Làm Việc Thực Thể 3D (In-World Desk)
+
+Thay thế UI menu 2D bảng 3 cột phẳng ngắt quãng cảm xúc bằng không gian làm việc thực thể trong thế giới:
+1. **Tại các Hub an toàn (Xưởng Natan, Quán trọ Q01, Phòng J3 Giêrusalem):**
+   - Người chơi bước tới bàn làm việc và kích hoạt tương tác.
+   - Camera hạ xuống mặt bàn gỗ thực thể dưới ánh đèn dầu ấm áp.
+   - Các vật chứng E01–E12 hiển thị dưới dạng vật thể 3D có thể cầm nắm: cuộn giấy da cuộn tròn, thẻ kho đất sét nung, mẩu sáp niêm vỡ, sợi thừng gai.
+   - Cơ chế nối liên kết: Người chơi dùng que than hoặc dây chỉ đỏ kéo nối giữa hai vật thể độc lập để hình thành mệnh đề (Claims P01–P05).
+2. **Ngoài hiện trường (Field Exploration):**
+   - Khi chưa về Hub, người chơi mở sổ tay bằng cách hiển thị cuốn sổ da bỏ túi (*Pocket Leather Ledger*) được cầm trực tiếp trên tay nhân vật theo góc nhìn thứ nhất, lật từng trang ghi chép nhanh mà không che kín màn hình hay dừng thời gian của thế giới.

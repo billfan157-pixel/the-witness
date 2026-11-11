@@ -15,7 +15,7 @@ Qua các thời đại, mỗi cuộc đời đều để lại một lời chứ
 
 **Bộ hồ sơ trục v3.0 + phụ lục chiều sâu v3.2 • 08/11/2026 • Ngôn ngữ gốc: tiếng Việt**
 
-**Legends là xương sống; nội dung Kinh Thánh là cốt truyện chính; thám hiểm là lối chơi chủ đạo.** V3 sửa hướng v2 theo quyết định của chủ dự án: ba hồi có L01 Môsê, L02 Đavít, L04 Phêrô bắt buộc, khoảng 30% thời lượng tuyến chuẩn. Mortal World nối các chương qua người kể, phản tư và hành động đời thường; Veil và hai Legend mở rộng vẫn tự chọn. Đọc [pitch/bất biến một trang](../PRODUCT.md) trước các bible.
+**Legends là xương sống; nội dung Kinh Thánh là cốt truyện chính; thám hiểm là lối chơi chủ đạo.** Ba hồi có L01 Môsê, L02 Đavít, L04 Phêrô bắt buộc. Đích biên tập v6 là 145/580 phút (25%), chưa đo; baseline v3 theo [STATUS A08](../STATUS.md#open). Mortal World nối các chương qua người kể, phản tư và hành động đời thường; Veil và hai Legend mở rộng vẫn tự chọn. Đọc [pitch/bất biến một trang](../PRODUCT.md) trước các bible.
 
 **Tầm nhìn AAA là đích chất lượng dài hạn.** Bộ hồ sơ không chứng minh đã có đội ngũ/ngân sách/chất lượng ấy. 0.1.0 là baseline v2; prototype 0.2.0 đã triển khai core/cổng v3, đã qua kiểm model/UI trước đóng gói. Chưa hoàn thành thời lượng, level art/cinematic và thẩm định của hồ sơ. Bộ v1/v2 và dữ liệu chơi cũ được giữ riêng.
 
@@ -89,7 +89,7 @@ Các mã S01…S32 dẫn đến hồ sơ 10. V3 đọc lại ba pericope trục 
 
 **Bất biến mới:** không bỏ trắng ba chương bắt buộc để đi tiếp. Chơi hoặc xem/nghe tóm tắt đủ beat đều mở cùng cổng; thoát/để sau giữ điểm dừng. Không yêu cầu câu trả lời tôn giáo hay thời gian đọc tối thiểu. Phản tư được để trống. Hoàn tất L được ghi tiến độ và ngữ cảnh, không tạo chứng cứ/đồng thuận/vật phẩm.
 
-**Nguồn sở hữu quyết định:** PRODUCT cho định hướng sản phẩm và bất biến; 08/15 cho giới hạn nguồn; 14 cho scene Legends; 12 cho sự thật hư cấu; 11 cho scene cầu nối; 02 cho hệ thống; campaign-contract cho ID/cổng/phút; 07 cho slice rút gọn không ghi save campaign. Mâu thuẫn phải được sửa ở nguồn, không xử bằng một câu ghi đè cuối tài liệu.
+**Nguồn sở hữu quyết định:** PRODUCT cho định hướng và bất biến; 08/15 cho giới hạn nguồn; 14 cho scene Legends; 12 cho sự thật hư cấu; 11 cho scene cầu nối; 02 cho hệ thống/đích thời lượng v6; campaign-contract cho ID/cổng/baseline v3; 07 cho đặc tả trục mở màn, phân biệt với mẫu 90 phút không ghi save campaign. [Kết quả rà soát nhận định ngày 11/11](../STATUS.md#story-review-2026-11-11) ghi từng điểm đúng/sai và cách sửa. [Ghi chú production](PRODUCTION_STATUS_AND_CHANGELOG.md) chỉ là chỉ mục, không sở hữu hiện trạng. Mâu thuẫn phải được sửa ở nguồn, không xử bằng một câu ghi đè cuối tài liệu.
 
 ## Trạng thái chuyên môn
 

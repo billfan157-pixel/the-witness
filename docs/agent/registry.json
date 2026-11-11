@@ -483,6 +483,11 @@
       "path": "witness-q01-state.js",
       "owner": "game-systems",
       "reason": "Pure Q01 v6 scene state foundation (PR-03); gated by witness-model, no engine/UI/cloud or evidence access"
+    },
+    {
+      "path": "docs/the-witness/PRODUCTION_STATUS_AND_CHANGELOG.md",
+      "owner": "domain-documentation",
+      "reason": "Technical production status, runtime gap analysis, gates and version changelog separated from design bibles"
     }
   ],
   "requiredFiles": [
@@ -569,6 +574,7 @@
   ],
   "mirrors": [],
   "linkDocuments": [
+    "docs/the-witness/PRODUCTION_STATUS_AND_CHANGELOG.md",
     ".agents/skills/witness-change/SKILL.md",
     ".agents/skills/witness-content/SKILL.md",
     ".agents/skills/witness-environment/SKILL.md",
@@ -801,7 +807,7 @@
         "role": "specification",
         "owner": "content",
         "value": "Giữ chuỗi scene/core, không gian và hai định dạng của ba Legends",
-        "limits": "Ngân sách phút còn lệch contract, cần quyết định riêng"
+        "limits": "Đích scene v6 55/48/42 phút; baseline contract v3 giữ riêng, chưa có đo người chơi thật"
       },
       {
         "path": "docs/the-witness/15-source-world-packets.md",
@@ -843,6 +849,13 @@
         "role": "index",
         "owner": "navigation",
         "value": "Chỉ mục tương thích, không sở hữu quy tắc sản phẩm hoặc hiện trạng"
+      },
+      {
+        "path": "docs/the-witness/PRODUCTION_STATUS_AND_CHANGELOG.md",
+        "role": "index",
+        "owner": "navigation",
+        "value": "Chỉ mục chuyển tiếp của ghi chú kỹ thuật có sẵn, dẫn về nguồn sở hữu và phân biệt thiết kế với thực thi",
+        "limits": "Không sở hữu trạng thái, gate, schema hoặc lịch sử nghiệm thu; tra STATUS và evidence đúng candidate"
       }
     ],
     "tasks": [
@@ -908,7 +921,8 @@
           "docs/the-witness/14-legends-depth-dossiers.md",
           "docs/the-witness/15-source-world-packets.md",
           "docs/the-witness/18-scene-craft-and-dialogue.md",
-          "docs/the-witness/19-depth-playtest.md"
+          "docs/the-witness/19-depth-playtest.md",
+          "docs/the-witness/PRODUCTION_STATUS_AND_CHANGELOG.md"
         ],
         "implementation": [
           "witness-content.js",

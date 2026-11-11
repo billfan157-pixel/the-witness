@@ -47,3 +47,24 @@ are written to `test/artifacts/graphics/`.
 
 Automated browser checks use desktop Chrome / SwiftShader. They do not establish
 physical phone compatibility, device GPU performance or sustained real-device FPS.
+
+<a id="q01-lighting"></a>
+## Q01: timeline kịch bản và giới hạn preset
+
+Đối chiếu nguồn ngày 11/11/2026: `witness-q01.js` khai báo `q01-day` và
+`q01-evening`, chọn bằng `settings.q01Lighting`; GI dùng dữ liệu nướng tĩnh.
+`q01-evening` có thuộc tính `night: true` phục vụ render, nhưng không phải một
+preset đêm độc lập hoặc hệ chuyển thời gian tự động theo Beat.
+
+| Nhịp kịch bản 07 | Yêu cầu hình ảnh | Trạng thái kỹ thuật |
+| --- | --- | --- |
+| Beat 00–02 | Chiều muộn/hoàng hôn | Cần đối chiếu góc cảnh với preset hiện có |
+| Beat 03–06 | Chạng vạng/tối, kho cháy | `q01-evening` là mốc render; chưa chứng minh cảnh cháy v6 |
+| Beat 07 | Đêm trong xưởng, đèn dầu | Chưa có preset `night` độc lập gắn Beat |
+| Beat 08 | Rạng sáng hôm sau | Chưa có preset `dawn` gắn Beat |
+
+Giai đoạn logic trong `sceneProgress.Q01` không tự đổi lighting. Đây là khoảng
+cách sản xuất để đối chiếu với [kịch bản 07](07-vertical-slice-screenplay.md),
+không là yêu cầu đổi renderer trong đợt rà soát tài liệu. Tình trạng G3/G4
+vẫn theo [STATUS](../STATUS.md#open); chuyển ghi chú ra khỏi screenplay không
+đóng các cổng đó.

@@ -1,9 +1,9 @@
-# 07 • Kịch bản Phân cảnh Vertical Slice 3A — Prologue Q01, Chapter Q03 & Legend L01
+# 07 • Kịch bản phân cảnh trục mở màn — Prologue Q01, Chapter Q03 & Legend L01
 
 **Tác phẩm:** *Unsealed Witness: Legacy of the Covenant (Chứng Nhân: Di Sản Giao Ước)*  
 **Phân đoạn:** Bộ Kịch Bản Phân Cảnh Chi Tiết Trục Mở Màn & Cổng Hồi I (Prologue Q01, Chapter Q03, Legend L01)  
-**Thời lượng dự kiến:** Đây là bộ đặc tả đầy đủ Q01/Q03/L01 với ngân sách từng scene chưa playtest (tổng nhịp chi tiết: Q01 ~40–45 phút, Q03 ~36–46 phút, L01 ~48–58 phút, cộng 124–149 phút chưa tính Q02). Mục tiêu demo tuyển chọn khoảng 90 phút là một phương án biên tập riêng, chưa có scene selection và chưa xác nhận tính liên tục campaign. Không được bỏ Q02 hoặc tự cấp cổng để khớp thời lượng demo.
-**Chuẩn mực thiết kế:** One-Shot Camera cho phân cảnh prologue, Khảo cổ Hiện trường Đa tầng, Không chiến đấu lấy mạng (Zero-Combat Tension), Tương tác Vật thể & Cơ học Thực tế, Canon Lock 100%. Vỏ kho, tuyến cửa–nội thất–18 bậc thang–mái đã tồn tại và từng được kiểm trong phạm vi G2/Phase 3 trên candidate tương ứng. Các mở rộng C1 gác lửng, C-1 rãnh bảo trì, cứu hộ và yêu cầu hình ảnh v6 chưa được nghiệm thu. G3 còn chờ duyệt trực quan, G4 còn đang thực hiện.
+**Thời lượng dự kiến:** Bộ đặc tả đầy đủ Q01/Q03/L01 có Q01 ~40–45 phút, Q03 ~36–46 phút, L01 ~48–58 phút: cộng 124–149 phút, chưa tính Q02. L01 có đích biên tập 55 phút ở hồ sơ 14, nằm trong khoảng phân cảnh này. Đây không phải tổng của demo 90 phút. Hợp đồng v3 mô tả một mẫu khác, `SLICE.L01.SPINE`: trích L01 cùng phần cầu nối Q03/Q04, dùng preset đánh giá và không ghi completion vào save campaign. Cả hai ngân sách chưa qua playtest. Chơi campaign đầy đủ vẫn phải qua Q02 và các cổng; preset mẫu không là đường bỏ qua trong campaign.
+**Chuẩn mực thiết kế:** One-Shot Camera cho phân cảnh prologue, Khảo cổ Hiện trường Đa tầng, Không chiến đấu lấy mạng (Zero-Combat Tension), Tương tác Vật thể & Cơ học Thực tế, Canon Lock 100%. Trạng thái triển khai/duyệt ở [STATUS](../STATUS.md#open); giới hạn ánh sáng của bản dựng ở [hồ sơ đồ họa](22-graphics-rendering.md#q01-lighting). Kịch bản này là đích dàn dựng, không là báo cáo nghiệm thu.
 
 ---
 
@@ -103,7 +103,7 @@ flowchart TD
 ### Phân cảnh 04: Giải Quyết Bằng Vật Thể (Gameplay Môi trường Đa tuyến)
 * **Thời lượng:** ~8–10 phút
 * **Cấu trúc Hiện trường Bốn Vùng Chức Năng Cao Độ (Four Functional Elevation Zones):**
-  Kho phía tây được tổ chức theo 4 vùng chức năng cao độ (không phải bốn tầng nhà độc lập xếp chồng). Vỏ kho, tuyến cửa–nội thất–18 bậc thang–mái đã tồn tại và từng được kiểm trong phạm vi G2/Phase 3 trên candidate tương ứng. Các mở rộng C1 gác lửng, C-1 rãnh bảo trì, cứu hộ và yêu cầu hình ảnh v6 là thiết kế đề xuất chưa được nghiệm thu hình học hay va chạm (G3 còn chờ duyệt trực quan, G4 còn đang thực hiện):
+  Kho phía tây được thiết kế theo 4 vùng chức năng cao độ (không phải bốn tầng nhà độc lập xếp chồng):
   1. `C0 · Cầu cảng & Sân hàng:` Dốc xe hàng Q01.LOAD, đường bánh xe, thợ bốc dỡ ngoài trời.
   2. `C1 · Kho trệt & Gác lửng cứu hộ:` Ngăn chứa trệt ngổn ngang kiện hàng và thùng dầu, gác lửng gỗ bị khói bao vây cục bộ có Simeon và phụ việc mắc kẹt.
   3. `C-1 · Rãnh bảo trì ngầm:` Rãnh tiêu nước đá dưới nền có nắp kiểm tra nối sang khu cảng, bùn nước đọng và vết xước vật nặng (lối ngầm khảo sát và đường luồn cáp).
@@ -223,7 +223,7 @@ flowchart TD
   * Cột xà gãy cháy sém nằm nghiêng đúng vị trí đã bị đòn bẩy nhấc qua.
   * Mặt sàn đá loang lổ vết bồ hóng đen và những vũng bùn tro đã đông cứng.
 * **Phát hiện Dấu vết Chuyển tiếp (Preliminary B06 Observation):**
-  Timeline ánh sáng tiến triển theo nhịp kịch bản: Beat 00–02 chiều muộn/hoàng hôn (cần kiểm tra khả năng biểu đạt bằng preset hiện có) → Beat 03–06 chạng vạng/tối khi cháy kho (preset `q01-evening` chỉ là mốc kỹ thuật đại diện) → Beat 07 đêm tại xưởng Natan (chưa có preset `night` được xác minh) → Beat 08 rạng sáng hôm sau (chưa có preset `dawn` được xác minh). Engine (`witness-q01.js`) hiện chỉ có hai preset kỹ thuật `q01-day` và `q01-evening` với dữ liệu GI nướng tĩnh; các trạng thái ban đêm và rạng sáng là yêu cầu mỹ thuật cho tương lai, chưa phải tính năng runtime đã nghiệm thu.
+  Ánh sáng theo thời gian truyện: Beat 00–02 chiều muộn/hoàng hôn → Beat 03–06 chạng vạng/tối khi cháy kho → Beat 07 đêm tại xưởng Natan → Beat 08 rạng sáng hôm sau. Bình minh soi rõ dấu cháy nhưng không giải thích hộ nguyên nhân vụ cháy; yêu cầu dàn dựng và giới hạn bản dựng được đối chiếu riêng tại hồ sơ đồ họa.
   Người chơi soi đèn dầu vào góc bàn kiểm nhận bị lửa táp sém một góc. Dưới đáy một khay gỗ bị lật úp, người chơi phát hiện một mảnh giấy da ghi nhận xuất kho mang mã hiệu **B06**:
   * Mặt giấy có vết cạo cơ học rõ rệt: con số lượng hàng đã bị cạo mỏng bề mặt bột đá vôi để viết đè lên.
   * *Giới hạn chứng cứ nghiêm ngặt:* Quan sát này chỉ là ghi nhận hiện tượng vật lý sơ bộ tại hiện trường Q01, **chưa cấp vật chứng E02 vào sổ tay điều tra**. Việc thu thập, kiểm tra mép dán và thẩm định chính thức E02 thuộc phạm vi Q02. Mệnh đề P01 yêu cầu đủ cả E02 và E03, tuyệt đối không tự suy đoán nguyên nhân hay quy kết thủ phạm. B06 hoàn toàn tách biệt với G17.
@@ -439,11 +439,11 @@ flowchart TD
 
 ---
 
-## 5. Hiện Thực Hóa 5 Trụ Cột Chiến Lược Trong Vertical Slice (Q01, Q03, L01)
+## 5. Khung trải nghiệm trục Hồi I (Q01, Q03, L01)
 
 > [!NOTE]
 > Toàn văn đặc tả hệ thống và quy chuẩn kiến trúc của 5 Trụ cột Chiến lược thuộc quyền sở hữu duy nhất của **[03 Narrative Bible — Phần II: Scene Systems v6.0](03-narrative-bible.md#phan-ii-scene-systems-c-v60-thiet-ke-canh-co-che-moi-tich-hop)**.  
-> Trong phạm vi 90 phút của Vertical Slice, 5 Trụ cột này được hiện thực hóa trực tiếp qua các cơ chế tương tác hiện trường cụ thể:
+> Trong bộ đặc tả đầy đủ Q01/Q03/L01, năm trụ cột được đặt thành yêu cầu tương tác hiện trường dưới đây. Chúng chưa phải danh sách đã triển khai hoặc một gói 90 phút đã được nghiệm thu:
 
 1. **Khảo Cổ Hiện Trường Đa Tầng (Trải nghiệm tại Q01 & Q03):**
    * *Tại Q01 (Cảng Sebastos):* Vận hành không gian 4 tầng (`C0` cầu cảng, `C1` kho cháy ám khói, `C-1` rãnh ngầm thoát nước, `C+1` sàn tời mái 18 bậc). Điều tra dựa trên vết cạo sửa cơ học của tờ B06 và hướng khói thực tế ([Doc 03 · Mục 14.2](03-narrative-bible.md#142-xedare--sebastos--bon-tang-tham-hiem-q01q04-tro-lai-q11q12)).
