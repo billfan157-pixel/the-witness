@@ -1,10 +1,10 @@
 # THE WITNESS — Legacy of the Covenant
 
-> **Chỉ mục hồ sơ chi tiết.** Nguồn điều hành và quyền sở hữu hiện tại ở [docs/README](../README.md); chỉ tra các Bible bên dưới khi task route yêu cầu. Các mô tả phiên bản cũ không tự xác nhận runtime hiện tại.
+> **Chỉ mục hồ sơ chi tiết.** Nguồn điều hành và quyền sở hữu hiện tại ở [docs/README](../README.md); chỉ tra các Bible bên dưới khi task route yêu cầu. v6 là đặc tả thiết kế mục tiêu, runtime/save contract v3 đang thực thi. Phase B/Gate G3 chưa có phê chuẩn mỹ thuật cuối cùng. Các mô tả phiên bản cũ không tự xác nhận runtime hiện tại.
 
 
-**AI agent:** bắt đầu ở `AGENTS.md`, `docs/agent/README.md` và
-`docs/agent/status.md` từ gốc repository trước khi sửa hồ sơ.
+**AI agent:** bắt đầu ở `AGENTS.md`, `docs/README.md` và
+`docs/STATUS.md` từ gốc repository trước khi sửa hồ sơ.
 Markdown và contracts bên dưới giữ quyền sở hữu theo miền; bản xuất HTML/DOCX
 không là nguồn biên tập song song.
 
@@ -89,8 +89,8 @@ Các mã S01…S32 dẫn đến hồ sơ 10. V3 đọc lại ba pericope trục 
 
 **Bất biến mới:** không bỏ trắng ba chương bắt buộc để đi tiếp. Chơi hoặc xem/nghe tóm tắt đủ beat đều mở cùng cổng; thoát/để sau giữ điểm dừng. Không yêu cầu câu trả lời tôn giáo hay thời gian đọc tối thiểu. Phản tư được để trống. Hoàn tất L được ghi tiến độ và ngữ cảnh, không tạo chứng cứ/đồng thuận/vật phẩm.
 
-**Nguồn sở hữu quyết định:** 13 cho định hướng; 08/15 cho giới hạn nguồn; 14 cho scene Legends; 12 cho sự thật hư cấu; 11 cho scene cầu nối; 02 cho hệ thống; campaign-contract cho ID/cổng/phút; 07 cho slice rút gọn không ghi save campaign. Mâu thuẫn phải được sửa ở nguồn, không xử bằng một câu ghi đè cuối tài liệu.
+**Nguồn sở hữu quyết định:** PRODUCT cho định hướng sản phẩm và bất biến; 08/15 cho giới hạn nguồn; 14 cho scene Legends; 12 cho sự thật hư cấu; 11 cho scene cầu nối; 02 cho hệ thống; campaign-contract cho ID/cổng/phút; 07 cho slice rút gọn không ghi save campaign. Mâu thuẫn phải được sửa ở nguồn, không xử bằng một câu ghi đè cuối tài liệu.
 
 ## Trạng thái chuyên môn
 
-Đã có nguồn công khai, sáu packet và tiêu chí dựng thử. Bảy vị trí duyệt đều **chưa phân công**, chưa có phê chuẩn chuyên môn hay playtest v3. Kiểm JSON/bản đọc chỉ kiểm thiết kế. Thời lượng 216/720 phút là mục tiêu, chưa đo. Kiểm chơi 0.1.0 trước đây không chứng minh các gate mới. Chưa khóa lời thu âm, tạo hình lịch sử, kinh phí hoặc ngày phát hành.
+Đã có nguồn công khai, sáu packet và tiêu chí dựng thử. Bảy vị trí duyệt đều **chưa phân công**, chưa có phê chuẩn chuyên môn hay playtest v3. Kiểm JSON/bản đọc chỉ kiểm thiết kế. Thời lượng 216/720 phút là baseline blockout target của hợp đồng kỹ thuật v3 chưa đo, 145/580 phút là đích nhịp độ biên kịch v6; cả hai chưa qua đo đạc playtest người thật. Kiểm chơi 0.1.0 trước đây không chứng minh các gate mới. Chưa khóa lời thu âm, tạo hình lịch sử, kinh phí hoặc ngày phát hành.

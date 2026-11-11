@@ -16,7 +16,7 @@ Bản tổng hợp giữa: (1) kịch bản C đề xuất trong trao đổi; (2
 ---
 
 ## THÔNG TIN ĐỌC NHANH
-Tài liệu này là story bible có tiết lộ toàn bộ bí ẩn, thiết kế theo hướng một trò chơi nhập vai khám phá dẫn truyện cho đối tượng game thủ rộng. Đây không phải kịch bản lời thoại cuối hoặc danh sách các sự kiện lịch sử đã được xác nhận.
+Tài liệu này là story bible chi tiết và đặc tả kịch bản v6, tiết lộ toàn bộ cốt truyện để phục vụ biên kịch và thiết kế cảnh. **Hồ sơ 12 Continuity là nguồn sở hữu duy nhất** của sự thật nền vụ hàng, logic điều kiện chứng cứ/mệnh đề, chuỗi lưu giữ (lineage) và đồng thuận (consent); nội dung trong hồ sơ này chỉ là tham chiếu diễn giải phái sinh. Mọi ước tính thời lượng (90m slice, 32m hay 40–45m Q01, 145m hay 216m Legends, 580m hay 720m chiến dịch) đều là các mục tiêu biên kịch/khung kỹ thuật chưa qua đo đạc playtest người thật và không thay thế lẫn nhau. Tài liệu không tự tuyên bố runtime v6 đã chạy, Phase B đã nghiệm thu, Gate G3 đã duyệt hay dự án sẵn sàng phát hành.
 
 ### Trục sáng tạo
 | Thành tố | Quyết định v6.0 |
@@ -104,7 +104,7 @@ Mục này là sự thật trong thế giới hư cấu `[H]`. Tất cả không
 * **T07:** B06 là một lượt bữa chung khác, đang thiếu hai bao tại Xêdarê. Có dấu sửa ghi nhận, nhưng chưa có căn cứ tự động nối thiếu B06 với bốn bao G17.
 * **T08:** E04/E05/E06 và lời chứng đúng phạm vi cho thấy tuyến G17, không có một nguồn duy nhất đủ kết luận toàn bộ mạng lưới. Giêrusalem giữ nguồn thư, không phải điểm nhận 18 bao G17.
 * **T09:** Varro là nhân vật hư cấu có ảnh hưởng tới khâu hồ sơ/niêm xác nhận ở cảng. Ông biết và hưởng lợi từ việc ghi nhận sai; đặt làm bản sửa giả quy hết trách nhiệm cho Haddai và gán người làm chứng thành đồng phạm.
-* **T10:** Rufus phụ trách một đội canh/hộ tống thuê hoặc được phân công trong mạng lưới hư cấu, không mặc định là chỉ huy quân đội La Mã. Một lần thu hồi hồ sơ vội gây ra biến cố cháy kho ngoài dự tính; việc che giấu sau đó là có chủ đích.
+* **T10:** Rufus phụ trách một đội canh/hộ tống thuê hoặc được phân công trong mạng lưới hư cấu, không mặc định là chỉ huy quân đội La Mã. Đây là sự thật tác giả: vụ cháy phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus, việc che giấu sau đó là có chủ đích; avatar tại Q01 chỉ quan sát hiện tượng thực địa, chưa thể quy kết vai trò hay danh tính Rufus.
 * **T11:** Lea từng xóa một tên khỏi bản ghi nhằm bảo vệ một người; về sau bị uy hiếp về sinh kế của người thân nên tiết lộ một phần lịch trình nhóm. Hai việc có thời điểm khác nhau, tạo trách nhiệm riêng, không được gọi gộp là phản bội vô cớ.
 * **T12:** Amon rời khỏi tuyến sau khi bị đe dọa. Người khác tin anh chết/mất tích, nhưng thực tế anh sống, có thể được tìm lại qua tuyến cứu hộ Q08; sự hiện diện ở hồi cuối phụ thuộc diễn biến và sự an toàn.
 * **T13:** Một bản sửa thật và một bản sửa giả có đường truyền tài liệu khác nhau. Bản thật xác nhận lỗi ký trước, không toàn tri về Varro; bản giả nhận mọi tội và tự tiện nêu tên người khác. Bằng chứng giả không đồng nghĩa mọi sự thật trên bản thật là vô hiệu.
@@ -153,16 +153,16 @@ L03 (Gr 38 [S07]), L05 (Cv 16 [S11]), bốn Inner Veil và sáu nhiệm vụ qua
 ## 06 • HỒ SƠ NHIỆM VỤ CHI TIẾT Q01–Q12
 
 ### Q01 — Bến không chờ người về
-* **TÍCH HỢP v6:** Chuyển kho phía tây thành một nút khám phá bốn lớp: cầu cảng C0 → tầng kho C1 → rãnh bảo trì C-1 → sàn tời/mái C+1. Giữ Q01.LOAD và cứu hộ cháy cục bộ; dấu cháy chỉ xác nhận diễn biến vật lý, chưa tự chứng minh Rufus chủ mưu.
+* **TÍCH HỢP v6:** Chuẩn hóa bến kho phía tây thành bốn vùng chức năng cao độ (không phải bốn tầng nhà độc lập): cầu cảng/sân hàng C0 → kho trệt và gác lửng cứu hộ C1 → rãnh bảo trì ngầm C-1 → sàn tời và sân mái C+1. Giữ nguyên tương tác Q01.LOAD (chèn bánh/nêm gỗ), lựa chọn sinh hoạt lodging/meal, cờ Q01.COMMITTED và các callback sẵn có. Dấu cháy phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus (sự thật tác giả T10; avatar tại Q01 chỉ ghi nhận 4 thuộc tính quan sát giới hạn, chưa thể suy luận danh tính hay vai trò của Rufus). Vết mực B06 quan sát được ở cuối Q01 chỉ là ghi nhận hiện tượng sơ bộ; việc thu thập và xác minh vật chứng E02 thuộc về Q02.
 * **Bối cảnh:** Xêdarê — bến / kho phía tây.
 * **Xung đột:** Cứu người khỏi kho cháy, nhận sổ, bắt đầu nghi ngờ thao túng hồ sơ.
-* **Gameplay:** Khám phá nhiều tầng, thao tác xe có tải, làm quen NPC, đọc dấu cháy và thẩm định giới hạn điều nhìn thấy.
-* **Quyền lựa chọn:** Titus giúp một tuyến; có thể nhờ thợ khác nếu không theo cách kỹ thuật. Chọn chỗ nghỉ/bữa chung vẫn còn hệ quả tài nguyên.
-* **Điều tiết lộ:** Nhân chứng bị đe dọa; bìa có khâu lệch; avatar nhớ mình từng im lặng.
-* **Callback:** Một nhân chứng được cứu; kho có trạng thái sau cháy; Q02 mở.
+* **Gameplay:** Khám phá theo vùng cao độ, thao tác xe có tải, làm quen NPC, đọc dấu cháy và thẩm định giới hạn điều nhìn thấy.
+* **Quyền lựa chọn:** Tuyến 1 cơ học cùng Titus hoặc tuyến 2 đòn bẩy cùng thợ cảng; lựa chọn chỗ nghỉ (lodging) hay bữa chung (meal) tạo callback tài nguyên/người hỗ trợ.
+* **Điều tiết lộ:** Nhân chứng bị đe dọa; bìa có khâu lệch; avatar nhớ mình từng im lặng (T05).
+* **Callback:** Người được cứu thoát an toàn; kho có trạng thái sau cháy; Q01.COMMITTED mở Q02.
 
 ### Q02 — Những tên không được đọc
-* **TÍCH HỢP v6:** Mép dán B06 được quan sát in-world dưới ánh xiên tại khu sao chép sát bến. Miriam dẫn vào sân bữa bằng công việc hỗ trợ, không dùng điểm quan hệ để ép Yosef. B06 luôn tách biệt G17.
+* **TÍCH HỢP v6:** Thu thập và thẩm định chính thức vật chứng E02 (mép dán/sửa B06) dưới ánh xiên tại khu sao chép; kết hợp lời chứng E03 của Rina để xác lập P01 (B06 không khớp; không suy ra T03, không quy kết nguyên nhân hay thủ phạm). Miriam dẫn vào sân bữa bằng công việc hỗ trợ, không dùng điểm quan hệ để ép Yosef. B06 luôn tách biệt G17.
 * **Bối cảnh:** Xêdarê — sân bữa / cổng phụ.
 * **Xung đột:** B06 có dấu sửa; Yosef sợ bị lộ tên.
 * **Gameplay:** Quan sát mép dán dưới ánh xiên, hỏi người giữ bữa, kiểm khoảng cách/đường gặp kín, chuẩn bị nơi an toàn.
@@ -434,13 +434,14 @@ Nhìn thấy bất thường → tự tiếp cận → đặt giả thuyết →
 * Độ lớn bản đồ tăng bằng tuyến dọc, lối vòng, tầm nhìn và tầng chức năng, không tăng bằng khoảng đất trống.
 
 <a id="142-xedare--sebastos--bon-tang-tham-hiem-q01q04-tro-lai-q11q12"></a>
-### 14.2 Xêdarê / Sebastos — bốn tầng thám hiểm (Q01–Q04, trở lại Q11–Q12)
-| Tầng | Chức năng đời sống / gameplay | Dấu và sự thật có thể thu |
+### 14.2 Xêdarê / Sebastos — bốn vùng chức năng cao độ (Q01–Q04, trở lại Q11–Q12)
+*Lưu ý kiến trúc:* Bốn vùng chức năng cao độ (không phải bốn tầng nhà độc lập xếp chồng). Vỏ kho, tuyến cửa–nội thất–18 bậc thang–mái đã tồn tại và từng được kiểm trong phạm vi G2/Phase 3 trên candidate tương ứng; gác lửng C1, rãnh ngầm C-1 và các yêu cầu hình ảnh v6 là thiết kế đề xuất chưa được nghiệm thu (G3 còn chờ visual review, G4 còn đang thực hiện):
+| Vùng | Chức năng đời sống / gameplay | Dấu và sự thật có thể thu |
 |---|---|---|
-| **C0 · Cầu cảng** | Thuyền cập, dốc xe hàng, bến cập/đường quay, xe Q01.LOAD và công nhân bốc dỡ. | Đường xe/bánh, lịch trực, hướng kéo; không xác nhận người chủ mưu. |
-| **C1 · Kho phía tây** | Ngăn chứa, cửa khóa, đèn, giá hàng, chỗ xe kẹt; tuyến cứu người khỏi khói. | Vết ám khói từ hướng gió, tro trên bề mặt, vị trí chốt; dấu cháy có nguyên nhân vật lý. |
-| **C-1 · Rãnh bảo trì** | Rãnh thoát/tiêu nước hư cấu có cửa kiểm tra, lối bảo trì nối 2 khu, nước đọng và bùn. | Dấu di chuyển sau cháy, vết xước vật nặng; không đồng nhất với aqueduct thời sau. |
-| **C+1 · Sàn tời và mái** | Giàn gỗ chịu tải, trục quay, đối trọng, giằng, lối mái và bến quan sát. | Đường kéo vật liệu, thời điểm sửa dây; tận dụng 18 bậc và đường mái hiện có. |
+| **C0 · Cầu cảng & Sân hàng** | Thuyền cập bến, dốc xe hàng, bến cập/đường quay, xe Q01.LOAD và công nhân bốc dỡ. | Đường xe/bánh, lịch trực, hướng kéo; không xác nhận người chủ mưu. |
+| **C1 · Kho trệt + Gác lửng** | Ngăn chứa trệt, thùng hàng, cửa khóa, đèn, giá hàng; gác lửng gỗ nơi Simeon kẹt và tuyến cứu người khỏi khói. | Vết ám khói từ hướng gió, tro trên bề mặt, vị trí chốt; dấu cháy phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus (sự thật tác giả T10; avatar tại Q01 chỉ quan sát hiện tượng, chưa thể suy luận danh tính hoặc vai trò của Rufus). |
+| **C-1 · Rãnh bảo trì ngầm** | Rãnh tiêu nước đá dưới nền có nắp kiểm tra, rãnh ngầm kỹ thuật, nước đọng và bùn. | Dấu di chuyển sau cháy, vết xước kéo vật nặng; lối ngầm dự phòng cho áp lực cấp 2. |
+| **C+1 · Sàn tời và Sân mái** | Giàn tời chịu tải chữ A, trục quay đối trọng trên cao, sân mái hở thoát hiểm và điểm quan sát hẻm sau. | Đường kéo ròng rọc; nhìn bóng người chạy trốn (Beat 05) với 4 thuộc tính giới hạn, không có HUD đỏ. |
 
 *Bộ cảnh Q01 v6:* (a) tàu cập và nguy cơ xe; (b) Natan trao sổ có đường khâu đáng ngờ; (c) cháy cục bộ, cứu người bằng xe/nêm/dây; (d) thấy cửa bảo trì và một đường rời khả nghi; (e) chọn hỏi người hoặc tự khảo sát; (f) kết bằng câu hỏi về Haddai, không phán Rufus là hung thủ. Sau Q04, đối chiếu vị trí kho và thời điểm đóng cửa; sau Q11 quay lại dùng lối cũ trong môi trường đã niêm.
 
@@ -564,10 +565,11 @@ Q12 là không gian tiếp nhận hồ sơ/điều trần địa phương hư c�
 
 <a id="19-atlas-vat-chung-e01e12-menh-de-p01p05"></a>
 ## 19 • ATLAS VẬT CHỨNG E01–E12 & MỆNH ĐỀ P01–P05
+*(Nguồn sở hữu duy nhất: [Hồ sơ 12 Continuity](12-continuity-and-state.md). Mục này chỉ là tham chiếu diễn giải; E11/E12/P05 là đề xuất v6 hiện đang hoãn ở runtime v3).*
 
 Mọi hiện vật có `sourceLineage` và `consentScope`, nguồn copy không tăng `independentSourceCount`.
 * **E01 (Q04):** Biên nhận gốc, chữ ký trong bìa do Natan bàn giao. *Có:* Haddai ký. *KHÔNG:* chứng minh ông cất 4 bao.
-* **E02 (Q02):** Mép dán/sửa B06, ánh sáng xiên. *Có:* Có sửa B06. *KHÔNG:* suy ra người sửa hoặc G17.
+* **E02 (Q02):** Mép dán/sửa B06, ánh sáng xiên. (Q01 Beat 08 chỉ ghi nhận hiện tượng vật lý sơ bộ; E02 được thu thập và thẩm định tại Q02). *Có:* Có sửa B06. *KHÔNG:* suy ra người sửa, nguyên nhân, thủ phạm hoặc G17.
 * **E03 (Q02):** Bữa/nồi và Rina kiểm lượng thực nhận. *Có:* B06 không khớp. *KHÔNG:* chứng minh lệnh Hanan.
 * **E04 (Q03):** Sổ xuất, vệt xe và lời Amon. *Có:* 24 xuất, 2 hỏng ghi riêng. *KHÔNG:* biết 18 đến trước Q05.
 * **E05 (Q05):** Sân chia, người nhận, bản ghi. *Có:* 18 tới Galilê. *KHÔNG:* biết đường giữ 4 bao.
@@ -576,15 +578,15 @@ Mọi hiện vật có `sourceLineage` và `consentScope`, nguồn copy không t
 * **E08 (Q10):** Bản sửa thật của Haddai. *Có:* ông nhận ký sớm. *KHÔNG:* toàn tri về Varro.
 * **E09 (Q09):** Người nghe lệnh trực tiếp, scope. *Có:* câu người đó thực nghe. *KHÔNG:* điều họ không thấy.
 * **E10 (Q11):** Sổ ca và Mattai nhận lệnh. *Có:* nguồn độc lập củng cố P04 sau kiểm provenance.
-* **E11 (Q10):** Bản sửa giả nhận tội thay và nêu tên người khác. *Có:* tồn tại bản giả. *KHÔNG:* ai đặt làm từ một nét mực.
-* **E12 (Q09–Q11):** Mốc thư, người bàn giao, dấu niêm/trạm. *Có:* nguồn xuất xứ củng cố can thiệp. *KHÔNG:* tự buộc Varro nếu chỉ là một nhánh.
+* **E11 (Q10 — Đề xuất v6 hoãn ở v3):** Bản sửa giả nhận tội thay và nêu tên người khác. *Có:* tồn tại bản giả. *KHÔNG:* ai đặt làm từ một nét mực.
+* **E12 (Q09–Q11 — Đề xuất v6 hoãn ở v3):** Mốc thư, người bàn giao, dấu niêm/trạm. *Có:* nguồn xuất xứ củng cố can thiệp. *KHÔNG:* tự buộc Varro nếu chỉ là một nhánh.
 
 ### 19.1 Bộ lọc claim và trigger hợp lệ
-* **P01 — B06 sai lệch:** Yêu cầu `E02 + E03`. Chưa đủ: chỉ nêu “có sửa”, không nhập G17.
-* **P02 — G17 thiếu 4 ở nơi nhận:** Yêu cầu `E04 + E05` (`24 - 2 - 18 = 4`). Chưa đủ: hiện số chưa giải trình.
+* **P01 — B06 sai lệch:** Yêu cầu `E02 + E03`. Chưa đủ: chỉ nêu “có sửa”, không nhập G17, không suy đoán nguyên nhân hoặc quy kết thủ phạm.
+* **P02 — G17 thiếu 4 ở nơi nhận:** Yêu cầu `E04 + E05` (`24 - 2 - 18 = 4`). Chưa đủ: hiện số chưa giải trình; giữ ranh giới tri thức E04/Q03 không biết dữ liệu E05/Q05.
 * **P03 — Trách nhiệm Haddai:** Yêu cầu `E01 + E08` và nền G17. Nhận chữ ký nhưng giới hạn hành vi chuyển hàng.
 * **P04 — Lệnh Hanan:** Yêu cầu `E06 + E09` hoặc `E10` độc lập. Chưa đủ: có quyền nghi vấn sân phụ, không gọi Hanan đã bị chứng minh.
-* **P05 — Varro sửa hồ sơ/đặt giả:** Yêu cầu `E11 + E12 + nguồn độc lập`. Chưa đủ: chỉ kết luận bản giả có vấn đề, chưa đủ quy kết Varro.
+* **P05 — Varro sửa hồ sơ/đặt giả (Đề xuất v6 hoãn ở v3):** Yêu cầu `E11 + E12 + nguồn độc lập`. Chưa đủ: chỉ kết luận bản giả có vấn đề, chưa đủ quy kết Varro.
 
 ---
 
@@ -630,7 +632,7 @@ Mọi hiện vật có `sourceLineage` và `consentScope`, nguồn copy không t
 
 <a id="212-backlog-san-xuat-theo-doc-vertical-slices"></a>
 ### 21.2 Backlog sản xuất theo dọc (Vertical Slices)
-* **P0:** Q01 kho 4 lớp (C0, C1, C-1, C+1) + LOAD + cứu hộ + nguyên nhân cháy giới hạn.
+* **P0:** Q01 bốn vùng chức năng cao độ (C0, C1, C-1, C+1) + LOAD + cứu hộ + nguyên nhân cháy giới hạn (tai nạn T10).
 * **P1:** Q03 route geology (3 tuyến A/B/C) + L01 mechanical echo + Q04 phản hồi đóng kho.
 * **P2:** Q06 audio tutorial → L02 → Q07 Lea/Miriam → Q08 wadi cứu Amon & E07.
 * **P3:** Q09/Q10 pháo đài thủ tục Giêrusalem (J0–J3) + E08/E11/E12 provenance.

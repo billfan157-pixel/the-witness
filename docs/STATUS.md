@@ -53,6 +53,19 @@ Không sao chép bản HEAD cũ đè lên chúng để “chuẩn hóa”.
   tuyến đọc bắt buộc, consumer đối chiếu tác động và bài kiểm bắt buộc khi trigger
   được kích hoạt. Handoff là cơ chế đọc/kiểm liên miền có cấu trúc, không phải bằng
   chứng semantic correctness và tuyệt đối không cho phép tự ý mở rộng phạm vi chỉnh sửa.
+- **D012 — Q01 v6 state foundation (PR-03).** Runtime có module thuần `witness-q01-state.js`
+  (`fresh/restore/reduce/canCommit/phase`) và `sceneProgress.Q01` trong `witness-model.js`
+  (`beginQ01Scene/q01SceneEvent/q01SceneReady`). `null` = v6 chưa kích hoạt, gameplay v3
+  giữ nguyên; khi kích hoạt, commit Q01 bị chặn tới khi scene đủ điều kiện và vẫn dùng
+  hàm commit cũ (trừ tài nguyên một lần, không tạo nguồn completion thứ hai). Scene state
+  đi qua `Model.restore` nên local save/backup và Worker/D1 cùng validate; giữ schema 2,
+  contentVersion 3.0, campaignId, API v1, D1 schema và namespace. 9 Beat (00–08) và hai
+  route cứu hộ `mechanical`/`manual` có bước độc lập, không trộn/đổi route, hậu quả thế
+  giới riêng (`world.fire/cart/beam/sideExit`); không cấp evidence/E02, không suy thủ phạm,
+  không biến yêu cầu giữ kín của Yosef thành quyền công bố. `phase` là giai đoạn logic tự
+  truyện, không phải preset ánh sáng runtime (`night`/`dawn` chưa có). Đã kiểm: unit
+  `test/q01-state.cjs`, regression `test/campaign.cjs`, cloud/Worker `test:backend`. Chưa
+  dựng gameplay 3D Q01 v6, chưa đóng G3/G4, chưa deploy; phần đó thuộc PR-04/05.
 
 Nguồn và phép đánh giá từng file, vị trí thay thế, hash gốc và luận cứ phương
 pháp nằm trong `registry.knowledge`. Mốc trước ở Git và cleanup-record; không

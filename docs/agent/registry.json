@@ -29,6 +29,7 @@
     "witness-model.js",
     "witness-modular-kit.js",
     "witness-q01-environment.js",
+    "witness-q01-state.js",
     "witness-q01.js",
     "witness-relationships.js",
     "witness-spine.js",
@@ -464,6 +465,11 @@
       "reason": "Behavioral coverage for stale output, invalid reader and safe cleanup boundaries"
     },
     {
+      "path": "test/q01-state.cjs",
+      "owner": "game-systems",
+      "reason": "Unit coverage for the Q01 v6 scene reducer: beat order, rescue routes, world persistence and save validation"
+    },
+    {
       "path": "tools/build-output.cjs",
       "owner": "repository-maintenance",
       "reason": "Shared bounded output reset and optional reader freshness verification"
@@ -472,6 +478,11 @@
       "path": "tools/check-agent-governance.cjs",
       "owner": "agent-governance",
       "reason": "Read-only admission, link, skill and contract mirror validation"
+    },
+    {
+      "path": "witness-q01-state.js",
+      "owner": "game-systems",
+      "reason": "Pure Q01 v6 scene state foundation (PR-03); gated by witness-model, no engine/UI/cloud or evidence access"
     }
   ],
   "requiredFiles": [
@@ -849,6 +860,7 @@
         ],
         "implementation": [
           "witness-model.js",
+          "witness-q01-state.js",
           "witness-app.js",
           "index.html",
           "tools/build.cjs"
@@ -1529,10 +1541,12 @@
         ],
         "implementation": [
           "witness-model.js",
+          "witness-q01-state.js",
           "witness-cloud.js",
           "server/api.mjs",
           "docs/the-witness/campaign-contract.json",
           "test/campaign.cjs",
+          "test/q01-state.cjs",
           "test/backend.test.mjs",
           "test/cloud-client.test.cjs"
         ],

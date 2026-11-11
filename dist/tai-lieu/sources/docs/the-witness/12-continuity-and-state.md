@@ -1,6 +1,6 @@
 # 12 • Sự thật nền, continuity và hệ quả (Story Bible v6.0 — C+ Synthesis)
 
-**Revision 6.0 • 10/11/2026.** Tài liệu nội bộ có tiết lộ toàn bộ truyện [H]. Đây là đặc tả để triển khai và kiểm nhánh, chưa là hệ thống đang chạy. “Đúng trong hồ sơ tác giả”, “avatar đã biết”, “NPC đã biết” và “được phép nói với ai” là bốn việc khác nhau.
+**Revision 6.0 • 10/11/2026.** Hồ sơ 12 là **nguồn sở hữu duy nhất** của sự thật nền vụ hàng, các điều kiện xác lập vật chứng/mệnh đề (evidence/claims), chuỗi lưu giữ (source lineage) và phạm vi đồng thuận (witness consent). Các phần tóm tắt trong hồ sơ 03 Narrative Bible và 06 Campaign Quest Bible chỉ là tham chiếu diễn giải phái sinh, không sở hữu luật riêng. Đây là đặc tả thiết kế, phân biệt rõ: “Đúng trong hồ sơ tác giả”, “avatar đã biết”, “NPC đã biết” và “được phép nói với ai”. E11, E12, P05 thuộc đề xuất mở rộng v6 và hiện được hoãn, chưa đưa vào runtime/contract v3.
 
 ## 1. Sự thật nền của vụ hàng (T01–T13)
 
@@ -54,23 +54,23 @@ Không nhân vật nào có "thần giao cách cảm" tự động biết hết 
 | ID | Nguồn/cổng | Xác nhận được | Chưa xác nhận được |
 |---|---|---|---|
 | E01 | Biên nhận gốc G17, Natan/Q04 | Haddai thực sự ký nhận đủ; xác thực có giới hạn nghề nghiệp | Ông ký lúc nào, cất hay lấy bốn bao |
-| E02 | Mép sổ B06/Q02 | Có lớp ghi sửa trên B06 | Ai sửa, vì sao sửa |
+| E02 | Mép sổ B06/Q02 (Q01 chỉ quan sát sơ bộ Beat 08; E02 được cấp/thẩm định tại Q02) | Có lớp ghi sửa trên B06 | Ai sửa, vì sao sửa; không suy ra nguyên nhân |
 | E03 | Rina và chỗ nhận B06/Q02 | Lượng Rina thực nhận không khớp lượt hôm nay | Kẻ ra lệnh cuối của G17 |
-| E04 | Ghi xuất và ghi hỏng G17, Amon/Q03 | 24 rời điểm xuất; hai bao hỏng được ghi riêng | Mọi điểm dừng sau đó |
+| E04 | Ghi xuất và ghi hỏng G17, Amon/Q03 | 24 rời điểm xuất; hai bao hỏng được ghi riêng | Mọi điểm dừng sau đó; KHÔNG biết 18 bao đến trước Q05 |
 | E05 | Biên nhận và người nhận Galilê/Q05 | 18 đến điểm chia | Ai điều khiển sân phụ |
 | E06 | Thẻ bốn bao ở sân phụ/Q06 | G17 được ghi tại sân phụ; nguyên bản/bản sao có chuỗi giữ riêng | Dấu dùng chung tự nó xác định Hanan |
 | E07 | Bản phụ qua nước/Q08 | Chi tiết đối chiếu nếu còn đọc được | Chỗ mờ được phục chế thành chắc chắn |
 | E08 | Bản sửa của Haddai/Q10 | Ông nhận ký trước, đã muốn sửa | Mọi lời tự thuật của ông tự thành dữ kiện độc lập |
 | E09 | Người trực tiếp nhận lệnh/Q09 | Nội dung lệnh họ thực nghe, tùy phạm vi cho dùng | Điều họ không chứng kiến |
 | E10 | Sổ bàn giao ca Mattai tự ghi/Q11 | Chỉ dẫn mở kho của Hanan trong ca trực | Chữ ký/niêm tự là chứng minh tuyệt đối |
-| E11 | Bản sửa giả quy tội `[Đề xuất v5.0]`/Q10 | Tồn tại văn bản giả mạo đổ tội cho Haddai | Chưa tự chứng minh người chủ mưu đặt làm |
-| E12 | Dấu đường chuyển thư của bản giả `[Đề xuất v5.0]`/Q09–Q11 | Chuỗi trạm chuyển và dấu niêm cảng của Varro | Cần chuỗi giữ độc lập để chứng minh Varro |
+| E11 | Bản sửa giả quy tội `[Đề xuất v6.0 hoãn ở v3]`/Q10 | Tồn tại văn bản giả mạo đổ tội cho Haddai | Chưa tự chứng minh người chủ mưu đặt làm |
+| E12 | Dấu đường chuyển thư của bản giả `[Đề xuất v6.0 hoãn ở v3]`/Q09–Q11 | Chuỗi trạm chuyển và dấu niêm cảng của Varro | Cần chuỗi giữ độc lập để chứng minh Varro |
 
-**P01: B06 không khớp.** Cần E02 + E03; không suy ra T03.  
-**P02: G17 thiếu bốn bao chưa được giải trình tại điểm chia.** Cần E04 + E05; tách hai bao hỏng khỏi số cáo buộc.  
+**P01: B06 không khớp.** Cần E02 + E03; không suy ra T03, không suy đoán nguyên nhân hay quy kết thủ phạm.
+**P02: G17 thiếu bốn bao chưa được giải trình tại điểm chia.** Cần E04 + E05; tách hai bao hỏng khỏi số cáo buộc; giữ nghiêm ngặt ranh giới tri thức E04 (Q03) không biết trước dữ kiện của E05 (Q05).
 **P03: Haddai chịu lỗi ký trước, không đủ căn cứ nói ông lấy cả phần thiếu.** Cần E01 + E08 và đối chiếu E04/E05.  
 **P04: Hanan chỉ dẫn chuyển bốn bao ngoài phân phối.** Cần E06 + một nguồn độc lập đã kiểm E09 hoặc E10, cùng nền E04/E05.  
-**P05: Varro can thiệp chứng từ và đặt bản sửa giả `[Đề xuất v5.0]`.** Cần E11 + E12 với chuỗi người giữ độc lập; nếu chưa đạt thì chỉ nêu nghi vấn thủ tục tại cảng.
+**P05: Varro can thiệp chứng từ và đặt bản sửa giả `[Đề xuất v6.0 hoãn ở v3]`.** Cần E11 + E12 với chuỗi người giữ độc lập; nếu chưa đạt thì chỉ nêu nghi vấn thủ tục tại cảng.
 
 ## 4. Ai biết điều gì, bằng đường nào
 

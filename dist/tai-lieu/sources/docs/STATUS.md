@@ -13,7 +13,7 @@ theo; số đo/evidence và gate vẫn ở nguồn sở hữu. Code đang dùng 
 | A02 | Q01 G3 awaiting_visual_review; G4 in_progress | Duyệt góc gameplay, giữ artAccepted false nếu chưa có xác nhận |
 | A05 | Report Phase B được nhắc nhưng chưa có trong checkout khi audit; gold/phase3 là mốc cũ | Kiểm file/hash/build trước khi dùng claim; không tạo báo cáo giả |
 | A07 | Chưa kiểm lại production trong các tác vụ quản trị | Không suy deploy từ build/push; kiểm live riêng khi được giao |
-| A08 | Charter cũ nói 140–155 phút Legends/~10 giờ, contract nói 216/720; đều chưa đo | Chưa khóa ngân sách mới. Contract mô tả model thiết kế hiện tại, không là cam kết thời lượng |
+| A08 | Thời lượng: GDD v6 nhắm 145 phút Legends (~580m campaign), contract giữ baseline 216/720 phút | 216/720m là unmeasured-blockout-target của hợp đồng v3, 145/580m là đích nhịp biên kịch v6 (chênh lệch ~71m là độ co giãn thiết kế, không phải buffer đã nghiệm thu); chỉ khóa cam kết phát hành sau playtest người thật |
 | A09 | GDD v6 nhấn zero lethal combat, runtime vẫn có bốn skill và sân luyện | Không tự xóa defend/training hoặc diễn giải thành combat giết người; quyết định gameplay cần scope rõ |
 
 Các file chapter/screenplay/campaign/Legends có thay đổi chưa commit từ công
@@ -33,6 +33,39 @@ Không sao chép bản HEAD cũ đè lên chúng để “chuẩn hóa”.
   architecture cũ chuyển vào các trang lõi. Nghiên cứu vision/depth gộp ở source
   register; nghiên cứu camera gộp ở input research. Atlas/implementation sinh khi
   cần vào outputs/reference. Các nội dung chi tiết truyện đang sửa không bị cắt.
+- **D010 — Điều hòa thiết kế v6 và hợp đồng runtime v3 (PR-01).** Narrative Bible v6
+  và đặc tả cảnh v6 là đích thiết kế cốt truyện/scene chính thức, trong khi v3 vẫn
+  là hợp đồng runtime/save được bảo vệ nghiêm ngặt. Phân vùng không gian Q01 được
+  chuẩn hóa thành bốn vùng chức năng cao độ (C0 = cầu cảng/sân hàng, C1 = kho trệt
+  và gác lửng cứu hộ, C-1 = rãnh bảo trì ngầm, C+1 = sàn tời và sân mái; không phải
+  bốn tầng nhà độc lập xếp chồng). Giữ nguyên Q01.LOAD, lựa chọn lodging/meal, cờ
+  Q01.COMMITTED và các callback sẵn có. Tách biệt quan sát sơ bộ B06 tại Q01 với việc
+  thu thập/xác minh E02 tại Q02; P01 yêu cầu E02 + E03 và không tự suy ra thủ phạm/nguyên nhân.
+  Giữ ranh giới tri thức E04/Q03 và E05/Q05. Hồ sơ 12 sở hữu sự thật, điều kiện claim,
+  lineage và consent; hồ sơ 03/06 chỉ là tham chiếu diễn giải. Ngân sách 90m slice,
+  32m hay 40–45m Q01, 145/216m Legends và 580/720m chiến dịch đều là ước tính thiết kế
+  chưa đo đạc, không thay thế lẫn nhau. Không tuyên bố v6 đã chạy, Phase B đã nghiệm thu,
+  G3 đã duyệt hay dự án sẵn sàng phát hành.
+- **Phát hiện hậu PR-01 (PR-01.1):** Rà soát và khóa sai lệch: E01 thuộc Q04 thay vì Q03 (P02 cần E04 + E05); B06 tại Q01 là quan sát hiện tượng sơ bộ, không dùng pseudo-fields (`observation.b06_scraped`, `evidence.patch`); ánh sáng outro Q01 chuyển rạng sáng (chưa có preset runtime `dawn`/`night`); làm rõ hiện trạng Phase B/G3 và bản chất chưa đo của các ngân sách thời lượng.
+- **D011 — Conditional cross-domain handoffs (PR-02).** Bổ sung cơ chế handoff
+  có điều kiện H01–H05 trong `registry.knowledge.handoffs` cho các tác vụ giao thoa
+  giữa 3D environment, content kịch bản, change/save và release. Handoff bổ sung
+  tuyến đọc bắt buộc, consumer đối chiếu tác động và bài kiểm bắt buộc khi trigger
+  được kích hoạt. Handoff là cơ chế đọc/kiểm liên miền có cấu trúc, không phải bằng
+  chứng semantic correctness và tuyệt đối không cho phép tự ý mở rộng phạm vi chỉnh sửa.
+- **D012 — Q01 v6 state foundation (PR-03).** Runtime có module thuần `witness-q01-state.js`
+  (`fresh/restore/reduce/canCommit/phase`) và `sceneProgress.Q01` trong `witness-model.js`
+  (`beginQ01Scene/q01SceneEvent/q01SceneReady`). `null` = v6 chưa kích hoạt, gameplay v3
+  giữ nguyên; khi kích hoạt, commit Q01 bị chặn tới khi scene đủ điều kiện và vẫn dùng
+  hàm commit cũ (trừ tài nguyên một lần, không tạo nguồn completion thứ hai). Scene state
+  đi qua `Model.restore` nên local save/backup và Worker/D1 cùng validate; giữ schema 2,
+  contentVersion 3.0, campaignId, API v1, D1 schema và namespace. 9 Beat (00–08) và hai
+  route cứu hộ `mechanical`/`manual` có bước độc lập, không trộn/đổi route, hậu quả thế
+  giới riêng (`world.fire/cart/beam/sideExit`); không cấp evidence/E02, không suy thủ phạm,
+  không biến yêu cầu giữ kín của Yosef thành quyền công bố. `phase` là giai đoạn logic tự
+  truyện, không phải preset ánh sáng runtime (`night`/`dawn` chưa có). Đã kiểm: unit
+  `test/q01-state.cjs`, regression `test/campaign.cjs`, cloud/Worker `test:backend`. Chưa
+  dựng gameplay 3D Q01 v6, chưa đóng G3/G4, chưa deploy; phần đó thuộc PR-04/05.
 
 Nguồn và phép đánh giá từng file, vị trí thay thế, hash gốc và luận cứ phương
 pháp nằm trong `registry.knowledge`. Mốc trước ở Git và cleanup-record; không

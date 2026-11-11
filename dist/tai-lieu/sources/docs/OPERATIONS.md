@@ -19,6 +19,17 @@ Không tạo worklog/plan/report riêng cho mỗi việc. Kế hoạch ngắn tr
 cho việc nhỏ; quyết định bền vững hoặc bàn giao còn mở dùng STATUS. Lịch sử chi
 tiết lấy từ Git, không nuôi nhiều sổ lặp lại cùng sự kiện.
 
+### Conditional cross-domain handoff
+
+Khi công việc chạm qua ranh giới nhiều miền, sử dụng cơ chế handoff có điều kiện (H01–H05):
+1. **Chọn primary skill:** Xác định một skill chính làm nhiệm vụ trung tâm (`change`, `content`, `environment`, `release`).
+2. **Phân loại trigger:** Xác định mã trigger tương ứng (`q01-geometry`, `q01-gameplay`, `state-save`, `visual-asset`, `release-candidate`).
+3. **Lấy context có handoff:** Chạy `npm run agent:context -- <task> --handoff <id>` để nhận readingOrder, implementation consumers, checks và update targets.
+4. **Kiểm owner/consumer và giới hạn phạm vi:** Đọc tài liệu bắt buộc của miền đối tác; chỉ rà soát tác động consumer, không tự mở rộng phạm vi chỉnh sửa.
+5. **Sửa nguồn được giao:** Chỉ chỉnh sửa các tệp thuộc phạm vi được giao trong tác vụ hiện tại.
+6. **Chạy checks theo tác động:** Chạy các bài kiểm tra được liệt kê trong hợp đồng handoff theo điều kiện `when`.
+7. **Báo lại phần đã xác nhận và phần chưa xác nhận:** Minh bạch phần đã kiểm chứng và phần còn chờ visual review, human playtest hoặc đo đạc vật lý.
+
 <a id="files"></a>
 ## Tạo, sinh và nghỉ một file
 

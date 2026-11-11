@@ -16,22 +16,34 @@
 | Bản văn, chuyển thể, nguồn nghiên cứu | [08 Scripture](the-witness/08-scripture-reference.md) / [10 Sources](the-witness/10-source-register.md) | Từng claim cần nhãn, nguồn, giới hạn |
 
 Không đọc tất cả các hàng. Chọn hàng theo phần đang sửa; nguồn kia chỉ cần khi
-thay đổi đi qua ranh giới sở hữu. Hạn chế sao chép cùng bảng chứng cứ/cốt truyện
-sang nhiều Bible; file tổng hợp dẫn link tới bảng sở hữu.
+thay đổi đi qua ranh giới sở hữu. Hồ sơ 12 sở hữu độc quyền sự thật nền, điều kiện
+chứng cứ/mệnh đề, lineage và consent; các phần tóm tắt trong hồ sơ 03 và 06 chỉ là
+hình chiếu tham chiếu phái sinh, không sở hữu luật riêng. Phân biệt quan sát vật lý
+sơ bộ B06 ở Q01 với việc xác lập E02 ở Q02; giữ ranh giới E04/Q03 với E05/Q05.
+Hạn chế sao chép cùng bảng chứng cứ/cốt truyện sang nhiều Bible; file tổng hợp dẫn link tới bảng sở hữu.
 
 <a id="contracts"></a>
 ## Dữ liệu và ranh giới thực thi
 
 Các contract ở `docs/the-witness/`:
 
-- `campaign-contract.json`: ID, route, core/gate, callback và ngân sách v3.
+- `campaign-contract.json`: ID, route, core/gate, callback và ngân sách v3 (216/720 phút là baseline blockout target của hợp đồng chưa đo).
 - `design-contract.json`: thiết kế progression, scope và manifest tài liệu xuất.
 - `depth-contract.json`, `craft-contract.json`: chỉ mục sinh từ module encounter/
   craft. Khi đổi runtime, chạy đúng producer; không sửa số đếm bằng tay để khớp.
 
-Code thực thi là content/spine/depth/relationships/craft/model. Chưa có chuyển
-đổi toàn bộ E11/E12/P05 của v6 vào runtime. Cần đọc A01 trước mọi việc thêm quest,
+Code thực thi là content/spine/depth/relationships/craft/model. Narrative Bible v6
+là nguồn thiết kế cốt truyện mới chính thức, nhưng phải tuân thủ tuyệt đối các bất biến
+trong PRODUCT (Canon Lock, Dual-Tier Persona, không mana/phép lạ, Legends không truyền
+dữ liệu sang Mortal). Chưa có chuyển đổi toàn bộ E11/E12/P05 của v6 vào runtime; các
+ID/claim này được hoãn cho tới đợt nâng cấp toàn diện. Cần đọc A01/D010 trước mọi việc thêm quest,
 vật chứng, claim hoặc thay cổng. Version truyện, game, tài liệu và save khác miền.
+
+Q01 v6 đã có state foundation trong runtime (`witness-q01-state.js` + `sceneProgress.Q01`
+của model, PR-03): 9 Beat, hai route cứu hộ và hậu quả thế giới được ghi nhớ/validate,
+nhưng gameplay 3D Q01 v6 chưa triển khai (PR-04/05). Quan sát B06 ở Q01 vẫn chỉ là sơ bộ,
+không cấp E02 (E02 thuộc Q02); không thêm evidence/claim, không suy thủ phạm từ Beat 05,
+không biến yêu cầu giữ kín của Yosef thành quyền công bố.
 
 <a id="authoring"></a>
 ## Cách thay nội dung
@@ -54,6 +66,6 @@ Atlas encounter và bảng triển khai cảnh được tạo khi cần bằng
 `outputs/reference/`. Chúng là hình chiếu của code, không phải nguồn luật thứ hai.
 Các tool vẫn cập nhật hai contract sinh tương ứng để kiểm đối chiếu.
 
-Nghiên cứu thị giác/điều khiển ở hồ sơ 14-input và nguồn 10 chỉ cung cấp luận cứ;
+Nghiên cứu thị giác/điều khiển ở [hồ sơ 24](the-witness/24-input-and-ux-research.md) và nguồn 10 chỉ cung cấp luận cứ;
 thông số camera hiện tại lấy từ engine. Các snapshot trong archive và lịch sử Git
 không được dùng để ghi đè hồ sơ đang sở hữu nội dung.

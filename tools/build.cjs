@@ -2,7 +2,7 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const root=path.resolve(__dirname,'..');
 const {prepareOutput,verifiedDossier}=require('./build-output.cjs');
 const dossier=verifiedDossier(root),out=prepareOutput(root,'dist');
-const files=['environment-references.html','index.html','kit-lab.html','kit-lab.js','witness.css','witness-content.js','witness-spine.js','witness-depth.js','witness-relationships.js','witness-craft.js','witness-workshop-ui.js','witness-model.js','witness-craft-renderer.js','witness-field-ui.js','witness-architecture.js','witness-q01.js','witness-modular-kit.js','witness-world.js','witness-ambience.js','witness-compass.js','witness-audio-library.js','witness-audio.js','witness-cloud.js','witness-app.js'];
+const files=['environment-references.html','index.html','kit-lab.html','kit-lab.js','witness.css','witness-content.js','witness-spine.js','witness-depth.js','witness-relationships.js','witness-craft.js','witness-workshop-ui.js','witness-q01-state.js','witness-model.js','witness-craft-renderer.js','witness-field-ui.js','witness-architecture.js','witness-q01.js','witness-modular-kit.js','witness-world.js','witness-ambience.js','witness-compass.js','witness-audio-library.js','witness-audio.js','witness-cloud.js','witness-app.js'];
 files.push('witness-q01-environment.js');
 for(const f of files)fs.copyFileSync(path.join(root,f),path.join(out,f));
 for(const dir of ['assets','vendor'])fs.cpSync(path.join(root,dir),path.join(out,dir),{recursive:true});

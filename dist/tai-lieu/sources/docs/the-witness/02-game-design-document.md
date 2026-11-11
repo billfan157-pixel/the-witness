@@ -4,7 +4,7 @@
 
 ## 1. Thông số nền
 
-Game phiêu lưu thám hiểm dẫn truyện điện ảnh (Cinematic Narrative Exploration RPG), góc nhìn thứ ba; single-player, chơi offline sau cài đặt. Tuyến truyện chính lấy **ba biến cố Kinh Thánh trọng tâm (Legends)** làm trục phát triển; 12 chương đời thường (Mortal World) đóng vai trò là những nhịp cầu nối kết, chuẩn bị và đáp lại.
+Game phiêu lưu thám hiểm dẫn truyện điện ảnh (Cinematic Narrative Exploration RPG), hệ thống góc nhìn kép (Dual-Perspective: góc nhìn thứ ba điều hướng mặc định, hỗ trợ góc nhìn thứ nhất đắm mình qua phím V theo thông số tầm mắt 1.58m); single-player, chơi offline sau cài đặt. Tuyến truyện chính lấy **ba biến cố Kinh Thánh trọng tâm (Legends)** làm trục phát triển; 12 chương đời thường (Mortal World) đóng vai trò là những nhịp cầu nối kết, chuẩn bị và đáp lại.
 
 > **Tuyên ngôn trải nghiệm v5.0:**  
 > Người chơi đến vì một bí ẩn. Ở lại vì con người và những nơi chốn đáng khám phá. Ra về sau ba trải nghiệm Kinh Thánh có sức nặng riêng — và một quyết định làm chứng mà không ai có thể thực hiện thay họ.
@@ -150,7 +150,7 @@ Slice cần chứng minh Legends là lõi qua hồi tưởng không gợi ý, ho
 ## 12. Cấu trúc thiết kế từng chương cầu nối (Q01–Q12)
 
 Mỗi chương cầu nối đời thường được thiết kế với một trọng tâm tương tác và thử thách riêng biệt:
-- **Q01 (Vertical Slice Mở màn — One-Shot Camera):** Cập bến cảng Sebastos hoàng hôn Địa Trung Hải; 9 nhịp phân cảnh (Beats 00–08); xoay vật thể 3D Close Inspection phát hiện vết khâu gáy lệch; cứu hộ môi trường kho cháy 3 tầng đa tuyến (xe tải đối trọng + ròng rọc cùng Titus hoặc hợp lực thợ cảng nâng xà); quan sát 4 thuộc tính giới hạn từ sân mái; hạt mầm Witness Consent từ Yosef; đối thoại cận cảnh Natan (Scene A) và sự thật im lặng T05; trạng thái kho sau cháy bền vững cùng vết cạo B06.
+- **Q01 (Vertical Slice Mở màn — One-Shot Camera):** Cập bến cảng Sebastos hoàng hôn Địa Trung Hải; 9 nhịp phân cảnh (Beats 00–08); xoay vật thể 3D Close Inspection phát hiện vết khâu gáy lệch; cứu hộ môi trường tại bốn vùng chức năng cao độ (C0 cầu cảng/sân hàng, C1 kho trệt và gác lửng cứu hộ, C-1 rãnh bảo trì ngầm, C+1 sàn tời và sân mái; không phải bốn tầng nhà độc lập xếp chồng) với đa tuyến (xe tải đối trọng C0 + ròng rọc C+1 cùng Titus hoặc hợp lực thợ cảng nâng xà sồi); quan sát 4 thuộc tính giới hạn từ sân mái C+1 (sự cố ngoài dự tính khi người thuộc mạng lưới Rufus thu hồi tài liệu theo sự thật tác giả T10; avatar tại Q01 chỉ quan sát hiện tượng, chưa thể suy luận danh tính hay vai trò của Rufus); hạt mầm Witness Consent từ Yosef; lựa chọn sinh hoạt lodging/meal; đối thoại cận cảnh Natan (Scene A) và sự thật im lặng T05; trạng thái kho sau cháy bền vững; ghi nhận hiện tượng vết cạo B06 sơ bộ (thu thập và thẩm định vật chứng E02 diễn ra tại Q02); cờ Q01.COMMITTED mở Q02.
 - **Q02:** Điều tra thực địa song hành cùng nhiệm vụ bảo vệ nhân chứng yếu thế.
 - **Q03:** Khảo sát các tuyến đường ven thành và kiểm chứng nhận định.
 - **Q04:** Phân tải vận chuyển và mở lối đi an toàn.
@@ -166,6 +166,7 @@ Mỗi chương cầu nối đời thường được thiết kế với một tr
 Hai chương liền kề không lặp lại cùng một động từ chủ đạo hay dạng chướng ngại. Mỗi nhiệm vụ cung cấp một lối đi cơ bản cho mọi cấu hình nhân vật, một lối đi biến thể đòi hỏi phối hợp kỹ năng/đồng đội, và ít nhất một hệ quả cụ thể tác động vào thế giới sau đó.
 
 ## 13. Hệ thống điều tra: Nối Claim với Nguồn chứng cứ
+*(Nguồn sở hữu duy nhất về sự thật nền, điều kiện evidence/claims, lineage và consent: [Hồ sơ 12 Continuity](12-continuity-and-state.md). Mục này chỉ mô tả đặc tả giao diện và luồng xử lý UI/UX).*
 
 Sổ tay điều tra hoạt động trên nguyên tắc đối chiếu nguồn độc lập:
 1. **Xác định mệnh đề cần kiểm chứng (Claim):** Người chơi chọn một nhận định cụ thể (P01–P04).
@@ -243,14 +244,15 @@ Không định lượng tầm vóc cốt truyện đơn thuần bằng tỷ lệ
 - Hoàn tất L04 mở khóa phương án công bố bảo toàn nhân chứng độc quyền ở Q11–Q12.
 Nhờ đó, dù chiếm thời lượng tinh gọn 25–28%, Legends nắm giữ **100% chìa khóa tư tưởng và giải pháp** cho toàn bộ cuộc điều tra thế kỷ I.
 
-### Bảng phân bổ thời lượng chiến dịch chuẩn (Tuyến tương tác tinh gọn ~10 giờ):
+### Bảng phân bổ thời lượng chiến dịch chuẩn (Đích nhịp độ biên kịch v6 ~10 giờ):
+*(Lưu ý phân tầng: Bảng dưới đây là Đích nhịp độ biên kịch tuyến chính v6 (~580 phút campaign / 145 phút Legends) — mục tiêu nhịp độ v6 chưa đo đạc qua playtest người thật; Hợp đồng v3 duy trì 720 phút / 216 phút Legends làm baseline blockout target của hợp đồng chưa đo. Khoảng chênh ~71 phút cho Legends là độ co giãn thiết kế giữa hai đề xuất biên kịch và blockout, không mặc nhiên là vùng đệm gameplay đã nghiệm thu. Cả hai là ước tính thiết kế chưa qua đo đạc playtest người thật, không thay thế lẫn nhau và không phải cam kết phát hành chính thức).*
 | Thành phần | Thời lượng mục tiêu | Tỷ trọng | Vai trò trong trải nghiệm |
 |---|---:|---:|---|
 | **3 Legends trục (L01, L02, L04)** | 55 + 48 + 42 = **145 phút** | **25%** | **Trục cốt truyện chính:** biến cố Kinh Thánh, thám hiểm nhập vai |
 | **12 Quest cầu nối (Q01–Q12)** | 120 + 130 + 110 = **360 phút** | **62%** | Cầu nối thế kỷ I: điều tra, quan hệ cộng đồng, thực thi trách nhiệm |
 | **Hành trình & Hub liên kết** | **45 phút** | **8%** | Di chuyển giữa các vùng, đời sống bến cảng và xưởng thợ |
 | **Inner Veil tự chọn** | **30 phút** | **5%** | Giấc mơ nội tâm phản tư nghệ thuật (có thể bỏ qua) |
-| **Tổng cộng** | **580 phút (~9.7 giờ)** | **100%** | Chiến dịch tinh gọn, mật độ cao, production-ready |
+| **Tổng cộng** | **580 phút (~9.7 giờ)** | **100%** | Đích nhịp độ biên kịch tinh gọn, mật độ cao |
 
 ### Bảng đối chiếu nhịp cốt lõi Level Beat (Core Beats B01–B06) của 3 Legends trục:
 

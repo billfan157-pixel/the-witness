@@ -108,5 +108,25 @@ test('production Worker and D1: authorization, durable saves, conflict and recov
       await mf.dispose();mf=new Miniflare(config);
       const response=await send('/api/saves/2');assert.equal(response.status,200);assert.equal(response.data.save.revision,14);assert.equal(response.data.save.state.flags.iteration,2);
     });
+    await t.test('Q01 v6 scene state round-trips through Worker/D1 and invalid scenes are rejected',async()=>{
+      const seq=[['disembark'],['stranger',{response:'follow'}],['ledgerSeam'],['fire'],['rescueRoute',{route:'manual'}],['rescueStep',{step:'workers'}],['rescueStep',{step:'lever'}],['rescueStep',{step:'exit'}],['rescueStep',{step:'extract'}],['rooftop'],['yosefPrivacy'],['recallT05'],['observeB06']];
+      let state=Model.beginQ01Scene(Model.fresh({name:'Scene Player'}));
+      for(const [e,p] of seq)state=Model.q01SceneEvent(state,e,p);
+      const base=(await send('/api/saves/3')).data.save?.revision||0;
+      const put=await send('/api/saves/3',{method:'PUT',data:payload(state,base)});
+      assert.equal(put.status,200);
+      const got=(await send('/api/saves/3')).data.save;
+      assert.deepEqual(got.state.sceneProgress.Q01,state.sceneProgress.Q01);
+      assert.equal(got.state.sceneProgress.Q01.rescue.route,'manual');
+      assert.equal(got.state.sceneProgress.Q01.world.beam,'moved');
+      assert.equal(got.state.sceneProgress.Q01.b06PreliminaryObserved,true);
+      const bad=Model.fresh();bad.sceneProgress={Q01:{version:2}};
+      assert.equal((await send('/api/saves/3',{method:'PUT',data:payload(bad,got.revision)})).status,422);
+      let mid=Model.beginQ01Scene(Model.fresh());
+      for(const [e,p] of seq.slice(0,6))mid=Model.q01SceneEvent(mid,e,p);
+      const base2=(await send('/api/saves/2')).data.save?.revision||0;
+      assert.equal((await send('/api/saves/2',{method:'PUT',data:payload(mid,base2)})).status,200);
+      assert.deepEqual((await send('/api/saves/2')).data.save.state.sceneProgress.Q01,mid.sceneProgress.Q01);
+    });
   }finally{await mf.dispose();fs.rmSync(dir,{recursive:true,force:true});}
 });

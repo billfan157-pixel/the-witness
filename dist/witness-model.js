@@ -5,6 +5,7 @@
   const X=root.WitnessDepth||(typeof require!=='undefined'?require('./witness-depth.js'):null);
   const R=root.WitnessRelationships||(typeof require!=='undefined'?require('./witness-relationships.js'):null);
   const C=root.WitnessCraft||(typeof require!=='undefined'?require('./witness-craft.js'):null);
+  const Q01=root.WitnessQ01State||(typeof require!=='undefined'?require('./witness-q01-state.js'):null);
   const STORE='the-witness.spine.v3', BACKUP=STORE+'.backup',LEGACY='the-witness.campaign.v2';
   const clone=x=>JSON.parse(JSON.stringify(x));
   const error=message=>{throw new Error(message);};
@@ -53,7 +54,7 @@
       pendingEscort:null,finished:false,pendingBond:null,
       campaignProgress:{requiredLegends:{}},unlockedBridgeContext:[],
       board:defaultBoard(),talked:{},quietSeen:[],workshop:{drafts:{},records:{}},craft:{looked:[],field:null},
-      migration:null,settings:defaultSettings(),lastSaved:null
+      sceneProgress:{Q01:null},migration:null,settings:defaultSettings(),lastSaved:null
     };
   }
 
@@ -231,6 +232,7 @@
 
   function commit(s,a,choice){
     const q=quest(s),ch=chapter(s);if(q.route)return;
+    if(ch.id==='Q01'&&s.sceneProgress?.Q01&&!Q01.canCommit(s.sceneProgress.Q01))error('Cảnh Q01 v6 chưa đủ điều kiện để khép chương.');
     q.route=ch.id==='Q10'&&q.plan==='conceal'?(choice||'conceal'):q.plan;
     if(ch.id==='Q01'){if(q.route==='lodging')s.resources.money--;else s.resources.food--;}
     if(ch.id==='Q02'){
@@ -247,6 +249,29 @@
     if(ch.id==='Q11'){s.flags.finalPlan=q.route;s.flags.planSnapshot={method:q.route,claims:allowedClaims(s,q.route==='distributed'?'private_group':'public'),consent:clone(s.consent)};}
     if(ch.id==='Q12'){if(!allLegends(s))error('Cần khép đủ ba chương Kinh Thánh chính trước đoạn kết.');s.finished=true;s.flags.ending=q.route;}
     s.pendingEscort=null;log(s,ch.id+'.COMMITTED',{route:q.route});
+  }
+
+  function beginQ01Scene(state){
+    const s=clone(state);
+    if(chapter(s).id!=='Q01')error('Chỉ mở cảnh Q01 v6 khi đang ở Q01.');
+    if(quest(s).route)error('Q01 đã khép, không thể mở lại cảnh v6.');
+    if(s.sceneProgress?.Q01)error('Cảnh Q01 v6 đã được kích hoạt.');
+    if(!s.sceneProgress)s.sceneProgress={Q01:null};
+    s.sceneProgress.Q01=Q01.fresh();
+    log(s,'Q01SceneStarted',{version:1});
+    return s;
+  }
+  function q01SceneEvent(state,event,payload){
+    const s=clone(state);
+    if(!s.sceneProgress?.Q01)error('Cảnh Q01 v6 chưa được kích hoạt.');
+    const next=Q01.reduce(s.sceneProgress.Q01,event,payload);
+    if(JSON.stringify(next)!==JSON.stringify(s.sceneProgress.Q01))log(s,'Q01SceneEvent',{event,beat:next.beat});
+    s.sceneProgress.Q01=next;
+    return s;
+  }
+  function q01SceneReady(state){
+    const scene=state.sceneProgress?.Q01;
+    return !!scene&&Q01.canCommit(scene);
   }
 
   function act(state,id,options={}){
@@ -620,6 +645,12 @@
         if(s.layer.craft)s.layer.craft=readCraft(s.layer.craft,s.layer.id,true);
       }
     }
+    if(raw.sceneProgress!==undefined){
+      if(!raw.sceneProgress||typeof raw.sceneProgress!=='object'||Array.isArray(raw.sceneProgress))error('Tiến độ cảnh trong bản lưu không hợp lệ.');
+      const q01=raw.sceneProgress.Q01;
+      s.sceneProgress={Q01:q01==null?null:Q01.restore(q01)};
+      if(s.quests.Q01.route&&s.sceneProgress.Q01&&!Q01.canCommit(s.sceneProgress.Q01))error('Q01 đã khép nhưng cảnh v6 chưa đủ điều kiện.');
+    }
     for(const key of ['money','food','tools'])if(!Number.isFinite(s.resources[key])||s.resources[key]<0||s.resources[key]>100)error('Tài nguyên trong bản lưu không hợp lệ.');
     s.events=Array.isArray(raw.events)?raw.events.filter(e=>e&&typeof e.type==='string').slice(-4000):[];
     s.finished=!!raw.finished&&!!s.quests.Q12.route&&allLegends(s);
@@ -735,7 +766,7 @@
   }
 
   const Model={
-    fresh,chapter,quest,actions,planAllowed,checkPuzzle,act,chooseAgain,escort,workshopState,workshopDraft,inspectDetail,detailView,fieldStart,fieldSelect,fieldAct,fieldReset,fieldStop,noteObservation,fieldFinish,
+    fresh,chapter,quest,actions,planAllowed,checkPuzzle,act,chooseAgain,escort,beginQ01Scene,q01SceneEvent,q01SceneReady,workshopState,workshopDraft,inspectDetail,detailView,fieldStart,fieldSelect,fieldAct,fieldReset,fieldStop,noteObservation,fieldFinish,
     openLayer,layerStep,closeLayer,switchLayer,summaryStep,adjustComposure,
     legendComplete,dueLegend,allLegends,attunement,kitStatus,tenets,activeTenetForChapter,
     startBond,bond,talkTopics,recordTalk,recordQuiet,

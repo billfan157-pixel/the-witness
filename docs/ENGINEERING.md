@@ -11,6 +11,7 @@ nhật thứ tự nạp, builder, standalone và consumer.
 | --- | --- |
 | Catalog và luật chapter/Legend | witness-content, witness-spine, witness-depth, witness-relationships, witness-craft |
 | State, quyền hành động, restore/save | `witness-model.js`; UI không tự bỏ qua model |
+| Q01 v6 scene state (foundation) | `witness-q01-state.js` thuần reducer; model giữ `sceneProgress.Q01` và chặn commit Q01 |
 | Điều phối và UI | witness-app, workshop-ui, field-ui, craft-renderer, witness.css |
 | Thế giới/kiến trúc | witness-world, witness-architecture, witness-q01, witness-q01-environment, witness-modular-kit |
 | Engine đọc được | `tools/environment-kit/engine-runtime.js`; build-engine ghép vào vendor/adventure-3d, giữ core pin hash |
@@ -29,6 +30,12 @@ Save hiện tại schema 2/contentVersion 3.0/campaign the-witness-spine-v3; gue
 key the-witness.spine.v3 có backup/legacy path. Đọc `restore` trước khi đổi state.
 Cloud dùng namespace account/slot, outbox bền vững, revision/CAS và mutation ID.
 Không tự chọn bản thắng bằng đồng hồ client, bỏ tombstone hoặc trộn guest/account.
+
+`sceneProgress.Q01` (PR-03) mang scene state Q01 v6 trong cùng schema 2; `null`
+nghĩa là v6 chưa kích hoạt và gameplay v3 giữ nguyên. `Model.restore` validate scene
+state nên Worker/D1 tự chấp nhận hoặc từ chối; không đổi schema, contentVersion,
+campaignId, API v1 hay namespace. Scene completion chỉ chặn commit, không phải nguồn
+quest completion thứ hai (`quests.Q01.route`/`Q01.COMMITTED` vẫn sở hữu ở model).
 
 Worker phân `/api/` sang server/api.mjs, còn lại tới ASSETS. Danh tính production
 do nền tảng cấp; demo identity chỉ ở dev. `db/schema.ts` sở hữu schema;

@@ -39,6 +39,12 @@ dữ liệu sang Mortal). Chưa có chuyển đổi toàn bộ E11/E12/P05 của
 ID/claim này được hoãn cho tới đợt nâng cấp toàn diện. Cần đọc A01/D010 trước mọi việc thêm quest,
 vật chứng, claim hoặc thay cổng. Version truyện, game, tài liệu và save khác miền.
 
+Q01 v6 đã có state foundation trong runtime (`witness-q01-state.js` + `sceneProgress.Q01`
+của model, PR-03): 9 Beat, hai route cứu hộ và hậu quả thế giới được ghi nhớ/validate,
+nhưng gameplay 3D Q01 v6 chưa triển khai (PR-04/05). Quan sát B06 ở Q01 vẫn chỉ là sơ bộ,
+không cấp E02 (E02 thuộc Q02); không thêm evidence/claim, không suy thủ phạm từ Beat 05,
+không biến yêu cầu giữ kín của Yosef thành quyền công bố.
+
 <a id="authoring"></a>
 ## Cách thay nội dung
 

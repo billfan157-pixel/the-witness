@@ -68,3 +68,38 @@ test('a failed initial session check can recover without discarding guest progre
   const c=create({model:M,storage,sessionStorage:memory(),fetch:server.fetch,onState:()=>applied++});
   try{await c.init();assert.equal(c.info().mode,'offline');assert.equal(c.localState().profile.name,'Kept Guest');const previous=applied;server.setOffline(false);await c.refresh();assert.equal(c.info().mode,'guest');assert.equal(c.localState().profile.name,'Kept Guest');assert.equal(applied,previous);}finally{c.dispose();}
 });
+const SCENE_SEQ=[['disembark'],['stranger',{response:'follow'}],['ledgerSeam'],['fire'],['rescueRoute',{route:'mechanical'}],['rescueStep',{step:'cart'}],['rescueStep',{step:'pulley'}],['rescueStep',{step:'exit'}],['rescueStep',{step:'extract'}],['rooftop'],['yosefPrivacy'],['recallT05'],['observeB06']];
+function sceneState(name,seq){let s=M.beginQ01Scene(fresh(name));for(const [e,p] of (seq||SCENE_SEQ))s=M.q01SceneEvent(s,e,p);return s;}
+test('Q01 v6 scene progress survives cloud sync and a reload without losing fields',async()=>{
+  const storage=memory(),session=memory(),server=service(),s=sceneState('Scene');
+  let c=create({model:M,storage,sessionStorage:session,fetch:server.fetch});
+  try{await c.init();c.capture(s);await c.flush();assert.equal(c.info().mode,'synced');
+    assert.deepEqual(server.slots.get('account-one:1').state.sceneProgress.Q01,s.sceneProgress.Q01);
+    c.dispose();c=create({model:M,storage,sessionStorage:session,fetch:server.fetch});await c.init();
+    assert.deepEqual(c.localState().sceneProgress.Q01,s.sceneProgress.Q01);
+    assert.equal(c.localState().sceneProgress.Q01.world.cart,'chocked');
+  }finally{c.dispose();}
+});
+test('Q01 v6 scene state survives offline outbox and a lost acknowledgement',async()=>{
+  const storage=memory(),session=memory(),server=service(),s=sceneState('Outbox',SCENE_SEQ.slice(0,2));
+  let c=create({model:M,storage,sessionStorage:session,fetch:server.fetch});
+  try{await c.init();server.setOffline(true);c.capture(s);await c.flush();assert.equal(c.info().pending,true);
+    server.setOffline(false);server.loseAck();await c.flush();assert.equal(c.info().pending,true);
+    assert.equal(server.slots.get('account-one:1').revision,1);
+    assert.deepEqual(server.slots.get('account-one:1').state.sceneProgress.Q01,s.sceneProgress.Q01);
+    c.dispose();c=create({model:M,storage,sessionStorage:session,fetch:server.fetch});await c.init();
+    assert.equal(c.info().pending,false);assert.equal(c.info().revision,1);
+    assert.deepEqual(c.localState().sceneProgress.Q01,s.sceneProgress.Q01);
+  }finally{c.dispose();}
+});
+test('Q01 v6 scene state survives a CAS conflict and chooseLocal',async()=>{
+  const server=service(),a=create({model:M,storage:memory(),sessionStorage:memory(),fetch:server.fetch}),b=create({model:M,storage:memory(),sessionStorage:memory(),fetch:server.fetch});
+  try{await a.init();await b.init();
+    const sa=sceneState('A',SCENE_SEQ.slice(0,1)),sb=sceneState('B',SCENE_SEQ.slice(0,2));
+    a.capture(sa);b.capture(sb);await a.flush();await b.flush();
+    assert.equal(b.info().mode,'conflict');assert.deepEqual(b.localState().sceneProgress.Q01,sb.sceneProgress.Q01);
+    await b.chooseLocal();const remote=server.slots.get('account-one:1').state;
+    assert.deepEqual(remote.sceneProgress.Q01,sb.sceneProgress.Q01);
+    assert.equal(remote.sceneProgress.Q01.beat,2);assert.equal(remote.sceneProgress.Q01.strangerResponse,'follow');
+  }finally{a.dispose();b.dispose();}
+});
