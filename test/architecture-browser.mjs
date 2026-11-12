@@ -10,6 +10,14 @@ async function reached(id,limit=70000){await b.wait(`phase3Engine.within(${JSON.
 async function trace(name){const frames=await b.evaluate('phase3Trace');assert(frames.length>20,'No real movement trace');
  const collisions=frames.filter(x=>x.collision),camera=frames.filter(x=>x.cameraError>.025);assert.deepEqual(collisions,[],name+' capsule penetrates a collider');assert.deepEqual(camera,[],name+' camera penetrates its clearance volume');
  const geometry=await b.evaluate('globalThis.phase3GeometryErrors??[]');assert.deepEqual(geometry,[],name+' collision against actual rendered geometry');
+ // Controls: the same predicate must still catch a deliberate overlap and stay quiet elsewhere.
+ const control=await b.evaluate(`(()=>{const G=WitnessGeometryGuard,p=phase3Engine.spatial(),cp=phase3Engine.cameraState().position;const box=(c,r=.1)=>({min:{x:c.x-r,y:c.y-r,z:c.z-r},max:{x:c.x+r,y:c.y+r,z:c.z+r}});const body={x:p.x,y:p.y+.9,z:p.z},away={x:p.x+6,y:p.y+.9,z:p.z+6};return {bodyNear:G.torsoOverlap(box(body),p),bodyFar:G.torsoOverlap(box(away),p),bodyBand:G.outsideBodyBand(box(body),p),cameraNear:G.cameraOverlap(box(cp),cp),cameraFar:G.cameraOverlap(box({x:cp.x+6,y:cp.y,z:cp.z+6}),cp)};})()`);
+ assert.equal(control.bodyNear,true,name+' guard no longer detects a deliberate body overlap');
+ assert.equal(control.bodyFar,false,name+' guard reports a body overlap six metres away');
+ assert.equal(control.bodyBand,false,name+' guard treats the player body as outside its own band');
+ assert.equal(control.cameraNear,true,name+' guard no longer detects a deliberate camera overlap');
+ assert.equal(control.cameraFar,false,name+' guard reports a camera overlap six metres away');
+ report.checks.push({name:'deliberate body and camera overlaps are still detected by the component-aware guard',...control});
  const support=[...new Set(frames.map(x=>x.supportId))],steps=support.filter(x=>x.startsWith('q01-step'));assert.equal(steps.length,18,name+' did not traverse all steps');assert(support.includes('q01-room'));assert(support.some(x=>x.startsWith('q01-roof')));
  fs.writeFileSync(path.join(out,name+'-trace.json'),JSON.stringify(frames));report.runs.push({name,frames:frames.length,supports:support,cameraCollisions:camera.length,bodyCollisions:collisions.length,independentGeometryErrors:geometry.length});return frames;
 }
@@ -27,6 +35,7 @@ async function walkKeys(goal){
  throw Error('Keyboard waypoint timeout');
 }
 try{
+ const guardSource=fs.readFileSync(new URL('./q01-geometry-guard.cjs',import.meta.url),'utf8');
  const geometryHook=`
   const originalHook=AdventureVisuals.createPipeline;
   AdventureVisuals.createPipeline=(T,renderer,quality)=>{
@@ -37,19 +46,21 @@ try{
      if(lastGroup!==ar.group){lastGroup=ar.group;boxes=[];ar.group.traverse(o=>{if(!o.isMesh)return;
       o.geometry.computeBoundingBox();
       if(o.isInstancedMesh){for(let i=0;i<o.count;i++){o.getMatrixAt(i,im);ib.copy(o.geometry.boundingBox).applyMatrix4(im).applyMatrix4(o.matrixWorld);boxes.push({name:o.name+'#'+i,box:ib.clone()});}}
-      else boxes.push({name:o.name,box:new T.Box3().setFromObject(o,true)});});}
+      else{const parts=WitnessGeometryGuard.partBoxes(o);
+       if(parts)for(const part of parts){const b=new T.Box3(new T.Vector3(part.min[0],part.min[1],part.min[2]),new T.Vector3(part.max[0],part.max[1],part.max[2]));b.applyMatrix4(o.matrixWorld);boxes.push({name:o.name+'#'+part.id,box:b});}
+       else boxes.push({name:o.name,box:new T.Box3().setFromObject(o,true)});}});}
      const errors=[];v.copy(camera.position);
      for(const {name,box}of boxes){
-      if(box.distanceToPoint(v)<.16)errors.push('camera:'+name);
-      if(box.max.y<=p.y+.23||box.min.y>=p.y+1.65||box.max.y<=p.y+.32)continue;
-      const dx=p.x-Math.max(box.min.x,Math.min(box.max.x,p.x)),dz=p.z-Math.max(box.min.z,Math.min(box.max.z,p.z));if(dx*dx+dz*dz<.28**2)errors.push('torso:'+name);
+      if(WitnessGeometryGuard.cameraOverlap(box,v))errors.push('camera:'+name);
+      if(WitnessGeometryGuard.outsideBodyBand(box,p))continue;
+      if(WitnessGeometryGuard.torsoOverlap(box,p))errors.push('torso:'+name);
      }
      ray.set(new T.Vector3(p.x,p.y+.07,p.z),down);ray.far=.12;const ground=scene.getObjectByName('witness-terrain'),hits=ray.intersectObjects([ground,ar.group],true),hit=hits[0];
      if(!hit||Math.abs(hit.point.y-p.y)>.025)errors.push('unsupported-feet');
      if(errors.length){globalThis.phase3GeometryErrors??=[];phase3GeometryErrors.push({p,camera:{...camera.position},errors,feet:hits.slice(0,3).map(h=>({name:h.object.name,y:+h.point.y.toFixed(4),d:+h.distance.toFixed(4)}))});}
     }return result;};return pipeline;
   };`;
- await b.send('Page.addScriptToEvaluateOnNewDocument',{source:hook.replace('const e=make',geometryHook+';const e=make')});await b.seed(M.fresh());
+ await b.send('Page.addScriptToEvaluateOnNewDocument',{source:'(function(){'+guardSource+'})();'+hook.replace('const e=make',geometryHook+';const e=make')});await b.seed(M.fresh());
  const before=await b.read(),stable=s=>({quests:s.quests,evidence:s.evidence,consent:s.consent,skills:s.skills,resources:s.resources});
  await b.evaluate('phase3Trace=[]');await go('architecture:roof-rack');await reached('architecture:roof-rack');
  await b.shot('third-roof.png');await trace('third-up');

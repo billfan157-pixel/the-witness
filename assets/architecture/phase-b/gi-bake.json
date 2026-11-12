@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "algorithm": "q01-aabb-diffuse-pathtrace-sh9-v1",
-  "sourceHash": "3edfe19cdce74a6e0056bd80b9d68e7da4de9020d95d82f42181168e95d607f6",
-  "generatedAt": "2026-11-10T06:20:36.488Z",
+  "sourceHash": "b12013f4d58ed769d5fbaf88d76971b8e58cb0cf4354ea4c7e594e07b849d890",
+  "generatedAt": "2026-11-12T07:42:32.293Z",
   "runtime": {
     "node": "v24.14.1",
     "platform": "win32",
     "architecture": "x64"
   },
-  "seconds": 16.928145400000002,
+  "seconds": 13.7958812,
   "scene": {
     "source": "WitnessArchitecture.create({height:()=>-.12}); WitnessQ01Environment.bakeBoxes(ar); WitnessQ01Environment.lamps",
-    "bakerSha256": "2a2e325dce5052039a305d0a55ba74e9d6cc3d4297d2be2c182146356083469e",
+    "bakerSha256": "b5ebf7f7d0a219fb62c5df5d21e9969995a47022bb7c934708db4abf66f857a7",
     "sceneInputSha256": "76125f8bebf09e786b719eb9d96e099e63445562e8645bf885701fe1cda93ae3",
     "datumY": 0,
     "boxCount": 61,
@@ -291,7 +291,8 @@
   "asset": {
     "path": "vendor/witness-q01-gi-data.js",
     "bytes": 54453,
-    "sha256": "cf436a107a2ef7f5bdad4cc11d1d118cde5c4271039f27e77102473384113261"
+    "sha256": "5e9ab9db3d74831e284a17d3863b3639172c94e17c5bf0ccab807e468de0a2b3",
+    "lineEndings": "normalised"
   },
   "selfTest": {
     "passed": true,
@@ -360,7 +361,7 @@
   },
   "scenarios": {
     "day": {
-      "seconds": 10.448953099999999,
+      "seconds": 4.921685500000001,
       "pixelSha256": "b36bc015fa30208d70974b8e392f544b036d3b8bef94e42cf9521ae642a9f899",
       "maxQuantizationError": 0.003034037655656005,
       "maxDecodedSixAxisIrradianceError": 0.004869008084814323,
@@ -436,7 +437,7 @@
       }
     },
     "evening": {
-      "seconds": 6.302808700000002,
+      "seconds": 8.676056599999999,
       "pixelSha256": "1c3e8bb4b7d35510b427395756eae4e3fa926ddf148897dbb7046a46a382350d",
       "maxQuantizationError": 0.014731927168802172,
       "maxDecodedSixAxisIrradianceError": 0.026300756430456942,

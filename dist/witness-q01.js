@@ -73,13 +73,17 @@
     group.traverse(mesh=>{if(mesh.isMesh&&!mesh.isInstancedMesh)meshes.push(mesh);});
     for(const mesh of meshes){
       if(Array.isArray(mesh.material)||mesh.name==='q01-oil-flame'||mesh.name==='q01-drying-linen'||!mesh.geometry?.attributes?.position)continue;
-      const key=mesh.material.uuid;if(!batches.has(key))batches.set(key,{material:mesh.material,parts:[]});
+      const key=mesh.material.uuid;if(!batches.has(key))batches.set(key,{material:mesh.material,parts:[],boxes:[]});
       // Nested part groups are flattened with their world transform baked in.
       const matrix=new T.Matrix4().multiplyMatrices(toGroup,mesh.matrixWorld);
       const g=(mesh.geometry.index?mesh.geometry.toNonIndexed():mesh.geometry.clone()).applyMatrix4(matrix);
+      // Keep every merged mesh's own box. One merged envelope would cover the whole store and
+      // report collisions that no authored mesh occupies; consumers measure these boxes instead.
+      g.computeBoundingBox();
+      batches.get(key).boxes.push({id:mesh.name,min:g.boundingBox.min.toArray(),max:g.boundingBox.max.toArray()});
       batches.get(key).parts.push(g);mesh.removeFromParent();mesh.geometry.dispose();
     }
-    for(const {material,parts}of batches.values()){
+    for(const {material,parts,boxes}of batches.values()){
       const g=new T.BufferGeometry();
       for(const name of ['position','normal','uv']){
         if(parts.some(p=>!p.attributes[name]))continue;
@@ -87,7 +91,7 @@
         for(const p of parts){const attribute=p.attributes[name];arr.set(attribute.array,at);at+=p.attributes.position.count*size;}g.setAttribute(name,new T.BufferAttribute(arr,size));
       }
       if(g.attributes.uv)g.setAttribute('uv1',g.attributes.uv.clone());g.computeBoundingSphere();
-      const m=new T.Mesh(g,material);m.name='q01-batched-'+material.name;m.castShadow=m.receiveShadow=true;group.add(m);parts.forEach(p=>p.dispose());
+      const m=new T.Mesh(g,material);m.name='q01-batched-'+material.name;m.castShadow=m.receiveShadow=true;m.userData.batchParts=boxes;group.add(m);parts.forEach(p=>p.dispose());
     }
   }
   function install({T,scene,height,architecture,state}){

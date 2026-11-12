@@ -1,0 +1,21 @@
+# Text is checked out with LF on every platform. The build compares byte hashes of
+# generated sources, so a CRLF checkout must not change what those hashes cover.
+* text=auto eol=lf
+
+# Binary assets keep their bytes exactly as stored.
+*.png binary
+*.jpg binary
+*.webp binary
+*.gif binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.glb binary
+*.ktx2 binary
+*.wasm binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.docx binary
+*.zip binary
+*.pdf binary

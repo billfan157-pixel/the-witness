@@ -4,6 +4,7 @@
   "baselineDate": "2026-11-10",
   "baselineHead": "ac01bccc0bceb02e56e15b2a0ebd4539bed740df",
   "rootFiles": [
+    ".gitattributes",
     ".gitignore",
     "AGENTS.md",
     "README.md",
@@ -55,6 +56,13 @@
       "kind": "config",
       "admission": true,
       "reason": "Sites hosting source, never credentials"
+    },
+    {
+      "prefix": ".github/",
+      "owner": "release",
+      "kind": "config",
+      "admission": true,
+      "reason": "Continuous integration that runs the contract, build and browser gates on every change"
     },
     {
       "prefix": "assets/",
@@ -348,9 +356,39 @@
   ],
   "admissions": [
     {
+      "path": ".github/workflows/ci.yml",
+      "owner": "release",
+      "reason": "CI that runs governance, unit, backend, build and output checks plus the architecture gate on Linux and a Windows checkout build"
+    },
+    {
+      "path": "tools/run-checks.cjs",
+      "owner": "build-and-tooling",
+      "reason": "Runs a group of scripted checks from Node so npm scripts stay single commands and a failing step stops the rest with a real exit code"
+    },
+    {
+      "path": ".gitattributes",
+      "owner": "repository-maintenance",
+      "reason": "Pins text to LF on every platform so the byte-hash guards of the GI bake and the engine build cover the same content in a Windows and a Linux checkout"
+    },
+    {
       "path": "docs/environment-kit/validation/q01-pr04/verification.json",
       "owner": "environment-qa",
       "reason": "Actual PR-04 candidate evidence from the shared-engine browser suite: source/offline hashes, hardware, eight routes and resource release; no art or story acceptance"
+    },
+    {
+      "path": "docs/environment-kit/validation/q01-pr04-764dc8a/verification.json",
+      "owner": "environment-qa",
+      "reason": "Re-verification evidence bound to SHA 764dc8a: greybox web/offline runs, build revision, source hashes, hardware and the PR-04 comparison; records the failing legacy architecture gate and its limits"
+    },
+    {
+      "path": "docs/environment-kit/validation/q01-pr04-764dc8a/comparison.md",
+      "owner": "environment-qa",
+      "reason": "Readable comparison between the PR-04 candidate and SHA 764dc8a with the four findings and the scope limits of that comparison"
+    },
+    {
+      "path": "docs/environment-kit/validation/q01-pr04-1a/verification.json",
+      "owner": "environment-qa",
+      "reason": "PR-04.1A evidence: the legacy architecture gate passes on the batching commit with per-mesh measurement, seven in-scene deliberate-overlap controls, the unit, backend, build-output and graphics regressions, and the scope limits"
     },
     {
       "path": "witness-q01-greybox.js",
@@ -503,6 +541,16 @@
       "reason": "Unit coverage for the Q01 v6 scene reducer: beat order, rescue routes, world persistence and save validation"
     },
     {
+      "path": "test/q01-geometry-guard.cjs",
+      "owner": "environment-qa",
+      "reason": "Shared component-aware collision measurement for batched Q01 geometry, used by the architecture gate and by its deliberate-overlap controls"
+    },
+    {
+      "path": "test/q01-geometry.cjs",
+      "owner": "environment-qa",
+      "reason": "Negative and positive controls for batched Q01 geometry: per-mesh boxes are kept, the merged envelope is the false positive, and a deliberate overlap is still reported"
+    },
+    {
       "path": "tools/build-output.cjs",
       "owner": "repository-maintenance",
       "reason": "Shared bounded output reset and optional reader freshness verification"
@@ -521,6 +569,16 @@
       "path": "docs/the-witness/PRODUCTION_STATUS_AND_CHANGELOG.md",
       "owner": "domain-documentation",
       "reason": "Technical production status, runtime gap analysis, gates and version changelog separated from design bibles"
+    },
+    {
+      "path": "test/ci-workflow.cjs",
+      "owner": "release",
+      "reason": "Local guard for the GitHub Actions workflow: it must keep calling existing npm scripts and real paths, must not swallow a failing gate, and must force software rendering for the browser gate"
+    },
+    {
+      "path": ".github/workflows/architecture-gate.yml",
+      "owner": "release",
+      "reason": "On-demand run of the heaviest browser gate on the software rasteriser, kept out of the push pipeline because a CPU walk of the whole Q01 route takes far longer than the other checks"
     }
   ],
   "requiredFiles": [

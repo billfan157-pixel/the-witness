@@ -1,0 +1,636 @@
+{
+  "version": "q01-pr04-recheck-764dc8a-1",
+  "sha": "764dc8a6284734b021415d6ce2ea506d8c5698e9",
+  "commitSubject": "feat(q01): greybox PR-04 candidate, story/design sync, and graphics Phase 0",
+  "url": "http://127.0.0.1:8035/dist/q01-greybox.html",
+  "scope": "Actual shared engine, hardware WebGL, continuous walking and rendered-box/ray checks. Scripted input; 4x animation clock with unchanged controller and capsule substeps. Not a timing/FPS measure, human playtest, final art or production acceptance.",
+  "runDate": "2026-11-12",
+  "status": "passed-with-findings",
+  "buildRevision": "469e18d00673",
+  "totalFrames": 15886,
+  "visualCombinations": 16,
+  "runs": [
+    {
+      "kind": "web",
+      "route": "mechanical",
+      "view": "third",
+      "frames": 1922,
+      "supports": [
+        "q01-quay",
+        "world",
+        "q01-step-0",
+        "q01-step-2",
+        "q01-step-3",
+        "q01-step-4",
+        "q01-step-5",
+        "q01-step-6",
+        "q01-step-8",
+        "q01-step-9",
+        "q01-step-10",
+        "q01-step-12",
+        "q01-landing",
+        "q01-mezzanine",
+        "q01-step-1",
+        "q01-step-11",
+        "q01-step-13",
+        "q01-roof-main",
+        "q01-step-7",
+        "q01-room",
+        "q01-drain"
+      ],
+      "actors": {
+        "titus": {
+          "x": -24.41726519407428,
+          "y": 5.04,
+          "z": -17.524187511522157
+        },
+        "simeon": {
+          "x": -25.114835670509493,
+          "y": 5.04,
+          "z": -17.531953751866613
+        },
+        "apprentice": {
+          "x": -23.7295632809826,
+          "y": 5.04,
+          "z": -17.53065821731529
+        }
+      },
+      "geometryErrors": 0,
+      "cameraErrors": 0,
+      "lightsReviewed": [
+        "day",
+        "evening"
+      ]
+    },
+    {
+      "kind": "web",
+      "route": "manual",
+      "view": "first",
+      "frames": 2089,
+      "supports": [
+        "q01-quay",
+        "world",
+        "q01-room",
+        "q01-step-0",
+        "q01-step-1",
+        "q01-step-2",
+        "q01-step-3",
+        "q01-step-4",
+        "q01-step-5",
+        "q01-step-7",
+        "q01-step-8",
+        "q01-step-9",
+        "q01-step-10",
+        "q01-step-11",
+        "q01-step-12",
+        "q01-step-13",
+        "q01-mezzanine",
+        "q01-step-6",
+        "q01-roof-main",
+        "q01-landing",
+        "q01-drain"
+      ],
+      "actors": {
+        "titus": {
+          "x": -24.403656050324663,
+          "y": 5.04,
+          "z": -17.505118470454534
+        },
+        "simeon": {
+          "x": -25.116879729069677,
+          "y": 5.04,
+          "z": -17.537468157162373
+        },
+        "apprentice": {
+          "x": -23.72236891565488,
+          "y": 5.04,
+          "z": -17.52327307640307
+        }
+      },
+      "geometryErrors": 0,
+      "cameraErrors": 0,
+      "lightsReviewed": [
+        "day",
+        "evening"
+      ]
+    },
+    {
+      "kind": "web",
+      "route": "mechanical",
+      "view": "first",
+      "frames": 2003,
+      "supports": [
+        "q01-quay",
+        "world",
+        "q01-step-0",
+        "q01-step-1",
+        "q01-step-2",
+        "q01-step-3",
+        "q01-step-5",
+        "q01-step-6",
+        "q01-step-7",
+        "q01-step-8",
+        "q01-step-10",
+        "q01-step-11",
+        "q01-step-12",
+        "q01-step-13",
+        "q01-landing",
+        "q01-mezzanine",
+        "q01-step-9",
+        "q01-roof-main",
+        "q01-step-4",
+        "q01-room",
+        "q01-drain"
+      ],
+      "actors": {
+        "titus": {
+          "x": -24.410283841271994,
+          "y": 5.04,
+          "z": -17.514555947906235
+        },
+        "simeon": {
+          "x": -25.099999999999998,
+          "y": 5.04,
+          "z": -17.5
+        },
+        "apprentice": {
+          "x": -23.712271875647808,
+          "y": 5.04,
+          "z": -17.512902285675906
+        }
+      },
+      "geometryErrors": 0,
+      "cameraErrors": 0,
+      "lightsReviewed": [
+        "day",
+        "evening"
+      ]
+    },
+    {
+      "kind": "web",
+      "route": "manual",
+      "view": "third",
+      "frames": 1978,
+      "supports": [
+        "q01-quay",
+        "world",
+        "q01-room",
+        "q01-step-0",
+        "q01-step-1",
+        "q01-step-2",
+        "q01-step-3",
+        "q01-step-4",
+        "q01-step-5",
+        "q01-step-6",
+        "q01-step-8",
+        "q01-step-9",
+        "q01-step-10",
+        "q01-step-11",
+        "q01-step-13",
+        "q01-mezzanine",
+        "q01-step-7",
+        "q01-step-12",
+        "q01-roof-main",
+        "q01-landing",
+        "q01-drain"
+      ],
+      "actors": {
+        "titus": {
+          "x": -24.403610703029873,
+          "y": 5.04,
+          "z": -17.50507800076703
+        },
+        "simeon": {
+          "x": -25.108189768912574,
+          "y": 5.04,
+          "z": -17.518027739768975
+        },
+        "apprentice": {
+          "x": -23.7,
+          "y": 5.04,
+          "z": -17.5
+        }
+      },
+      "geometryErrors": 0,
+      "cameraErrors": 0,
+      "lightsReviewed": [
+        "day",
+        "evening"
+      ]
+    },
+    {
+      "kind": "offline",
+      "route": "mechanical",
+      "view": "third",
+      "frames": 2006,
+      "supports": [
+        "q01-quay",
+        "world",
+        "q01-step-1",
+        "q01-step-2",
+        "q01-step-4",
+        "q01-step-6",
+        "q01-step-7",
+        "q01-step-9",
+        "q01-step-11",
+        "q01-step-13",
+        "q01-landing",
+        "q01-mezzanine",
+        "q01-step-3",
+        "q01-step-5",
+        "q01-step-8",
+        "q01-step-10",
+        "q01-step-12",
+        "q01-roof-main",
+        "q01-step-0",
+        "q01-room",
+        "q01-drain"
+      ],
+      "actors": {
+        "titus": {
+          "x": -24.422453293509488,
+          "y": 5.04,
+          "z": -17.531434610913287
+        },
+        "simeon": {
+          "x": -25.099999999999998,
+          "y": 5.04,
+          "z": -17.5
+        },
+        "apprentice": {
+          "x": -23.7,
+          "y": 5.04,
+          "z": -17.5
+        }
+      },
+      "geometryErrors": 0,
+      "cameraErrors": 0,
+      "lightsReviewed": [
+        "day",
+        "evening"
+      ]
+    },
+    {
+      "kind": "offline",
+      "route": "manual",
+      "view": "first",
+      "frames": 1912,
+      "supports": [
+        "q01-quay",
+        "world",
+        "q01-room",
+        "q01-step-0",
+        "q01-step-1",
+        "q01-step-2",
+        "q01-step-3",
+        "q01-step-4",
+        "q01-step-5",
+        "q01-step-6",
+        "q01-step-7",
+        "q01-step-9",
+        "q01-step-10",
+        "q01-step-12",
+        "q01-step-13",
+        "q01-mezzanine",
+        "q01-step-8",
+        "q01-step-11",
+        "q01-roof-main",
+        "q01-landing",
+        "q01-drain"
+      ],
+      "actors": {
+        "titus": {
+          "x": -24.40365358625688,
+          "y": 5.04,
+          "z": -17.505200897107073
+        },
+        "simeon": {
+          "x": -25.099999999999998,
+          "y": 5.04,
+          "z": -17.5
+        },
+        "apprentice": {
+          "x": -23.70281334725133,
+          "y": 5.04,
+          "z": -17.502929237342965
+        }
+      },
+      "geometryErrors": 0,
+      "cameraErrors": 0,
+      "lightsReviewed": [
+        "day",
+        "evening"
+      ]
+    },
+    {
+      "kind": "offline",
+      "route": "mechanical",
+      "view": "first",
+      "frames": 1927,
+      "supports": [
+        "q01-quay",
+        "world",
+        "q01-step-1",
+        "q01-step-2",
+        "q01-step-3",
+        "q01-step-4",
+        "q01-step-5",
+        "q01-step-6",
+        "q01-step-8",
+        "q01-step-9",
+        "q01-step-10",
+        "q01-step-11",
+        "q01-step-12",
+        "q01-landing",
+        "q01-mezzanine",
+        "q01-step-0",
+        "q01-step-7",
+        "q01-step-13",
+        "q01-roof-main",
+        "q01-room",
+        "q01-drain"
+      ],
+      "actors": {
+        "titus": {
+          "x": -24.40518474412655,
+          "y": 5.04,
+          "z": -17.507271636174153
+        },
+        "simeon": {
+          "x": -25.099999999999998,
+          "y": 5.04,
+          "z": -17.5
+        },
+        "apprentice": {
+          "x": -23.72064297011718,
+          "y": 5.04,
+          "z": -17.52151040769194
+        }
+      },
+      "geometryErrors": 0,
+      "cameraErrors": 0,
+      "lightsReviewed": [
+        "day",
+        "evening"
+      ]
+    },
+    {
+      "kind": "offline",
+      "route": "manual",
+      "view": "third",
+      "frames": 2049,
+      "supports": [
+        "q01-quay",
+        "world",
+        "q01-room",
+        "q01-step-0",
+        "q01-step-1",
+        "q01-step-3",
+        "q01-step-4",
+        "q01-step-5",
+        "q01-step-6",
+        "q01-step-8",
+        "q01-step-9",
+        "q01-step-10",
+        "q01-step-11",
+        "q01-step-12",
+        "q01-step-13",
+        "q01-mezzanine",
+        "q01-step-2",
+        "q01-step-7",
+        "q01-roof-main",
+        "q01-landing",
+        "q01-drain"
+      ],
+      "actors": {
+        "titus": {
+          "x": -24.413127468022758,
+          "y": 5.04,
+          "z": -17.518495463917453
+        },
+        "simeon": {
+          "x": -25.112999141400362,
+          "y": 5.04,
+          "z": -17.528237317881718
+        },
+        "apprentice": {
+          "x": -23.703529624821456,
+          "y": 5.04,
+          "z": -17.503675517019182
+        }
+      },
+      "geometryErrors": 0,
+      "cameraErrors": 0,
+      "lightsReviewed": [
+        "day",
+        "evening"
+      ]
+    }
+  ],
+  "checks": [
+    "W input, continuous guidance and collision-backed mechanisms",
+    "Two route-specific physical states remain independent",
+    "C0→C1→C+1→C1→C+1→C0 and optional C−1",
+    "Three actual proxy actors reach the roof without teleporting",
+    "First/third camera, day/evening views, rendered geometry ray checks",
+    "No campaign save writes"
+  ],
+  "sources": {
+    "witness-q01-greybox.js": "85b3910244738693aa1d6bf062654cbe4c8340e5d938959045ce40028080876d",
+    "witness-architecture.js": "95870c545a87d905745ddf6dc092a0c82d4609524c0d5ccb77809c4e1b29a914",
+    "q01-greybox-lab.js": "24c6f2ccac18821f9dac515d3a2f0003e54a832846a2a3012a43ea599a094d30",
+    "q01-greybox.html": "5dcc15b6de0b630593c9fa0e746024332458e1c3e6137a62f56ed03fc43213fc",
+    "witness-q01-environment.js": "95e520afd493723c17de339188edceb0e1326e2365e4ea406a2dd65d0e39daac",
+    "witness-q01-state.js": "b69256a1a04c06ba7f4760e561ba41e0b103a48e2c4b0c7157f33e22d4a61e63",
+    "vendor/adventure-3d.js": "320c37b9f946776a0f59e9fd50d38d5a9425850e743bf0b9922616ba9275444e"
+  },
+  "sourceNote": "Hashes are the bytes the browser run actually loaded. vendor/adventure-3d.js is the engine producer output (CRLF); the committed copy is the same content with LF endings (sha256 15416fe8df29646ed2d71687a2eec91bccd5bca2e7f7a63a1516d47c625e257b). The PR-04 candidate recorded the same CRLF hash.",
+  "offlineSha256": "da713d361ca2c11df88eac7747b2c4923c4130a8f37c65f690b2acce9512112b",
+  "lifecycle": {
+    "cycles": [
+      {
+        "mounted": {
+          "texture": 1,
+          "buffer": 37,
+          "vao": 17
+        },
+        "released": {
+          "texture": 0,
+          "buffer": 0,
+          "vao": 0
+        },
+        "triangles": 8592,
+        "drawMeshes": 77
+      },
+      {
+        "mounted": {
+          "texture": 1,
+          "buffer": 37,
+          "vao": 17
+        },
+        "released": {
+          "texture": 0,
+          "buffer": 0,
+          "vao": 0
+        },
+        "triangles": 8592,
+        "drawMeshes": 77
+      },
+      {
+        "mounted": {
+          "texture": 1,
+          "buffer": 37,
+          "vao": 17
+        },
+        "released": {
+          "texture": 0,
+          "buffer": 0,
+          "vao": 0
+        },
+        "triangles": 8592,
+        "drawMeshes": 77
+      },
+      {
+        "mounted": {
+          "texture": 1,
+          "buffer": 37,
+          "vao": 17
+        },
+        "released": {
+          "texture": 0,
+          "buffer": 0,
+          "vao": 0
+        },
+        "triangles": 8592,
+        "drawMeshes": 77
+      }
+    ],
+    "scope": "Actual WebGL allocations made by the temporary level; all returned to zero while the original scene stayed alive"
+  },
+  "environment": {
+    "width": 1440,
+    "height": 900,
+    "gpu": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "command": "WITNESS_GREYBOX_URL=http://127.0.0.1:8035/dist/q01-greybox.html WITNESS_GREYBOX_OFFLINE=<repo>/dist/q01-greybox-offline.html WITNESS_GREYBOX_OUT=outputs/agent-work/verify-764dc8a-20261112/greybox node test/q01-greybox-browser.mjs",
+  "modelVerification": {
+    "command": "npm test",
+    "scriptFiles": 11,
+    "result": "passed",
+    "note": "npm-runner stall on this Windows host; each script file was executed in order and all exited 0 (see logs/step01..step11)."
+  },
+  "regressions": {
+    "legacyArchitecture": {
+      "status": "failed",
+      "build": "469e18d00673",
+      "error": "third-up collision against actual rendered geometry",
+      "offendingMeshes": [
+        "q01-batched-q01-b-rubble",
+        "q01-batched-q01-b-stone"
+      ],
+      "position": {
+        "x": -23.604812631848414,
+        "y": 3.464334546821217,
+        "z": -15.001229059831218,
+        "supportId": "q01-roof-main"
+      },
+      "completedChecks": 0,
+      "pr04CandidateSameDay": {
+        "status": "passed",
+        "build": "e5bf8b4d1450",
+        "runs": 7,
+        "frames": 1918,
+        "bodyCollisions": 0,
+        "cameraCollisions": 0,
+        "independentGeometryErrors": 0,
+        "checks": 8
+      }
+    },
+    "graphics": {
+      "status": "passed",
+      "build": "469e18d00673",
+      "scenes": [
+        "coast-ultra",
+        "road-high",
+        "night-ultra",
+        "mobile-balanced"
+      ],
+      "glError": 0,
+      "coldStandalone": true
+    },
+    "backend": {
+      "status": "passed",
+      "checks": 28
+    },
+    "governance": {
+      "status": "passed",
+      "checks": 39
+    },
+    "buildOutput": {
+      "status": "passed",
+      "checks": 9
+    },
+    "contract": {
+      "status": "passed",
+      "assertions": 581
+    }
+  },
+  "comparisonToPr04": {
+    "candidate": "local/checkouts/q01-pr04-20261111",
+    "candidateBuildRevision": "e5bf8b4d1450",
+    "candidateOfflineSha256": "7ba70bc0bc817457728b455ffd379c90a7579dd12da38284e7fdb2c946e57f7e",
+    "candidateArchitectureSha256": "6b785198449978432b6d78aaafa0b71ca677236417622186bd33dc48691ed53a",
+    "currentArchitectureSha256": "95870c545a87d905745ddf6dc092a0c82d4609524c0d5ccb77809c4e1b29a914",
+    "greyboxStatus": "identical-pass",
+    "supportSetsIdentical": true,
+    "maxActorDeltaMetres": 0.0416,
+    "geometryErrors": 0,
+    "cameraErrors": 0,
+    "lifecycleIdentical": true,
+    "framesPr04": 13827,
+    "framesCurrent": 15886,
+    "offlineSha256Differs": true,
+    "changedSource": "witness-architecture.js (static batching added by this commit)",
+    "legacyArchitectureGate": "candidate passes, current fails"
+  },
+  "findings": [
+    {
+      "id": "F01",
+      "severity": "blocking",
+      "title": "test:architecture-browser fails on this commit",
+      "detail": "The static batching added in witness-architecture.js merges every mesh that shares a material into one mesh, so the rendered-geometry guard now measures one inflated AABB per material instead of the authored part boxes. The Q01 roof walk is reported as torso collisions against q01-batched-q01-b-rubble and q01-batched-q01-b-stone. The PR-04 candidate (same machine, same day, same script) passes the same gate with 7 runs and 0 body/camera/geometry errors.",
+      "impact": "Physics still uses the unbatched solids list, so this is a gate/measurement defect, not a proven in-game overlap. The legacy Q01 architecture gate cannot be closed on this commit until the guard measures per-part boxes.",
+      "evidence": "outputs/agent-work/verify-764dc8a-20261112/architecture/browser-failure.json and outputs/agent-work/verify-764dc8a-20261112/architecture-pr04-candidate/browser.json"
+    },
+    {
+      "id": "F02",
+      "severity": "high",
+      "title": "A fresh checkout cannot pass the build GI hash guard on Windows",
+      "detail": "core.autocrlf=true and there is no .gitattributes, so vendor/witness-q01-gi-data.js is checked out with 5 CRLF line endings (sha256 d511e08ceeb8aa48...). The tracked evidence assets/architecture/phase-b/gi-bake.json records the LF hash cf436a107a2ef7f5..., so tools/bake-q01-gi.cjs --check fails and npm run build stops before the engine build.",
+      "impact": "The build only reproduces from a working tree whose byte layout matches the committed blobs; a plain clone on this host cannot build.",
+      "evidence": "outputs/agent-work/verify-764dc8a-20261112/logs/build-bake-gi-check.log and the worktree used for the comparison"
+    },
+    {
+      "id": "F03",
+      "severity": "medium",
+      "title": "Committed dist/ is not byte-reproducible from the sources",
+      "detail": "A fresh build of 764dc8a reports the committed revision 469e18d00673 and rewrites 54 tracked files. git diff --ignore-cr-at-eol reports zero differences: the content is identical, only CR-at-EOL differs between the LF sources and the committed generated copies.",
+      "impact": "Build outputs are reproducible in content but not in bytes; hash comparisons of dist/ need line-ending normalisation.",
+      "evidence": "outputs/agent-work/verify-764dc8a-20261112/logs/build-build.log"
+    },
+    {
+      "id": "F04",
+      "severity": "medium",
+      "title": "npm script chains stall on this host",
+      "detail": "npm test (and any npm script whose body is a long && chain) starts and then stops after the pretest hook: the spawned cmd.exe keeps no child process and never exits. Running the same script file by file (11 files, 48.3 s) passes with exit 0, and single-command npm scripts (npm run test:backend, npm run test:build-output, npm run test:q01-state) complete normally.",
+      "impact": "Verification results are valid; the npm wrapper hang is an environment interaction, not a repository failure.",
+      "evidence": "outputs/agent-work/verify-764dc8a-20261112/logs/step01..step11-*.log and npm-test-raw.log"
+    }
+  ],
+  "limits": [
+    "Scripted input on the shared engine; not a human playtest and not an FPS or duration measurement.",
+    "No art approval, G3/G4 closure, story acceptance or deployment evidence is implied.",
+    "The legacy architecture gate is red on this commit, so the overall commit is not a release candidate.",
+    "Heavy artefacts (images, traces, logs) stay in outputs/agent-work/verify-764dc8a-20261112 and are not committed."
+  ]
+}

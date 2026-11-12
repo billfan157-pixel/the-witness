@@ -1,0 +1,168 @@
+{
+  "version": "q01-pr04-1a-geometry-1",
+  "runDate": "2026-11-12",
+  "baseSha": "764dc8a6284734b021415d6ce2ea506d8c5698e9",
+  "buildRevision": "ffe9f4976a90",
+  "status": "passed",
+  "scope": "Component-aware collision measurement for batched Q01 geometry. Scripted input on the shared engine with hardware WebGL; the deliberate-overlap controls run inside the live scene. Not a human playtest, not an FPS or duration measure, not an art or story acceptance.",
+  "change": {
+    "producer": "witness-q01.js: WitnessQ01.batch keeps every merged mesh own box in userData.batchParts (group-local); batching, draw calls and rendered geometry are unchanged.",
+    "measurement": "test/q01-geometry-guard.cjs holds the shared measurement; test/architecture-browser.mjs measures the per-mesh boxes with the unchanged thresholds (body 0.28 m, body band 0.23-1.65 m, camera 0.16 m).",
+    "controls": "test/q01-geometry.cjs proves the merged envelope is the false positive and that a body inside a part is still reported; every recorded walk also checks one deliberate body overlap, one deliberate camera overlap and one overlap six metres away."
+  },
+  "architectureGate": {
+    "status": "passed",
+    "runs": 7,
+    "frames": 1966,
+    "bodyCollisions": 0,
+    "cameraCollisions": 0,
+    "independentGeometryErrors": 0,
+    "checks": 15,
+    "inSceneControls": 7,
+    "runs_detail": [
+      {
+        "name": "third-up",
+        "frames": 425,
+        "supports": 22,
+        "bodyCollisions": 0,
+        "cameraCollisions": 0,
+        "independentGeometryErrors": 0
+      },
+      {
+        "name": "third-down",
+        "frames": 185,
+        "supports": 21,
+        "bodyCollisions": 0,
+        "cameraCollisions": 0,
+        "independentGeometryErrors": 0
+      },
+      {
+        "name": "first-roof-return",
+        "frames": 375,
+        "supports": 22,
+        "bodyCollisions": 0,
+        "cameraCollisions": 0,
+        "independentGeometryErrors": 0
+      },
+      {
+        "name": "offline-third-up",
+        "frames": 442,
+        "supports": 22,
+        "bodyCollisions": 0,
+        "cameraCollisions": 0,
+        "independentGeometryErrors": 0
+      },
+      {
+        "name": "offline-third-down",
+        "frames": 185,
+        "supports": 21,
+        "bodyCollisions": 0,
+        "cameraCollisions": 0,
+        "independentGeometryErrors": 0
+      },
+      {
+        "name": "offline-first-up",
+        "frames": 170,
+        "supports": 21,
+        "bodyCollisions": 0,
+        "cameraCollisions": 0,
+        "independentGeometryErrors": 0
+      },
+      {
+        "name": "offline-first-down",
+        "frames": 184,
+        "supports": 21,
+        "bodyCollisions": 0,
+        "cameraCollisions": 0,
+        "independentGeometryErrors": 0
+      }
+    ],
+    "coldStandalone": true
+  },
+  "regressions": {
+    "unit": {
+      "status": "passed",
+      "files": 12,
+      "note": "Each file of the npm test script run in order; npm test itself stalls on this host (finding F04)."
+    },
+    "backend": {
+      "status": "passed",
+      "checks": 28
+    },
+    "buildOutput": {
+      "status": "passed",
+      "checks": 9
+    },
+    "governance": {
+      "status": "passed",
+      "checks": 39
+    },
+    "graphics": {
+      "status": "passed",
+      "scenes": [
+        "coast-ultra",
+        "road-high",
+        "night-ultra",
+        "mobile-balanced"
+      ],
+      "glError": 0,
+      "coldStandalone": true
+    },
+    "q01GreyboxModel": {
+      "status": "passed",
+      "checks": 10,
+      "controllerFrames": 17451
+    }
+  },
+  "sources": {
+    "witness-q01.js": "3779ec132d8a4cfee601c33df70da101d32b5109d661bec16ec94db5967ee18e",
+    "witness-architecture.js": "95870c545a87d905745ddf6dc092a0c82d4609524c0d5ccb77809c4e1b29a914",
+    "test/architecture-browser.mjs": "9a2eba83fc1b546db6c6f2a6f69997c615847e56e00400532033eccd4505f961",
+    "test/q01-geometry-guard.cjs": "e58b7fa00c7d2a11f1b791f40f0208ea684c5f146b6ab2d34fdfae6ec9e03d55",
+    "test/q01-geometry.cjs": "b6a54681225745bb1c2398029e234f0d849399323bc7e633fe2012b40a37a77d"
+  },
+  "environment": {
+    "platform": "Microsoft Windows NT 10.0.26300.0",
+    "node": "v24.14.1",
+    "npm": "11.11.0",
+    "chrome": "157.0.8103.51",
+    "gpu": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "viewport": "1100x800"
+  },
+  "findings": [
+    {
+      "id": "F01",
+      "severity": "blocking",
+      "status": "resolved",
+      "title": "test:architecture-browser failed on the batching commit",
+      "detail": "The static batching merged every mesh that shares a material, and the rendered-geometry guard measured one merged envelope, so it reported body collisions against q01-batched-q01-b-rubble and q01-batched-q01-b-stone on the Q01 roof. The producer now keeps each merged mesh own box and the gate measures those boxes; the same gate that failed on 764dc8a passes here with 0 body, camera and geometry errors, while every deliberate overlap is still detected."
+    },
+    {
+      "id": "F02",
+      "severity": "high",
+      "status": "open",
+      "title": "A fresh checkout cannot pass the build GI hash guard on Windows",
+      "detail": "core.autocrlf=true and there is no .gitattributes, so vendor/witness-q01-gi-data.js is checked out with CRLF endings and its recorded LF hash no longer matches. The engine build pin has the same problem: tools/environment-kit/build-engine.cjs refuses to run against the committed copy of vendor/adventure-3d.js. Both are scheduled for PR-04.1B."
+    },
+    {
+      "id": "F03",
+      "severity": "medium",
+      "status": "open",
+      "title": "Committed dist/ is not byte-reproducible from the sources",
+      "detail": "The build reports the same content but rewrites the tracked copies with different line endings; git diff --ignore-cr-at-eol reports no content difference. PR-04.1B owns the normalisation."
+    },
+    {
+      "id": "F04",
+      "severity": "medium",
+      "status": "open",
+      "title": "npm script chains stall on this host",
+      "detail": "npm test starts the pretest hook and then the spawned cmd.exe keeps no child process and never exits. The same script files pass when run one by one. PR-04.1C owns the runner and the CI workflow."
+    }
+  ],
+  "limits": [
+    "Scripted input on the shared engine; no human playtest, no FPS or playtime measurement.",
+    "The fix changes measurement only: rendered geometry, batching, draw calls, collision, save and contract are untouched.",
+    "No art approval, no G3/G4 closure, no story acceptance, no deployment evidence.",
+    "Heavy artefacts (images, traces, logs) stay in outputs/agent-work/pr04-1a and are not committed."
+  ]
+}

@@ -34,6 +34,8 @@ const GOLDEN_ANGLE = PI * (3 - Math.sqrt(5));
 const CHANNELS = ['directSky', 'bouncedSky', 'bouncedSun', 'bouncedLamps'];
 const NORMALS = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
 const sha256 = value => crypto.createHash('sha256').update(value).digest('hex');
+// A checkout policy must not change what a recorded hash covers.
+const eolNormalised = value => Buffer.from((Buffer.isBuffer(value) ? value.toString('utf8') : String(value)).replace(/\r\n/g, '\n'), 'utf8');
 const sum3 = (a, b) => a.map((v, i) => v + b[i]);
 const length = v => Math.hypot(...v);
 const normalize = v => { const l = length(v); return v.map(x => x / l); };
@@ -80,7 +82,7 @@ function loadInputs() {
   assert.equal(lamps.length, 3, 'Update the explicit scenario lamp mapping if the light count changes');
   const scene = {
     algorithm: ALGORITHM,
-    bakerSha256: sha256(fs.readFileSync(__filename)),
+    bakerSha256: sha256(eolNormalised(fs.readFileSync(__filename))),
     grid: GRID, min: MIN, max: MAX, bounces: BOUNCES, raysPerProbe: RAYS,
     seed: SEED, rayEpsilon: EPS, probeClearance: PROBE_CLEARANCE,
     primarySamples: 'equal-solid-angle spherical Fibonacci',
@@ -348,7 +350,7 @@ function verifyAsset(inputs, verifyEvidence = true) {
   if (verifyEvidence) {
     const evidence = JSON.parse(fs.readFileSync(EVIDENCE, 'utf8'));
     assert.equal(evidence.sourceHash, inputs.sourceHash);
-    assert.equal(evidence.asset.sha256, sha256(fs.readFileSync(ASSET)));
+    assert.equal(evidence.asset.sha256, sha256(eolNormalised(fs.readFileSync(ASSET))));
     for (const name of ['day', 'evening']) assert.equal(evidence.scenarios[name].pixelSha256, sha256(Buffer.from(data.scenarios[name].pixels, 'base64')));
     assert.equal(evidence.selfTest.passed, true);
   }
@@ -459,7 +461,7 @@ async function bake(inputs) {
     atlas: { width: GRID[0] * 9, height: GRID[1] * GRID[2], bytesPerScenario: GRID.reduce((a, b) => a * b, 1) * 9 * 4,
       encoding: 'Signed SH9 radiance RGB: round((coefficient/scale*.5+.5)*255), alpha=255; one maxAbs scale per coefficient/channel over all probes',
       pixelIndex: '((z*ny+y)*nx*9+c*nx+x)*4', interpolation: 'Runtime trilinear probe sampling and cosine convolution' },
-    asset: { path: path.relative(ROOT, ASSET).split(path.sep).join('/'), bytes: Buffer.byteLength(source), sha256: sha256(source) },
+    asset: { path: path.relative(ROOT, ASSET).split(path.sep).join('/'), bytes: Buffer.byteLength(source), sha256: sha256(eolNormalised(source)), lineEndings: 'normalised' },
     selfTest: selfTestResult, scenarios: scenarioEvidence,
     limitations: [
       'Deterministic CPU diffuse path tracing of AABB volumes and material-average linear albedos, not full rendered triangles, individual mortar joints, textures, normal maps, specular transport, caustics or spectral rendering.',

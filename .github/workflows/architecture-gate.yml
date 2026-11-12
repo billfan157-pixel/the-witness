@@ -1,0 +1,39 @@
+name: Architecture gate on demand
+
+# The heaviest browser gate runs the full Q01 traversal. On a CPU rasteriser the walk
+# takes far longer than the other gates, so it is not part of every push; run it when
+# the rendering path or the collision measurement changes.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  architecture-software:
+    name: Architecture gate on the software rasteriser
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: npm ci
+      - run: npm ci --prefix tools/environment-kit
+      - name: Reader export
+        run: python tools/build-witness-docs.py
+      - name: Build
+        run: npm run build
+      - name: Architecture gate (software rendering)
+        env:
+          WITNESS_QA_HARDWARE: '0'
+          WITNESS_BASE_URL: http://127.0.0.1:8034/
+        run: |
+          node tools/serve.cjs &
+          node -e "const t=Date.now();(async()=>{while(Date.now()-t<60000){try{await fetch('http://127.0.0.1:8034/');process.exit(0)}catch{await new Promise(r=>setTimeout(r,500))}}process.exit(1)})()"
+          npm run test:architecture-browser

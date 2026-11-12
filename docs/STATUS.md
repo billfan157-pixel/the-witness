@@ -133,6 +133,64 @@ Không sao chép bản HEAD cũ đè lên chúng để “chuẩn hóa”.
   `docs/environment-kit/phase-b.md`; artAccepted false, G3/G4 giữ nguyên.
   Kiểm model không thay choreography, thoại, nguồn cảm xúc hoặc art approval.
 
+- **D018 — Kiểm lại candidate PR-04 trên `764dc8a` (12/11/2026).** Chạy lại nhóm ki
+  release trên checkout sạch `764dc8a` và đối chiếu candidate `e5bf8b4d1450`: greybox
+  web/ngoại tuyến cho kết quả tương đương (8 lượt, 0 lỗi hình học/camera, tập support
+  trùng từng id, lifecycle WebGL giống), `test:graphics` và `test:backend` đạt, build
+  cho revision `469e18d00673` đúng revision đã commit. Đồng thời xác nhận phần render
+  mới của commit (batching tĩnh trong `witness-architecture.js`) làm
+  `test:architecture-browser` đỏ: cổng đo AABB theo mesh nên gộp mesh theo vật liệu
+  biến thành va chạm thân giả ở mái; candidate PR-04 trước batching vẫn pass cùng
+  máy cùng ngày. Không sửa cổng ki để né, không hạ điều kiện kiểm, không sửa collision;
+  ghi nhận là hồi quy cần xử lý ở commit sau. Thêm: checkout mới trên Windows không
+  build được vì hash guard GI phụ thuộc byte và không có `.gitattributes`; `dist/` đã
+  commit chỉ lệch CR-at-EOL so với bản build mới; chuỗi script `npm` bị treo trên máy
+  kiểm nên kết quả được lấy bằng cách chạy từng file script. Bằng chứng gắn SHA ở
+  `docs/environment-kit/validation/q01-pr04-764dc8a/`. Chưa push/deploy, chưa duyệt
+  G3/G4, chưa có playtest người thật.
+
+- **D019 — Đo va chạm theo thành phần sau batching (PR-04.1A, 12/11/2026).** Batching tĩnh
+  trong `witness-architecture.js` gộp mọi mesh theo vật liệu thành một mesh, nên cổng
+  `test:architecture-browser` đo một AABB gộp phủ cả kho và báo va chạm thân giả ở mái
+  (`q01-batched-q01-b-rubble`, `q01-batched-q01-b-stone`). Sửa: producer `WitnessQ01.batch`
+  giữ hộp của từng mesh thành phần trong `userData.batchParts` (không gian của group);
+  batching, số draw call và hình học render không đổi. Cổng đo theo các hộp thành phần
+  với đúng ngưỡng cũ (thân 0,28 m, dải thân 0,23–1,65 m, camera 0,16 m) và dùng chung
+  một phép đo ở `test/q01-geometry-guard.cjs`. Đối chứng: `test/q01-geometry.cjs` chứng minh
+  hộp gộp là động giả còn hộp thành phần thì không, và người chơi ở trong một thành phần
+  vẫn bị báo; ngay trong scene thật mỗi lượt đi kiểm một va chạm cố ý và một va chạm 6 m.
+  Cổng xanh trên chính commit có batching: 7 lượt, 0 lỗi mesh/body/camera/sàn, giữ
+  checkpoint mái/bậc và cold HTML chặn HTTP. Không hạ điều kiện kiểm, không sửa collision,
+  không đổi schema/ID/canon; art G3/G4 vẫn chưa duyệt, chưa push/deploy. Khoảng cách EOL
+  (F02/F03) và treo script npm (F04) vẫn mở cho PR-04.1B và PR-04.1C.
+
+- **D020 — Chuẩn hóa EOL và build tái lập theo byte (PR-04.1B, 12/11/2026).** Hai phát hiện
+  của đợt kiểm lại `764dc8a` được xử lý tại nguồn: `core.autocrlf=true` không có
+  `.gitattributes` làm checkout Windows đổi byte của file text và phá hash guard của GI
+  bake cùng pin của engine build; `dist/` đã commit lệch byte với bản build mới chỉ ở
+  CR-at-EOL. Sửa: thêm `.gitattributes` (`* text=auto eol=lf`, nhị phân giữ nguyên byte);
+  `tools/bake-q01-gi.cjs` và `tools/environment-kit/build-engine.cjs` so hash trên nội dung
+  đã chuẩn hóa EOL nên cổng ki giữ nguyên dưới mọi chính sách checkout; `tools/build.cjs`
+  chép và nhúng nguồn text với LF, tính revision trên nội dung đã chuẩn hóa và nhúng asset
+  text (giấy phép, manifest nguồn) bằng cùng byte. GI được bake lại bằng quy trình chính
+  thức, engine runtime được dựng lại, `dist/` được đóng gói lại. Kiểm: hai checkout sạch
+  (LF theo `.gitattributes` và một bản legacy ép CRLF) đều build qua cả 6 bước; sau khi
+  bake chính thức, mọi file so sánh có hash giống nhau và cùng revision `d2e18a6b8ffc`
+  với bản build trong repo. Không đổi ID/schema/canon, không đổi hình học hay gameplay.
+  Phát hiện F04 (chuỗi script `npm` bị treo) được giải quyết ở PR-04.1C.
+
+- **D021 — Chuỗi kiểm tra không treo và cấu hình CI (PR-04.1C, 12/11/2026).** Phát hiện F04
+  (chuỗi script `npm` dùng toán tử shell `&&` bị treo trên cmd.exe của máy Windows) được xử lý
+  ở tầng công cụ: thêm `tools/run-checks.cjs` điều phối tuần tự từng bước kiểm tra từ tiến trình Node,
+  giữ mã exit thực và dừng chuỗi ngay khi có bước thất bại. `package.json` chuyển các script nhóm
+  (`test`, `build`, `browser`, `craft-details`, `build:kit`) sang gọi qua runner này. Thiết lập GitHub
+  Actions `.github/workflows/ci.yml` kiểm tra hợp đồng, governance, unit, backend, reader export, build,
+  output pipeline và nhóm cổng browser trên bộ rasteriser phần mềm SwiftShader (`WITNESS_QA_HARDWARE='0'`),
+  kèm job kiểm tra build sạch trên Windows runner; tách cổng kiểm tra hình học nặng của Q01 sang
+  `.github/workflows/architecture-gate.yml` chạy theo `workflow_dispatch`. Thêm `test/ci-workflow.cjs`
+  kiểm tra tĩnh tính hợp lệ của workflow, cấm nuốt lỗi và bảo đảm mọi lệnh gọi npm/đường dẫn đều tồn tại.
+  Đã đăng ký các file mới trong `docs/agent/registry.json`. Không đổi schema, ID, canon hay trạng thái art.
+
 <a id="story-review-2026-11-11"></a>
 ### Kết quả đối chiếu bản nhận định
 
@@ -235,6 +293,56 @@ Hồi quy trên cùng build đạt: `test:architecture-browser` 7 tuyến/1.915 
 Phase B `--quick` đạt 20 ảnh tại 5 điểm × hai góc × ngày/tối; `test:kit-lifecycle`
 đạt 14 kiểm, gồm 24 lượt đổi full/lite, cache thực và KTX2/Meshopt/WASM ngoại
 tuyến. Những kết quả này kiểm tương thích kỹ thuật, không đóng nghiệm thu art.
+
+
+**Kiểm lại trên checkout sạch `764dc8a` (12/11/2026):** chạy lại nhóm ki của release
+trên checkout sạch đúng SHA này rồi so với candidate PR-04. `npm test` đạt 11/11 file
+script; `test:backend` 28; `test:build-output` 9; `test:agents` 39; build cho revision
+`469e18d00673` đúng revision đã commit. Suite greybox đạt 8/8 lượt web + ngoại tuyến, 0
+lỗi hình học/camera, tập support 22 id trùng khớp từng id với PR-04, vị trí ba actor
+lệch tối đa 4,2 cm, vòng đời WebGL giống hệt (8.592 tam giác/77 mesh, giải phóng về 0);
+`test:graphics` đạt 5/5 với `glError` 0. **Cổng `test:architecture-browser` đỏ:**
+batching tĩnh mới trong `witness-architecture.js` gộp mọi mesh theo vật liệu thành một
+mesh, cổng đo AABB theo mesh nên báo va chạm thân ở mái (`q01-batched-q01-b-rubble`,
+`q01-batched-q01-b-stone`); A/B cùng máy cùng ngày cho thấy candidate PR-04 (chưa có
+batching) vẫn pass 7 lượt/1.918 mẫu/0 lỗi. Ba phát hiện còn lại: checkout mới trên
+Windows không qua được hash guard GI vì CRLF và không có `.gitattributes`; `dist/` đã
+commit lệch byte với bản build mới chỉ ở CR-at-EOL (nội dung giống); chuỗi script
+`npm` bị treo trên máy này nên kết quả lấy bằng cách chạy từng file script. Bằng chứng
+ở `docs/environment-kit/validation/q01-pr04-764dc8a/`, ảnh/trace/log ở
+`outputs/agent-work/verify-764dc8a-20261112/`. Không có playtest người thật, không
+duyệt G3/G4, không push/deploy; commit này chưa đủ điều kiện làm candidate phát hành.
+
+**Kiểm PR-04.1A (sửa đo va chạm sau batching):** cổng `test:architecture-browser` xanh trên
+chính commit có batching — 7 lượt (2.966 frame), 0 lỗi mesh/body/camera/sàn, 21–22 support
+mỗi lượt, giữ đúng tọa độ khi tải lại mái/bậc, cold HTML chặn HTTP vẫn đi trọn hai góc
+camera, vật liệu Q01 nhúng 512 px. Bảy đối chứng trong scene thật (một va chạm cố ý và một
+va chạm 6 m cho mỗi lượt) đều đạt, nên phép đo theo thành phần vẫn bắt được va chạm thật.
+Đối chứng ở mức producer (`test/q01-geometry.cjs`) chứng minh hộp gộp là động giả. Build
+lại cho revision `ffe9f4976a90`; `check:agents` và `test:agents` đạt. Bằng chứng gắn SHA ở
+`docs/environment-kit/validation/q01-pr04-1a/verification.json`, ảnh/trace/log ở
+`outputs/agent-work/pr04-1a/`. Không có playtest người thật, không duyệt art, không
+push/deploy.
+
+**Kiểm PR-04.1B (EOL và build):** thêm `.gitattributes` (text luôn LF, nhị phân giữ
+nguyên byte) và chuẩn hóa EOL trong ba hash guard (GI bake, pin engine, revision của
+build) cùng trong bản build (chép/nhúng nguồn text và asset text). GI được bake lại và
+engine runtime dựng lại bằng quy trình chính thức; `dist/` đóng gói lại, revision
+`d2e18a6b8ffc`. Kiểm trên hai checkout sạch dựng từ cây có thay đổi: bản LF theo
+`.gitattributes` và bản legacy ép toàn bộ file text thành CRLF — cả hai đều qua đủ 6 bước
+build (GI check, engine, architecture, kit budget, build, build cloud) với mã exit 0;
+sau khi bake chính thức chạy trong bản legacy, tám file so sánh (GI asset, build-info,
+witness-q01.js, witness-sw.js, index.html, standalone, greybox offline) có hash giống
+nhau và cùng revision với bản build trong repo. Bằng chứng ở
+`outputs/agent-work/pr04-1a/pr04-1b-fresh-summary.json` và
+`outputs/agent-work/pr04-1a/pr04-1b-reproducible.json`. Không có playtest người thật,
+không duyệt art, không push/deploy.
+
+**Kiểm PR-04.1C (quy trình npm và CI):** `npm test` chạy trọn vẹn 13 nhóm kiểm tra qua
+`tools/run-checks.cjs` mà không bị treo hay cần can thiệp thủ công (toàn bộ 13 bước PASS, exit 0);
+`test/ci-workflow.cjs` xác nhận 2 workflow, 23 bước kiểm, đủ 9 script bắt buộc và 3 bước software
+rendering. Governance `check:agents` và `test:agents` đạt 39/39 ca kiểm; `test:backend` đạt 28/28 ca.
+Cấu hình CI sẵn sàng chạy ổn định trên hạ tầng GitHub Actions.
 
 **Giới hạn checkout tại lúc bàn giao:** sau khi candidate đã kiểm xong, có
 thay đổi render đồng thời trong `witness-architecture.js` (thêm batch ở
