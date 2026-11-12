@@ -33,6 +33,8 @@ jobs:
         run: npm run test:agents
       - name: Cloud and save contract
         run: npm run test:backend
+      - name: Install documentation dependencies
+        run: python -m pip install -r tools/requirements-docs.txt
       - name: Reader export
         run: python tools/build-witness-docs.py
       - name: Build
@@ -55,12 +57,18 @@ jobs:
           python-version: '3.11'
       - run: npm ci
       - run: npm ci --prefix tools/environment-kit
+      - name: Install documentation dependencies
+        run: python -m pip install -r tools/requirements-docs.txt
       - name: Reader export
         run: python tools/build-witness-docs.py
       - name: Build
         run: npm run build
       # A GitHub runner has no GPU, so the browser gates must run on the software rasteriser.
       # The wait budgets scale with it; nothing here may pass by skipping a check.
+      - name: Start local test server
+        run: |
+          node tools/serve.cjs &
+          node -e "const t=Date.now();(async()=>{while(Date.now()-t<60000){try{await fetch('http://127.0.0.1:8034/');process.exit(0)}catch{await new Promise(r=>setTimeout(r,500))}}process.exit(1)})()"
       - name: Graphics gate (software rendering)
         env:
           WITNESS_QA_HARDWARE: '0'
@@ -71,10 +79,7 @@ jobs:
           WITNESS_GREYBOX_SMOKE: '1'
           WITNESS_GREYBOX_URL: http://127.0.0.1:8034/q01-greybox.html
           WITNESS_GREYBOX_OFFLINE: dist/q01-greybox-offline.html
-        run: |
-          node tools/serve.cjs &
-          node -e "const t=Date.now();(async()=>{while(Date.now()-t<60000){try{await fetch('http://127.0.0.1:8034/');process.exit(0)}catch{await new Promise(r=>setTimeout(r,500))}}process.exit(1)})()"
-          npm run test:q01-greybox-browser
+        run: npm run test:q01-greybox-browser
 
   windows-checkout:
     name: Windows checkout builds with the same line endings

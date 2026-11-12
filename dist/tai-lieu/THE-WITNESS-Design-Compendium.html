@@ -704,6 +704,20 @@ Không sao chép bản HEAD cũ đè lên chúng để “chuẩn hóa”.</p>
   Không có bất kỳ lỗi hồi quy nào. Bằng chứng được lưu tại <code>docs/environment-kit/validation/q01-pr04-1d/verification.json</code>.
   Không tự duyệt G3/G4, không push hay deploy production.</p>
 </li>
+<li>
+<p><strong>D023 — Đóng cổng GitHub CI và giải quyết tính bất biến GI hash (PR-04.1E, 12/11/2026).</strong>
+  Khắc phục triệt để hai lỗi chặn phát hành trên hạ tầng CI và môi trường đa runtime:
+  1) Thêm <code>tools/requirements-docs.txt</code> (<code>Markdown==3.7</code>) và cài đặt <code>python -m pip install -r tools/requirements-docs.txt</code>
+  trước khi gọi <code>tools/build-witness-docs.py</code> trong <code>.github/workflows/ci.yml</code> và <code>.github/workflows/architecture-gate.yml</code>;
+  mở rộng <code>test/ci-workflow.cjs</code> phát hiện gọi python script thiếu dependencies; đăng ký file trong <code>docs/agent/registry.json</code>.
+  2) Giải quyết sai số 1 ULP của <code>Math.pow</code> giữa engine V8 v12 (Node 22) và V8 v13 (Node 24) làm lệch <code>sourceHash</code>
+  trong <code>tools/bake-q01-gi.cjs</code> bằng cách chuẩn hóa số thực hữu hạn trong <code>canonical</code> qua <code>Number(value.toPrecision(9))</code>;
+  bake lại GI chính thức với hash đồng nhất <code>81141cc84e39126db1d24313e461232314ae7684e5dc14fe89eb571d8b85e55d</code> trên
+  mọi runtime Node <code>&gt;=22.13.0</code>; sửa tương tranh file Windows trong <code>tools/build.cjs</code> khi sao chép <code>dist/</code>.
+  3) Khởi động máy chủ cục bộ <code>tools/serve.cjs</code> trước các cổng browser trong <code>ci.yml</code>. Cả hai môi trường Node 22 và
+  Node 24 tái lập chuẩn xác cùng revision <code>36e9366f06b6</code>; đạt 100% các bộ kiểm tra governance, unit, backend, graphics
+  và greybox smoke. Không đổi ID/schema/canon hay trạng thái duyệt art G3/G4.</p>
+</li>
 </ul>
 <p><a id="story-review-2026-11-11"></a></p>
 <h3>Kết quả đối chiếu bản nhận định</h3>
@@ -899,6 +913,7 @@ cold standalone chặn HTTP đạt), <code>test:graphics</code> (394,4 s, 4 scen
 <code>test:q01-greybox-browser</code> (713,9 s, 8 lượt web + offline, vòng đời WebGL giải phóng sạch về 0).
 Không có hồi quy; SHA và revision được ghi nhận vào <code>docs/environment-kit/validation/q01-pr04-1d/verification.json</code>.
 Working tree sạch, không push/deploy, giữ nguyên trạng thái G3/G4 (<code>awaiting_visual_review</code> / <code>in_progress</code>).</p>
+<p><strong>Kiểm PR-04.1E (đóng cổng GitHub CI và chuẩn hóa đa runtime):</strong> Thêm requirements cho reader export Python, chuẩn hóa số thực hữu hạn trong GI bake canonical loại bỏ sai số 1 ULP giữa Node 22 và Node 24, sửa cơ chế copy file trong build chống xung đột Windows. Cả hai runtime Node 22 và Node 24 cùng cho kết quả build chuẩn xác revision <code>36e9366f06b6</code> và hash GI <code>81141cc84e39126db1d24313e461232314ae7684e5dc14fe89eb571d8b85e55d</code>; <code>npm test</code> 13/13 đạt; <code>test:backend</code> 28/28 đạt; <code>check:agents</code> và <code>test:agents</code> 39 ca đạt; <code>test:build-output</code> 9 ca đạt; <code>test:graphics</code> 5 cảnh và <code>test:q01-greybox-browser</code> smoke đạt; kiểm chứng trên CI GitHub Actions xanh 100%.</p>
 <p><strong>Giới hạn checkout tại lúc bàn giao:</strong> sau khi candidate đã kiểm xong, có
 thay đổi render đồng thời trong <code>witness-architecture.js</code> (thêm batch ở
 <code>install</code>), <code>witness-q01.js</code>, <code>witness-world.js</code>, <code>vendor/adventure-visuals.js</code>

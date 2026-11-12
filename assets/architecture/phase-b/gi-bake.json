@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
   "algorithm": "q01-aabb-diffuse-pathtrace-sh9-v1",
-  "sourceHash": "b12013f4d58ed769d5fbaf88d76971b8e58cb0cf4354ea4c7e594e07b849d890",
-  "generatedAt": "2026-11-12T07:42:32.293Z",
+  "sourceHash": "81141cc84e39126db1d24313e461232314ae7684e5dc14fe89eb571d8b85e55d",
+  "generatedAt": "2026-11-12T14:33:56.213Z",
   "runtime": {
     "node": "v24.14.1",
     "platform": "win32",
     "architecture": "x64"
   },
-  "seconds": 13.7958812,
+  "seconds": 8.4091193,
   "scene": {
     "source": "WitnessArchitecture.create({height:()=>-.12}); WitnessQ01Environment.bakeBoxes(ar); WitnessQ01Environment.lamps",
-    "bakerSha256": "b5ebf7f7d0a219fb62c5df5d21e9969995a47022bb7c934708db4abf66f857a7",
-    "sceneInputSha256": "76125f8bebf09e786b719eb9d96e099e63445562e8645bf885701fe1cda93ae3",
+    "bakerSha256": "95a791604f47c4ab58b81880bc14378070a39616fd9f01489c2c88fb338d1c70",
+    "sceneInputSha256": "e5327d422ae3eec2696c3e26b42d8351e4cfaf7fde07d59d4fb86a3af6cea358",
     "datumY": 0,
     "boxCount": 61,
     "probeCount": 550,
@@ -204,7 +204,7 @@
     "count": 210,
     "maximumDistanceMeters": 0.8610000000000007,
     "meanDistanceMeters": 0.11675594657118903,
-    "placementSha256": "50bcaab59484a49251b81fe604ddfbf45737d7e74735185ac91fc147cfce88dc",
+    "placementSha256": "f81e0c5d37947fad192b622690aaea6d002ba2b035661a5c102ab2abd4a707c6",
     "examples": [
       {
         "slot": [
@@ -291,7 +291,7 @@
   "asset": {
     "path": "vendor/witness-q01-gi-data.js",
     "bytes": 54453,
-    "sha256": "5e9ab9db3d74831e284a17d3863b3639172c94e17c5bf0ccab807e468de0a2b3",
+    "sha256": "ae990f64cf248aa420a779b75efe43913df77fd200eee178ba41949bb49088e5",
     "lineEndings": "normalised"
   },
   "selfTest": {
@@ -361,7 +361,7 @@
   },
   "scenarios": {
     "day": {
-      "seconds": 4.921685500000001,
+      "seconds": 4.264128899999999,
       "pixelSha256": "b36bc015fa30208d70974b8e392f544b036d3b8bef94e42cf9521ae642a9f899",
       "maxQuantizationError": 0.003034037655656005,
       "maxDecodedSixAxisIrradianceError": 0.004869008084814323,
@@ -437,7 +437,7 @@
       }
     },
     "evening": {
-      "seconds": 8.676056599999999,
+      "seconds": 4.0140352,
       "pixelSha256": "1c3e8bb4b7d35510b427395756eae4e3fa926ddf148897dbb7046a46a382350d",
       "maxQuantizationError": 0.014731927168802172,
       "maxDecodedSixAxisIrradianceError": 0.026300756430456942,

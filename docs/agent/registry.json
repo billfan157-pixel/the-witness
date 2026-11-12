@@ -584,6 +584,11 @@
       "path": ".github/workflows/architecture-gate.yml",
       "owner": "release",
       "reason": "On-demand run of the heaviest browser gate on the software rasteriser, kept out of the push pipeline because a CPU walk of the whole Q01 route takes far longer than the other checks"
+    },
+    {
+      "path": "tools/requirements-docs.txt",
+      "owner": "release",
+      "reason": "Pinned Python dependencies for the documentation reader export pipeline in GitHub Actions and local builds"
     }
   ],
   "requiredFiles": [

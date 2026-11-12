@@ -25,6 +25,8 @@ jobs:
           python-version: '3.11'
       - run: npm ci
       - run: npm ci --prefix tools/environment-kit
+      - name: Install documentation dependencies
+        run: python -m pip install -r tools/requirements-docs.txt
       - name: Reader export
         run: python tools/build-witness-docs.py
       - name: Build

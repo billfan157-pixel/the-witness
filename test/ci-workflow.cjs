@@ -65,10 +65,15 @@ for(const workflow of workflows){
     assert(job.runsOn,'Job '+job.id+' in '+workflow.file+' has no runs-on');
     assert(job.timeout,'Job '+job.id+' in '+workflow.file+' has no timeout-minutes');
     assert(job.steps.length>0,'Job '+job.id+' in '+workflow.file+' has no steps');
+    let installedPythonDeps = false;
     for(const step of job.steps){
       assert(step.kind!=='run'||step.value.trim().length>0,'Empty run step in job '+job.id+' of '+workflow.file);
       if(step.kind!=='run')continue;
       assert(!/continue-on-error:\s*true/.test(step.value),'A gate step may not continue on error in '+workflow.file+': '+step.value.slice(0,60));
+      if(/pip install.*tools\/requirements-docs\.txt/.test(step.value)) installedPythonDeps = true;
+      if(/tools\/build-witness-docs\.py/.test(step.value)){
+        assert(installedPythonDeps, 'Job '+job.id+' in '+workflow.file+' calls build-witness-docs.py before installing python dependencies from tools/requirements-docs.txt');
+      }
       const npmCalls=[...step.value.matchAll(/\bnpm (?:run )?([A-Za-z0-9:_-]+)/g)].map(m=>m[1]).filter(s=>!['ci','install','i'].includes(s));
       for(const script of npmCalls)assert(pkg.scripts[script],'Workflow calls missing npm script in '+workflow.file+': '+script);
       const localPaths=[...step.value.matchAll(/\b((?:tools|test|docs|scripts|dist)\/[A-Za-z0-9_.\/-]+)/g)].map(m=>m[1]);

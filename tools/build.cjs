@@ -11,9 +11,12 @@ const files=['environment-references.html','index.html','kit-lab.html','kit-lab.
 files.push('witness-q01-environment.js','witness-q01-greybox.js','q01-greybox.html','q01-greybox-lab.js');
 for(const f of files){const target=path.join(out,f);if(TEXT_FILE.test(f))fs.writeFileSync(target,textBytes(f));else fs.copyFileSync(path.join(root,f),target);}
 for(const dir of ['assets','vendor']){
- fs.cpSync(path.join(root,dir),path.join(out,dir),{recursive:true});
  const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(d,e.name)):[path.join(d,e.name)]);
- for(const p of walk(path.join(out,dir)))if(TEXT_FILE.test(p))fs.writeFileSync(p,textBytes(path.relative(root,p)));
+ for(const src of walk(path.join(root,dir))){
+  const rel=path.relative(root,src),target=path.join(out,rel);
+  fs.mkdirSync(path.dirname(target),{recursive:true});
+  if(TEXT_FILE.test(rel))fs.writeFileSync(target,textBytes(rel));else fs.copyFileSync(src,target);
+ }
 }
 if(dossier){
   const docsOut=path.join(out,'tai-lieu');fs.mkdirSync(docsOut,{recursive:true});

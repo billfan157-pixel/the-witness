@@ -201,6 +201,19 @@ Không sao chép bản HEAD cũ đè lên chúng để “chuẩn hóa”.
   Không có bất kỳ lỗi hồi quy nào. Bằng chứng được lưu tại `docs/environment-kit/validation/q01-pr04-1d/verification.json`.
   Không tự duyệt G3/G4, không push hay deploy production.
 
+- **D023 — Đóng cổng GitHub CI và giải quyết tính bất biến GI hash (PR-04.1E, 12/11/2026).**
+  Khắc phục triệt để hai lỗi chặn phát hành trên hạ tầng CI và môi trường đa runtime:
+  1) Thêm `tools/requirements-docs.txt` (`Markdown==3.7`) và cài đặt `python -m pip install -r tools/requirements-docs.txt`
+  trước khi gọi `tools/build-witness-docs.py` trong `.github/workflows/ci.yml` và `.github/workflows/architecture-gate.yml`;
+  mở rộng `test/ci-workflow.cjs` phát hiện gọi python script thiếu dependencies; đăng ký file trong `docs/agent/registry.json`.
+  2) Giải quyết sai số 1 ULP của `Math.pow` giữa engine V8 v12 (Node 22) và V8 v13 (Node 24) làm lệch `sourceHash`
+  trong `tools/bake-q01-gi.cjs` bằng cách chuẩn hóa số thực hữu hạn trong `canonical` qua `Number(value.toPrecision(9))`;
+  bake lại GI chính thức với hash đồng nhất `81141cc84e39126db1d24313e461232314ae7684e5dc14fe89eb571d8b85e55d` trên
+  mọi runtime Node `>=22.13.0`; sửa tương tranh file Windows trong `tools/build.cjs` khi sao chép `dist/`.
+  3) Khởi động máy chủ cục bộ `tools/serve.cjs` trước các cổng browser trong `ci.yml`. Cả hai môi trường Node 22 và
+  Node 24 tái lập chuẩn xác cùng revision `36e9366f06b6`; đạt 100% các bộ kiểm tra governance, unit, backend, graphics
+  và greybox smoke. Không đổi ID/schema/canon hay trạng thái duyệt art G3/G4.
+
 <a id="story-review-2026-11-11"></a>
 ### Kết quả đối chiếu bản nhận định
 
@@ -364,6 +377,8 @@ cold standalone chặn HTTP đạt), `test:graphics` (394,4 s, 4 scene, glError 
 `test:q01-greybox-browser` (713,9 s, 8 lượt web + offline, vòng đời WebGL giải phóng sạch về 0).
 Không có hồi quy; SHA và revision được ghi nhận vào `docs/environment-kit/validation/q01-pr04-1d/verification.json`.
 Working tree sạch, không push/deploy, giữ nguyên trạng thái G3/G4 (`awaiting_visual_review` / `in_progress`).
+
+**Kiểm PR-04.1E (đóng cổng GitHub CI và chuẩn hóa đa runtime):** Thêm requirements cho reader export Python, chuẩn hóa số thực hữu hạn trong GI bake canonical loại bỏ sai số 1 ULP giữa Node 22 và Node 24, sửa cơ chế copy file trong build chống xung đột Windows. Cả hai runtime Node 22 và Node 24 cùng cho kết quả build chuẩn xác revision `36e9366f06b6` và hash GI `81141cc84e39126db1d24313e461232314ae7684e5dc14fe89eb571d8b85e55d`; `npm test` 13/13 đạt; `test:backend` 28/28 đạt; `check:agents` và `test:agents` 39 ca đạt; `test:build-output` 9 ca đạt; `test:graphics` 5 cảnh và `test:q01-greybox-browser` smoke đạt; kiểm chứng trên CI GitHub Actions xanh 100%.
 
 **Giới hạn checkout tại lúc bàn giao:** sau khi candidate đã kiểm xong, có
 thay đổi render đồng thời trong `witness-architecture.js` (thêm batch ở

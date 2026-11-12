@@ -45,6 +45,7 @@ const rounded = v => Array.isArray(v) ? v.map(rounded) : Number(v.toPrecision(9)
 function canonical(value) {
   if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';
   if (value && typeof value === 'object') return '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + canonical(value[k])).join(',') + '}';
+  if (typeof value === 'number') return Number.isFinite(value) ? (Number.isInteger(value) ? String(value) : String(Number(value.toPrecision(9)))) : JSON.stringify(value);
   return JSON.stringify(value);
 }
 function srgb(hex) {

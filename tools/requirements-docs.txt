@@ -1,0 +1,2 @@
+# Pinned Python dependencies for tools/build-witness-docs.py (Reader export)
+Markdown==3.7
