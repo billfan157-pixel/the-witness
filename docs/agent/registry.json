@@ -391,6 +391,11 @@
       "reason": "PR-04.1A evidence: the legacy architecture gate passes on the batching commit with per-mesh measurement, seven in-scene deliberate-overlap controls, the unit, backend, build-output and graphics regressions, and the scope limits"
     },
     {
+      "path": "docs/environment-kit/validation/q01-pr04-1d/verification.json",
+      "owner": "environment-qa",
+      "reason": "PR-04.1D evidence: full release check matrix on a clean checkout of candidate SHA c93d1a5, covering governance, unit, backend, build, build-output and all three browser gates; G3/G4 unapproved"
+    },
+    {
       "path": "witness-q01-greybox.js",
       "owner": "q01-environment",
       "reason": "PR-04 authored spatial blueprint, collision-backed rescue mechanisms and read-only PR-03 projection for PR-05"

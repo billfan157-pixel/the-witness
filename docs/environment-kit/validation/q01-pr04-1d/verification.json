@@ -1,0 +1,97 @@
+{
+  "version": "q01-pr04-1d-candidate-1",
+  "runDate": "2026-11-12",
+  "verifiedSha": "c93d1a50ecd411e2310cc4cb1aa82d5aed2e168b",
+  "buildRevision": "d2e18a6b8ffc",
+  "status": "passed",
+  "scope": "Release check matrix on a clean checkout of the candidate commit: unit, governance, backend, build, generated output and the three browser gates. Scripted browser input on the shared engine; no human playtest, no FPS or playtime measure, no art or story acceptance.",
+  "checkout": {
+    "method": "git clone of the repository into a new directory, detached at the candidate SHA, with the installed dependencies linked in because this environment has no network. The source checkout was not modified by the verification.",
+    "targetDir": "C:\\hanh-trinh-loi-chua\\the-witness\\local\\checkouts\\pr04-1d-candidate",
+    "workingTreeClean": null
+  },
+  "matrix": [
+    {
+      "name": "npm test",
+      "exitCode": 0,
+      "seconds": 29.6
+    },
+    {
+      "name": "npm run test:agents",
+      "exitCode": 0,
+      "seconds": 18.1
+    },
+    {
+      "name": "npm run test:backend",
+      "exitCode": 0,
+      "seconds": 8.5
+    },
+    {
+      "name": "npm run check:agents",
+      "exitCode": 0,
+      "seconds": 1.2
+    },
+    {
+      "name": "npm run build",
+      "exitCode": 0,
+      "seconds": 7.3
+    },
+    {
+      "name": "npm run test:build-output",
+      "exitCode": 0,
+      "seconds": 0.7
+    },
+    {
+      "name": "npm run test:architecture-browser",
+      "exitCode": 0,
+      "seconds": 237.8
+    },
+    {
+      "name": "npm run test:graphics",
+      "exitCode": 0,
+      "seconds": 394.4
+    },
+    {
+      "name": "npm run test:q01-greybox-browser",
+      "exitCode": 0,
+      "seconds": 713.9
+    }
+  ],
+  "browserGates": {
+    "architecture": {
+      "status": "passed",
+      "runs": 7,
+      "frames": 1972,
+      "bodyCollisions": 0,
+      "cameraCollisions": 0,
+      "independentGeometryErrors": 0,
+      "checks": 15,
+      "inSceneControls": 7,
+      "coldStandalone": true
+    },
+    "greybox": {
+      "status": "passed",
+      "runs": 8
+    },
+    "graphics": {
+      "status": "passed",
+      "scenes": [
+        "coast-ultra",
+        "road-high",
+        "night-ultra",
+        "mobile-balanced"
+      ],
+      "glError": null
+    }
+  },
+  "regressions": {
+    "comparedWith": "docs/environment-kit/validation/q01-pr04-1a/verification.json",
+    "note": "The 1A run measured 7 architecture runs with 1966 frames and 0 collisions on the hardware renderer. The candidate must show the same green result on a clean checkout of its own SHA."
+  },
+  "limits": [
+    "The candidate commit was verified locally. It was not pushed, not deployed and not run on a hosted CI runner.",
+    "The browser gates are scripted movement checks. They are not a human playtest, an FPS measurement or a playtime claim.",
+    "G3/G4 stay unapproved; no art, story or campaign acceptance is implied by this evidence.",
+    "Heavy artefacts (images, traces, logs) stay in outputs/agent-work/pr04-1d and are not committed."
+  ]
+}

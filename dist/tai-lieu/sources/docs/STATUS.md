@@ -191,6 +191,16 @@ Không sao chép bản HEAD cũ đè lên chúng để “chuẩn hóa”.
   kiểm tra tĩnh tính hợp lệ của workflow, cấm nuốt lỗi và bảo đảm mọi lệnh gọi npm/đường dẫn đều tồn tại.
   Đã đăng ký các file mới trong `docs/agent/registry.json`. Không đổi schema, ID, canon hay trạng thái art.
 
+- **D022 — Xác minh candidate cuối trên SHA c93d1a5 (PR-04.1D, 12/11/2026).** Toàn bộ các
+  công việc của PR-04.1A, 1B và 1C được gom thành commit candidate duy nhất
+  `c93d1a50ecd411e2310cc4cb1aa82d5aed2e168b`. Quy trình xác minh độc lập được thực thi
+  bằng cách clone và checkout tách rời sạch từ đúng SHA này sang `local/checkouts/pr04-1d-candidate`,
+  liên kết dependencies và chạy toàn bộ ma trận kiểm tra phát hành (unit, governance, backend,
+  build, output pipeline và cả ba cổng browser với 1.972 frame kiến trúc, 8 lượt greybox, 4 scene graphics).
+  Toàn bộ 9/9 nhóm kiểm tra đều đạt với mã exit 0, build tái lập chuẩn xác revision `d2e18a6b8ffc`.
+  Không có bất kỳ lỗi hồi quy nào. Bằng chứng được lưu tại `docs/environment-kit/validation/q01-pr04-1d/verification.json`.
+  Không tự duyệt G3/G4, không push hay deploy production.
+
 <a id="story-review-2026-11-11"></a>
 ### Kết quả đối chiếu bản nhận định
 
@@ -343,6 +353,17 @@ không duyệt art, không push/deploy.
 `test/ci-workflow.cjs` xác nhận 2 workflow, 23 bước kiểm, đủ 9 script bắt buộc và 3 bước software
 rendering. Governance `check:agents` và `test:agents` đạt 39/39 ca kiểm; `test:backend` đạt 28/28 ca.
 Cấu hình CI sẵn sàng chạy ổn định trên hạ tầng GitHub Actions.
+
+**Kiểm PR-04.1D (xác minh candidate cuối trên SHA c93d1a5):** clone và checkout sạch
+tách rời từ đúng SHA `c93d1a50ecd411e2310cc4cb1aa82d5aed2e168b` sang thư mục riêng,
+chạy trọn vẹn 9/9 bước kiểm tra ma trận phát hành với mã exit 0: `npm test` (29,6 s),
+`test:agents` (18,1 s, 39 ca), `test:backend` (8,5 s, 28 ca), `check:agents` (1,2 s, 0 lỗi/cảnh báo),
+`build` (7,3 s, tái lập đúng revision `d2e18a6b8ffc`), `test:build-output` (0,7 s),
+`test:architecture-browser` (237,8 s, 7 lượt/1.972 frame, 0 va chạm, 15 kiểm tra, 7 đối chứng va chạm cố ý,
+cold standalone chặn HTTP đạt), `test:graphics` (394,4 s, 4 scene, glError null) và
+`test:q01-greybox-browser` (713,9 s, 8 lượt web + offline, vòng đời WebGL giải phóng sạch về 0).
+Không có hồi quy; SHA và revision được ghi nhận vào `docs/environment-kit/validation/q01-pr04-1d/verification.json`.
+Working tree sạch, không push/deploy, giữ nguyên trạng thái G3/G4 (`awaiting_visual_review` / `in_progress`).
 
 **Giới hạn checkout tại lúc bàn giao:** sau khi candidate đã kiểm xong, có
 thay đổi render đồng thời trong `witness-architecture.js` (thêm batch ở
