@@ -94,11 +94,17 @@ try{
    const make=gl[create].bind(gl),drop=gl[remove].bind(gl),oldMake=gl[create],oldDrop=gl[remove];
    gl[create]=(...args)=>{const r=make(...args);sets[kind].add(r);return r;};gl[remove]=r=>{sets[kind].delete(r);return drop(r);};restore.push(()=>{gl[create]=oldMake;gl[remove]=oldDrop;});
   }
-  const wait=()=>new Promise(r=>setTimeout(r,180)),snapshot=()=>Object.fromEntries(Object.entries(sets).map(([k,s])=>[k,s.size])),runs=[];
+  const frame=()=>new Promise(r=>requestAnimationFrame(r)),snapshot=()=>Object.fromEntries(Object.entries(sets).map(([k,s])=>[k,s.size])),runs=[];
   try{for(let i=0;i<4;i++){
-   const temporary=WitnessQ01Greybox.mount(T,scene,WitnessQ01Greybox.create());await wait();const mounted=snapshot();
+   const temporary=WitnessQ01Greybox.mount(T,scene,WitnessQ01Greybox.create());
+   const uploadDeadline=Date.now()+8000;
+   while(Date.now()<uploadDeadline&&(!sets.texture.size||!sets.buffer.size))await frame();
+   const mounted=snapshot();
    let triangles=0,drawMeshes=0;temporary.group.traverse(o=>{if(o.isMesh){triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3*(o.isInstancedMesh?o.count:1);drawMeshes++;}});
-   temporary.dispose();scene.userData.architecture=ar;await wait();const released=snapshot();
+   temporary.dispose();scene.userData.architecture=ar;
+   const releaseDeadline=Date.now()+8000;
+   while(Date.now()<releaseDeadline&&Object.values(sets).some(s=>s.size>0))await frame();
+   const released=snapshot();
    if(!mounted.texture||!mounted.buffer)throw Error('Temporary level was not uploaded to WebGL');
    if(Object.values(released).some(Boolean))throw Error('Level resources retained: '+JSON.stringify(released));
    if(triangles>24000||drawMeshes>120)throw Error('Greybox geometry budget exceeded');runs.push({mounted,released,triangles,drawMeshes});
