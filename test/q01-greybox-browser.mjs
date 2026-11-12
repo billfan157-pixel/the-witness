@@ -37,7 +37,7 @@ const installTrace=`(()=>{
 async function key(key,down){await b.send('Input.dispatchKeyEvent',{type:down?'keyDown':'keyUp',key,code:'Key'+key.toUpperCase(),windowsVirtualKeyCode:key.toUpperCase().charCodeAt(0)});}
 async function go(id){
  const result=await b.evaluate(`(()=>{const lab=Q01GreyboxLab,select=document.querySelector('#destination');select.value=${JSON.stringify(id)};select.dispatchEvent(new Event('change'));lab.engine.controls(0,0);globalThis.greyboxArrived=false;return lab.engine.walkTarget(${JSON.stringify(id)},()=>greyboxArrived=true,.075);})()`);
- assert(result,'No engine path to '+id);const deadline=Date.now()+100000;let prev='',stuck=0;
+ assert(result,'No engine path to '+id);const deadline=Date.now()+(process.env.WITNESS_QA_HARDWARE==='0'?300000:100000);let prev='',stuck=0;
  while(Date.now()<deadline){const s=await b.evaluate('({done:globalThis.greyboxArrived,p:Q01GreyboxLab.engine.spatial(),nav:Q01GreyboxLab.engine.navigationState()})');if(s.done){assert.equal(await b.evaluate(`Q01GreyboxLab.engine.within(${JSON.stringify(id)})`),true);return;}
   const at=JSON.stringify([s.p.x.toFixed(3),s.p.y.toFixed(3),s.p.z.toFixed(3)]);if(at===prev)stuck++;else stuck=0;assert(stuck<22,'Engine stopped before '+id+': '+JSON.stringify(s));prev=at;await delay(180);
  }throw Error('Walk timeout: '+id);
@@ -67,7 +67,7 @@ async function run(route,view,kind){
  const checkpoint=await b.evaluate('Q01GreyboxLab.engine.spatial()');assert.equal(checkpoint.y,5.04);
  const restored=await b.evaluate(`Q01GreyboxLab.engine.restoreSpatial(${JSON.stringify(checkpoint)})`);assert.deepEqual(restored,checkpoint,'Same-floor spatial restore moved the avatar');
  await go('mezzanine');await go('mainBottom');await capture(prefix+'-04-ground-store');await go('mezzanine');await capture(prefix+'-04-return-for-people');
- await b.click('#actors');await go('reception');await b.wait('Q01GreyboxLab.jobs.size===0',100000);
+ await b.click('#actors');await go('reception');await b.wait('Q01GreyboxLab.jobs.size===0',process.env.WITNESS_QA_HARDWARE==='0'?300000:100000);
  const actors=await b.evaluate('Object.fromEntries(["titus","simeon","apprentice"].map(id=>[id,{...Q01GreyboxLab.mounted.actors[id].position}]))');
  for(const p of Object.values(actors))assert.equal(p.y,5.04,'An actor failed to walk to the receiving roof');
  assert.deepEqual(await b.evaluate('Q01GreyboxLab.errorLog'),[]);await capture(prefix+'-04-party-received');
