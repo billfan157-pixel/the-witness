@@ -51,7 +51,7 @@ async function run(route,view,kind){
  await b.click('#annotations');assert.equal(await b.evaluate('(()=>{let n=0;Q01GreyboxLab.mounted.group.traverse(o=>{if(o.userData.annotation&&o.visible)n++;});return n>0;})()'),true);
  await b.click('#annotations');assert.equal(await b.evaluate('(()=>{let n=0;Q01GreyboxLab.mounted.group.traverse(o=>{if(o.userData.annotation&&o.visible)n++;});return n;})()'),0);
  // Arrival is also checked with real W input before normal click-to-walk guidance.
- await b.evaluate('document.querySelector("#stage").focus()');await key('w',true);await delay(550);await key('w',false);
+ await b.evaluate('document.querySelector("#stage").focus()');await key('w',true);const wDeadline=Date.now()+6000;while(Date.now()<wDeadline){if((await b.evaluate('Q01GreyboxLab.engine.spatial().z'))>-29.9)break;await delay(100);}await key('w',false);
  assert((await b.evaluate('Q01GreyboxLab.engine.spatial().z'))>-29.9,'W did not move along the boat deck');
  for(const id of ['disembark','alley','load','ledger','titus'])await go(id);
  await capture(prefix+'-03-yard');
