@@ -1,8 +1,8 @@
 # 18 • Chi tiết cảnh, thoại và dấu trở lại
 
-**Phụ lục biên tập 3.2 • 08/11/2026.** Toàn bộ thoại dưới đây của người hư cấu là [H]. Không có lời mới gán cho nhân vật Kinh Thánh. Mỗi hồ sơ tách **đã chơi được** khỏi **dàn dựng tiếp**; phần sau là đặc tả sản xuất, không là tính năng được tính vào bản 0.4.0. Dữ kiện G17/B06 và ai biết gì tuân hồ sơ 12.
+**Phụ lục biên tập 3.2, đối chiếu thiết kế v6 ngày 11/11/2026.** Toàn bộ thoại dưới đây của người hư cấu là [H]. Không có lời mới gán cho nhân vật Kinh Thánh. Mỗi hồ sơ tách **đã chơi được** ở mốc runtime được ghi khỏi **dàn dựng tiếp**; phần sau là đặc tả sản xuất. Tên chương dùng tên thiết kế v6 của hồ sơ 11, không đổi ID hoặc tiêu đề trong save. Dữ kiện G17/B06 và ai biết gì tuân hồ sơ 12.
 
-**Cập nhật thực thi 0.5.0:** phần đã dựng tiếp, vật thể cụ thể, sáu việc quan hệ và giới hạn còn lại được ghi ở [20 • Thực thi từng cảnh](../STORY.md). Các mục dưới giữ mốc biên tập 0.4.0 để đối chiếu, không phải danh sách tính năng còn thiếu của bản mới.
+**Đối chiếu thực thi:** tra [STORY — nguồn sinh từ runtime](../STORY.md#derived) để tạo danh mục hoạt động, vật thể và sáu việc quan hệ của mốc 0.5.0. Các mục “Đã chơi được” dưới đây giữ mốc biên tập 0.4.0 để đối chiếu; các bổ sung v6 được ghi riêng, không biến thành báo cáo tính năng đã chạy.
 
 ## 1. Quy tắc viết và dàn dựng
 
@@ -10,9 +10,15 @@ Một NPC không chỉ là người đưa câu trả lời. Họ có việc đan
 
 Không cho lời mở đọc hộ luật từng bước. Luật có thể rõ, nhưng NPC nên đặt cái giá con người: người đang chờ bữa, người chưa nhìn thấy đèn, việc đang có người gánh. Phản hồi cơ chế nêu quan hệ còn thiếu; lời nhân vật giữ cảm giác cùng làm, tránh “bạn đã lựa chọn đạo đức”.
 
+**Tuân thủ Ma trận Giọng điệu & Cấm kỵ từ ngữ hệ thống:**
+Biên kịch phải đối chiếu nghiêm ngặt [Bảng giọng điệu nhân vật & Tâm lý ngầm (Character Voice & Subtext Matrix)](05-character-bible.md#10-bang-giong-dieu-nhan-vat--tam-ly-ngam-character-voice--subtext-matrix): Titus dùng từ ngữ cơ khí (trục, nêm, tải trọng, dung sai); Lea dùng câu ngắn sắc bén của người làm văn thư nhưng ngập ngừng nuốt nghẹn khi chạm đến gia đình; Natan dùng ẩn dụ mộc và biển hồ; Yosef rào đón tự vệ.
+**Tuyệt đối cấm** nhân vật thế kỷ I sử dụng các thuật ngữ hệ thống siêu ngôn ngữ như *"nguồn độc lập"*, *"phạm vi công bố"*, *"mệnh đề"*, *"canon"*, *"runtime"*, *"validator"*, *"state model"*. Mọi ý niệm pháp lý phải được chuyển hóa tự nhiên vào đời sống thế kỷ I (*"người mắt thấy tai nghe"*, *"lời nói kín trong nhà"*, *"điều ta dám đoan chắc"*).
+
 Vật trở lại cần có lịch sử sử dụng. Một chốt cũ được giữ lại vì còn giúp chỉ đường tải; một bản nháp có gạch sửa giúp thấy đã thay cách hiểu; một phần dự trữ có người tiếp nhận ở ca sau. Không biến mọi vật thành collectible và không dùng ánh sáng thần bí để biến suy luận chưa kiểm thành sự thật.
 
 ## 2. Q01 • Bến không chờ người về
+
+**Bản bàn giao Q01 hiện hành:** dùng [07, phần 1–2](07-vertical-slice-screenplay.md#q01-handoff) cho toàn bộ Beat/thoại/camera. Các dòng nền 0.4 và đề xuất dưới đây giữ để đối chiếu công việc Q01.LOAD; không tự nhập thêm thoại hoặc đổi thứ tự vào bản bàn giao mới.
 
 **Câu hỏi cảnh.** Giúp Natan là tháo ngay thứ đang hỏng, hay hiểu thứ gì còn đang giữ cả xe?
 
@@ -34,9 +40,14 @@ Các cuộc nói, quyền từ chối của Yosef và ba phương án bảo vệ
 
 **Dàn dựng tiếp.** Mép dán có màu gần giấy cũ, nhìn ra bằng bóng nghiêng và bản mô tả chữ, không bằng một điểm sáng gào “vật chứng”. Nồi của Rina ở phía khác sân để người chơi nhận ra một nguồn độc lập đến từ công việc khác. Giấy B06 có mã nhìn được ở mọi mức phóng to.
 
-**Thoại đề xuất.** Rina: “Tôi có thể kể đã đổ bao nhiêu hạt vào nồi. Người sửa chữ trong sổ thì tôi không nhìn thấy.” Miriam khi người chơi suy tên: “Ta có thể giữ câu hỏi ấy. Đừng đặt nó vào miệng người chỉ nhìn thấy một trang giấy.”
+**Nối cảnh v6, chưa triển khai.** Giữ tro và hậu quả cứu hộ Q01 trong cảnh mở Q02, theo [hồ sơ 11](11-chapter-dossiers.md). Yosef được chọn chỗ nói; vết cháy/vết cạo không thành dấu riêng xác định người gây án. Bàn PALIMPSEST vẫn chỉ xác lập điều có căn cứ trên B06, không cấp consent hoặc bằng chứng G17.
 
-## 4. Q03 • Một bao thiếu, ba người nhớ
+**Thoại đề xuất.**  
+Rina: “Tôi có thể kể đã đổ bao nhiêu hạt vào nồi. Người sửa chữ trong sổ thì tôi không nhìn thấy.”  
+Miriam khi người chơi suy đoán vội: “Ta có thể giữ câu hỏi ấy trong lòng. Đừng đặt nó vào miệng người chỉ nhìn thấy một trang giấy.”  
+Yosef (hạ giọng, mắt nhìn về bóng cây vả nơi góc sân): “Cậu săm soi cái mép giấy dán đè ấy làm gì... Năm ngoái, ngay tại đúng góc sân này dưới bóng cây vả, cha cậu — ông Haddai — cũng từng đứng chết lặng, bàn tay run run cầm một cuộn da cạo mép y hệt thế này để chất vấn bọn cai kho. Thủ pháp cạo mỏng thớ giấy rồi quét một lớp keo bột xương dán đè mép chỉ có một kẻ ở văn phòng cảng làm được... Đó là chữ ký của hắn! Nhưng xin cậu... đừng lôi tên tôi ra trước công đường, tôi còn mẹ già phải nuôi...”
+
+## 4. Q03 • Con đường biến mất
 
 **Câu hỏi cảnh.** Một tuyến có dấu đi qua khác gì một lời cáo buộc?
 
@@ -68,7 +79,7 @@ Sổ lưu nhánh tuyến đã chọn. Khi vào Q05, đoạn mở nhắc đúng g
 
 **Thoại đề xuất.** Người nhận: “Tôi giữ con số mình đã đếm. Nếu đường đi có hai bao hỏng, xin đừng bắt người đã nhận mười tám phải gánh thêm phần kể hộ ấy.” Lea có thể yêu cầu đọc lại từng khoản thay vì chốt ngay một thủ phạm.
 
-## 7. Q06 • Chỗ đứng của lưỡi gậy
+## 7. Q06 • Cái giá của một tờ giấy
 
 **Câu hỏi cảnh.** Giữ được một vật hay chép được ba bản có nghĩa biết thêm được gì?
 
@@ -110,7 +121,7 @@ Khi vào Q11, sổ nhắc đúng cuộc gặp trực tiếp, phân việc lại 
 
 **Thoại đề xuất.** Người giữ bản: “Ta có thể giữ một khoảng chưa được phép đọc. Một khoảng trống đúng cũng giúp người nhận biết giới hạn hồ sơ.”
 
-## 11. Q10 • Bản sao không nguyên vẹn
+## 11. Q10 • Hai bản sửa
 
 **Câu hỏi cảnh.** Có thể giữ trách nhiệm thật của cha mà không nhận thay mọi cáo buộc?
 
@@ -119,6 +130,10 @@ Khi vào Q11, sổ nhắc đúng cuộc gặp trực tiếp, phân việc lại 
 Nếu đã làm bảng Q05, đoạn mở nhắc ba khoản trước khi đọc thư cha. Điều này cho người chơi một thước đối chiếu từng có, không thêm một hồi tưởng siêu nhiên biết sự thật.
 
 **Dàn dựng tiếp.** Lá thư có chỗ ngập ngừng/gạch sửa [H], nhưng không cho chữ viết tay tự chứng minh cảm xúc thật. Khi avatar chọn bản lược, bản đủ còn nằm trong tay Lea; đính chính là một hành động tới đúng người nhận, không là nút xóa lịch sử.
+
+**Đích v6, chưa triển khai vào bàn RESPONSIBILITY.** Đặt E08 và bản quy tội E11 ở hai phía, giữ riêng phần nhận lỗi thật của Haddai với điều E11 cáo buộc thêm. Các dấu mực/nếp gấp/niêm chỉ dẫn người chơi đến từng chặng E12; phải kiểm người giữ độc lập và phạm vi theo [hồ sơ 12](12-continuity-and-state.md#3-so-chung-cu-va-dieu-co-the-ket-luan). Q10 ghi cả chặng chưa biết, Q11 kiểm tiếp; không giải P05 bằng một lần ghép giấy. Nếu người giữ từ chối, cảnh vẫn cho bàn giao phần đã kiểm và giữ P05 chưa đủ. Đây là việc còn phải dựng; không mô tả E11/E12 như thẻ đang có trong runtime v3.
+
+**Thoại v6 [H].** Lea: “Giữ cả hai bản ở đây. Điều cha bạn đã làm sai không cho người khác quyền viết thêm vào.”
 
 **Thoại đề xuất.** Lea: “Bạn không cần bỏ cha mình lại ngoài bàn. Chỉ đừng đổi thước đo lúc đặt lá thư của ông xuống.”
 

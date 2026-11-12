@@ -1,12 +1,28 @@
 {
-  "documentRevision": 4,
+  "documentRevision": 5,
   "roadmap": "docs/environment-kit/roadmap.md",
   "standards": "docs/environment-kit/standards.md",
   "catalog": "docs/environment-kit/catalog.csv",
-  "updated": "2026-11-10",
+  "updated": "2026-11-11",
   "production": "AI",
   "requiredScene": "Q01",
   "extensionScene": "L04",
+  "q01Greybox": {
+    "stage": "playable-spatial-candidate",
+    "source": "witness-q01-greybox.js",
+    "entry": "q01-greybox.html",
+    "build": "e5bf8b4d1450",
+    "verification": "docs/environment-kit/validation/q01-pr04/verification.json",
+    "modelChecks": 10,
+    "webOfflineWalks": 8,
+    "dayEveningViewCombinations": 16,
+    "controllerSamples": 13827,
+    "levelTriangles": 8592,
+    "drawableMeshes": 77,
+    "resourceReleaseCycles": 4,
+    "artAccepted": false,
+    "storyPresenter": "PR-05 pending; the lab does not write campaign progress"
+  },
   "deadlinePolicy": "quality-gated",
   "gates": [
     {
@@ -85,7 +101,8 @@
     "docs/environment-kit/validation/phase3/verification.json",
     "docs/environment-kit/research/q01-gold-materials.md",
     "docs/environment-kit/q01-gold-scene.md",
-    "docs/environment-kit/validation/q01-gold/verification.json"
+    "docs/environment-kit/validation/q01-gold/verification.json",
+    "docs/environment-kit/validation/q01-pr04/verification.json"
   ],
   "limitations": [
     "pipeline surface study is not accepted final art or exact Caesarea kurkar",

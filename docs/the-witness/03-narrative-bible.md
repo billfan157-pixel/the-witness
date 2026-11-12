@@ -100,7 +100,7 @@ Mục này là sự thật trong thế giới hư cấu `[H]`. Tất cả không
 * **T03:** Hanan trực tiếp chỉ dẫn chuyển bốn bao sang sân phụ, ngoài tuyến phân phối. Ông có động cơ dự phòng thật nhưng về sau biến hàng để tạo sự lệ thuộc và quyền lực ngầm bến bãi. Varro giúp che đậy bằng thủ tục và hưởng lợi.
 * **T04:** Haddai phát hiện bất nhất, dầm mưa rét đêm ngày tìm cách sửa và gửi bản sửa thật (E08) chính thức qua đường chuyển thư về Giêrusalem; tài liệu bị ngăn hoặc thất lạc có chủ đích. Chính sự lao lực quá độ trong mùa đông và nỗi dày vò tinh thần khiến ông kiệt sức, nhiễm bệnh phổi nặng rồi qua đời [H]; không có bí ẩn giết cha nhưng cái chết của ông gắn liền với món nợ công lý của 4 bao hàng.
 * **T05:** Avatar tận mắt biết tại thời điểm ký chưa kiểm đủ, nhưng chọn im lặng vì sợ mất việc. Sự thật này được chia sẻ với người chơi từ Hồi I, không giấu thành “tội bất ngờ”.
-* **T06:** Natan giữ sổ gia đình, bìa và biên nhận có chữ ký gốc; Q04 trao phần đã làm khô. Dấu khâu bất thường ở gáy được gieo sớm, nhưng nội dung chỉ mở khi có cách bảo tồn/đối chiếu tại Q10.
+* **T06:** Theo [chuỗi giữ vật ở hồ sơ 12](12-continuity-and-state.md#q01-book-custody): Q01 avatar nhận nguyên cuốn sổ có gáy khâu; Natan giữ tờ bìa hồ sơ **rời** kẹp biên nhận, Q04 mới bàn giao phần ấy. Không tháo bìa hoặc khâu lại sổ; gáy nguyên trạng để đối chiếu Q10.
 * **T07:** B06 là một lượt bữa chung khác, đang thiếu hai bao tại Xêdarê. Dù B06 không chứng minh được vụ G17 năm trước (giữ nguyên bất biến P01), Yosef tại góc sân bữa Q02 nhìn thấy avatar săm soi vết cạo mép đã xúc động tiết lộ: chính Haddai lúc sinh thời từng đứng ở đúng góc sân này dưới bóng cây vả để chất vấn về một vết cạo mực tương tự; thủ pháp dán đè mép giấy của B06 chính là "chữ ký nghề nghiệp" của kẻ đang nắm giữ hồ sơ cảng. Điều này gắn chặt B06 với nỗi đau mất cha của avatar mà không phá vỡ logic pháp lý.
 * **T08:** E04/E05/E06 và lời chứng đúng phạm vi cho thấy tuyến G17, không có một nguồn duy nhất đủ kết luận toàn bộ mạng lưới. Giêrusalem giữ nguồn thư, không phải điểm nhận 18 bao G17.
 * **T09:** Varro là nhân vật hư cấu có ảnh hưởng tới khâu hồ sơ/niêm xác nhận ở cảng. Ông biết và hưởng lợi từ việc ghi nhận sai; đặt làm bản sửa giả quy hết trách nhiệm cho Haddai và gán người làm chứng thành đồng phạm.
@@ -134,32 +134,23 @@ L03 (Gr 38 [S07]), L05 (Cv 16 [S11]), bốn Inner Veil và sáu nhiệm vụ qua
 ---
 
 ## 05 • PROLOGUE Q01 — KỊCH BẢN TƯƠNG TÁC
-Định hướng: mở tại Xêdarê, không bắt đầu bằng sáu phút chơi L01. Q01 ưu tiên mối quan hệ với người cha, một hiểm nguy thật có thể xử lý và một bí ẩn người chơi nhìn thấy ngay bằng mắt.
-* **00 \| Một con thuyền cập bến:** Góc nhìn theo mặt nước và tiếng dây neo; avatar bước xuống cảng. Không bắt xem đoạn phim dài. Học nhìn/di chuyển khi đi tới xưởng Natan.
-* **01 \| Dấu hiệu người lạ:** Một người quan sát cửa xưởng rồi bỏ đi khi bị nhìn; không có marker xác nhận hắn là kẻ đốt kho. Người chơi có thể theo vài bước hoặc hỏi công nhân.
-* **02 \| Natan và bìa giấy:** Natan trao sổ hộ gia đình, chưa giao lời giải. Bìa bị ẩm và có đường khâu lệch; người chơi có thể kiểm tra như một dấu vật lý, không được kết luận ngay.
-* **03 \| Tiếng cháy ở kho phía tây:** Cháy bắt đầu trong khu vực chứa hàng; Titus hướng dẫn lối có người cần đưa xuống. Không bắt người chơi đánh nhau, ưu tiên cứu hộ và tìm đường.
-* **04 \| Người chơi giải quyết bằng vật thể:** Chèn xe hàng chặn lối, mở lối phụ hoặc gọi hai thợ cùng nâng; bố cục dùng kho bến → cầu thang → sân mái đã có. Hai đường chơi đều cho kết quả hợp lệ.
-* **05 \| Đốm người rời sân:** Từ sân mái nhìn thấy một người rời khu sau kho trước đội chữa cháy. Không biết người này là thủ phạm; ghi nhận hướng, thời điểm, quần áo và giới hạn tầm nhìn.
-* **06 \| Yosef không dám đứng tên:** Trong lúc người khác đang bối rối, Yosef nhận ra avatar là con Haddai và nhắc tới những hồ sơ có người không muốn mở. Anh yêu cầu không được gọi tên giữa đám đông.
-* **07 \| Di vật và ký ức:** Natan trở lại xưởng; câu nói về việc Haddai từng muốn sửa một điều. Avatar được nhắc sớm mình đã thấy việc ký khi chưa kiểm, nhưng chưa biết hàng đi đâu.
-* **08 \| Câu hỏi cuối mở ra Q02:** Người chơi thấy một tờ B06 có dấu thay đổi (chưa biết ai sửa), cùng dấu vết khác của vụ cháy. Chương khép bằng câu hỏi: *“Ai đang làm hồ sơ thay đổi và vì sao nhân chứng sợ nói?”*
 
-### 5.1 Yêu cầu dựng cảnh của Q01
-Động cơ chơi phải phát sinh từ vật thể và con người thật: khói chặn tầm nhìn, kiện hàng gây tắc, thợ cần trợ giúp; không chỉ là nút “cứu người”. Không dùng cháy kho như lý do phá hủy toàn bộ Q01 mới làm. Thiệt hại cục bộ, ánh sáng/khói theo kịch bản, trạng thái kho được lưu và có phiên bản sau sự kiện.
+**Nguồn phân cảnh/thoại duy nhất:** [07 — Q01 handoff](07-vertical-slice-screenplay.md#q01-handoff), bản bàn giao 11/11/2026. Chín Beat giữ thứ tự cập bến → người lạ → sổ → cháy → cứu hộ → mái → Yosef → đêm/T05 → sáng/B06/bàn giao; đích 42 phút trong khoảng 40–45, chưa đo.
+
+Trọng tâm là tìm lại quan hệ với cha, cứu người và học giới hạn lời chứng. Natan chỉ biết vật mình giữ; T05 là ký ức riêng của avatar, không tự trở thành điều ông biết. Yosef kể cửa/chuyến mình làm, không khẳng định nguyên nhân cháy hoặc nguyên nhân cha mất. Titus hiểu kết cấu tại chỗ, chưa biết âm mưu công cụ.
+
+One-shot là dàn dựng mặc định liền mạch, có nén đêm trong cùng khung sau khi chọn nghỉ và có ngoại lệ tiếp cận/load. Chọn `lodging`/`meal` ở Beat 07 là đặt phần việc; thực hiện bàn giao sau B06 ở Beat 08 mới commit/trừ phí. Hai tuyến cứu hộ giữ dấu thế giới riêng. B06 chưa thành E02, chưa có P01 hoặc kết luận thủ phạm. Các cue, lời thoại, tiền đề và cách khôi phục đều theo 07; không duy trì một bản chín Beat thứ hai tại đây.
 
 ---
 
 ## 06 • HỒ SƠ NHIỆM VỤ CHI TIẾT Q01–Q12
 
 ### Q01 — Bến không chờ người về
-* **TÍCH HỢP v6:** Chuẩn hóa bến kho phía tây thành bốn vùng chức năng cao độ (không phải bốn tầng nhà độc lập): cầu cảng/sân hàng C0 → kho trệt và gác lửng cứu hộ C1 → rãnh bảo trì ngầm C-1 → sàn tời và sân mái C+1. Giữ nguyên tương tác Q01.LOAD (chèn bánh/nêm gỗ), lựa chọn sinh hoạt lodging/meal, cờ Q01.COMMITTED và các callback sẵn có. Dấu cháy phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus (sự thật tác giả T10; avatar tại Q01 chỉ ghi nhận 4 thuộc tính quan sát giới hạn, chưa thể suy luận danh tính hay vai trò của Rufus). Vết mực B06 quan sát được ở cuối Q01 chỉ là ghi nhận hiện tượng sơ bộ; việc thu thập và xác minh vật chứng E02 thuộc về Q02.
-* **Bối cảnh:** Xêdarê — bến / kho phía tây.
-* **Xung đột:** Cứu người khỏi kho cháy, nhận sổ, bắt đầu nghi ngờ thao túng hồ sơ.
-* **Gameplay:** Khám phá theo vùng cao độ, thao tác xe có tải, làm quen NPC, đọc dấu cháy và thẩm định giới hạn điều nhìn thấy.
-* **Quyền lựa chọn:** Tuyến 1 cơ học cùng Titus hoặc tuyến 2 đòn bẩy cùng thợ cảng; lựa chọn chỗ nghỉ (lodging) hay bữa chung (meal) tạo callback tài nguyên/người hỗ trợ.
-* **Điều tiết lộ:** Nhân chứng bị đe dọa; bìa có khâu lệch; avatar nhớ mình từng im lặng (T05).
-* **Callback:** Người được cứu thoát an toàn; kho có trạng thái sau cháy; Q01.COMMITTED mở Q02.
+* **Bối cảnh:** Xêdarê, một chiều/tối, đêm nghỉ và sáng hôm sau; bốn vùng chức năng C0/C1/C-1/C+1.
+* **Kịch bản triển khai:** [07 — Q01 thống nhất](07-vertical-slice-screenplay.md#q01-handoff); giữ `Q01.LOAD`, ID task/route và callback.
+* **Quyền lựa chọn:** `follow/investigate`, `mechanical/manual`, `lodging/meal`; cứu hộ không khóa theo tiền, danh tiếng hay companion đã tuyển.
+* **Điều tiết lộ:** đường khâu, bốn mục quan sát giới hạn trên mái, yêu cầu giữ kín của Yosef, T05 riêng và dấu B06 sơ bộ. Không xác thực E01/E02 hoặc suy chủ mưu.
+* **Callback:** dấu xe/xà theo đúng tuyến; `lodging` mở góc sao sổ Q03, `meal` có người nhận ca Q04; bàn giao thật sau B06 qua model mới ghi `Q01.COMMITTED` và mở Q02.
 
 ### Q02 — Những tên không được đọc
 * **TÍCH HỢP v6:** Thu thập và thẩm định chính thức vật chứng E02 (mép dán/sửa B06) dưới ánh xiên tại khu sao chép; kết hợp lời chứng E03 của Rina để xác lập P01 (B06 không khớp; không suy ra T03, không quy kết nguyên nhân hay thủ phạm). Miriam dẫn vào sân bữa bằng công việc hỗ trợ, không dùng điểm quan hệ để ép Yosef. B06 luôn tách biệt G17 về mặt pháp lý logic.
@@ -397,10 +388,8 @@ Nhìn thấy bất thường → tự tiếp cận → đặt giả thuyết →
 ## 13 • PHỤ LỤC: CẢNH MẪU, GLOSSARY VÀ NGUỒN
 
 ### 13.1 Hai cảnh thoại mẫu `[H]`
-* **CẢNH A — Q01, XƯỞNG NATAN SAU VỤ CHÁY:**
-  * NATAN: *“Cha con sửa dây neo hai lần, kể cả khi người khác bảo đã chặt. Nhưng có một thứ ông ấy đã ký quá sớm.”*
-  * NGƯỜI CHỨNG: *“Chú biết chuyện ấy?”*
-  * NATAN: *“Chú chỉ biết thứ ông ấy để lại ở đây. Phần còn lại, chú không thể nói thay người đã thấy.”*
+* **CẢNH A — Q01, XƯỞNG NATAN SAU VỤ CHÁY:** Dùng trọn [thoại Beat 07 ở 07](07-vertical-slice-screenplay.md#q01-beat-07). Natan tạo khoảng ngồi và chỉ nói phần mình biết; không còn câu cho ông biết thời điểm ký trước. Avatar tiếp nhận T05 bằng hồi tưởng riêng, không đọc thành lời cho ông.
+
 * **CẢNH B — Q10, HAI BẢN SỬA:**
   * LEA: *“Hai tờ này đều nói là lời cuối của Haddai. Một tờ có dấu niêm đẹp hơn. Nhưng chính vì thế tôi muốn hỏi: ai đã đặt nó vào hồ sơ, và từ tay ai?”*
   * NGƯỜI CHỨNG: *“Nếu bản kia là thật, cha tôi vẫn có lỗi.”*

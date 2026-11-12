@@ -137,6 +137,16 @@ data produced by `tools/bake-q01-gi.cjs`; `gi-bake.json` records the proxy
 geometry, lighting inputs, occlusion checks, precision and limitations.
 No external archaeological photograph was copied into these assets.
 
+## Q01 PR-04 playable greybox
+
+`witness-q01-greybox.js` generates the original [H] port, warehouse,
+mezzanine, maintenance channel, roof/winch, rescue gates, trolley, lever,
+stairs, safety boundaries, scale figures and construction labels. These
+are project-authored blockout geometry and colors, with no new external
+textures, photographs, audio or archaeological measurement claims.
+The playable lab uses the existing credited engine and avatar. This is
+a spatial candidate for PR-05, not accepted final art; `artAccepted=false`.
+
 ## Cover
 
 `journey-cover.webp` was generated with the built-in ImageGen tool, then encoded

@@ -14,20 +14,17 @@ Mỗi quest có ID bền, tiền điều kiện, trigger, objective, phương á
 
 ## 2. Hồi I — Người bị buộc im lặng (Q01–Q04 + L01)
 
-### Q01 — Bến không chờ người về (Vertical Slice Mở Màn — One-Shot Camera)
+### Q01 — Bến không chờ người về (bản bàn giao phân cảnh 11/11/2026)
 
-**Vào:** Game mới, cập bến cảng Sebastos (Xêdarê) cuối thập niên 50 AD; không dùng đoạn chơi thử 6 phút L01 ở đầu game để bảo toàn trọng tâm tâm lý cha con.  
-**Cấu trúc 9 nhịp phân cảnh (Beats 00–08):**
-* *Beat 00 (Cập bến & Invisible Tutorial):* Góc máy sát mặt nước lướt lên vai Người Chứng khi ván gỗ hạ xuống; trao quyền điều khiển tức thì không cắt cảnh; làm quen di chuyển qua phu khuân vác.
-* *Beat 01 (Bóng người lạ):* Bố cục hẻm đá đóng khung bóng người lạ dò xét xưởng Natan; lẩn đi khi bị nhìn; không marker chỉ định; tự do bám theo hoặc hỏi thợ cưa gỗ.
-* *Beat 02 (Natan & 3D Close Inspection):* Nhận sổ gia đình; xoay vật thể 3D dưới ánh sáng xiên phát hiện vết ẩm lạnh và đường khâu gáy lệch bất thường; khóa suy diễn tại chỗ.
-* *Beat 03 (Cháy kho phía tây & Titus):* Đà gỗ gãy, chuông báo dập dồn, khói đen bốc lên; gặp Titus — thợ sửa trục/ròng rọc; tập trung cứu hộ người mắc kẹt, loại bỏ combat giả tạo.
-* *Beat 04 (Hiện trường bốn vùng chức năng C0/C1/C-1/C+1 & Đa tuyến vật lý):* Tuyến 1 (Cơ học cùng Titus): tháo chốt xe hàng nặng C0 trượt chèn cửa sập, tời cáp ròng rọc C+1 mở lối phụ lên gác lửng C1. Tuyến 2 (Sức người): gọi hai thợ cảng hợp lực đòn bẩy nâng xà sồi đè ngang cầu thang.
-* *Beat 05 (Góc nhìn giới hạn từ sân mái C+1):* Bung cửa sân mái lộng gió; nhìn xuống hẻm khuất sau kho ghi nhận 4 thuộc tính giới hạn của bóng người tháo chạy (hướng bến tàu tuần, thời điểm, áo choàng ngắn viền da, cự ly làm mờ mặt; sự thật tác giả T10: vụ cháy phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus, chưa có bằng chứng tại Q01 cho phép người chơi xác định thủ phạm).
-* *Beat 06 (Yosef & Mầm Consent):* Xuống đất ngổn ngang tro tàn; Yosef thì thầm về hồ sơ bị ém nhẹm và khẩn nài không được gọi tên anh giữa đám đông để bảo toàn mạng sống.
-* *Beat 07 (Lựa chọn tài nguyên & Cảnh thoại Natan A):* Quyết định `lodging` (bàn riêng) vs `meal` (góp dầu bếp chung). Đối diện quá khứ tại xưởng Natan: câu nói về chữ ký vội của Haddai; Người Chứng đối mặt ký ức mình từng thấy cha ký trước biên nhận nhưng im lặng vì sợ mất việc (T05).
-* *Beat 08 (Dấu vết B06 & Kho sau cháy bền vững):* Hiện trường giữ nguyên trạng thái sau cháy; tìm thấy tờ B06 có vết cạo sửa mực (quan sát hiện tượng sơ bộ, chưa cấp E02); camera nâng cao qua mái cháy sém nhìn ra vịnh sương sớm đầu ngày mở ra câu hỏi vào Q02: *"Ai đang làm hồ sơ thay đổi và vì sao nhân chứng sợ nói?"*.
-**Ra:** Ghi nhận quan sát sơ bộ B06 ở cấp thiết kế; giữ sổ đã nhận từ Natan; sau khi hoàn tất hành động thuộc lodging hoặc meal, ghi sự kiện `Q01.COMMITTED` và mở Q02. Không cấp E02 trong Q01 (chưa có pseudo-field `observation.b06_scraped` trong runtime).
+**Vào:** Game mới ở Xêdarê; [07 — Q01 handoff](07-vertical-slice-screenplay.md#q01-handoff) sở hữu chín Beat, thoại, camera, sáng/tối và điều kiện chốt. Đích 42 phút, chưa đo; không mở bằng L01.
+
+**Làm:** giúp Natan qua `Q01.LOAD`, nhận sổ/quan sát gáy; một trong hai tuyến `mechanical` hoặc `manual`; quan sát trên mái có giới hạn; Yosef xin giữ kín; ký ức T05 riêng; sáng hôm sau thấy B06 sơ bộ. Không chép lại chuỗi phân cảnh/thoại tại đây.
+
+**Cam kết sinh hoạt:** Beat 07 dùng `choose` đặt `lodging` hoặc `meal`, chưa trừ phí; cả hai có chỗ nghỉ cơ bản. Sau B06 ở Beat 08, tới điểm tương ứng để thực hiện `pay-lodging` hoặc `give-oil` hiện hữu.
+
+**Quy ước bàn giao:** Cuốn sổ nguyên gáy đi với avatar; tờ bìa hồ sơ rời ở Natan tới Q04 theo T06/12. `sideExit` là đường chung gác–mái đã kiểm, không tự mở cánh ngăn cơ học ở manual. Tuyến đi/điểm nhận Titus và lời Yosef/Natan dùng đúng bản 07 đã hiệu chỉnh, không tạo một bản thoại hoặc actor thứ hai.
+
+**Ra:** Scene đủ điều kiện và task quest cũ đủ, model mới ghi `Q01.COMMITTED`, trừ money/food đúng một lần và mở Q02. E01 vẫn Q04, E02/P01 vẫn Q02. Không dùng yêu cầu giữ kín của Yosef làm consent. Xe/xà và người an toàn giữ đúng tuyến đã thực hiện; one-shot không thay việc đi/làm thật.
 
 ### Q02 — Những tên không được đọc
 * **TÍCH HỢP v6:** Mép dán B06 được thu thập qua hành động `patch` và thẩm định chính thức thành vật chứng E02 dưới ánh xiên tại khu sao chép sát bến (không gọi hành động `patch` là evidence ID); kết hợp E03 để xác lập P01 (không suy đoán nguyên nhân hay quy kết thủ phạm). Miriam dẫn vào sân bữa bằng công việc hỗ trợ, không dùng điểm quan hệ để ép Yosef. B06 luôn tách biệt G17 về logic pháp lý.

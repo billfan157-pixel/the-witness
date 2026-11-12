@@ -8,6 +8,11 @@ const mesh=E.partMesh(T,part,false,get).children[0],p=mesh.geometry.attributes.p
 let top=0;for(let i=0;i<p.count;i++)if(n.getY(i)>.99){top++;assert(Math.abs(p.getY(i)-.10)<1e-6);assert(Math.abs(uv.getX(i)-(p.getX(i)+mesh.position.x)/1.8)<1e-6);assert(Math.abs(uv.getY(i)-(p.getZ(i)+mesh.position.z)/1.8)<1e-6);}
 assert(top>=16,'Walkable top lost its upward normals');
 console.log('PASS Walkable beveled slabs retain a planar top and continuous metre-scaled UVs at every top vertex');
+const edgeAr=A.create({height:()=>.104334546821217}),step=edgeAr.parts.find(p=>p.id==='step-15'),stepMesh=E.partMesh(T,step,false,get);stepMesh.updateMatrixWorld(true);
+for(const x of [step.min[0]+.001,(step.min[0]+step.max[0])/2,step.max[0]-.001])for(const z of [step.min[2]+.001,step.max[2]-.001]){
+ const ray=new T.Raycaster(new T.Vector3(x,step.max[1]+.07,z),new T.Vector3(0,-1,0),0,.12),hit=ray.intersectObject(stepMesh,true)[0];assert(hit,'Beveled top cap lost support at its authored rim');assert(Math.abs(hit.point.y-step.max[1])<1e-5);
+}
+console.log('PASS Legacy stair caps retain real rendered support within 1 mm of all authored top edges');
 const ar=A.create({height:()=>-.12});
 for(const x of [-25.8,-23.1]){
  assert(ar.visible({x,y:2.45,z:-16.9},{x,y:2.45,z:-18}),'Clerestory is visually/physically sealed');

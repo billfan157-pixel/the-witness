@@ -12,3 +12,4 @@ CAE-STORE-PB-05,Kho Q01 ashlar loi tho trat voi cua van va o thong sang,caesarea
 CAE-QUAY-PB-05,Ke cong da mong mat dung da nap va tiep dat,caesarea,H,P0,40000,art-review-candidate,project-authored+CC0-1.0,witness-q01-environment.js,caesarea,walkable,false
 CAE-SURFACE-PB-05,Bo PBR ashlar rubble full1024 lite512 co nguon va hash,caesarea,H,P0,0,art-review-candidate,CC0-1.0,tools/environment-kit/prepare-phase-b-materials.mjs,caesarea,material,false
 CAE-GI-PB-05,SH9 GI tinh ngay toi 550 probe 512 ray 3 bounce,caesarea,H,P0,0,baked-proxy-GI,project-authored,tools/bake-q01-gi.cjs,caesarea,interior,false
+CAE-Q01-GREYBOX-PR04,Q01 C0 C1 C-1 C+1 va hai tuyen cuu ho,caesarea,H,P0,24000,playable-greybox,project-authored,witness-q01-greybox.js,caesarea,walkable+interior+stairs+mezzanine+drain+roof,false

@@ -7,230 +7,480 @@
 
 ---
 
-## 1. Thiết lập Bối cảnh & Định hướng Đạo diễn (Director's Vision)
+**Bàn giao Q01:** phần 1–2 là kịch bản thống nhất 42 phút đích, gồm thoại, camera, sáng/tối, tri thức và ánh xạ state; đọc từ [Q01 handoff](#q01-handoff). Q03/L01 ở phần 3–4 giữ phạm vi riêng.
 
-### 1.1. Không gian & Thời gian
-* **Địa điểm:** Cảng Sebastos (Xêdarê Maritima) — kỳ quan cảng nhân tạo La Mã bên bờ Địa Trung Hải.
-* **Thời điểm:** Một buổi chiều muộn cuối thập niên 50 sau Công nguyên (~58–60 AD). Ánh nắng vàng rực của hoàng hôn Địa Trung Hải rọi nghiêng qua những trụ đá vôi xói mòn bởi muối biển, đổ bóng dài lên các tháp tời bốc dỡ hàng hóa, đường ray gỗ con lăn và những kho hàng phân tầng nồng mùi hắc ín, mạt cưa và cá khô.
-* **Tôn chỉ Mở màn:** **Tuyệt đối không sử dụng đoạn chơi thử 6 phút của chương Biển Đỏ (L01) ở đầu game.** Việc mở màn bằng một lát cắt lịch sử hoành tráng sẽ làm phân tán và loãng đi trọng tâm tâm lý cốt lõi của tác phẩm: sự dằn vặt của Người Chứng về cái chết của người cha vừa qua đời và món nợ lương tâm của chính bản thân.
+<a id="q01-handoff"></a>
+## 1. Q01 — Kịch bản thống nhất để giao triển khai
 
-### 1.2. Trạng thái Tâm lý & Xuất phát điểm Nhân vật
-* **Nhân vật chính (The Witness / Người Chứng):** Một người chuyển thư trẻ tuổi thuộc tầng lớp bình dân. Vừa rời con thuyền cập bến sau chuyến hải trình dài, trở về quê nhà sau khi nhận tin cha mình — Haddai — đã chết vì bạo bệnh trong cảnh bị bêu riếu vì cáo buộc ký khống hồ sơ thất thoát hàng hóa tại kho cảng.
-* **Tảng đá trong tâm thức (T05):** Nhân vật không phải là một người quan sát vô can. Ký ức đau xót nhất đang dày vò Người Chứng là nhiều năm trước, chính mắt nhân vật đã thấy cha ký biên nhận "đã nhận đủ" khi hàng hóa chưa được kiểm tra xong; nhưng vì sợ cha mất việc và gia đình lâm vào cảnh khốn cùng, Người Chứng đã chọn im lặng.
+**Bản bàn giao biên tập ngày 11/11/2026, đã hiệu chỉnh theo góp ý Beat 02/03–04/06–07.** Đích thiết kế Q01 của truyện v6; mọi lời thoại, bố cục, nhân vật phụ và thao tác trong phần này là **[H] sáng tác**. Đây là nguồn duy nhất sở hữu phân cảnh/thoại Q01. Hồ sơ 03/06/11 dẫn về đây; hồ sơ 12 tiếp tục sở hữu sự thật và giới hạn tri thức. Phần state foundation PR-03 đã có; cảnh 3D, diễn xuất, camera và chuyển sáng theo kịch bản còn phải triển khai, kiểm và duyệt đúng phạm vi.
 
-### 1.3. Ngôn ngữ Điện ảnh & Giao diện (Cinematic & UX Rules)
-1. **One-Shot Camera:** Toàn bộ Prologue từ lúc con thuyền cập bến đến khoảnh khắc nhìn ra vịnh sương đêm được ghi lại qua một cú máy duy nhất bám sát nhân vật (Over-The-Shoulder / Third-Person Immersive), không một lần cắt cảnh đen (no hard black cuts) hay nhảy góc máy kiểu phim truyền hình (no disjointed shot-reverse-shot cuts).
-2. **Invisible Diegetic Tutorial:** Loại bỏ hoàn toàn pop-up hướng dẫn dạng chữ nổi, thanh máu hay vệt sáng dẫn đường (floating GPS waypoint marker). Mọi kỹ năng di chuyển, xoay góc nhìn, kiểm tra vật phẩm và tương tác vật lý đều được hướng dẫn thông qua kiến trúc không gian, âm thanh môi trường và phản xạ hành vi tự nhiên của các nhân vật phụ (NPC).
-3. **Observation-First Investigation:** Nghiêm cấm cơ chế "giác quan thám tử" (Detective Vision / Eagle Vision) làm nổi màu đồ vật. Người chơi chỉ có thể phát hiện bất thường qua ánh sáng xiên, âm thanh cót két, độ nghiêng sàn nhà và vết rách cơ học thực tế.
+### 1.1. Mục tiêu, đầu vào và điểm ra
 
----
+Người Chứng trở về Xêdarê sau khi Haddai mất vì một đợt bệnh thông thường. Người chơi tìm lại một quan hệ thân thuộc, cùng cứu hai người ở kho phía tây, nhận ra sự im lặng của mình và mang một câu hỏi cụ thể sang Q02. Không mở đầu bằng một đoạn L01, không biến Q01 thành cảnh phá án hoàn chỉnh.
 
-## 2. Kịch bản Phân cảnh Chi tiết 9 Nhịp (Beats 00–08)
+Đầu vào là game mới hoặc save Q01 phù hợp. Đích ra: đã nhận sổ gia đình, hoàn tất một tuyến cứu hộ, tiếp nhận yêu cầu giữ kín của Yosef, nhớ T05, thấy sơ bộ B06 và thực hiện bàn giao theo lựa chọn `lodging` hoặc `meal`. Chỉ model hiện hành ghi `Q01.COMMITTED`; Q02 mở sau đó. Q01 không cấp E01/E02/E03, không xác lập P01, không nhận diện người gây cháy.
 
-```mermaid
-flowchart TD
-    B00["Beat 00: Một Con Thuyền Cập Bến<br>(Góc máy mặt nước -> Vai nhân vật, Invisible Tutorial)"]
-    B01["Beat 01: Dấu Hiệu Người Lạ Bên Ngoài Xưởng<br>(Đóng khung hẻm hẹp, bóng người lảng vãng, không Marker)"]
-    B02["Beat 02: Natan Và Bìa Giấy<br>(Xoay 3D Close Inspection, đường khâu lệch, khóa suy diễn)"]
-    B03["Beat 03: Tiếng Cháy Ở Kho Phía Tây<br>(Gãy đà gỗ, chuông báo, gặp Titus cơ học, cứu nạn phi bạo lực)"]
-    B04["Beat 04: Giải Quyết Bằng Vật Thể<br>(Tuyến 1: Xe tải + Ròng rọc | Tuyến 2: Điều phối thợ cảng nâng xà)"]
-    B05["Beat 05: Đốm Người Rời Sân<br>(Sân mái nhìn hẻm khuất, ghi nhận 4 thuộc tính có giới hạn)"]
-    B06["Beat 06: Yosef Không Dám Đứng Tên<br>(Góc khuất mái hiên, lời thì thầm hồ sơ chôn giấu, mầm Consent)"]
-    B07["Beat 07: Di Vật, Ký Ức Và Sự Thật Về Bản Thân<br>(Bữa chung/Chỗ nghỉ, Scene A Natan, ký ức im lặng T05)"]
-    B08["Beat 08: Dấu Vết B06 Và Câu Hỏi Mở Ra Q02<br>(Kho sau cháy bền vững, phát hiện tờ B06 cạo sửa, sương đêm)"]
+**Đích nhịp 42 phút, khoảng hiệu chỉnh 40–45 phút.** Đây là dự toán thao tác và trình bày lần đầu, không tính dừng menu, thử lại, đi vòng tự chọn hoặc thời gian ngủ trong truyện. Không khóa cổng bằng số phút. Thoại có phụ đề, đọc lại và nhịp tiếp tục do người chơi điều khiển; không bắt chờ đủ thời gian để chứng minh đã hiểu.
 
-    B00 --> B01 --> B02 --> B03 --> B04 --> B05 --> B06 --> B07 --> B08
+### 1.2. Không gian và vị trí nhân vật
+
+Giữ bốn **vùng chức năng cao độ**, không dựng thành bốn tầng nhà độc lập:
+
+- **C0 — Cầu cảng/sân hàng:** xuống thuyền, hẻm tới xưởng Natan, điểm thợ tập hợp, xe đối trọng của kho, sân bếp/góc bàn và nơi bàn giao cuối. `Q01.LOAD` là việc sửa khung hàng hiện hữu gần xưởng, tách khỏi xe dùng trong cứu hộ.
+- **C1 — Kho trệt và gác lửng cứu hộ:** cửa kho, xà gãy chặn lối chính và chỗ Simeon cùng người học việc mắc kẹt. Lối phụ cơ học và lối chính sức người hội tụ ở chiếu nghỉ gác lửng.
+- **C-1 — Rãnh bảo trì:** nhìn được miệng rãnh/đường dây từ C0. Chỉ là dấu không gian/nghề nghiệp và nhánh khảo sát, không bắt mọi người chui qua, không giấu một vật bắt buộc hoặc thêm tuyến cứu hộ thứ ba.
+- **C+1 — Sàn tời và sân mái:** bộ tời đã lắp; đoạn cầu thang trên nối chiếu nghỉ với sân mái có chỗ đứng an toàn, điểm nhìn hẻm và đường xuống C0. Điều khiển dây tời phải tới được từ C0; không yêu cầu leo lên mái qua chính lối đang bị chặn.
+
+Đồ thị đi lại cần dựng và kiểm bằng capsule thực:
+
+```text
+Cầu tàu -> C0 hẻm/xưởng -> Q01.LOAD -> bàn sổ Natan
+                                |
+                     C0 trước kho/Titus
+                       /                 \
+     cơ học: lối phụ C1                   sức người: lối chính C1
+                       \                 /
+                        chiếu nghỉ gác lửng
+                                  |
+                       cầu thang trên -> C+1 sân mái
+                                  |
+                     đường xuống an toàn -> C0 mái hiên Yosef
+                                  |
+                       xưởng Natan/đêm nghỉ
+                                  |
+            sáng hôm sau: bàn B06 ở vành kho an toàn
+                                  |
+               góc bàn/bếp C0 -> bàn giao -> Q02
 ```
 
----
+Titus ở C0 khi giới thiệu hai phương án. Sau chuẩn bị, anh đi cùng avatar qua đúng tuyến tới gác C1 rồi cùng lên kiểm sân mái; Titus ở lại điểm nhận, avatar quay xuống C1 đón hai người. Chỉ chốt `exit` sau lượt đi/kiểm/quay xuống này. Vị trí và khôi phục theo bảng ở Beat 04, không tạo actor Titus thứ hai. Hai thợ sức người chỉ rời điểm nâng sau khi xà đã đặt ổn định. Natan không vào cứu hộ thay người chơi. Yosef đợi ở C0, không biết việc diễn ra trên mái. Những số 18 bậc trong kiến trúc hiện hữu là đầu vào phải đo lại khi nối gác lửng; không tự suy ra mái cao 8 m hoặc sàn nghiêng 5°.
 
-### Phân cảnh 00: Một Con Thuyền Cập Bến (Góc máy Liền mạch & Hướng dẫn Ẩn)
-* **Thời lượng:** ~3–4 phút
-* **Không gian:** Cầu tàu số 4, Cảng Sebastos.
-* **Hình ảnh & Âm thanh mở màn:**
-  Khung hình mở ra ở tầm cực thấp, sát mặt nước biển biếc xanh đang dập dềnh phản chiếu ráng chiều Địa Trung Hải. Không có âm nhạc dàn dựng phô trương; không gian chỉ tràn ngập âm thanh thực địa sống động: tiếng sóng vỗ ì oạp vào chân kè đá vôi phủ rêu, tiếng gỗ mạn thuyền va chạm êm ái vào thanh chắn cảng, tiếng dây neo thừng lớn căng kẽo kẹt rợn người khi thủy thủ quăng dây vào cọc bích bằng đá.
-* **Chuyển giao điều khiển tức thì:**
-  Mũi thuyền chầm chậm chạm gờ bến. Tiếng "rầm" chắc nịch của tấm ván gỗ lớn được hai thủy thủ hạ xuống mặt cầu đá. Máy quay từ mặt nước lướt mượt mà hướng lên, lượn ra sau lưng Người Chứng khi nhân vật nhấc bước chân đầu tiên đạp lên tấm ván. Ngay giây phút mũi hài chạm vào mặt đá ướt của bến cảng, quyền điều khiển hoàn toàn thuộc về người chơi. Không có màn hình tải, không có cắt cảnh.
-* **Cơ chế làm quen chuyển động (Diegetic Onboarding):**
-  * *Xoay góc nhìn (Camera Control):* Người chơi tự nhiên đưa mắt quan sát khi nghe tiếng hò hét vang dội của các phu khuân vác đang vác các bao ngũ cốc lớn từ boong tàu xuống, và những cánh tay chỉ trỏ của đốc công cảng.
-  * *Di chuyển & Điều hướng (Locomotion):* Lối đi thẳng phía trước bị một kiện hàng gỗ cẩu dở che khuất; người chơi tự động học cách luồn lách qua khe hẹp giữa các kiện hàng, lách qua tốp thợ đang cuộn lưới, nhìn theo tấm biển gỗ khắc ký hiệu xưởng mộc của Natan treo nghiêng ở đầu con hẻm lát đá dẫn vào thị trấn cảng.
+<a id="q01-camera"></a>
+### 1.3. Hợp đồng camera one-shot
 
----
+**One-shot là quy tắc dàn dựng liền mạch mặc định.** Camera đi cùng hành trình nhân vật, không cắt qua một vị trí chưa đi tới để mở cổng. Dùng góc vai khi điều hướng; các cận cảnh tay/sổ/cơ cấu là dịch camera tại chỗ, giữ hướng không gian, có đường trả về góc chơi.
 
-### Phân cảnh 01: Dấu Hiệu Người Lạ Bên Ngoài Xưởng (Quan sát Không gian 3D)
-* **Thời lượng:** ~3 phút
-* **Không gian:** Hẻm Thợ Mộc nối cầu tàu và xưởng đóng tàu nhỏ.
-* **Điểm nhấn thị giác tự nhiên:**
-  Rẽ vào con hẻm đá hẹp dốc nhẹ lên trên, hai bờ tường đá vôi cao vút tạo thành hiệu ứng đóng khung thị giác (visual framing). Ánh hoàng hôn hắt nghiêng tạo mảng sáng tối tương phản gay gắt. Ngay trước lối vào xưởng Natan, một bóng người lạ mặt — khoác áo choàng len thô màu tro sẫm, trùm kín đầu — đang đứng bất động, chăm chú dò xét cánh cửa gỗ và cấu trúc khóa của xưởng.
-* **Phản ứng AI và Giới hạn Thông tin:**
-  Khoảnh khắc tâm nhìn (reticle/camera focus) của người chơi hướng thẳng về phía bóng người lạ và bước chân tiến lại gần khoảng 8 mét, nhân vật này khẽ giật mình, liếc mắt nhìn lại rồi lập tức quay ngoắt bước nhanh lẩn vào dòng người đang đổ xô ra chợ cá.
-  * *Nguyên tắc thiết kế:* **Tuyệt đối không xuất hiện icon dấu hỏi, vệt đỏ hay marker xác nhận "Kẻ phóng hỏa / Địch thủ".** Người chơi chỉ biết đây là một người có hành vi lấm lét bất thường.
-* **Quyền tự do phản ứng của người chơi (Player Agency):**
-  * *Lựa chọn A (Bám theo):* Người chơi có thể chạy vội theo vài mét đến ngã rẽ góc tường, kịp nhìn thấy dáng đi vội vã hơi khập khiễng của hắn trước khi bị đám đông thương nhân che khuất hoàn toàn.
-  * *Lựa chọn B (Điều tra tại chỗ):* Người chơi dừng lại bắt chuyện với hai người thợ đang cưa thân gỗ bá hương cạnh đó: *"Người lúc nãy là ai thế?"* — Thợ cảng gạt mồ hôi đáp: *"Chẳng biết, nhưng hắn lảng vảng quanh xưởng bác Natan từ trưa đến giờ, cứ ngó nghiêng mấy cái then cửa."*
+Mở màn chỉ có một động tác máy ngắn, đích tối đa khoảng sáu giây, từ mặt nước lên vai. Người chơi có thể nhận điều khiển sớm. Sau đó không tự quay đầu người chơi khi chuông reo, không cắt đối đáp qua lại, không bay qua tường/trần để nhìn người lạ. Khi người chơi bấm quan sát vật, camera mới tiến gần; luôn có hủy/lùi.
 
----
+**Đêm sang sáng:** sau lựa chọn nghỉ ở cuối Beat 07, giữ nguyên khuôn hình cạnh chỗ nghỉ/cửa xưởng; nén thời gian bằng thay ánh đèn, âm bến và sắc trời trong cùng khung. Ghi rõ “Sáng hôm sau”. Đây là tỉnh lược thời gian có thông báo, không giả vờ một đêm là vài phút liên tục trong thế giới. Không dùng cắt đen để giấu đổi địa điểm. Mục tiêu chuyển cảnh khoảng 6–8 giây; giảm chuyển động dùng cùng góc tĩnh, thay trạng thái nhanh và cho bỏ phần chờ. Chỉ chốt sang Beat 08 khi đoạn chuyển hoàn tất.
 
-### Phân cảnh 02: Natan Và Bìa Giấy (Tương tác Vật chứng Xúc giác)
-* **Thời lượng:** ~5 phút
-* **Không gian:** Bên trong xưởng mộc Natan — không gian mờ tối, ấm áp, nồng đượm mùi mạt cưa thông và dầu thắp ô-liu.
-* **Cuộc gặp tại xưởng gỗ:**
-  Người Chứng bước qua ngưỡng cửa gỗ thấp. Natan — người bạn thợ lâu năm của người cha quá cố Haddai — đang ngồi trầm ngâm bên bàn thợ, tay vân vê một chiếc bào gỗ đã sứt mẻ. Nghe tiếng bước chân, ông ngẩng đầu lên, ánh mắt đượm vẻ xót xa nhưng đầy cảnh giác.
-  Natan đứng dậy, không vội vàng ôm ấp than khóc, mà bước tới một hốc tường bí mật sau giá gỗ, rút ra một cuốn sổ bọc da dê bị quăn mép: cuốn sổ ghi chép hộ gia đình của Haddai.
-  * NATAN: *"Cha con bảo giao lại cuốn này tận tay con nếu ông ấy không kịp qua mùa gió bấc. Cầm lấy đi. Giữ cho kỹ, đừng để ai thấy con mang nó ra khỏi cửa này."*
-* **Giải đố Quan sát Vật lý (Tactile 3D Close Inspection):**
-  Hệ thống kích hoạt góc nhìn cận cảnh vật thể 3D tương tác tự do:
-  * Người chơi dùng tay xoay cuốn sổ dưới ánh sáng xiên hắt vào từ khung cửa sổ nhỏ.
-  * *Cảm nhận xúc giác:* Bìa da phía sau có mảng ẩm lạnh và bị biến màu do ngấm nước biển lâu ngày.
-  * *Phát hiện vật lý:* Khi xoay gáy sổ về phía nguồn sáng, người chơi phát hiện một đường chỉ cước gai khâu lại bị xô lệch bất thường — các lỗ đục cũ vẫn còn dấu vết sợi chỉ tơ đỏ bị cắt đứt vội vàng trước khi bị đè lên bởi một đường khâu thô ráp mới.
-  * *Cơ chế ghi nhận (Observation Lock):* Nhật ký chỉ ghi lại sự kiện khách quan: *"Đường chỉ khâu gáy sổ bị lệch và có dấu chỉ bị thay mới."* **Khóa chặt tuyệt đối không cho phép nhân vật tự suy diễn hay kết luận** rằng cuốn sổ đã bị đánh cắp ruột hay làm giả tại thời điểm này (manh mối này chỉ được giải mã hoàn toàn ở Q10 khi có phương pháp bảo tồn và đối chiếu mẫu chỉ).
+First-person, giảm chuyển động, bảng thao tác thay thế và load save được ưu tiên khả năng tiếp cận. Sau chúng, trả về góc nhìn hợp lệ ở cùng vùng/sàn, không phát lại mở màn đã chốt. Vì vậy không dùng “một cú máy không bao giờ ngắt” làm tiêu chí loại những chế độ này. Outro mặc định giữ camera ở gần nhân vật; chỉ nâng nhẹ tại một vị trí nhìn được vịnh, không bay xuyên mái hoặc biến thành camera quảng bá toàn bản đồ.
 
----
+<a id="q01-lighting-story"></a>
+### 1.4. Mốc sáng/tối và nhịp toàn chương
 
-### Phân cảnh 03: Tiếng Cháy Ở Kho Phía Tây (Bùng phát Biến cố)
-* **Thời lượng:** ~4 phút
-* **Không gian:** Lối thông từ xưởng Natan sang kho bến phía tây (West Harbor Warehouse).
-* **Chuyển nhịp khẩn cấp (Pacing Shift):**
-  Ngay khi Người Chứng cất cuốn sổ vào túi ngực, một tiếng "RẮC... RẦM!" xé toạc bầu không khí từ hướng bến cảng, tiếp nối là tiếng đà gỗ lớn gãy đổ, tiếng chuông đồng báo động dập dồn và tiếng thét hoảng loạn: *"LỬA! Lửa cháy ở kho phân tầng phía tây rồi!"*. Khói đen mù mịt mang theo mùi dầu hắc cháy khét lẹt cuồn cuộn bốc lên che khuất cả bầu trời hoàng hôn.
-* **Sự xuất hiện của Titus (Companion Mechanics Introduction):**
-  Người Chứng lao ra khỏi xưởng. Giữa đám đông đang chạy ngược chiều tán loạn, **Titus** — người thợ cơ khí phụ trách hệ thống cáp trục và ròng rọc của cảng — đang cố sức chặn một toán thợ lại:
-  * TITUS: *"Kho chưa kiểm hết người! Còn lão Simeon và thằng bé học việc bị kẹt trên sàn gác lửng tầng hai! Cầu thang chính bị xà gãy đè sập rồi! Này anh bạn trẻ, lại đây giúp tôi một tay!"*
-* **Định hướng Đạo diễn:**
-  **Kiên quyết loại bỏ mọi yếu tố chiến đấu giả tạo (No Combat).** Không có kẻ địch nào nhảy ra chặn đường rút kiếm. Căng thẳng tột độ được tạo nên hoàn toàn từ hiểm họa môi trường: sức nóng của lửa, khói ngạt làm mờ tầm nhìn, và thời gian trôi qua đè nặng lên sinh mạng của người mắc kẹt.
+| Beat | Việc trung tâm | Phút đích | Thời gian trong truyện | Dấu chuyển |
+| --- | --- | ---: | --- | --- |
+| 00 | Xuống thuyền, tìm hẻm | 3 | Chiều muộn | Mặt nước sáng, bến còn làm việc |
+| 01 | Người lạ ở xưởng | 3 | Chiều muộn | Ánh xiên ở cửa/hẻm |
+| 02 | Giúp Natan, nhận và xem sổ | 5 | Cuối chiều | Cửa xưởng còn đủ sáng xiên |
+| 03 | Phát hiện cháy, gặp Titus | 4 | Chạng vạng | Chuông/khói đến trước ánh lửa |
+| 04 | Một trong hai tuyến cứu hộ | 9 | Chạng vạng chuyển tối | Đèn công việc và vùng trời ở lối ra |
+| 05 | Quan sát từ mái | 3 | Tối còn đủ phân biệt dáng áo | Mặt luôn không đọc được |
+| 06 | Yosef xin giữ kín | 4 | Đầu đêm | Mái hiên ngoài đám đông, đèn ổn định |
+| 07 | Đặt phần việc, Natan và T05 | 7 | Đêm -> sáng hôm sau | Chỉ nén đêm sau khi chọn nghỉ |
+| 08 | B06, bàn giao, khép chương | 4 | Rạng sáng | Vành kho an toàn, tro không phát lửa |
+| Tổng | 3 + 3 + 5 + 4 + 9 + 3 + 4 + 7 + 4 | **42** | Một chiều/tối, một đêm nghỉ, sáng kế tiếp | Chưa có số đo playtest |
 
----
+State PR-03 có phase `afternoon` ở 00–02, `evening` ở 03–06, `night` ở 07, `dawn` ở 08. Đó là mốc logic, không phải tên preset render. Ở Beat 05 phải đọc được hướng/dáng áo bằng tương phản và mô tả tương đương, không tăng sáng để lộ mặt. Không tự nâng mốc tối/rạng sáng thành tính năng đã chạy; phần kỹ thuật và giới hạn GI ở hồ sơ 22.
 
-### Phân cảnh 04: Giải Quyết Bằng Vật Thể (Gameplay Môi trường Đa tuyến)
-* **Thời lượng:** ~8–10 phút
-* **Cấu trúc Hiện trường Bốn Vùng Chức Năng Cao Độ (Four Functional Elevation Zones):**
-  Kho phía tây được thiết kế theo 4 vùng chức năng cao độ (không phải bốn tầng nhà độc lập xếp chồng):
-  1. `C0 · Cầu cảng & Sân hàng:` Dốc xe hàng Q01.LOAD, đường bánh xe, thợ bốc dỡ ngoài trời.
-  2. `C1 · Kho trệt & Gác lửng cứu hộ:` Ngăn chứa trệt ngổn ngang kiện hàng và thùng dầu, gác lửng gỗ bị khói bao vây cục bộ có Simeon và phụ việc mắc kẹt.
-  3. `C-1 · Rãnh bảo trì ngầm:` Rãnh tiêu nước đá dưới nền có nắp kiểm tra nối sang khu cảng, bùn nước đọng và vết xước vật nặng (lối ngầm khảo sát và đường luồn cáp).
-  4. `C+1 · Sàn tời và Sân mái (Roof Terrace):` Giàn tời chịu tải chữ A, trục quay đối trọng trên cao, chiếu nghỉ và cầu thang 18 bậc dẫn ra sân mái lộng gió.
-  
-  Khói đen dày đặc cuộn tròn sát trần nhà, buộc người chơi phải cúi thấp người để quan sát và di chuyển. Lối cầu thang chính lên gác lửng bị một thanh đà chịu lực bằng gỗ sồi đang cháy sém đè ngang.
+<a id="q01-knowledge"></a>
+### 1.5. Phần biết của nhân vật — hình chiếu từ hồ sơ 12
 
-```
-       [C+1: SÀN TỜI & SÂN MÁI PHẲNG]  <--- Quan sát bóng người tháo chạy (Beat 05)
-                     ^
-       [CẦU THANG 18 BẬC (ĐOẠN TRÊN)]
-                     ^
-  +-------------------------------------+
-  |   C1: GÁC LỬNG CỨU HỘ BÊN TRONG     |  <--- Người mắc kẹt (Simeon & phụ việc)
-  +-------------------------------------+
-        /                         \
-  [TUYẾN 1: CƠ HỌC]            [TUYẾN 2: SỨC NGƯỜI]
-  Tháo chốt xe hàng nặng C0     Gọi 2 thợ cảng ở cửa ngách
-  Lợi dụng sàn trệt nghiêng 5°  Hợp lực đòn bẩy gỗ dài
-  Kích hoạt ròng rọc C+1        Dọn thanh xà sồi chắn thang
-        \                         /
-  +-------------------------------------+
-  |   C1: MẶT SÀN TRỆT KHO CHỨA HÀNG    |  <--- Bắt đầu cứu hộ cùng Titus
-  +-------------------------------------+
-                     ^
-    (Lối cửa chính thông ra mặt bằng cảng)
-                     v
-  +-------------------------------------+
-  |   C0: CẦU CẢNG & SÂN HÀNG NGOÀI TRỜI|  <--- Xe hàng Q01.LOAD, dốc bốc dỡ
-  +-------------------------------------+
-                     |
-  [C-1: RÃNH BẢO TRÌ TIÊU NƯỚC DƯỚI NỀN]|  <--- Lối rãnh ngầm, vết xước kéo hòm
-```
+| Người | Được biết/nói trong Q01 | Đường tiếp nhận | Chưa được phép suy thành sự thật |
+| --- | --- | --- | --- |
+| Người Chứng | Cha đã mất/bị cáo buộc; đường khâu lệch; việc mình làm trong cứu hộ; quan sát trên mái; Yosef xin giữ kín; ký ức T05; dấu bề mặt B06 | Trực tiếp thấy/nghe; ký ức riêng của bản thân | Ai gây cháy; người ở hai hẻm là cùng một người; ai lấy hàng; lô B06 là G17; chữ ký gốc đã được xác thực |
+| Natan | Haddai gửi vật gì về xưởng, tình bạn/công việc của họ, sự bất thường vật lý người chơi chỉ cho ông | Vật ông giữ và cuộc nói trực tiếp | Tự biết thời điểm ký trước; nội dung E08 ở Giêrusalem; avatar từng im lặng nếu chưa được kể |
+| Titus | Vị trí có người, lối/xà/tời anh đã kiểm, các việc trong tuyến anh có mặt | Quan sát công việc và gọi đáp với người mắc kẹt | Công cụ mình có liên hệ âm mưu; ai phóng hỏa; nội dung sổ gia đình/B06 |
+| Yosef | Cửa/chuyến anh đã khuân qua; anh thấy khói khi quay lại; nỗi sợ và yêu cầu giữ kín của mình | Trải nghiệm riêng | Loại trừ một nguyên nhân cháy; nói cha chết do điều tra; biết chủ mưu hoặc những gì avatar thấy trên mái |
+| Hai thợ/Simeon/người học việc | Phần công việc và đường họ vừa đi | Có mặt tại chỗ | Tự biết sổ, T05 hoặc cuộc nói kín với Yosef |
+| Rina/người giữ góc bàn | Phương án avatar đặt và bàn giao thật tới họ | Cuộc trao đổi/bàn giao tại C0 | Biết T05, toàn bộ lời Yosef hoặc thủ phạm chỉ vì Q01 đã xong |
 
-* **Tuyến giải quyết 1 — Tương tác Cơ học & Đối trọng (Phối hợp cùng Titus):**
-  * Người chơi quan sát độ dốc mặt sàn kho lát đá hướng về phía khung cửa sập phụ (thông số thiết kế đề xuất sàn nghiêng ~5°, chưa xác minh qua đo đạc geometry).
-  * Tiếp cận chiếc xe thồ bánh sắt chất đầy bao cát dằn tàu: người chơi dùng xà beng nạy chốt hãm bánh xe gỗ.
-  * Tận dụng gia tốc trọng trường, Người Chứng và Titus cùng dùng vai tì đẩy chiếc xe lao xuống rãnh trượt, chèn cứng chiếc xe vào khung cửa đang có nguy cơ sập, tạo thành một bệ đỡ chịu lực kiên cố (cơ cấu cơ học đề xuất, cần kiểm thử va chạm capsule và khả năng di chuyển).
-  * Titus móc sợi dây cáp tời vào dầm trên, người chơi kéo ròng rọc dây thừng kéo tung cửa thoát hiểm phụ dẫn thẳng lên chiếu nghỉ cầu thang gác lửng (đường nối gác lửng–mái và thoát khói là giả định thiết kế chưa đo line-of-sight).
-* **Tuyến giải quyết 2 — Điều phối Sức người & Đòn bẩy (Social/Manual Coordination):**
-  * Thay vì vận hành ròng rọc, người chơi quay ra cửa ngách hô hoán, dùng uy tín gia đình Haddai để thuyết phục hai người phu khuân vác đang chần chừ chạy vào trợ giúp.
-  * Ba người cùng lách qua làn khói, dùng một thanh gỗ chốt dài luồn dưới thanh xà đang đè, cùng ghé vai hô nhịp *"Một... Hai... Nâng!"* để nhấc bổng thanh đà nghiêng sang một bên, giải phóng lối đi cầu thang bộ.
-* **Kết quả:** Cả hai phương án đều giải cứu thành công người thợ già và đứa bé thoát ra hành lang thông lên sân mái mà không bên nào bị thương tổn (tuyến thoát ra sân mái ngoài trời là đề xuất thiết kế, cần xác minh kết nối hình học).
+Trong **bản mặc định này, T05 là hồi tưởng riêng, không phát thành lời cho Natan nghe**. Không sinh callback “Natan biết avatar im lặng” từ `t05Recalled`. Yêu cầu giữ kín của Yosef không tự tạo `private_group`, `anonymous_summary`, `public_named` hoặc bất kỳ quyền công bố nào. Tất cả xin phép/bảo vệ tiếp ở Q02 dùng cơ chế hiện hành.
 
----
+### 1.6. Quy ước diễn xuất và giao diện
 
-### Phân cảnh 05: Đốm Người Rời Sân (Góc nhìn Giới hạn Từ Sân Mái)
-* **Thời lượng:** ~3 phút
-* **Không gian:** Sân mái hở (Roof Terrace) nhìn bao quát ra con hẻm phía sau kho bến và khu bến thuyền nhỏ.
-* **Khoảnh khắc trên cao:**
-  Đẩy cánh cửa gỗ bung ra sân mái lộng gió biển, làn không khí mát lạnh xua tan khói ngạt. Người già và đứa trẻ được Titus dìu ra vị trí an toàn.
-  Người Chứng tiến lại gần lan can đá ở mép sân mái nhìn xuống con hẻm khuất phía sau kho chứa ngay trước khi tiếng chuông đội cứu hộ dập lửa của cảng xông tới.
-* **Ghi nhận Hiện trường Khách quan (Limited Field Observation):**
-  Từ điểm nhìn sân mái (cao độ thiết kế ước tính ~8m, chưa đo line-of-sight thực tế), nhìn xuyên qua làn khói xám bốc nghi ngút và ánh lửa bập bùng:
-  * Một bóng người đang vội vã chạy lướt qua góc hẻm, trèo qua hàng rào cọc gỗ dẫn ra phía mạn tàu nhỏ của đội thuyền tuần.
-  * **Sự thật tác giả (T10):** Vụ cháy phát sinh ngoài dự tính trong lần thu hồi hồ sơ vội của người thuộc mạng lưới Rufus; chưa có bằng chứng tại Q01 cho phép người chơi xác định thủ phạm.
-  * **Giới hạn nhận thức người chơi:** Trò chơi không hiện tên thủ phạm, không có "phân tích khuôn mặt". Người chơi chỉ có thể ghi lại vào sổ tay bốn thuộc tính quan sát có giới hạn:
-    1. *Hướng di chuyển:* Thoát về phía bến tàu tuần phía bắc.
-    2. *Thời điểm rời đi:* Ngay trước khi đội chữa cháy xông vào cửa trước 2 phút.
-    3. *Trang phục:* Áo choàng ngắn viền da thuộc của nhân viên hành chính cảng, không phải y phục phu khuân vác.
-    4. *Tầm nhìn bị nhòe:* Khoảng cách xa và khói mù khiến không thể nhận diện khuôn mặt hay độ tuổi chính xác.
+Natan xưng **Chú–Con**, chậm, có những lúc trở lại việc tay để người kia tự có khoảng nói. Titus dùng **Tôi–Bạn**, câu ngắn gắn với phần việc đang thấy; không giảng lý thuyết hệ thống. Yosef dùng **Tôi–Bạn**, ngập ngừng và nhìn người qua lại; không độc thoại kể toàn âm mưu. Người Chứng xưng Con với Natan, Tôi với người mới gặp. Các vai phụ không dùng “scope”, “checkpoint”, “callback”, “evidence”, “route” trong thoại.
 
----
+Mặc định chỉ dẫn qua người/vật/âm thanh; phụ đề, mô tả chữ, trợ giúp thao tác và chỉ dẫn tùy chọn vẫn có. Không biến yêu cầu “hướng dẫn ẩn” thành cấm trợ giúp tiếp cận. Lửa không có đồng hồ giết người khi đọc lâu; nhạc/khói không tăng vô hạn theo thời gian ngoài đời. Thao tác thử sai có phản hồi tại chỗ và cách làm lại; không sinh kết canon người chết hoặc phạt đạo đức.
 
-### Phân cảnh 06: Yosef Không Dám Đứng Tên (Hạt mầm của Cơ chế Consent)
-* **Thời lượng:** ~4 phút
-* **Không gian:** Chân cầu thang ngoài nhà kho, mặt đất ẩm ướt đầy tro tàn và vũng nước cứu hỏa.
-* **Hậu quả hiện trường:**
-  Người Chứng bước xuống mặt đất. Đám cháy đã được đội dập lửa của cảng khống chế cục bộ, nhưng khu vực kho phía tây vẫn ngổn ngang tro bụi, lính tuần tra cảng bắt đầu chăng dây cô lập hiện trường. Phu khuân vác và thợ thuyền đứng xì xầm to nhỏ trong tâm trạng căng thẳng, đưa những ánh mắt dò xét lẫn nhau.
-* **Cuộc tiếp xúc kín đáo:**
-  Giữa đám đông đang lộn xộn, **Yosef** — một phu khuân vác với đôi bàn tay chai sần rớm máu — len lén bước tới gần Người Chứng, nép mình vào bóng tối dưới mái hiên của xưởng thuộc da:
-  * YOSEF (thì thầm gấp gáp, mắt đảo quanh đầy sợ hãi): *"Cậu... cậu là con trai của bác Haddai đúng không? Bác ấy mất rồi... nhưng chuyện ở bến này chưa hết đâu."*
-  * NGƯỜI CHỨNG: *"Anh biết chuyện gì vừa xảy ra trong kho?"*
-  * YOSEF: *"Đám cháy này không phải do tàn thuốc. Có những cuộn hồ sơ kiểm kho... những kẻ ngồi trên lầu cao kia tuyệt đối không bao giờ muốn ai mở ra xem lại. Bác Haddai năm xưa cũng vì đụng vào những cuộn ấy mà..."* (Yosef khựng lại, hoảng hốt khi thấy một toán lính tuần đi ngang).
-  * YOSEF (nắm chặt cổ tay Người Chứng, khẩn thiết): *"Tôi nói cho cậu vì mang ơn bác Haddai từng chia bánh cho mẹ tôi. Nhưng xin cậu... lạy Chúa tôi van cậu, đừng bao giờ xướng tên tôi ra trước quan chức hay giữa đám đông! Chúng mà biết tôi hé răng, ngày mai xác tôi sẽ nổi ở ngoài đê chắn sóng!"*
-* **Ý nghĩa Hệ thống (Systemic Seed):**
-  Đây là **hạt mầm đầu tiên của Cơ chế Đồng thuận (Witness Consent Contract)** xuyên suốt game: Người chơi thu thập được một đầu mối thông tin cực kỳ quan trọng, nhưng đồng thời bị trói buộc bởi trách nhiệm đạo đức và tính mạng của nhân chứng — tuyệt đối không được tự tiện công khai tên họ Yosef nếu chưa có phương án bảo hộ an toàn.
+## 2. Kịch bản chín Beat 00–08
 
----
+Mỗi mục ghi mục tiêu, dàn cảnh, thoại thực thi, thao tác, điều kiện chốt và giới hạn biết. Số Beat chỉ nhịp đang làm; sự kiện chốt thường đưa `sceneProgress.Q01.beat` sang số kế tiếp. Không suy đã hoàn tất một nhịp chỉ vì camera vừa tới điểm mở đầu.
 
-### Phân cảnh 07: Di Vật, Ký Ức Và Sự Thật Về Bản Thân (Cao trào Nội tâm)
-* **Thời lượng:** ~6–8 phút
-* **Không gian:** Xưởng Natan lúc nửa đêm — ngọn đèn dầu liu riu, gió biển rít qua khe cửa gỗ.
-* **Quản lý Sinh hoạt & Quyết định Tài nguyên (Lodging vs Meal):**
-  Trước khi bước vào cuộc trò chuyện cuối ngày, người chơi phải đưa ra lựa chọn phân bổ sinh hoạt thiết yếu (mở ra callback cho các chương sau):
-  * *Lựa chọn `lodging`:* Trả tiền thuê một góc bàn riêng tại quán trọ gần cảng để có nơi an toàn sao chép tài liệu và phân loại hồ sơ (tạo lợi thế nghiên cứu cho Q03).
-  * *Lựa chọn `meal`:* Đóng góp phần tiền mua dầu và bánh dự trữ cho bếp chung của xóm thợ nghèo, chấp nhận ngủ tạm trên sàn rơm của xưởng Natan (tạo mối liên kết cộng đồng, có người hỗ trợ canh gác ở Q04).
-* **Đối diện Quá khứ tại Xưởng Natan (Diễn xuất Cận cảnh — Cảnh thoại Mẫu A):**
-  Natan rót một chén rượu hạt thông nhỏ, ngồi đối diện Người Chứng. Ngọn đèn dầu hắt bóng hai người lên vách gỗ sực mùi mạt cưa. Natan nhìn sâu vào mắt nhân vật chính:
-  
-  > **NATAN**  
-  > *(ngón tay chai sần chạm nhẹ vào cuộn dây thừng bện ba tao trên bàn)*  
-  > Cha con sửa dây neo hai lần, kể cả khi người khác bảo đã chặt. Nhưng có một thứ ông ấy đã ký quá sớm.  
-  >  
-  > **NGƯỜI CHỨNG**  
-  > *(khựng lại, ánh mắt phản chiếu ngọn đèn dầu chập chờn)*  
-  > Chú... chú biết chuyện ấy?  
-  >  
-  > **NATAN**  
-  > *(ngước lên nhìn thẳng, giọng trầm và chắc nịch)*  
-  > Chú chỉ biết thứ ông ấy để lại ở đây. Phần còn lại, chú không thể nói thay người đã thấy.  
+<a id="q01-beat-00"></a>
+### Phân cảnh 00 — Một con thuyền cập bến
 
-* **Nỗi đau của Sự Im lặng (Core Revelation — Không Twist Giả tạo):**
-  Trò chơi không hề "lừa dối" người chơi bằng một màn lật kèo tréo ngoe của kịch bản phim hạng B. Ngay tại phân cảnh này, hồi ức chân thực nhất của Người Chứng được mở ra:
-  * Nhân vật nhớ lại chính xác buổi chiều định mệnh 3 năm trước: Cha mình — già yếu và mỏi mệt — run rẩy cầm que lau chấm mực ký vào bản biên nhận *"Đã tiếp nhận đủ hàng"* khi các bao tải ngoài bến còn chưa được tháo niêm kiểm kê.
-  * Người Chứng khi ấy đã đứng ngay cạnh cha, nhìn thấy rõ sự vội vã bất thường đó nhưng đã chọn **giữ im lặng** vì sợ cha bị cắt hợp đồng khuân vác của cảng.
-  * Điều duy nhất Người Chứng chưa biết: Số hàng bị thất thoát ấy thực sự đã đi đâu, và ai là kẻ hưởng lợi sau lưng bức màn giấy tờ đó?
+**Đích:** cho người chơi đặt chân vào đời sống đang tiếp diễn, không bắt xem phim giới thiệu. **3 phút; chiều muộn; cầu tàu -> C0.**
 
----
+**Hình/âm/camera.** Sóng dưới chân kè, thừng neo và ván đặt xuống bến. Máy từ mặt nước lên vai ngay ở cùng chiếc thuyền; người chơi đi trên ván thật có sàn đỡ. Một người khuân bao dừng nhường lối, tiếng bào gỗ từ hẻm và biển xưởng Natan cùng chỉ một hướng. Không treo một kiện hàng đang rơi làm đồng hồ giả.
 
-### Phân cảnh 08: Dấu Vết B06 Và Câu Hỏi Mở Ra Q02 (Trạng thái Thế giới Bền vững)
-* **Thời lượng:** ~4 phút
-* **Không gian:** Hiện trường kho phía tây lúc rạng sáng, khi tàn tro đã nguội.
-* **Trạng thái Thế giới Bền vững (Persistent World State):**
-  Nhà kho không hề bị reset hay biến mất. Khi người chơi quay trở lại hiện trường, thế giới 3D giữ nguyên vẹn mọi dấu vết vật lý từ vụ cứu hộ ở Beat 04:
-  * Chiếc xe hàng bánh sắt vẫn nằm chèn cứng ở khung cửa ngách.
-  * Cột xà gãy cháy sém nằm nghiêng đúng vị trí đã bị đòn bẩy nhấc qua.
-  * Mặt sàn đá loang lổ vết bồ hóng đen và những vũng bùn tro đã đông cứng.
-* **Phát hiện Dấu vết Chuyển tiếp (Preliminary B06 Observation):**
-  Ánh sáng theo thời gian truyện: Beat 00–02 chiều muộn/hoàng hôn → Beat 03–06 chạng vạng/tối khi cháy kho → Beat 07 đêm tại xưởng Natan → Beat 08 rạng sáng hôm sau. Bình minh soi rõ dấu cháy nhưng không giải thích hộ nguyên nhân vụ cháy; yêu cầu dàn dựng và giới hạn bản dựng được đối chiếu riêng tại hồ sơ đồ họa.
-  Người chơi soi đèn dầu vào góc bàn kiểm nhận bị lửa táp sém một góc. Dưới đáy một khay gỗ bị lật úp, người chơi phát hiện một mảnh giấy da ghi nhận xuất kho mang mã hiệu **B06**:
-  * Mặt giấy có vết cạo cơ học rõ rệt: con số lượng hàng đã bị cạo mỏng bề mặt bột đá vôi để viết đè lên.
-  * *Giới hạn chứng cứ nghiêm ngặt:* Quan sát này chỉ là ghi nhận hiện tượng vật lý sơ bộ tại hiện trường Q01, **chưa cấp vật chứng E02 vào sổ tay điều tra**. Việc thu thập, kiểm tra mép dán và thẩm định chính thức E02 thuộc phạm vi Q02. Mệnh đề P01 yêu cầu đủ cả E02 và E03, tuyệt đối không tự suy đoán nguyên nhân hay quy kết thủ phạm. B06 hoàn toàn tách biệt với G17.
-* **Khép lại Trường đoạn (Cinematic Outro):**
-  Máy quay từ từ nâng cao dần, lướt qua khung vì kèo mái kho bị cháy thủng toang hoác, bay vút lên bầu trời sớm mai ửng hồng ánh bình minh nhìn bao quát toàn cảnh vịnh cảng Sebastos. Cảng biển thức giấc trong làn sương sớm tinh khôi, ánh nắng đầu ngày rọi chiếu lên những vết cháy đen còn bốc khói mỏng và mặt nước vịnh phẳng lặng.
-  Âm thanh lắng lại chỉ còn tiếng chuông xa xăm và câu hỏi trọng tâm dẫn dắt bước sang Q02:  
-  **"Ai đang làm hồ sơ thay đổi, và vì sao nhân chứng sợ nói?"**
+**Thoại [H].**
+
+> THỢ BẾN: “Chờ tôi đặt bao xuống… Rồi, bạn qua đi.”
+>
+> NGƯỜI CHỨNG: “Xưởng của chú Natan còn ở lối cũ chứ?”
+>
+> THỢ BẾN: “Theo tiếng bào, qua hẻm bên kia.”
+
+**Việc chơi.** Đi khỏi ván, xoay nhìn nguồn tiếng, đi vòng kiện hàng đặt ổn định. Có mô tả chữ/chỉ dẫn tùy chọn cùng thông tin; không cần nghe mới qua. Người chơi nhận camera sớm hoặc bỏ động tác máy, vẫn phải đi qua điểm xuống bến.
+
+**Chốt.** Khi capsule thực ở C0 ngoài ván, gọi `disembark`; lưu Beat 01. Không gọi vì intro đã chạy hết. Natan/Titus/Yosef chưa học được điều gì từ việc avatar xuất hiện.
+
+<a id="q01-beat-01"></a>
+### Phân cảnh 01 — Người đứng trước cửa xưởng
+
+**Đích:** tạo một điều chưa rõ, không xác nhận địch thủ. **3 phút; cuối chiều; hẻm -> cửa xưởng.**
+
+**Hình/âm/camera.** Người mặc áo thô đứng nhìn cửa rồi đi về đám đông. Khung hẻm làm họ dễ nhận thấy; không ép xoay đầu, không icon địch, không nhạc nhận diện phản diện. Chỉ bắt đầu chuyển động rời đi khi người chơi tới ngưỡng quan sát hoặc chọn mô tả tương đương; không đặt một cửa sổ nhìn cực ngắn.
+
+**Hai phản ứng đã có.** `follow`: tự đi theo tới góc rẽ an toàn rồi mất tầm nhìn. `investigate`: quan sát chỗ đứng và hỏi người thợ. Cả hai trả người chơi về xưởng; không bắt/bắt kịp được người lạ, không sinh combat hoặc một vật chứng mới. Người không muốn rượt vẫn có đường hỏi/quan sát, không bị tự gán một lựa chọn.
+
+**Thoại nhánh hỏi [H].**
+
+> NGƯỜI CHỨNG: “Bạn có biết người vừa đứng trước cửa không?”
+>
+> THỢ CƯA: “Tôi chỉ thấy người ấy đứng đó một lúc. Gọi thì họ đi. Tôi không biết tên.”
+
+Nhánh bám theo chỉ có tiếng bước chân khuất sau góc tường. Không thêm dáng khập khiễng thành dấu nhận diện duy nhất. Thợ cưa không tự biết người ấy đứng từ trưa, nghề nghiệp hoặc lý do đến nếu không có một nguồn khác đã được thiết kế.
+
+**Chốt.** `stranger {response: 'follow'|'investigate'}` sau hành động tương ứng. Nhật ký chỉ giữ cách tiếp cận và sự hiện diện bất thường; không nối họ với người ở Beat 05.
+
+<a id="q01-beat-02"></a>
+### Phân cảnh 02 — Natan và cuốn sổ chưa khô
+
+**Đích:** cho quan hệ Chú–Con hiện ra qua cùng làm, rồi gieo dấu đường khâu. **5 phút; cuối chiều; C0 gần xưởng -> bàn Natan.**
+
+**Hình/âm/camera.** Natan đang giữ khung hàng cản lối chuyển bữa. Người Chứng giúp trước, ông mới rảnh tay đặt **bọc vận chuyển còn ẩm** lên bàn rồi mở nó trên một **tấm vải lót khô**. Bọc và vải lót là hai vật khác nhau; không đổi độ ẩm của cùng một bọc giữa hình và thoại. Không có hốc bí mật phát sáng hoặc cảnh tìm kho báu. Tiếng bào dừng khi ông nhận ra người về. Máy theo tay và mặt bàn, không cắt đi trong lúc chia vật.
+
+<a id="q01-ledger-custody"></a>
+**Vật được trao — theo [T06, chuỗi giữ vật](12-continuity-and-state.md#q01-book-custody).** Bọc chứa hai vật **đã rời nhau trước khi mở**, không phải một cuốn sổ bị xé làm đôi:
+
+1. **Cuốn sổ gia đình đóng liền:** ruột sổ, bìa gắn vào sổ và gáy có đường khâu lệch là một khối. Bề mặt đủ khô để cầm, vết ố cũ vẫn thấy được. Avatar nhận nguyên khối này, gồm cả gáy/chỉ/lỗ cũ; không nhận riêng một tập ruột đã tháo bìa.
+2. **Tờ bìa hồ sơ rời:** một tờ gấp kẹp biên nhận gốc E01, nằm ngoài cuốn sổ trong bọc và còn ẩm nhiều hơn. Nó không nối với gáy sổ bằng chỉ hoặc keo. Natan giữ nguyên gói gấp này ở xưởng để hong; Q01 chưa mở tới chữ ký hoặc xác thực E01. Q04 mới bàn giao phần giấy đã đủ điều kiện đọc.
+
+Natan mở bọc trước mắt avatar, chỉ từng vật, đặt tờ bìa hồ sơ rời sang vải khô rồi đẩy **cả cuốn sổ** tới tay avatar. Hai người cùng nhìn và xác nhận việc chia giữ; không tự thêm Titus/người khác làm nhân chứng khi họ không có mặt. Camera liên tục phải thấy hai vật cùng ở trên bàn trước bàn giao. Người chơi mở cận cảnh gáy trên cuốn sổ còn nguyên, Natan chỉ nhìn dấu được chỉ cho mình. Không cắt chỉ, rút tờ khỏi gáy, bóc keo, khâu lại, hoặc “phục hồi” lỗ khâu giữa Q01 và Q10. Hai cách gọi *bìa sổ* và *tờ bìa hồ sơ rời* không dùng thay nhau trong prop, thoại hoặc journal.
+
+**Việc chơi giữ từ runtime.** Hoàn tất hành động `brace` qua bàn `Q01.LOAD` hiện hữu: chèn bánh, hạ hai vò, kê/chằng theo tiền đề, thử tải, tháo chốt. Giữ các thứ tự hợp lệ của luật đang chạy. Sau đó `ledger` nhận sổ từ Natan. Xe/khung này phục vụ bữa ở C0; không mang nó đi làm xe đối trọng cứu hộ ở Beat 04.
+
+**Thoại [H].**
+
+> NATAN: “Con về rồi. Khoan, giữ giúp chú bên này.”
+>
+> NGƯỜI CHỨNG: “Chốt nứt rồi.”
+>
+> NATAN: “Ừ. Con xem phần nặng đang tựa vào đâu đã.”
+>
+> *(Sau thao tác thật; Natan buông tay, xoa vai.)*
+>
+> NATAN: “Chú đã hứa đưa tận tay người nhà. Khăn ngoài còn ẩm. Con cầm nguyên cuốn sổ này; tờ bìa gấp rời này chú giữ lại hong.”
+>
+> NGƯỜI CHỨNG: “Cuốn sổ đi với con. Tờ bìa rời ở lại đây với chú?”
+>
+> NATAN: “Ừ. Chú không tháo gì khỏi gáy sổ.”
+>
+> NGƯỜI CHỨNG: “Đường chỉ này không ăn vào lỗ cũ.”
+>
+> NATAN: “Chú thấy chỗ ấy rồi. Cứ giữ nguyên, đừng tháo thêm.”
+
+**Quan sát.** Avatar tự xoay cuốn sổ đang cầm về ánh xiên, thấy vết ố, lỗ cũ và đường khâu không trùng. Camera cận cảnh do thao tác mở, có mô tả chữ cùng thông tin. Không bịa cảm giác xúc giác mà thiết bị không truyền được; chỉ hình/âm và mô tả vật. Không mở ruột sổ bí mật, không dùng màu chỉ như dấu của một thủ phạm. Khi thoát cận cảnh, sổ vẫn ở tay/túi avatar; tờ bìa hồ sơ rời còn trên vải ở phía Natan, không phát lại việc tách/trao để nhân đôi vật.
+
+**Chốt.** Sau `brace`/`ledger` hợp lệ, bàn giao nguyên cuốn sổ và xác nhận quan sát hoặc mô tả tương đương, gọi `ledgerSeam`. Nhật ký: “Gáy cuốn sổ mình giữ có đường khâu lệch khỏi các lỗ cũ. Natan giữ tờ bìa hồ sơ rời còn ẩm.” `ledger` không cấp E01. Chuỗi giữ: trước Q04, avatar giữ sổ nguyên gáy/Natan giữ tờ bìa hồ sơ; sau bàn giao Q04, phần giấy ấy đi cùng hồ sơ của avatar. Tới Q10 đối chiếu đúng cuốn sổ nguyên gáy đã thấy, không thay bằng một prop vừa khâu lại hoặc một bản tái tạo. Natan không biết thêm về T05 từ việc nhìn con mình cầm sổ.
+
+<a id="q01-beat-03"></a>
+### Phân cảnh 03 — Tiếng cháy phía tây
+
+**Đích:** chuyển từ điều tra sang trách nhiệm trước mắt. **4 phút; chạng vạng; xưởng -> C0 trước kho.**
+
+**Hình/âm/camera.** Một tiếng gỗ gãy, người ở sân quay về phía kho, sau đó mới có chuông và dải khói. Người chơi tự đi theo đường còn thông; camera giữ hướng di chuyển. Natan ở xưởng giữ đồ, không teleport sang kho để bình luận. Tiểu cảnh báo cháy có thể trình bày lại nếu load trước khi chốt; không tạo hai vụ cháy.
+
+Titus đã nghe Simeon và người học việc gọi đáp ở gác; anh biết có hai người còn ở đó, không đoán qua danh sách toàn cảng. Lối chính bị xà chắn. Anh chỉ hai lựa chọn từ nơi người chơi nhìn được chúng.
+
+**Thoại [H].**
+
+> TITUS: “Simeon! Còn nghe tôi không?”
+>
+> SIMEON, TỪ GÁC: “Còn. Có người học việc ở đây với tôi.”
+>
+> TITUS: “Tôi nghe hai người ở gác. Xà chặn thang rồi.”
+>
+> NGƯỜI CHỨNG: “Còn lối nào tới họ?”
+>
+> TITUS: “Bộ tời còn đường dây xuống sân. Hoặc gọi hai người nâng xà, rồi chèn nó lại. Bạn muốn bắt đầu bên nào?”
+
+**Chốt.** Khi người chơi tới điểm làm việc, đã tiếp nhận tình thế và đường tiếp cận, gọi `fire` đúng một lần. World chuyển `burning`/`broken`, state sang Beat 04. Chỉ sau đó cho bắt đầu các thao tác cứu hộ bền vững. Trước chốt, hiệu ứng báo cháy là tiểu cảnh chưa xác nhận; load lại từ đầu Beat 03. Không cần biết/chọn một nguyên nhân cháy để được cứu người.
+
+<a id="q01-beat-04"></a>
+### Phân cảnh 04 — Một đường tới hai người
+
+**Đích:** cho người chơi làm việc có tiền đề và nhận kết quả nhìn được. **9 phút; chạng vạng chuyển tối; C0 -> C1 -> C+1.**
+
+Khảo sát cả hai phương án miễn phí trước khi chọn. Chọn `mechanical` hoặc `manual` ghi bằng `rescueRoute`; sau khi chọn không đổi/trộn bước. Giải thích ngay trên xác nhận đầu tiên: “Bắt đầu cùng Titus ở bộ tời” hoặc “Bắt đầu cùng nhóm nâng xà”. Không khóa phương án theo tiền, danh tiếng của Haddai, companion được tuyển hoặc bậc skill. Titus là người làm việc tại cảnh, chưa phải điều kiện phải tuyển vào đội.
+
+**Ý nghĩa `world.sideExit` được khóa.** Giữ tên field cũ để tương thích; trong bản dàn dựng này, `open` nghĩa là **đường cuối từ gác C1 tới điểm nhận sân mái đã mở và kiểm xong**, chưa có nghĩa hai người đã được đưa qua. Đây là điều kiện chung của hai tuyến, không phải cờ mở cánh ngăn cơ học. Cánh ngăn lối phụ chỉ mở từ prefix `mechanical` đã có `pulley`; đường chính chỉ thông khi xà đã `moved` trong `manual`. Vì vậy ở `manual`, `world.sideExit='open'` mở/giữ đường chung gác–mái và **cánh ngăn cơ học vẫn đóng**. Renderer không được dùng riêng field này để mở mọi cửa; không đổi schema hoặc thêm route để chữa tên field.
+
+**Tuyến cơ học `mechanical`:**
+
+| Bước có sẵn | Hình/việc phải làm trong thế giới | Điều kiện ghi bước |
+| --- | --- | --- |
+| `cart` | Đưa xe đối trọng của kho trong rãnh dẫn có cữ, dây giữ và điểm chèn đã bố trí; chèn nó ở điểm làm việc để bộ dây có chỗ giữ tải. Tách khỏi Q01.LOAD; không thả xe lao tự do hoặc dùng vai chặn một xe đang tăng tốc | Xe ở cữ, bánh được chèn, Titus đã kiểm đường tải; `world.cart='chocked'` |
+| `pulley` | Từ tay dây tới được ở C0, phối hợp Titus vận hành bộ tời trên C+1; mở cánh ngăn của lối phụ tới chiếu nghỉ C1. Người chơi thực hiện phần kéo/giữ qua tương tác hoặc thao tác thay thế; Titus không hoàn tất từ một câu chọn | Cánh ngăn đứng ở chỗ giữ, lối phụ có thể đi; không nâng xà lối chính |
+| `exit` | Avatar và Titus đi lối phụ đã mở lên C1, cùng kiểm đoạn thang/cửa chung tới sân mái. Titus đi tới điểm nhận trên mái và ở lại; avatar quay xuống C1 đón hai người | Chỉ ghi khi đường chung mở/đã kiểm, Titus ở điểm nhận, avatar đã về C1; `world.sideExit='open'` |
+| `extract` | Gọi đáp, đi cùng Simeon và người học việc theo lối đã kiểm tới điểm nhận ngoài khói trên sân mái; Titus nhận cả hai | Cả hai actor đã ở điểm nhận, không chỉ avatar đã tới mái; `peopleSafe=true`, lửa được khống chế, sang Beat 05 |
+
+**Thoại tuyến cơ học [H].**
+
+> TITUS: “Tôi giữ dây. Bạn đưa xe tới cữ ấy, rồi chèn bánh.”
+>
+> *(Khi chuẩn bị chưa đủ.)* TITUS: “Khoan kéo. Chỗ giữ tải chưa đứng yên.”
+>
+> *(Sau kiểm.)* TITUS: “Được. Mình mở cánh ngăn bên kia.”
+
+**Tuyến sức người `manual`:**
+
+| Bước có sẵn | Hình/việc phải làm trong thế giới | Điều kiện ghi bước |
+| --- | --- | --- |
+| `workers` | Tới hai thợ đang ở sân, nói còn hai người trên gác; họ tự nhận giữ một đầu đòn và một chỗ kê. Người chơi/Titus nhận phần còn lại | Cả hai có mặt ở chỗ làm; không gọi từ xa rồi cho họ tự tới trước mọi vật cản |
+| `lever` | Bố trí đòn kê và nâng theo nhịp đã thống nhất; dịch xà sang chỗ tựa ổn định rồi chèn lại. Khóa kết quả cơ học trước khi mọi người buông | Xà nằm ở chỗ đã chèn, lối chính thông; `world.beam='moved'`; xe đối trọng không đổi |
+| `exit` | Avatar và Titus đi qua lối chính đã dọn tới C1 rồi cùng kiểm đường chung lên mái. Titus ở lại điểm nhận; avatar quay xuống C1, không dùng cánh ngăn cơ học | Cùng điều kiện vị trí như tuyến cơ học; `world.sideExit='open'`, cánh ngăn cơ học vẫn đóng |
+| `extract` | Cùng hai người mắc kẹt đi tới Titus ở điểm nhận sân mái | Điều kiện hai actor an toàn như tuyến cơ học; không tạo một ending cứu hộ khác |
+
+**Thoại tuyến sức người [H].**
+
+> NGƯỜI CHỨNG: “Còn hai người ở trên gác. Hai bạn giữ giúp đầu đòn này được không?”
+>
+> THỢ BẾN: “Được. Cho chúng tôi thấy chỗ đặt nó.”
+>
+> TITUS: “Nâng một nhịp. Giữ… Đặt nêm vào rồi mới buông.”
+
+<a id="q01-titus-path"></a>
+**Choreography Titus — một actor, một đường đi.** Sau `pulley` hoặc `lever`, Titus và avatar cùng còn ở C0; không đặt sẵn một Titus khác trên mái. Bước `exit` gồm: (a) cùng đi tuyến đã mở tới chiếu nghỉ C1, gọi đáp để hai người chờ tại đó; (b) avatar mở cửa chung, cả hai đi đoạn thang trên tới C+1 và kiểm điểm nhận; (c) Titus đi vài bước tới điểm nhận, nói “Tôi nhận họ ở đây. Bạn xuống đi cùng họ lên”; (d) avatar tự quay đúng đoạn thang về C1. Lúc này mới ghi `exit`, rồi người chơi thực hiện `extract` để đi cùng hai người lên gặp Titus. Camera luôn theo avatar; không cắt tới mái để giả rằng Titus đã đi xong.
+
+| Prefix đã lưu | Titus ở checkpoint nào | Avatar/người mắc kẹt và việc còn phải làm |
+| --- | --- | --- |
+| Chưa chọn tuyến; `cart`/`workers`; hoặc đã `pulley`/`lever` nhưng chưa `exit` | C0, cùng điểm bắt đầu phần đi kiểm đường | Hai người còn ở C1; khôi phục phần `exit` chưa chốt từ checkpoint trước khi đi kiểm |
+| Đã `exit`, chưa `extract` | Điểm nhận sân mái C+1 | Avatar ở C1 cùng Simeon/người học việc; còn hộ tống thật lên mái |
+| Đã `extract` | Cùng hai người ở điểm nhận C+1 | Avatar ở vùng nhận; không còn ai mắc kẹt trong gác; tới Beat 05 |
+
+Nếu thoát khi Titus đang đi lên hoặc avatar đang quay xuống mà `exit` chưa chốt, load trở lại checkpoint C0 của phần chưa chốt, không hứa tiếp đúng vị trí giữa đường. Nếu thoát giữa hộ tống mà chưa `extract`, load checkpoint C1, Titus đã ở C+1 vì `exit` đã lưu. Chỉ dựng lại checkpoint khi load/bắt đầu lại phần chưa chốt; không snap vị trí theo prefix ở mỗi frame trong một lần chơi. Dùng cùng actor Titus qua C0–C1–C+1; không tạo “Titus đón người” như một bản sao. Sai/vướng navigation phải dừng chờ hoặc báo lỗi kiểm, không teleport. Sang Beat 06, Titus thật sự dẫn hai người xuống C0 theo lối đã mở trước/đi cùng lượt avatar xuống, không đồng thời đứng trên mái và dưới sân.
+
+**Phản hồi và camera.** Nhìn được vật đang chịu tải, tay người và đường đi; không rung camera che lỗi. Thử hụt không làm người chết hoặc tự chuyển route. Cúi/đi chậm có mô tả và phương án thao tác thay thế; khói không thành bài kiểm đòi nghe/nhìn màu. Không gọi `rescueStep` vì một animation đã bắt đầu; chỉ gọi sau điều kiện vật/người thực thỏa. Không thưởng lại khi tải cảnh hoặc bấm lặp.
+
+**Kết sau hai tuyến.** Người được cứu ở sân mái ngoài vùng khói, Titus ở đó cùng họ. Chỗ an toàn này nối được đường xuống mặt đất; mái không phải một nền không có lối thoát. Nhóm chữa cháy mới kiểm soát phần cháy cục bộ; avatar không tự dập tắt toàn kho. Ở `mechanical`, xà lối chính vẫn gãy/chặn; ở `manual`, xe đối trọng vẫn ở vị trí ban đầu. Cả hai giữ cùng cổng và quyền tiếp tục, nhưng dấu thế giới khác nhau.
+
+<a id="q01-beat-05"></a>
+### Phân cảnh 05 — Một người rời hẻm
+
+**Đích:** nhìn một sự kiện có giới hạn từ đúng nơi mình đã tới. **3 phút; tối còn đọc được dáng áo; C+1.**
+
+**Hình/âm/camera.** Titus đưa hai người được cứu tới chỗ đứng an toàn rồi kiểm họ. Avatar đi tới điểm nhìn có lan can. Camera ở cùng sàn, không dùng một cú máy cận mặt người bên dưới. Người chơi chủ động mở quan sát; việc phát cảnh chỉ bắt đầu khi điểm nhìn/mô tả tương đương đã sẵn sàng. Không phát cảnh này ở xa trong khi người chơi vẫn bận hộ tống.
+
+Một người rời hẻm sau kho về phía bến thuyền nhỏ. Tiếng nhóm chữa cháy tới cửa trước đến sau đó. Không có nhãn “nhân viên hành chính”, không đoán nghề từ viền áo, không ghi một khoảng đúng hai phút khi avatar không có phép đo.
+
+**Thoại ngắn [H].**
+
+> NGƯỜI CHỨNG, KHẼ: “Có người vừa ra phía sau kho.”
+>
+> TITUS, VẪN Ở ĐIỂM NHẬN: “Bạn thấy gì?”
+>
+> NGƯỜI CHỨNG: “Một dáng áo. Xa quá, tôi không thấy mặt.”
+
+Titus chỉ biết phần avatar vừa nói; anh không tự kể bốn chi tiết như người đã nhìn. Nhật ký riêng có đúng bốn mục: **hướng** về phía bến nhỏ; **thứ tự** trước nhóm chữa cháy tới; **dáng áo** ngắn có đường viền sẫm; **giới hạn** mặt/tuổi không đọc được vì cự ly và khói. Chưa gọi người này là người ở Beat 01, người của Rufus, người đốt kho hoặc người đang mang giấy.
+
+**Tiếp cận.** Khi đang mở quan sát, cho dừng/giảm tốc phần trình bày để đọc; người chỉ dùng mô tả chữ nhận cùng bốn mục. Không cho NPC chạy lặp vòng trong hẻm. Nếu rời/thoát trước xác nhận, cảnh giữ ở đầu phần chưa chốt để trình bày lại khi tiếp tục; không ghi một cuộc chạy trốn thứ hai vào lịch sử.
+
+**Chốt.** Gọi `rooftop` sau khi trình bày đủ phần quan sát và người chơi chọn tiếp tục; không gọi vì avatar chỉ đứng trên mái. State sang Beat 06, giữ riêng phần nhìn trực tiếp và phần đã nói với Titus.
+
+<a id="q01-beat-06"></a>
+### Phân cảnh 06 — Yosef xin một chỗ nói nhỏ
+
+**Đích:** gặp một người có nhu cầu tự bảo vệ, không nhận lời giải về vụ cháy. **4 phút; đầu đêm; đường xuống C0 -> mái hiên.**
+
+**Hình/âm/camera.** Avatar đi xuống tuyến đã mở. Người được cứu theo Titus tới chỗ nghỉ ngoài kho; không spawn lại trong gác. Nhóm chữa cháy kiểm soát khu cháy, người đi đường tập hợp ngoài ranh giới. Yosef đứng ở mái hiên, có đường rời; không lôi cổ tay hoặc ép avatar vào một góc. Camera giữ cự ly đối thoại, không phóng gần vào mặt sợ hãi như một phép kiểm nói dối.
+
+**Thoại thực thi [H].**
+
+> YOSEF: “Bạn vừa từ xưởng Natan sang phải không?”
+>
+> NGƯỜI CHỨNG: “Tôi là con Haddai. Bạn cần gặp tôi?”
+>
+> YOSEF: “Tôi từng khuân hàng qua cửa này. Mình nói ở dưới hiên được không?”
+>
+> *(Người chơi đi tới khoảng nói yên; đám đông không đi xuyên cuộc nói.)*
+>
+> NGƯỜI CHỨNG: “Bạn có thấy lửa bắt đầu ở đâu không?”
+>
+> YOSEF: “Không. Lúc tôi quay lại đã có khói rồi. Tôi chỉ biết những chuyến mình đã khuân. Cuốn sổ bên trong, tôi không cầm.”
+>
+> NGƯỜI CHỨNG: “Nếu sáng mai tôi cần hỏi một chuyến hàng?”
+>
+> YOSEF: “Hỏi tôi trước. Nhưng xin đừng gọi tên tôi giữa sân, hay đưa tên tôi cho người khác. Tôi còn phải trở lại làm ở đây.”
+>
+> *(Yosef sửa lại nút buộc áo để đi, rồi dừng. Đây là lần anh nói một điều không thuộc chuyến hàng.)*
+>
+> YOSEF: “Mẹ tôi vẫn để mấy chậu cây ngoài bậc cửa, đợi tôi về mới chịu mang vào. Tôi không muốn tối nay bà phải ra bến tìm.”
+>
+> *(Người Chứng hạ tay đang định hỏi tiếp, bước sang bên chừa lối ra.)*
+>
+> NGƯỜI CHỨNG: “Tôi nghe rồi. Tối nay mình dừng ở đây. Bạn về đi.”
+>
+> YOSEF: “Mai… nếu bạn còn cần hỏi, cứ nói nhỏ như thế này.”
+
+**Dư âm cá nhân.** Chi tiết mẹ/chậu cây nối với đời sống đã có ở Q02 của hồ sơ 11; không thêm một biến cố gia đình hoặc nguồn điều tra. Yosef muốn được về nhà làm nốt một việc nhỏ, không chỉ tồn tại như người giữ đầu mối. Để một khoảng im sau câu ấy; không tăng nhạc bi thương hay bắt anh chứng minh lòng tốt để được giữ kín. Việc avatar ngừng hỏi và nhường đường là phản hồi nhìn thấy được cho giới hạn anh vừa đặt. Câu hẹn hỏi ngày mai chỉ mở khả năng gặp lại, không là quyền trích lời hoặc công khai tên; chưa chọn thay `shelter/anonymous/consented` của Q02.
+
+Nếu người chơi mở lời khi có người đi ngang, Yosef nói: “Chờ họ qua đã.” rồi im; chuyển sang vị trí kín hơn hoặc đợi. Không dùng bấm dồn để buộc khai. Không viết câu loại trừ nguyên nhân cháy, đe dọa xác nổi ngoài biển hoặc hàm ý Haddai bị giết vì điều tra. Nỗi sợ của Yosef là thật trong trải nghiệm của anh; nó không chứng minh chủ mưu.
+
+**Chốt.** Sau khi yêu cầu giữ kín đã được trình bày đầy đủ, gọi `yosefPrivacy`. Trường này chỉ ghi yêu cầu, **không cấp lời chứng chính thức, consent hoặc tình trạng Yosef đã an toàn**. Không có nút ở Q01 cho chọn công khai tên. Nhật ký nhắc “Yosef yêu cầu được hỏi trước và giữ kín tên”; không tự phát nội dung ấy vào bếp/xưởng.
+
+<a id="q01-beat-07"></a>
+### Phân cảnh 07 — Một chỗ đặt cuốn sổ
+
+**Đích:** cho việc đời thường và ký ức im lặng chạm nhau, không để Natan đọc hộ bí mật. **7 phút; đêm ở C0/xưởng -> sáng hôm sau trong cùng góc nghỉ.**
+
+**Phần việc sinh hoạt.** Theo chuỗi cũ, hoàn tất việc nghe nhu cầu bữa `meal`, rồi dùng `choose` đặt `lodging` hoặc `meal`. Đây là **đặt phần việc**, chưa chạy `pay-lodging`/`give-oil`, chưa trừ tài nguyên. `lodging` dành góc bàn riêng để chép/gửi thư kín từ sáng; `meal` nhận việc góp phần cho bếp chung. Cả hai vẫn có chỗ nghỉ cơ bản trong đêm ở xưởng/khu chung, không cần đưa camera tới một quán trọ mới.
+
+**Thoại Rina và nhắc việc [H].**
+
+> RINA: “Đêm nay vẫn có chỗ nằm ở xưởng. Lượt bếp sáng cần thêm phần dầu.”
+>
+> NGƯỜI CHỨNG, NHÁNH `lodging`: “Tôi xin để dành góc bàn có đèn. Sáng mai tôi quay lại bàn giao.”
+>
+> NGƯỜI CHỨNG, NHÁNH `meal`: “Để tôi nhận phần góp cho lượt bếp sáng. Tôi sẽ mang tới.”
+>
+> RINA, NHÁNH `meal`: “Được. Tôi ghi phần bạn nhận; chưa tính là đã trao.”
+
+Chỉ bày phương án `Model.planAllowed` cho phép. Không đổi cứu hộ thành cách kiếm tiền/food, không thêm trừ dầu riêng vì câu thoại; chi phí vẫn là money/food của model lúc commit. Chưa có schema lưu “đã trả một nửa”, vì vậy không diễn tay đã trao tiền/dầu từ tối.
+
+**Cảnh Natan [H] — hai người đang thiếu cùng một người, nhưng mang hai điều chưa nói khác nhau.** Avatar mang nguyên cuốn sổ của mình tới bàn, định tìm một việc cụ thể để làm; tờ bìa hồ sơ rời vẫn ở chỗ Natan hong, không bị lấy ra thành lời giải. Natan chừa ghế, se đi se lại cùng một đoạn đầu dây mà chưa tiến thêm. Máy ở cùng bàn, để thấy cả đôi tay và khoảng ngồi; đèn ổn định, không cắt đối đáp cận mặt.
+
+> NATAN: “Con ngồi đi. Cha con hay để mái chèo ở phía ấy.”
+>
+> *(Natan quay sang nửa nhịp như định hỏi người ngồi cạnh, rồi nhìn lại đầu dây.)*
+>
+> NGƯỜI CHỨNG: “Chú vẫn quen có cha ở đây.”
+>
+> NATAN: “Mấy hôm nay chú cứ quay sang hỏi ông ấy một câu. Hỏi xong mới nhớ ra.”
+>
+> NGƯỜI CHỨNG: “Con cứ nghĩ, về tới cửa này thì vẫn còn kịp.”
+>
+> *(Natan đặt đoạn dây chưa se xong xuống; lần này ông ngồi cùng, không lấp khoảng im bằng lời khuyên.)*
+>
+> NATAN: “Chú cũng chưa quen.”
+>
+> NGƯỜI CHỨNG: “Con còn một chuyện chưa nói với cha.”
+>
+> NATAN: “Nếu con muốn nói, chú nghe.”
+>
+> NGƯỜI CHỨNG: “Con chưa biết nói thế nào.”
+>
+> *(Natan gật, đẩy chén nước tới gần hơn. Ông không hỏi dồn.)*
+>
+> NATAN: “Đèn còn dầu. Con cứ ngồi.”
+
+**Ký ức T05, chỉ người chơi tiếp nhận.** Avatar đặt ngón tay cạnh gáy sổ rồi rút lại. Âm xưởng lùi nhẹ, còn tiếng bút trong đoạn nhớ hoặc mô tả chữ riêng: **“Chỉ cần nói: ‘Chưa kiểm xong.’ Mình đã không nói.”** Chỉ tái hiện phần avatar từng thấy: Haddai ký khi chưa kiểm hàng, bản thân đã im vì sợ mất việc. Không thêm một cái nhìn kết tội/tha thứ của cha, lời chưa từng nghe, số hàng về sau, ba năm hoặc động cơ toàn tri. Nếu dùng hình, ở với bàn tay và mép giấy trong giới hạn ký ức, không cắt sang cảnh thủ phạm. Đây là nhớ lại T05, không thu được E08 hay một nguồn mới.
+
+**Hành động nhỏ sau đoạn nhớ.** Avatar có thể khép sổ, đặt nguyên cuốn lên vải hoặc tiếp tục giữ trong tay. Cử chỉ chỉ thay diễn xuất tại chỗ, không là đáp án đạo đức hoặc field hoàn tất mới. Natan chỉ nghe “còn một chuyện chưa nói”, không nghe nội dung hồi tưởng và không suy ra việc ký trước/im lặng. Không cho ông tuyên bố cha đã tha thứ. Khoảng yên để hai người chưa giải quyết xong điều ấy mà vẫn có thể ngồi cạnh nhau; đoạn dây cũng chưa cần được se xong. Người chơi được ở lại/đọc lại hoặc chọn nghỉ; không buộc chờ đủ một khoảng im để khép Beat.
+
+**Nghỉ/chuyển sáng.** Nút ngữ cảnh “Nghỉ, sáng mai trở lại kho” xác nhận chuyển thời gian; có thể ở lại trước khi bấm. Giữ khung cửa/chỗ nghỉ, thay đèn và âm bến theo hợp đồng camera 1.3. Sau khi ký ức và đoạn sáng hôm sau đã trình bày xong, mới gọi `recallT05`; state chuyển 08/`dawn`. Không gọi ngay câu đầu của hồi tưởng rồi bật trời sáng khi cuộc nói vẫn còn diễn ra. Load trước chốt quay về đầu Beat 07, giữ phương án đã đặt và không diễn lại một lần trả phí chưa có.
+
+<a id="q01-beat-08"></a>
+### Phân cảnh 08 — Điều còn đọc được sáng hôm sau
+
+**Đích:** đi từ hiện trường có dấu thật sang một việc cần xác minh tiếp. **4 phút; rạng sáng; vành kho C1 -> điểm bàn giao C0.**
+
+**Trở lại và giữ hậu quả.** Người chơi tự đi từ xưởng tới vành an toàn của kho, không bước vào một vùng cháy lại. Người kiểm kho địa phương chỉ lối: “Bàn kiểm nhận bên này đi được rồi. Phần trong kia còn rào lại.” Đây là lối của chủ kho/người làm việc tại chỗ, không tạo một phiên khám nghiệm pháp lý lịch sử.
+
+**Dấu theo đúng tuyến.**
+
+| Save cứu hộ | Khi trở lại phải thấy | Không được tự dựng |
+| --- | --- | --- |
+| `mechanical` | Xe đối trọng ở cữ đã chèn; bộ tời/lối phụ giữ kết quả; xà lối chính vẫn gãy tại chỗ; lối sân mái mở | Xà đã nâng/di chuyển bằng đòn bẩy dù không làm tuyến manual |
+| `manual` | Xà đã đặt sang chỗ tựa có nêm; lối chính thông; xe đối trọng vẫn ở điểm ban đầu; đường chung lên mái mở nhưng cánh ngăn cơ học vẫn đóng | Xe cứu hộ đã chèn hoặc cánh ngăn cơ học mở chỉ vì `sideExit='open'` |
+| Cả hai | Vết cháy cục bộ, đồ và người theo kết quả đã làm; người đã cứu không trở lại gác; `Q01.LOAD` giữ việc sửa riêng của nó | Reset sạch kho, nhân đôi người/đồ, biến cuộc cứu hộ thành nguyên nhân biết thủ phạm |
+
+**Quan sát B06.** Một phần giấy nhô dưới khay ở bàn kiểm nhận. Người chơi nghiêng góc nhìn/nguồn đèn sẵn có, nhận mã **B06** cùng vùng bề mặt xơ/cạo và nét ghi chồng. Không kết luận phương pháp hóa học, lớp bột cụ thể hoặc người đã sửa từ một ảnh. Không lấy mảnh giấy vào inventory; nó ở đúng bàn để Q02 kiểm tiếp với nguồn khác.
+
+> NGƯỜI CHỨNG, NHỎ VỚI MÌNH: “B06… Chỗ này có nét ghi đè.”
+>
+> *(Nhật ký riêng.)* “Có dấu bề mặt bị can thiệp. Chưa biết ai làm và lượng nhận có khớp không.”
+
+**Chốt quan sát.** Gọi `observeB06` sau khi trình bày quan sát/mô tả tương đương và người chơi tiếp tục. PR-03 ghi `b06PreliminaryObserved=true`, `world.fire='cold'`; không cấp E02/P01. Khi vừa vào sáng, bộ dựng có thể biểu đạt khu cháy đã được khống chế và nguội theo phase `dawn`; không tự ghi `cold` ngoài reducer trước event này.
+
+**Bàn giao và commit.** Người chơi quay tới đúng điểm C0. `lodging`: tới góc bàn đã đặt, thực hiện `pay-lodging`, bàn giao phần tiền và nhận chỗ làm việc. `meal`: tới Rina, thực hiện `give-oil`, bàn giao phần góp và xác nhận người nhận ca. Đây là animation/hành động qua model của chi phí hiện hành, không thêm một khoản dầu ngoài food. Chỉ khi `q01SceneReady` và tiền đề quest cũ đủ, model ghi `Q01.COMMITTED`, trừ một lần đúng money hoặc food, giữ callback và mở Q02.
+
+> NGƯỜI GIỮ BÀN, NHÁNH `lodging`: “Tôi nhận phần bạn gửi. Góc bàn ấy để bạn làm việc.”
+>
+> RINA, NHÁNH `meal`: “Tôi nhận rồi. Người tới ca sau biết phần này ở đâu.”
+
+**Outro.** Camera vẫn cạnh avatar, từ giấy/đồ bàn giao nhìn ra khoảng vịnh thấy được qua lối mở. Đèn công việc hạ vai trò khi trời sáng; âm bến bắt đầu lại. Không cần một chuyến bay quảng bá để hoàn tất. Journal gợi việc kế: “Đối chiếu B06 tại bàn ghi và hỏi nơi thực nhận ở bữa chung”; câu hỏi kịch giữ ở người chơi: **“Ai đang làm hồ sơ thay đổi, và vì sao nhân chứng sợ nói?”** Natan/Rina không được tự trả lời vì đã thấy chương khép.
+
+<a id="q01-event-map"></a>
+### 2.9. Bảng chốt sang state hiện hữu
+
+Đây là ánh xạ bàn giao, không phải schema mới. Caller dùng `Model.beginQ01Scene` và `Model.q01SceneEvent`; không ghi trực tiếp `sceneProgress`, không gọi `Q01.reduce` từ UI để tự gán state. Kiểm tra khoảng cách/sàn/vật/người thực ở phía model/interaction có thẩm quyền khi triển khai, không chỉ ẩn nút trong UI.
+
+| Nhịp đang làm | Event chốt có sẵn | Payload | Kết quả để dựng tiếp |
+| --- | --- | --- | --- |
+| 00 | `disembark` | Không thêm trường | Beat 01, `afternoon` |
+| 01 | `stranger` | `response='follow'` hoặc `'investigate'` | Beat 02, giữ phản ứng đã chọn |
+| 02 | `ledgerSeam` | Không thêm trường | Beat 03, `ledgerSeamObserved=true`, phase `evening` |
+| 03 | `fire` | Không thêm trường | Beat 04, `world.fire='burning'`, `world.beam='broken'` |
+| 04, bắt đầu | `rescueRoute` | `route='mechanical'` hoặc `'manual'` | Giữ Beat 04, khóa một phương án |
+| 04, làm việc | `rescueStep` | `step` đúng chuỗi bốn bước của tuyến | Lưu prefix thật; `extract` cuối đưa tới Beat 05/`peopleSafe` |
+| 05 | `rooftop` | Không thêm trường | Beat 06, `rooftopSeen=true` |
+| 06 | `yosefPrivacy` | Không thêm trường | Beat 07, `night`; không cấp consent |
+| 07, sau nghỉ/chuyển sáng | `recallT05` | Không thêm trường | Beat 08, `dawn`; chỉ flag hồi tưởng riêng |
+| 08, sau xem B06 | `observeB06` | Không thêm trường | Vẫn Beat 08, B06 sơ bộ đã ghi, lửa `cold` |
+| 08, sau bàn giao | `Model.act` với `pay-lodging`/`give-oil` hiện hữu | Theo action hiện hành | Model cũ sở hữu route, chi phí và `Q01.COMMITTED` |
+
+Chuỗi task quest cũ vẫn là `brace -> ledger -> meal -> choose -> execution`; `Q01.LOAD` nằm ở `brace`. Mốc presentation mới đặt ba task đầu ở Beat 02/07 như trên, không đổi ID, tiền đề hoặc phần thưởng. `choose` lưu ý định tại Beat 07; `execution` chờ Beat 08 đủ scene. Phần binding này chưa có trong gameplay 3D: AI phải triển khai kiểm tiền đề vị trí/Beat ở đúng owner, không coi bảng này là bằng chứng code đã làm.
+
+Khi dựng v6, giữ ID/luật task nhưng dùng đúng tên vật của T06 trong lời trình bày: *bìa sổ* gắn nguyên với cuốn sổ, *tờ bìa hồ sơ rời* kẹp E01 ở Natan. Không nạp lại câu v3 mơ hồ về “tờ bìa” rồi cho prop tách gáy trái kịch bản. Quyền giữ cuốn sổ suy từ task `ledger` đã hoàn tất, còn `ledgerSeamObserved` chỉ xác nhận đã quan sát đường khâu; không dùng hai điều ấy thay cho nhau.
+
+<a id="q01-restore"></a>
+### 2.10. Thoát, khôi phục và giới hạn của foundation
+
+- Chỉ gọi `beginQ01Scene` cho Q01 chưa commit, theo điều kiện bật v6; scene `null` của save cũ giữ tuyến v3. Không bật v6 giữa một Q01 đã đi dở rồi bắt người chơi trả/nhận lại. Chọn chính sách tương thích rõ trong tác vụ triển khai.
+- Save sau mỗi event được model chấp nhận và sau task/plan cũ. Nếu lưu trữ thất bại, báo đúng cơ chế đang có, không nói “đã lưu”. Không đưa token/account/save thật vào báo cáo.
+- Foundation lưu Beat và prefix việc cứu hộ, không lưu từng khung camera, nét mặt hoặc câu thoại. Thoát giữa tiểu cảnh chưa chốt trở lại đầu nhịp/phần việc chưa chốt; không hứa tiếp đúng một frame. Không phát lại thao tác, chi phí hoặc event đã ghi.
+- Nếu đã hoàn tất task `ledger` nhưng chưa `ledgerSeam`, load giữ nguyên cuốn sổ ở avatar và tờ bìa hồ sơ rời ở Natan, chỉ tiếp phần quan sát chưa chốt. Không lặp bàn giao, không rút gáy để tạo hai vật. T06/Q04 quyết định lúc gói chứng từ đổi người giữ; không suy đổi chủ từ camera hoặc một lần mở inspector.
+- Sau `cart` dựng xe đã chèn; sau `lever` dựng xà đã đặt ổn; sau `exit` giữ đường chung gác–mái mở, không tự mở cánh ngăn cơ học ở manual. Actor theo bảng Titus của Beat 04: trước `exit` ở C0, sau `exit` Titus ở C+1/avatar và hai người ở C1, sau `extract` tất cả ở điểm nhận. Không tạo bộ cờ hoàn tất thứ hai hoặc cộng prefix hai tuyến.
+- Sau save Beat 07 giữ `q.plan` đã chọn, nhưng chưa có khoản trả nào. Sau save Beat 08 trước B06 giữ bình minh và phần chưa quan sát. Sau B06 nhưng trước bàn giao, chỉ việc bàn giao còn lại. Sau commit không trừ phí hoặc chạy cứu hộ lần nữa.
+- Tọa độ/camera/sàn theo hệ spatial snapshot hiện hành ở đoạn đã chốt. Riêng phần `exit`/`extract` đang làm chưa được foundation lưu vị trí từng actor: load dàn lại **cả nhóm** tại checkpoint đầu phần chưa chốt ở bảng Titus, dùng sàn/đường hợp lệ và báo tiếp tục phần việc ấy; không trộn tọa độ avatar giữa hành trình với Titus của checkpoint cũ. Đây là lùi về checkpoint sau load, không là teleport khi chơi hoặc cách bỏ qua việc đi/làm. Muốn tiếp đúng vị trí giữa bước cần một tác vụ H03 có dữ liệu/kiểm riêng, chưa được coi là tính năng foundation.
+- Không tự thêm schema, evidence ID, consent scope, route, thời lượng khóa cổng hoặc NPC knowledge từ một flag quan sát. Nếu cần thêm dữ liệu trong đợt triển khai sau, phải có hợp đồng/migration và H03 riêng.
+
+<a id="q01-ai-implementation"></a>
+### 2.11. Phạm vi giao cho AI và thứ tự dựng
+
+**Giữ:** `witness-q01-state.js`/model làm nền PR-03, Q01.LOAD, ID task/route, save schema 2, contentVersion 3.0, namespace/API/D1, chi phí và callback. **Dựng tiếp:** presenter 9 Beat, thoại trên, tương tác/đường đi thật, diễn xuất NPC, camera liền mạch có trợ giúp, hậu quả hai tuyến và chuyển đêm–sáng.
+
+1. Đọc lại git status/HEAD, STATUS và context content/H02 tại checkout triển khai. Đối chiếu sự thật/consent ở 12. Lập tác động trước khi thay code; danh sách consumer không tự mở phạm vi.
+2. Dựng greybox cả hai đường C0–C1–C+1, đường xuống và điểm bàn giao. Chứng minh đi được qua sàn/cửa/thang bằng capsule, không dùng teleport. Geometry/collision thay đổi kích hoạt H01.
+3. Nối presenter/task/interaction với model, kiểm điều kiện bắt đầu/chốt và restore như 2.9–2.10. Action/state/restore thay đổi kích hoạt H03, phải kiểm local/backup và server tương ứng; không chỉ sửa client.
+4. Đưa thoại/âm/diễn xuất vào đúng Beat; thông tin chỉ tới người có mặt. Không thay tên nhân vật/source qua lời nội bộ của hệ thống. Kiểm NPC/camera bằng trình duyệt khi chúng đã được dựng.
+5. Dựng thời gian ánh sáng và chuyển cảnh. Thay preset/GI/khói/animation/asset kích hoạt H04, cập nhật nguồn/producer/bake/cache đúng miền. `q01-evening` không được gọi thành preset `dawn` bằng một nhãn. Chưa đủ renderer phải ghi khoảng cách, không tự tuyên bố đã đạt hình ảnh.
+6. Chỉ đóng gói candidate khi có phạm vi giao và checks H05. G3 cần người dùng duyệt đúng góc gameplay; không tự đổi `artAccepted` hoặc trạng thái deploy từ một kiểm tra script.
+
+Không cần dựng biển/Legend, nhân vật phản diện lộ diện, một nhà nhiều tầng mới hoặc physics cứu hỏa tổng quát để hoàn tất Q01. Cơ cấu trò chơi có chuyển động/va chạm đủ cho việc quan sát và thực hiện; không quảng cáo nó là mô phỏng kết cấu thật hoặc hướng dẫn cứu hỏa.
+
+<a id="q01-acceptance"></a>
+### 2.12. Điều kiện nhận bản triển khai
+
+1. Cả chín Beat xuất hiện đúng thứ tự; camera/âm mở màn không cướp quá lâu quyền điều khiển. Không cần xem L01 để vào Q01.
+2. Hai phản ứng người lạ và hai tuyến cứu hộ đều đi được. Không đường nào cần tiền, danh tiếng hoặc một companion được tuyển để cứu người.
+3. Bốn bước từng tuyến cần thao tác/vị trí/người thật; sai thứ tự, sai sàn, gọi từ xa hoặc giả payload bị chặn. Chọn route/đến mái không tự cứu người.
+4. Lối phụ cơ học được điều khiển từ C0; lối chính manual chỉ thông sau xà đặt ổn. Có đường từ gác tới mái và từ mái về C0, không cầu thang cụt hoặc camera xuyên trần.
+5. Cảnh 05 có cùng bốn mục quan sát ở bản hình/âm/chữ, đọc không bị đếm giờ. Không mặt, nghề, chủ mưu hoặc liên kết chắc chắn hai người lạ.
+6. Natan không nói “cha ký quá sớm”; Yosef không loại trừ nguyên nhân cháy/giải thích cái chết Haddai; Titus không biết âm mưu công cụ. T05 ở 07 là ký ức riêng, không tự thành điều Natan biết.
+7. Chạng vạng, tối, đêm và sáng đúng bảng 1.4; chọn nghỉ mới qua đêm; `recallT05` không đưa bình minh vào giữa cuộc nói. Trước B06 sáng hôm sau không cháy lại kho.
+8. Cảnh 08 chỉ có dấu của route đã làm; hai người không spawn lại; Q01.LOAD và xe cứu hộ không bị nhập thành một instance.
+9. B06 chỉ là quan sát sơ bộ. E01 ở Q04, E02/E03 và P01 ở Q02 vẫn đúng cổng; yêu cầu giữ kín không cấp consent/công khai tên.
+10. `lodging`/`meal` được đặt ở 07 và bàn giao ở 08; chi phí một lần theo model. Không commit sớm, trả hai lần, thưởng lặp hoặc mở Q02 từ một góc máy.
+11. Kiểm save/load ở từng Beat, từng prefix cứu hộ, trước/sau B06 và trước/sau commit; bản cũ/scene null vẫn chạy được theo chính sách đã chốt.
+12. Ma trận smoke đích: 2 tuyến cứu hộ × 2 phương án sinh hoạt × 2 góc nhìn × 2 cách thao tác (hiện trường/bảng thay thế) = 16 tổ hợp. Đây là yêu cầu kiểm khi triển khai, chưa phải 16 ca đã chạy. Kiểm phần mềm, duyệt hình ảnh, thiết bị thật và playtest người thật báo riêng.
+13. Beat 02 phải thấy hai vật đã rời nhau, avatar nhận nguyên sổ/gáy và Natan giữ tờ bìa hồ sơ kẹp E01; bọc vận chuyển ẩm khác vải lót khô. Không cắt/khâu lại gáy để giải việc chia giữ, không tự cấp E01 trước Q04.
+14. Manual tới `sideExit='open'` vẫn giữ cánh ngăn cơ học đóng. Titus đi C0–C1–C+1 trong cùng lần chơi, đứng nhận trước `extract`; kiểm load trước/trong/sau `exit` và `extract` không nhân đôi actor hoặc trộn hai checkpoint.
+15. Chi tiết mẹ/chậu cây và câu Natan nhớ bạn phải hiện qua thoại/hành động có khoảng nghe; chúng không thêm nguồn điều tra, không cấp consent và không làm Natan biết nội dung T05. Đánh giá sức nặng cảm xúc bằng đọc/dựng và người chơi thật, không bằng số câu tăng thêm.
 
 ---
 

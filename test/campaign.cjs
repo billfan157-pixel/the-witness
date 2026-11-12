@@ -27,14 +27,73 @@ test('Corrupt current save recovers a verified backup',()=>{const store=new Map(
 test('Unavailable storage reports failure while leaving playable state',()=>{const saved=M.save(M.fresh(),{getItem(){throw Error('denied');},setItem(){throw Error('denied');}});assert.equal(saved.persisted,false);assert.equal(saved.state.campaignId,'the-witness-spine-v3');});
 // --- PR-03: Q01 v6 state foundation integration (sceneProgress.Q01) ---
 const SCENE_SEQ=[['disembark'],['stranger',{response:'follow'}],['ledgerSeam'],['fire'],['rescueRoute',{route:'mechanical'}],['rescueStep',{step:'cart'}],['rescueStep',{step:'pulley'}],['rescueStep',{step:'exit'}],['rescueStep',{step:'extract'}],['rooftop'],['yosefPrivacy'],['recallT05'],['observeB06']];
-function driveScene(s,seq){for(const [e,p] of (seq||SCENE_SEQ))s=M.q01SceneEvent(s,e,p);return s;}
-function q01Prep(s,choice){for(const id of ['brace','ledger','meal']){const a=M.actions(s).find(x=>x.id===id);s=M.act(s,id,a.puzzle?{puzzle:solution(s,a)}:{});}return M.act(s,'choose',{choice});}
+function driveScene(s,seq,choice='lodging'){
+  for(const [e,p] of (seq||SCENE_SEQ)){
+    if(e==='ledgerSeam'){
+      for(const id of ['brace','ledger']){
+        if(!s.quests.Q01.done.includes(id)){
+          const a=M.actions(s).find(x=>x.id===id);
+          if(a)s=M.act(s,id,a.puzzle?{puzzle:solution(s,a)}:{});
+        }
+      }
+    }
+    if(e==='recallT05'){
+      if(!s.quests.Q01.done.includes('meal')){
+        const a=M.actions(s).find(x=>x.id==='meal');
+        if(a)s=M.act(s,'meal',a.puzzle?{puzzle:solution(s,a)}:{});
+      }
+      if(!s.quests.Q01.plan){
+        const aChoose=M.actions(s).find(x=>x.id==='choose');
+        if(aChoose)s=M.act(s,'choose',{choice});
+      }
+    }
+    s=M.q01SceneEvent(s,e,p);
+  }
+  return s;
+}
+function q01Prep(s,choice){
+  for(const id of ['brace','ledger','meal']){
+    if(!s.quests.Q01.done.includes(id)){
+      const a=M.actions(s).find(x=>x.id===id);
+      if(a)s=M.act(s,id,a.puzzle?{puzzle:solution(s,a)}:{});
+    }
+  }
+  if(!s.quests.Q01.plan){
+    const aChoose=M.actions(s).find(x=>x.id==='choose');
+    if(aChoose)s=M.act(s,'choose',{choice});
+  }
+  return s;
+}
 test('PR-03: v3 gameplay is untouched when the v6 scene is inactive',()=>{assert.equal(M.fresh().sceneProgress.Q01,null);const s=walk();assert(s.finished);assert.equal(s.sceneProgress.Q01,null);assert.equal(s.evidence.length,10);});
-test('PR-03: beginQ01Scene only opens a fresh, uncommitted Q01',()=>{assert.throws(()=>M.beginQ01Scene({...M.fresh(),chapter:1}));const s=M.beginQ01Scene(M.fresh());assert.throws(()=>M.beginQ01Scene(s));let committed=q01Prep(driveScene(M.beginQ01Scene(M.fresh())),'meal');committed=M.act(committed,'give-oil');assert.throws(()=>M.beginQ01Scene({...committed,sceneProgress:{Q01:null}}));});
-test('PR-03: active v6 scene blocks Q01 commit until ready (no deduction, no COMMITTED)',()=>{for(const choice of ['lodging','meal']){let s=driveScene(M.beginQ01Scene(M.fresh()),SCENE_SEQ.slice(0,4));s=q01Prep(s,choice);const before=JSON.stringify(s.resources);const commitId=choice==='lodging'?'pay-lodging':'give-oil';assert.throws(()=>M.act(s,commitId));assert.equal(JSON.stringify(s.resources),before);assert.equal(s.quests.Q01.route,null);assert(!s.events.some(e=>e.type==='Q01.COMMITTED'));assert.equal(M.q01SceneReady(s),false);}});
-test('PR-03: complete v6 scene commits through the existing commit with a single deduction',()=>{for(const choice of ['lodging','meal']){let s=driveScene(M.beginQ01Scene(M.fresh()));assert.equal(M.q01SceneReady(s),true);s=q01Prep(s,choice);const key=choice==='lodging'?'money':'food',before=s.resources[key];s=M.act(s,choice==='lodging'?'pay-lodging':'give-oil');assert.equal(s.quests.Q01.route,choice);assert.equal(s.resources[key],before-1);assert(s.events.some(e=>e.type==='Q01.COMMITTED'));assert(!s.evidence.includes('E02'));assert.equal(s.sceneProgress.Q01.rescue.peopleSafe,true);}});
-test('PR-03: v6 Q01 keeps the campaign flowing and E02 stays in Q02',()=>{let s=driveScene(M.beginQ01Scene(M.fresh()));s=q01Prep(s,'meal');s=M.act(s,'give-oil');assert(!s.evidence.includes('E02'));s=M.act(s,'advance');assert.equal(M.chapter(s).id,'Q02');s=one(s,M.actions(s).find(a=>a.id==='opening'));s=one(s,M.actions(s).find(a=>a.id==='patch'));assert(s.evidence.includes('E02'));});
+test('PR-03: beginQ01Scene only opens a fresh, uncommitted Q01',()=>{assert.throws(()=>M.beginQ01Scene({...M.fresh(),chapter:1}));const s=M.beginQ01Scene(M.fresh());assert.throws(()=>M.beginQ01Scene(s));let committed=driveScene(M.beginQ01Scene(M.fresh()),null,'meal');committed=M.act(committed,'give-oil');assert.throws(()=>M.beginQ01Scene({...committed,sceneProgress:{Q01:null}}));});
+test('PR-03: active v6 scene blocks Q01 commit until ready (no deduction, no COMMITTED)',()=>{for(const choice of ['lodging','meal']){let s=driveScene(M.beginQ01Scene(M.fresh()),SCENE_SEQ.slice(0,4),choice);const before=JSON.stringify(s.resources);const commitId=choice==='lodging'?'pay-lodging':'give-oil';assert.throws(()=>M.act(s,commitId));assert.equal(JSON.stringify(s.resources),before);assert.equal(s.quests.Q01.route,null);assert(!s.events.some(e=>e.type==='Q01.COMMITTED'));assert.equal(M.q01SceneReady(s),false);}});
+test('PR-03: complete v6 scene commits through the existing commit with a single deduction',()=>{for(const choice of ['lodging','meal']){let s=driveScene(M.beginQ01Scene(M.fresh()),null,choice);assert.equal(M.q01SceneReady(s),true);const key=choice==='lodging'?'money':'food',before=s.resources[key];s=M.act(s,choice==='lodging'?'pay-lodging':'give-oil');assert.equal(s.quests.Q01.route,choice);assert.equal(s.resources[key],before-1);assert(s.events.some(e=>e.type==='Q01.COMMITTED'));assert(!s.evidence.includes('E02'));assert.equal(s.sceneProgress.Q01.rescue.peopleSafe,true);}});
+test('PR-03: v6 Q01 keeps the campaign flowing and E02 stays in Q02',()=>{let s=driveScene(M.beginQ01Scene(M.fresh()),null,'meal');s=M.act(s,'give-oil');assert(!s.evidence.includes('E02'));s=M.act(s,'advance');assert.equal(M.chapter(s).id,'Q02');s=one(s,M.actions(s).find(a=>a.id==='opening'));s=one(s,M.actions(s).find(a=>a.id==='patch'));assert(s.evidence.includes('E02'));});
 test('PR-03: save/restore preserves scene progress mid-beat and mid-rescue',()=>{let s=driveScene(M.beginQ01Scene(M.fresh()),SCENE_SEQ.slice(0,6));const mid=JSON.parse(JSON.stringify(s.sceneProgress.Q01));assert.deepEqual(M.restore(JSON.stringify(s)).sceneProgress.Q01,mid);const store=new Map(),storage={getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v)};M.save(s,storage);assert.deepEqual(M.load(storage).state.sceneProgress.Q01,mid);s=driveScene(s,SCENE_SEQ.slice(6));M.save(s,storage);assert.deepEqual(M.restore(store.get(M.BACKUP)).sceneProgress.Q01,mid);assert.deepEqual(M.load(storage).state.sceneProgress.Q01,s.sceneProgress.Q01);});
 test('PR-03: restore rejects invalid or inconsistent scene state',()=>{const s=driveScene(M.beginQ01Scene(M.fresh()));assert.throws(()=>M.restore({...s,sceneProgress:'bad'}));assert.throws(()=>M.restore({...s,sceneProgress:[]}));const badVersion=JSON.parse(JSON.stringify(s));badVersion.sceneProgress.Q01.version=2;assert.throws(()=>M.restore(badVersion));const badEnum=JSON.parse(JSON.stringify(s));badEnum.sceneProgress.Q01.rescue.route='magic';assert.throws(()=>M.restore(badEnum));const badOrder=JSON.parse(JSON.stringify(s));badOrder.sceneProgress.Q01.rescue.steps=['cart','exit','pulley','extract'];assert.throws(()=>M.restore(badOrder));const partial=driveScene(M.beginQ01Scene(M.fresh()),SCENE_SEQ.slice(0,4));const crossBad=JSON.parse(JSON.stringify(partial));crossBad.quests.Q01.route='lodging';assert.throws(()=>M.restore(crossBad));assert.equal(M.restore(JSON.stringify(M.fresh())).sceneProgress.Q01,null);});
 test('PR-03: scene events require an active scene and do not double-log repeats',()=>{assert.throws(()=>M.q01SceneEvent(M.fresh(),'disembark'));let s=M.beginQ01Scene(M.fresh());s=M.q01SceneEvent(s,'disembark');const count=s.events.filter(e=>e.type==='Q01SceneEvent').length;s=M.q01SceneEvent(s,'disembark');assert.equal(s.events.filter(e=>e.type==='Q01SceneEvent').length,count);assert.equal(s.sceneProgress.Q01.beat,1);});
+test('PR-03: Section 2.9 task prerequisites, action gating and groundwork floor validation',()=>{
+  let s=M.beginQ01Scene(M.fresh());
+  // Beat 0: brace/ledger/meal are not in actions
+  assert(!M.actions(s).some(a=>['brace','ledger','meal'].includes(a.id)));
+  s=M.q01SceneEvent(s,'disembark');
+  s=M.q01SceneEvent(s,'stranger',{response:'follow'});
+  // Beat 2: brace and ledger now visible
+  assert(M.actions(s).some(a=>a.id==='brace'));
+  // ledgerSeam without brace + ledger throws
+  assert.throws(()=>M.q01SceneEvent(s,'ledgerSeam'),/Hãy giúp chú Natan/);
+  const aBrace=M.actions(s).find(a=>a.id==='brace');
+  s=M.act(s,'brace',{puzzle:solution(s,aBrace)});
+  assert.throws(()=>M.q01SceneEvent(s,'ledgerSeam'),/Hãy giúp chú Natan/);
+  s=M.act(s,'ledger');
+  s=M.q01SceneEvent(s,'ledgerSeam');
+  assert.equal(s.sceneProgress.Q01.beat,3);
+  // requireGroundWork check on mezzanine and landing
+  s.spatialPositions={'Q01.mortal':{schema:1,x:0,y:2,z:0,supportId:'q01-mezzanine'}};
+  assert.throws(()=>M.act(s,'advance'),/Hãy trở lại đúng tầng/);
+  s.spatialPositions={'Q01.mortal':{schema:1,x:0,y:2,z:0,supportId:'q01-landing'}};
+  assert.throws(()=>M.act(s,'advance'),/Hãy trở lại đúng tầng/);
+  s.spatialPositions={'Q01.mortal':{schema:1,x:0,y:0,z:0,supportId:'q01-room'}};
+  assert.doesNotThrow(()=>M.actions(s));
+});
 console.log(JSON.stringify({status:'passed',checks,mainQuests:12,legends:5,veils:4,relationshipQuests:6}));

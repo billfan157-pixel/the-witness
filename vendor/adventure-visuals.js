@@ -1447,6 +1447,13 @@
         renderer.setRenderTarget(sceneRT);
         renderer.clear(true, true, true);
         renderer.render(scene, camera);
+        // Budget instrumentation: the scene pass includes the shadow pass, so the
+        // counters are captured before the post chain resets renderer.info.
+        diagnostics.calls=renderer.info.render.calls;
+        diagnostics.triangles=renderer.info.render.triangles;
+        diagnostics.programs=renderer.info.programs?.length ?? null;
+        diagnostics.textures=renderer.info.memory.textures;
+        diagnostics.geometries=renderer.info.memory.geometries;
         if(oldDensity!==null)scene.fog.density=oldDensity;
         if (!framebufferChecked) {
           if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw new Error('Incomplete HDR framebuffer');

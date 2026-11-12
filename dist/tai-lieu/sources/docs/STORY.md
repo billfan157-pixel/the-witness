@@ -9,10 +9,10 @@
 | Sự thật vụ hàng, evidence/claim, ai biết gì | [12 Continuity](the-witness/12-continuity-and-state.md) | Contract/runtime hiện vẫn 10 evidence/4 claims |
 | Nhân vật, động cơ, tri thức | [05 Character](the-witness/05-character-bible.md) | 12 sở hữu sự thật và quyền biết |
 | Chiến dịch tổng thể / cảnh từng Q | [06 Campaign](the-witness/06-campaign-quest-bible.md) / [11 Chapters](the-witness/11-chapter-dossiers.md) | ID/route/gate đang dùng ở campaign-contract |
-| Blocking, thoại, trình tự slice Q01/Q03/L01 | [07 Screenplay](the-witness/07-vertical-slice-screenplay.md) | Không mặc định thay campaign save đang chơi |
+| Blocking, thoại, trình tự Q01/Q03/L01 | [07 Screenplay](the-witness/07-vertical-slice-screenplay.md#q01-handoff) | Q01 có bản bàn giao thống nhất 00–08; không mặc định thay campaign save đang chơi |
 | Scene Legends / nguồn và thế giới của scene | [14 Legends](the-witness/14-legends-depth-dossiers.md) / [15 Packets](the-witness/15-source-world-packets.md) | Core/order/revision ở contract; canon ở 08 |
 | Địa lý, văn hóa và mỹ thuật chung | [04 World](the-witness/04-world-bible.md) | Source register và chuẩn môi trường |
-| Thoại/chi tiết cảm xúc bổ sung | [18 Craft & dialogue](the-witness/18-scene-craft-and-dialogue.md) | Là mốc biên tập 0.4; không sở hữu danh mục runtime mới |
+| Thoại/chi tiết cảm xúc bổ sung | [18 Craft & dialogue](the-witness/18-scene-craft-and-dialogue.md) | Giữ mốc runtime 0.4, bổ sung đích v6 có nhãn chưa triển khai; không sở hữu danh mục runtime |
 | Bản văn, chuyển thể, nguồn nghiên cứu | [08 Scripture](the-witness/08-scripture-reference.md) / [10 Sources](the-witness/10-source-register.md) | Từng claim cần nhãn, nguồn, giới hạn |
 
 Không đọc tất cả các hàng. Chọn hàng theo phần đang sửa; nguồn kia chỉ cần khi
@@ -21,6 +21,15 @@ chứng cứ/mệnh đề, lineage và consent; các phần tóm tắt trong h�
 hình chiếu tham chiếu phái sinh, không sở hữu luật riêng. Phân biệt quan sát vật lý
 sơ bộ B06 ở Q01 với việc xác lập E02 ở Q02; giữ ranh giới E04/Q03 với E05/Q05.
 Hạn chế sao chép cùng bảng chứng cứ/cốt truyện sang nhiều Bible; file tổng hợp dẫn link tới bảng sở hữu.
+
+Riêng Q01, phần 1–2 của 07 sở hữu duy nhất chín Beat, lời Natan/Yosef/Titus,
+camera, mốc sáng/tối và cách chốt/khôi phục cảnh. 03/06/11 giữ chỉ mục, động cơ
+và callback; 18 giữ snapshot biên tập cũ, không tự bổ sung thoại vào bản bàn giao.
+Tri thức/consent vẫn chịu hồ sơ 12. Đích Q01 là 42 phút trong khoảng 40–45 chưa đo.
+
+Chuỗi giữ cuốn sổ/tờ bìa hồ sơ rời do [12/T06](the-witness/12-continuity-and-state.md#q01-book-custody)
+sở hữu; 07 dựng hành động trao vật. `sideExit` và vị trí Titus trong bản dàn dựng
+Q01 phải theo giải nghĩa/tuyến đi ở Beat 04 của 07, không suy mesh cửa từ tên field.
 
 <a id="contracts"></a>
 ## Dữ liệu và ranh giới thực thi
@@ -36,12 +45,19 @@ Code thực thi là content/spine/depth/relationships/craft/model. Narrative Bib
 là nguồn thiết kế cốt truyện mới chính thức, nhưng phải tuân thủ tuyệt đối các bất biến
 trong PRODUCT (Canon Lock, Dual-Tier Persona, không mana/phép lạ, Legends không truyền
 dữ liệu sang Mortal). Chưa có chuyển đổi toàn bộ E11/E12/P05 của v6 vào runtime; các
-ID/claim này được hoãn cho tới đợt nâng cấp toàn diện. Cần đọc A01/D010 trước mọi việc thêm quest,
+ID/claim này đã được chọn trong thiết kế, còn chờ triển khai và kiểm tương thích đầy đủ. Cần đọc A01/D010 trước mọi việc thêm quest,
 vật chứng, claim hoặc thay cổng. Version truyện, game, tài liệu và save khác miền.
+
+Trường `character` của contract nhận diện nhân vật trung tâm trình thuật/khóa
+nguồn; không phải chỉ dẫn điều khiển nhân vật ấy. Runtime `witness-content.js`
+và `witness-spine.js` đã có `witnessRole` cho Nhân Chứng Vô Danh ở ba Legend trục.
+Không đổi `character` thành một tên vai chơi để sửa nhãn trong tài liệu.
 
 Q01 v6 đã có state foundation trong runtime (`witness-q01-state.js` + `sceneProgress.Q01`
 của model, PR-03): 9 Beat, hai route cứu hộ và hậu quả thế giới được ghi nhớ/validate,
-nhưng gameplay 3D Q01 v6 chưa triển khai (PR-04/05). Quan sát B06 ở Q01 vẫn chỉ là sơ bộ,
+greybox không gian PR-04 đã có entry chơi/kiểm riêng (`q01-greybox.html`, xem
+[hồ sơ cảnh](environment-kit/phase-b.md)); presenter/thoại/chốt gameplay chín Beat
+chưa gắn vào campaign mặc định (PR-05). Quan sát B06 ở Q01 vẫn chỉ là sơ bộ,
 không cấp E02 (E02 thuộc Q02); không thêm evidence/claim, không suy thủ phạm từ Beat 05,
 không biến yêu cầu giữ kín của Yosef thành quyền công bố.
 

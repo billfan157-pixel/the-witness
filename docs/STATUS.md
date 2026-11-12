@@ -9,7 +9,7 @@ theo; số đo/evidence và gate vẫn ở nguồn sở hữu. Code đang dùng 
 
 | ID | Đang lệch/chưa xác nhận | Hành động khi chạm miền |
 | --- | --- | --- |
-| A01 | T01–T13/E01–E12/P01–P05 là thiết kế truyện v6 đã chọn; runtime/contract vẫn 10 evidence/4 claims, Q01 mới có state foundation | Phân biệt thiết kế với chờ triển khai; nâng cấp phải đồng bộ content/model/UI/restore/server và kiểm tương thích, không chỉ thêm ID vào JSON |
+| A01 | T01–T13/E01–E12/P01–P05 là thiết kế truyện v6 đã chọn; runtime/contract vẫn 10 evidence/4 claims. Q01 có state foundation và greybox PR-04 riêng; presenter/gameplay chín Beat thuộc PR-05 | Phân biệt thiết kế, không gian đã dựng và gameplay chờ gắn; nâng cấp phải đồng bộ content/model/UI/restore/server và kiểm tương thích, không chỉ thêm ID vào JSON |
 | A02 | Q01 G3 awaiting_visual_review; G4 in_progress | Duyệt góc gameplay, giữ artAccepted false nếu chưa có xác nhận |
 | A05 | Report Phase B được nhắc nhưng chưa có trong checkout khi audit; gold/phase3 là mốc cũ | Kiểm file/hash/build trước khi dùng claim; không tạo báo cáo giả |
 | A07 | Chưa kiểm lại production trong các tác vụ quản trị | Không suy deploy từ build/push; kiểm live riêng khi được giao |
@@ -75,6 +75,64 @@ Không sao chép bản HEAD cũ đè lên chúng để “chuẩn hóa”.
   chỉ sửa tài liệu/manifest đọc, không thay geometry, Beat/hành vi Q01, state/save,
   lighting/asset hoặc candidate game nên không kích hoạt handoff triển khai.
 
+- **D014 — Q01: một kịch bản bàn giao AI (11/11/2026).** Theo yêu cầu rà chín
+  Beat, 07 phần 1–2 sở hữu phân cảnh/thoại/camera/sáng-tối/tri thức và ánh xạ state;
+  03/06/11 dẫn về cùng bản, 05/18/22 và STORY được đối chiếu. Checkout chuyển từ
+  `106ed916` sang `a6c264baacbc096f11a104359b1063fcc57e6406` do công việc có sẵn
+  được commit trong lúc rà; đã đọc lại nguồn và giữ nguyên Q03/L01 ngoài phạm vi.
+  Đích Q01 là 42 phút, khoảng 40–45 chưa đo. One-shot là dàn dựng liền mạch mặc
+  định, nén đêm có thông báo trong cùng khung và giữ ngoại lệ tiếp cận/load.
+  T05 ở 07 là ký ức riêng, Natan không tự biết chữ ký quá sớm; Yosef không biết
+  nguyên nhân cháy/cái chết Haddai; Titus chưa biết âm mưu công cụ. Tách Q01.LOAD
+  với xe cứu hộ, giữ dấu xe/xà đúng route. `choose` ở 07 chỉ đặt phần việc; execution
+  cũ ở 08 sau B06 mới commit/trừ phí một lần. Không đổi ID/schema/task/runtime.
+  H02 được dùng cho biên tập Beat/thoại; H01 geometry, H03 action/restore, H04
+  renderer và H05 candidate là trigger phải xử lý khi giao triển khai phần tương
+  ứng, không được suy đã xong từ bản kịch bản. Scene foundation vẫn là PR-03,
+  gameplay/presenter/lighting Q01 v6 và G3/G4 vẫn còn mở.
+
+- **D015 — Hiệu chỉnh bàn giao Q01 theo góp ý (11/11/2026).** Xác nhận ba điểm
+  thiếu chặt về vật trao tay/field cửa/vị trí Titus; nhận góp ý biên tập tăng đời
+  sống riêng Yosef và sức nặng mất cha ở Beat 07. T06/12 khóa hai vật vốn rời:
+  avatar nhận nguyên sổ/gáy, Natan giữ tờ bìa hồ sơ kẹp E01 tới Q04; không tháo/
+  khâu lại gáy trước Q10. 07 phân biệt bọc vận chuyển ẩm với vải lót khô, ghi
+  rõ hai người chứng kiến và xử lý load giữa nhận sổ/quan sát. `sideExit` giữ tên
+  cũ, chỉ đường chung gác–mái đã mở/kiểm; manual không mở cánh ngăn cơ học. Titus
+  cùng avatar kiểm mái, ở lại điểm nhận, avatar quay xuống C1 trước khi chốt
+  `exit`; bảng checkpoint không cho nhân đôi actor hoặc snap vị trí mỗi frame.
+  Mẹ/chậu cây của Yosef dùng đời sống đã có ở 11/Q02, không thêm nguồn/consent;
+  Natan có nỗi nhớ bạn riêng, T05 vẫn chỉ được người chơi tiếp nhận. Đồng bộ
+  03/05/06/11 và STORY theo nguồn 07/12, giữ phần khác của bản bàn giao D014.
+  Tuyến chính vẫn content/H02; H03 chỉ cần khi triển khai binding/restore, H01/
+  H04 khi dựng không gian/hình ảnh thực. Đợt này là sửa kịch bản, không đổi code,
+  ID/schema/cổng hoặc nhận art/deploy; cảm xúc chưa được coi là đã qua playtest.
+
+- **D016 — Khóa tiền đề task/vị trí Q01 v6 theo Mục 2.9–2.10 (H03, 11/11/2026).**
+  Kích hoạt ràng buộc liên miền giữa model chiến dịch và `WitnessQ01State`:
+  1) `requireGroundWork` mở rộng kiểm tra các mặt sàn cao độ `roof|step|mezzanine|landing`;
+     whitelist `restore` mở rộng nhận `q01-drain|q01-mezzanine|q01-landing`.
+  2) `actions(s)` khóa thứ tự xuất hiện task Q01 theo Beat khi chạy v6 (`brace`/`ledger`
+     tại Beat >= 2, `meal`/`choose` tại Beat >= 7, bàn giao `pay-lodging`/`give-oil` tại Beat 8
+     sau khi `b06PreliminaryObserved`). Save cũ (`sceneProgress.Q01 === null`) giữ nguyên 100% v3.
+  3) `q01SceneEvent` kiểm tra điều kiện hoàn tất task trước khi chốt `ledgerSeam` (`brace` + `ledger`)
+     và `recallT05` (`meal` + `plan`).
+  Đã cập nhật đồng bộ các bài kiểm tra consumer (`test/campaign.cjs`, `test/backend.test.mjs`,
+  `test/cloud-client.test.cjs`) và đóng gói lại `dist/`. Đạt 100% checks: `check:agents`, `npm test`,
+  `test:backend`, `test:build-output`, `test:agents`. Chưa dựng hình học 3D mezzanine/landing (H01).
+
+- **D017 — Q01 PR-04 spatial candidate (11/11/2026).** Theo yêu cầu trực tiếp
+  dựng không gian chơi được, chọn environment; H01 geometry, H04 mesh/lighting,
+  H05 candidate được kích hoạt. Đối chiếu H03 để giữ nguyên support ID/schema
+  và chiếu state PR-03; không sửa model/server. Không triển khai trigger H02
+  về thoại/chốt Beat trong đợt này. `witness-q01-greybox.js` sở hữu blueprint,
+  anchors đủ 00–08, mesh/collision và adapter đọc `rescue.route/steps` hiện hành;
+  `q01-greybox.html` + lab dùng cùng engine/capsule, có hai tuyến cơ cấu độc lập,
+  kiểm đường ba proxy actor, kho trệt/gác, cửa chung/mái, thang xuống và rãnh
+  tự chọn. Kho v3 mặc định và Q01.LOAD được giữ; không tự kích hoạt v6 hoặc ghi
+  save/quest/evidence/consent từ lab. Bố trí/API bàn giao PR-05 thuộc hồ sơ cảnh
+  `docs/environment-kit/phase-b.md`; artAccepted false, G3/G4 giữ nguyên.
+  Kiểm model không thay choreography, thoại, nguồn cảm xúc hoặc art approval.
+
 <a id="story-review-2026-11-11"></a>
 ### Kết quả đối chiếu bản nhận định
 
@@ -131,3 +189,57 @@ không đổi; design-contract chỉ thêm tài liệu có sẵn vào manifest. 
 tạo lại từ producer, hash nguồn nằm trong `validation.json` của gói tài liệu.
 Không chạy build/deploy game, kiểm GPU, duyệt chuyên môn hoặc playtest người thật
 trong phạm vi này; các khoảng cách A01/A02/A08/A09 vẫn giữ đúng giới hạn của chúng.
+
+**Kiểm bản bàn giao Q01/D014:** governance đạt, `test:agents` đạt 39 ca và
+validator v3 đạt 581 assertions. Đối chiếu biên tập đủ Beat 00–08/tổng 42 phút;
+phần Q03/L01 trong 07 được giữ nguyên byte nội dung. Bốn tổ hợp model PR-03
+`mechanical/manual × lodging/meal` đều giữ đặt trước ở đêm, chặn execution trước
+B06, restore được plan, commit/trừ phí một lần và không cấp evidence/consent.
+Đây là kiểm khả năng tương thích của tiến trình hiện hữu với lịch bàn giao;
+không chứng minh đã dựng thoại/camera/ánh sáng hoặc 16 tổ hợp gameplay 3D yêu cầu.
+Không thay runtime/contract nên không chạy browser nhân vật/GPU như nghiệm thu
+cho những cảnh còn chưa triển khai. Bản bàn giao riêng được trích từ nguồn 07,
+bộ reader được xuất lại theo producer và kiểm hash/freshness.
+
+**Kiểm hiệu chỉnh D015:** `check:agents`/39 ca `test:agents` đạt; validator giữ
+581 assertions; 16 ca `test:q01-state` đạt. Kiểm thêm bốn tổ hợp cứu hộ/sinh hoạt
+qua restore từng prefix: `exit` mở đường nhưng chưa sơ tán người, hai tuyến không
+trộn bước, chi phí một lần và chưa có evidence/consent. Save giữa `ledger` và
+`ledgerSeam` giữ task đã nhận sổ nhưng chưa xác nhận quan sát, không cấp E01.
+Đối chiếu đủ chín Beat/tổng đích 42 phút và giữ nguyên phần Q03/L01 trong 07;
+không đổi runtime/contract. Choreography/mesh cửa/vật thể trong game và sức nặng
+cảm xúc vẫn là yêu cầu dựng/duyệt, không phải kết quả đã được các ca model chứng minh.
+
+**Kiểm PR-04:** candidate cục bộ `e5bf8b4d1450`, đóng gói trong
+`local/checkouts/q01-pr04-20261111/dist` để giữ nguyên `dist/` và service worker
+đang có của công việc khác. Nguồn runtime candidate được đối chiếu byte với
+checkout. `npm test` đạt, gồm 10 ca greybox/17.451 bước controller mô hình;
+`test:backend` đạt 28, `test:agents` 39, `test:build-output` 9, contract 581
+assertions và GI freshness/self-test đạt. Suite greybox dùng engine thật trên
+Chrome/Intel Arc D3D11 ở 1440×900: 8 lượt hai route × hai view × web/HTML mở
+lạnh chặn HTTP, 16 tổ hợp ảnh ngày/tối; 13.827 mẫu không lỗi body/support/camera.
+Mô phỏng animation 4×, không đo thời lượng chơi hoặc FPS. Bốn vòng mount/dispose
+trả allocation WebGL tạm về 0; 8.592 tam giác/77 drawable mesh ở level (không
+đồng nhất drawable mesh với tổng draw calls nhiều pass). Bằng chứng/hash/scope
+ở `docs/environment-kit/validation/q01-pr04/verification.json`. Đã kiểm góc
+khuất Beat 01, đường nhìn Beat 05 và giữ mọi support ID trong whitelist cũ.
+Mesh top cap của kho legacy được sửa tại producer, có probe trước/sau và ca
+kiểm sát mép 1 mm; không hạ điều kiện kiểm hoặc sửa collision để né mesh.
+Thoại/choreography/chốt Beat/camera-sáng theo truyện thuộc PR-05; chưa có
+human playtest, chưa duyệt G3/G4, chưa push/deploy. Bản reader được xuất lại
+riêng từ nguồn; build/push không được suy thành trạng thái production.
+
+Hồi quy trên cùng build đạt: `test:architecture-browser` 7 tuyến/1.915 mẫu,
+0 lỗi mesh/body/camera/sàn, giữ đúng tọa độ khi tải lại mái/bậc và cold HTML;
+`test:graphics` đạt các cảnh/mức chất lượng, probe AO và cold standalone;
+Phase B `--quick` đạt 20 ảnh tại 5 điểm × hai góc × ngày/tối; `test:kit-lifecycle`
+đạt 14 kiểm, gồm 24 lượt đổi full/lite, cache thực và KTX2/Meshopt/WASM ngoại
+tuyến. Những kết quả này kiểm tương thích kỹ thuật, không đóng nghiệm thu art.
+
+**Giới hạn checkout tại lúc bàn giao:** sau khi candidate đã kiểm xong, có
+thay đổi render đồng thời trong `witness-architecture.js` (thêm batch ở
+`install`), `witness-q01.js`, `witness-world.js`, `vendor/adventure-visuals.js`
+và `vendor/witness-graphics.js`. Chúng được giữ nguyên, không ghi đè bằng
+candidate. Prefix physics/blueprint của architecture vẫn giống bản đã kiểm;
+báo cáo và hồi quy ở trên chứng nhận **gói e5bf8b4d1450**, không tự chứng nhận
+các chỉnh render mới này. Bản mở chơi/HTML bàn giao lấy từ gói cố định đó.

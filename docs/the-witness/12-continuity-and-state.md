@@ -16,7 +16,10 @@
 
 **T05.** Avatar tận mắt biết mình đã im lặng lúc có thể nói rằng hàng chưa được kiểm vì sợ mất việc. Quá khứ cố định này được biết từ Hồi I (Q01), là rào cản tâm lý cốt lõi, không lấy ở đoạn cuối để kết tội bất ngờ.
 
-**T06.** Natan giữ sổ hộ gia đình và bìa có biên nhận gốc gửi về. Dấu khâu gáy bất thường được phát hiện từ Q01, mở đối chiếu ở Q10.
+**T06.** Bộ giấy Haddai gửi về xưởng gồm cuốn sổ hộ gia đình đóng liền và một tờ bìa hồ sơ rời kẹp biên nhận gốc E01. Dấu khâu gáy bất thường thuộc **cuốn sổ**, được thấy từ Q01 và đối chiếu ở Q10; tờ bìa hồ sơ rời không khâu hoặc dán vào gáy ấy.
+
+<a id="q01-book-custody"></a>
+**Chuỗi giữ vật T06 — quy ước dàn dựng [H].** Trước bàn giao Q01, Natan giữ cả hai vật trong cùng bọc vận chuyển còn ẩm. Trước mắt avatar, ông mở bọc trên vải lót khô, đặt hai vật vốn đã rời nhau lên bàn rồi trao **nguyên cuốn sổ gồm ruột/bìa gắn/gáy khâu** cho avatar; ông giữ tờ bìa hồ sơ gấp còn ẩm ở xưởng. Hai người chứng kiến việc chia giữ, không có thao tác tháo bìa, rút chỉ, bóc dán hoặc khâu lại sổ. Q01 chỉ cho xem gáy, không mở/đọc tới chữ ký trong gói chứng từ rời và không cấp E01. Q04 Natan bàn giao tờ bìa hồ sơ cùng biên nhận đã đủ điều kiện đọc; tới Q10 avatar đem đúng cuốn sổ nguyên gáy và phần giấy đã nhận ra đối chiếu. Không thay bằng prop tái tạo, không dùng việc hong giấy như một thao tác xóa/tạo dấu. Hai tên gọi **bìa sổ** và **tờ bìa hồ sơ rời** phải phân biệt trong script, prop và journal; đường khâu tự nó không xác định người sửa hoặc chứng minh một claim mới.
 
 **T07.** Lượt bữa chung thiếu hai bao ở Xêdarê Q02 có mã `B06`, xảy ra trong hiện tại. Nó cho thấy cách thức sửa ghi nhận vẫn tiếp diễn. Dù B06 không chứng minh được vụ G17 năm trước (giữ nguyên bất biến P01), Yosef tại góc sân bữa Q02 nhìn thấy avatar săm soi vết cạo mép đã xúc động tiết lộ: chính Haddai lúc sinh thời từng đứng ở đúng góc sân này dưới bóng cây vả để chất vấn về một vết cạo mực tương tự; thủ pháp cạo mỏng thớ giấy rồi dán đè mép của B06 chính là "chữ ký nghề nghiệp" của kẻ đang nắm giữ hồ sơ cảng. Điều này gắn chặt B06 với nỗi đau mất cha và di nguyện chưa thành của Haddai.
 

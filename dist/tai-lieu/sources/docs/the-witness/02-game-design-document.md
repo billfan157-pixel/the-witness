@@ -1,6 +1,6 @@
 # 02 • Game Design Document
 
-**Phụ lục chiều sâu 3.2 / runtime 0.4.0:** 25 bàn thao tác tại địa vật hiện hữu đã thay các xác nhận ngắn ở 12 Q, 5 L và 4 V. [Atlas 17](../STORY.md) sở hữu đặc tả phản ánh luật đang chạy; [nghiên cứu 16](10-source-register.md) giải thích căn cứ; [kịch bản 18](18-scene-craft-and-dialogue.md) tách dàn dựng đã có với phần tiếp theo. Các luật gồm tiền đề thao tác, phân người/vật, tuyến có kết nối/ngưỡng, nhiều khoản sổ, ghép nguồn và chia bản theo nơi nhận. Ba bố cục giấc mơ mở không có đáp án đạo đức. “Thử” chỉ phản hồi; “Thực hiện” qua model rồi ghi bước. Bản nháp lưu theo cảnh và ghi chú nằm đúng tầng, không cấp consent hoặc viết lại kết cục nguồn.
+**Thiết kế v6 • Rà soát biên tập 11/11/2026.** Hồ sơ này sở hữu thiết kế hệ thống; trạng thái triển khai ở [STATUS](../STATUS.md#open), danh mục hoạt động đang chạy và cách tạo atlas ở [STORY](../STORY.md#derived). Phần dàn dựng v6 không tự trở thành tính năng đã có trong game.
 
 ## 1. Thông số nền
 
@@ -70,8 +70,8 @@ Không gian ưu tiên là ba level Legends trong hồ sơ 14: trại–bờ, khe
 | Tham số / Cơ chế | L01: Xuất Hành 14 (Biển Đỏ) | L02: 1 Samuel 24 (Hang En Ghêđi) | L04: Gioan 21 (Hồ Galilê) |
 |---|---|---|---|
 | **Thanh trạng thái nhóm (Group Composure)** | **Độ gắn kết đoàn (Caravan Cohesion):** Giảm khi xe thồ kẹt bùn, gió lốc tạt tắt đèn bão, hoặc súc vật hoảng loạn. | **Kỷ luật im lặng (Acoustic Restraint):** Giảm khi phát ra tiếng động cơ học hoặc đồng đội nổi giận đòi tuốt gươm. | **Nhịp đồng tâm & Sức bền (Seamanship Sync):** Giảm khi chèo ngược dòng nước lạnh hoặc lưới mắc đá ngầm. |
-| **Tương tác Môi trường (Quan sát + Thủ công)** | Soi đèn hiệu tìm dải đá khô; chèn ván gỗ kích trục bánh xe lún; chằng dây neo qua vũng sình. | Lắng nghe tiếng bước chân vọng trong vòm đá; căng dây dẫn đường trên vách đá vôi tối. | Đọc gợn sóng luồng nước sương mù; gỡ mắt lưới rê 3 lớp; giữ căng dây kéo mẻ 153 cá lớn. |
-| **Tương tác Con người (Giao tiếp + Tự vệ)** | Hô hiệu lệnh trấn an các gia đình; dùng khiên chắn chặn gia súc chen lấn xô đẩy. | Ra hiệu tay trong tối; dùng tay ghìm chặt bao kiếm của chiến binh cực đoan để ngăn ám sát Saun. | Bắt nhịp hô chèo cùng Phêrô và Gioan; chia sẻ khoảng lặng tâm lý trĩu nặng trên mạn thuyền. |
+| **Tương tác Môi trường (Quan sát + Thủ công)** | Soi đèn hiệu tìm dải đá khô; chèn ván gỗ kích trục bánh xe lún; chằng dây neo qua vũng sình. | Lắng nghe tiếng bước chân vọng trong vòm đá; căng dây dẫn đường trên vách đá vôi tối. | Đọc gợn sóng; chuẩn bị mép lưới và dây ngư cụ sáng tác [H], không chốt cấu tạo từ Ga 21; giữ phần dây phụ. |
+| **Tương tác Con người (Giao tiếp + Tự vệ)** | Hô hiệu lệnh trấn an các gia đình; dùng khiên chắn chặn gia súc chen lấn xô đẩy. | Ra hiệu tay, giữ khoảng trống và lối lùi để người phụ tự hạ tay; Đavít giữ vai ngăn người mình theo nguồn. | Phối hợp công việc phụ [H]; giữ khoảng yên cho nhóm môn đệ và phần trình bày nguồn. |
 | **Hình phạt thất bại (Non-Canon Fail State)** | Đoàn bị đứt quãng $\rightarrow$ Màn hình mờ đi trong bão cát, hồi về checkpoint gần nhất (không tạo cảnh dân chết). | Rơi vũ khí gây tiếng vang $\rightarrow$ Bị lính canh phát hiện, hồi về checkpoint trước khi Saun bước vào hang. | Lưới rối hoặc thuyền lệch dòng $\rightarrow$ Thao tác gỡ lại nhịp chèo/kéo từ checkpoint trước đó. |
 
 ## 5. Chiến đấu và thoát hiểm
@@ -106,7 +106,7 @@ Thay vì tách rời kỹ năng hoặc giải thích bằng yếu tố du hành 
 
 | Năng lực Người Chứng (Mortal) | Tác động cụ thể lên Nhân Chứng Vô Danh (Legends) |
 |---|---|
-| **Thủ công I / II / III** | **L01:** Bậc II mở khả năng dựng đòn bẩy kích bánh xe thồ lún bùn nhanh gấp đôi và mở lối tắt qua bãi đá ngầm.<br>**L04:** Bậc II giúp gỡ mắt lưới rê 3 lớp mắc cạn nhanh gấp đôi và giảm 50% thể lực tiêu hao. |
+| **Thủ công I / II / III** | **L01:** Bậc II mở khả năng dựng đòn bẩy kích bánh xe thồ lún bùn nhanh gấp đôi và mở lối tắt qua bãi đá ngầm.<br>**L04:** Bậc II hỗ trợ gỡ rối mép lưới và chuẩn bị dây ngư cụ sáng tác [H]; không thay diễn tiến mẻ cá nguồn. Các mức tốc độ/thể lực là giả định cân bằng cần thử. |
 | **Giao tiếp I / II / III** | **L02:** Bậc II mở tùy chọn đối thoại thì thầm thuyết phục đồng đội hạ kiếm xuống mà không gây tiếng động cơ học.<br>**L01:** Bậc II giúp hô hiệu lệnh trấn an lập tức một cụm gia đình đang hoảng loạn, hồi phục Cohesion. |
 | **Quan sát I / II / III** | **L02:** Bậc II phát hiện từ sớm tiếng vọng bước chân quân lính Saun trên vách đá vôi, mở đường né tránh trên cao.<br>**L04:** Bậc II đọc được dòng chảy ngầm và gợn sóng đêm để định hướng thuyền không bị trôi dạt. |
 | **Tự vệ I / II / III** | **L01:** Bậc II dùng khiên chặn đứng đàn gia súc xô đẩy mà không gây thương tích cho súc vật.<br>**L02:** Bậc II cho phép áp sát khóa tay tước vũ khí lính tuần trong im lặng tuyệt đối nếu bị tiến sát. |
@@ -150,7 +150,7 @@ Slice cần chứng minh Legends là lõi qua hồi tưởng không gợi ý, ho
 ## 12. Cấu trúc thiết kế từng chương cầu nối (Q01–Q12)
 
 Mỗi chương cầu nối đời thường được thiết kế với một trọng tâm tương tác và thử thách riêng biệt:
-- **Q01 (Vertical Slice Mở màn — One-Shot Camera):** Cập bến cảng Sebastos hoàng hôn Địa Trung Hải; 9 nhịp phân cảnh (Beats 00–08); xoay vật thể 3D Close Inspection phát hiện vết khâu gáy lệch; cứu hộ môi trường tại bốn vùng chức năng cao độ (C0 cầu cảng/sân hàng, C1 kho trệt và gác lửng cứu hộ, C-1 rãnh bảo trì ngầm, C+1 sàn tời và sân mái; không phải bốn tầng nhà độc lập xếp chồng) với đa tuyến (xe tải đối trọng C0 + ròng rọc C+1 cùng Titus hoặc hợp lực thợ cảng nâng xà sồi); quan sát 4 thuộc tính giới hạn từ sân mái C+1 (sự cố ngoài dự tính khi người thuộc mạng lưới Rufus thu hồi tài liệu theo sự thật tác giả T10; avatar tại Q01 chỉ quan sát hiện tượng, chưa thể suy luận danh tính hay vai trò của Rufus); hạt mầm Witness Consent từ Yosef; lựa chọn sinh hoạt lodging/meal; đối thoại cận cảnh Natan (Scene A) và sự thật im lặng T05; trạng thái kho sau cháy bền vững; ghi nhận hiện tượng vết cạo B06 sơ bộ (thu thập và thẩm định vật chứng E02 diễn ra tại Q02); cờ Q01.COMMITTED mở Q02.
+- **Q01 (Mở màn, đích 42 phút chưa đo):** [Kịch bản bàn giao thống nhất ở 07](07-vertical-slice-screenplay.md#q01-handoff) sở hữu chín Beat, thoại, camera liền mạch và nén đêm có thông báo. Giữ Q01.LOAD tách khỏi xe cứu hộ; hai tuyến cơ học/sức người cùng cổng, dấu xe/xà riêng. Chọn lodging/meal ở Beat 07 chỉ đặt phần việc, bàn giao sau B06 ở Beat 08 mới commit. Natan không đọc hộ T05; Yosef không giải nguyên nhân cháy; B06 chưa cấp E02/P01.
 - **Q02:** Điều tra thực địa song hành cùng nhiệm vụ bảo vệ nhân chứng yếu thế.
 - **Q03:** Khảo sát các tuyến đường ven thành và kiểm chứng nhận định.
 - **Q04:** Phân tải vận chuyển và mở lối đi an toàn.
@@ -175,47 +175,52 @@ Sổ tay điều tra hoạt động trên nguyên tắc đối chiếu nguồn �
 
 Trạng thái vật lý của đồ vật và giá trị pháp lý/sự thật được phân định rạch ròi. Kỹ năng Quan sát giúp phát hiện các dấu hiệu vật lý (vết cạo mực, mép giấy mới/cũ) nhưng không thay thế cho việc xác minh nhân chứng.
 
-### 13.1. Đặc tả Giao diện Sổ tay & Luồng Đối chiếu Chứng cứ (Evidence Board Specification)
+### 13.1. Trực quan hóa Sổ tay Đối chiếu thành Bàn Làm Việc Thực Thể 3D (In-World Tactile Desk)
 
-Sổ tay (Journal) là trung tâm điều phối thông tin của toàn bộ chiến dịch. Dưới đây là đặc tả bố cục giao diện (UI Wireframe) và luồng xử lý trạng thái:
+Để khắc phục cảm giác giao diện bảng biểu 2D phẳng làm ngắt quãng sự đắm chìm trong thế giới cổ đại, hệ thống đối chiếu chứng cứ được chuyển hóa thành trải nghiệm không gian 3D xúc giác:
+- **Bàn làm việc thực thể tại Hub (In-World Desk):** Tại các không gian an toàn (góc bàn xưởng mộc Natan ở Capernaum, góc bàn quán trọ tại Xêdarê Q01, hay bàn đá phòng đối chiếu J3 ở Giêrusalem), người chơi tiến đến tương tác. Camera chuyển mượt (smooth dolly-down) nhìn xuống mặt bàn gỗ sồi dưới ánh đèn dầu lay động.
+- **Vật chứng là thực thể 3D:** Vật chứng không phải các biểu tượng phẳng mà là các mô hình 3D cầm nắm được: cuộn giấy da cổ (*parchment scrolls*) với thớ da thật, thẻ kho đất sét khắc chữ (*clay tokens*), mảnh sáp niêm phong cảng vỡ đôi (*wax seals*), mẩu dây thừng gai đo tải.
+- **Thao tác đối chiếu xúc giác:** Người chơi dùng tay kéo thả các cuộn giấy và thẻ kho đặt cạnh nhau trên mặt bàn, dùng vệt que than hoặc sợi chỉ đỏ nối giữa hai nguồn độc lập để tổng hợp thành mệnh đề (Claims P01–P05).
+- **Sổ da bỏ túi ngoài thực địa (Pocket Leather Ledger):** Khi đang thám hiểm bên ngoài hiện trường (chưa về bàn làm việc), việc mở sổ tay sẽ hiển thị cuốn sổ bìa da được lật trực tiếp trên tay nhân vật theo góc nhìn thứ nhất hoặc cận cảnh vai, ghi chép nhanh các quan sát vật lý mà không làm dừng dòng chảy thời gian của thế giới.
 
 ```text
 +----------------------------------------------------------------------------------------------------+
-|                                      SỔ TAY ĐỐI CHIẾU CHỨNG CỨ                                     |
+|                         BÀN ĐỐI CHIẾU THỰC THỂ 3D (IN-WORLD TACTILE DESK)                          |
+|                             [Ánh đèn dầu lay động trên mặt bàn gỗ xưởng Natan]                     |
 +------------------------------------+---------------------------------------+-----------------------+
-| CỘT 1: MỆNH ĐỀ (CLAIMS P01–P04)    | CỘT 2: KHE CẮM NGUỒN ĐỘC LẬP (SLOTS)  | CỘT 3: QUYỀN CÔNG BỐ  |
+| MỆNH ĐỀ CẦN XÁC LẬP (CLAIMS P01–P05)| KHÔNG GIAN BÀN ĐỐI CHIẾU THỰC THỂ 3D  | THỰC THI CONSENT      |
 +------------------------------------+---------------------------------------+-----------------------+
-| [•] P01: B06 không khớp số lượng   | [ KHE CẮM A ] : E02 (Mép sổ sửa B06)  | HUY HIỆU CONSENT:     |
-| [ ] P02: G17 thiếu 4 bao tại bến   | [ KHE CẮM B ] : E03 (Lời chứng Rina)  | [X] CÔNG KHAI (Named) |
+| [•] P01: B06 không khớp số lượng   | [CUỘN GIẤY DA E02] ──(vệt than)──     | HUY HIỆU ĐỒNG THUẬN:  |
+| [ ] P02: G17 thiếu 4 bao tại bến   |                    └── [LỜI RINA E03] | [X] CÔNG KHAI (Named) |
 | [ ] P03: Haddai nhận lỗi ký trước  |                                       | [ ] ẨN DANH (Summary) |
-| [ ] P04: Hanan ra lệnh chuyển hàng | TÌNH TRẠNG: [ ĐÃ XÁC THỰC ĐỘC LẬP ]   | [ ] TỪ CHỐI (Revoked) |
+| [ ] P04: Hanan ra lệnh chuyển hàng | TÌNH TRẠNG: [ HAI NGUỒN ĐỘC LẬP KHỚP ]| [ ] TỪ CHỐI (Revoked) |
+| [ ] P05: Varro đặt bản sửa giả E11 |                                       |                       |
 +------------------------------------+---------------------------------------+-----------------------+
-| * CẢNH BÁO KIỂM TRA PHÁP LÝ (SOURCE LINEAGE CHECK):                                                |
-| - Nếu người chơi cắm 2 bản sao cùng gốc (ví dụ hai bản chép của thẻ kho E06):                     |
-|   -> UI hiển thị cảnh báo đỏ: [CẢNH BÁO: TRÙNG NGUỒN GỐC — CHƯA ĐỦ ĐIỀU KIỆN XÁC THỰC ĐỘC LẬP].   |
-| - Mệnh đề chỉ được xác nhận khi có ít nhất 2 nguồn khác nhau về Lineage (Vật chứng + Nhân chứng).   |
+| * KIỂM ĐỊNH XUẤT XỨ NGUỒN (SOURCE LINEAGE VERIFICATION):                                           |
+| - Nếu đặt 2 tài liệu cùng một nguồn chép: vệt than không sáng, âm thanh cọt kẹt cảnh báo trùng gốc. |
+| - Mệnh đề chỉ được xác nhận khi có ít nhất 2 nguồn độc lập khác nhau về chuỗi lưu giữ.              |
 +----------------------------------------------------------------------------------------------------+
 ```
 
-### 13.2. Màn hình Tiến trình Kinh Thánh & Khóa Mở Nguyên Lý (Witness Tenets Screen)
+### 13.2. Cơ chế Mở khóa Nhận thức (Knowledge-Gating) và Phương án Thứ Ba
 
-```text
-+----------------------------------------------------------------------------------------------------+
-|                                TIẾN TRÌNH KINH THÁNH & NGUYÊN LÝ CHỨNG NHÂN                        |
-+----------------------------------------------------------------------------------------------------+
-| [ĐÃ KHÓA CỔNG] L01: Xuất Hành 14 — Môsê & Biển Đỏ (50–60 phút)                                     |
-|  └── NGUYÊN LÝ ĐẠT ĐƯỢC: "LỐI ĐI CHƯA THẤY" (The Path Unseen)                                      |
-|      └── Mở khóa: Phương án Thứ Ba (Third Way) giải cứu và phân tải an toàn trong Q04.            |
-+----------------------------------------------------------------------------------------------------+
-| [ĐÃ KHÓA CỔNG] L02: 1 Samuel 24 — Đavít & Hang En Ghêđi (45–50 phút)                               |
-|  └── NGUYÊN LÝ ĐẠT ĐƯỢC: "RANH GIỚI QUYỀN LỰC" (Restraint of Power)                                |
-|      └── Mở khóa: Phương án Thứ Ba (Third Way) đàm phán giải trừ bạo lực danh dự trong Q07.       |
-+----------------------------------------------------------------------------------------------------+
-| [ĐÃ KHÓA CỔNG] L04: Gioan 21 — Phêrô & Bờ Hồ Ti-bê-ri-a (40–45 phút)                               |
-|  └── NGUYÊN LÝ ĐẠT ĐƯỢC: "SỨ VỤ ĐƯỢC TRAO LẠI" (The Shared Calling)                                |
-|      └── Mở khóa: Phương án Thứ Ba (Third Way) công bố sự thật và hòa giải toàn vẹn trong Q11–Q12.|
-+----------------------------------------------------------------------------------------------------+
-```
+Nhằm tôn trọng tuyệt đối trí tuệ của người chơi và tránh biến "Nguyên lý Chứng Nhân" (Witness Tenet) thành phần thưởng tự động tầm thường trên menu, game áp dụng cơ chế **Mở khóa Nhận thức (Knowledge-Gating)**:
+- **Không tự động trao nút bấm:** Hoàn thành L01, L02, L04 không tự bật ra bất kỳ marker HUD hay nút bấm lựa chọn "Phương án Thứ Ba" nào trên giao diện.
+- **Học quy tắc đọc thực tế trong Legends:**
+  - *L01 (Biển Đỏ):* Người chơi tự thân trải nghiệm và học quy tắc đọc hướng gió nghịch, chắn ngọn lửa đèn bấc trước luồng khí ven biển, và dò dải đá nén ngầm chịu tải dưới bùn lầy.
+  - *L02 (Hang En Ghêđi):* Người chơi học quy tắc **Điểm mù Âm thanh Vách đá (Acoustic Blindspot)** — cấu trúc vòm đá vôi triệt tiêu tiếng bước chân dọc theo dòng nước rỉ thạch nhũ.
+  - *L04 (Bờ hồ Ti-bê-ri-a):* Người chơi học cách quan sát dòng xoáy ngầm qua gợn sóng ngược triều và độ chùng mạn thuyền.
+- **Vận dụng không marker tại Q04 và Q07:**
+  - Tại Q04 (Bến cảng siết kiểm soát đêm): Người chơi tự nhớ bài học L01, che ngọn đèn bấc men theo luồng gió đập chân tường C1, lần theo gờ đá nén luồn vào rãnh thông gió C-1 để kích hoạt Phương án Thứ Ba mà không cần bất kỳ chỉ dẫn nào.
+  - Tại Q07 (Xưởng thuộc da Lea): Người chơi áp dụng bài học điểm mù âm thanh L02, tiếp cận góc khuất riêng tư sau giàn phơi da nặng để đối thoại chân thành với Lea mà không sợ bị nghe lén, kích hoạt Phương án Thứ Ba hòa giải.
+
+### 13.3. Cơ chế "Góc máy Cận cảnh Xúc giác" (Tactile Diorama / Close-Up Camera) cho 25 Bàn Thao Tác
+
+Để đạt 90% cảm giác điện ảnh và độ đắm chìm cao cấp của kịch bản v6 chỉ với 20% chi phí kỹ thuật (tránh việc lập trình hệ thống vật lý dây mềm hay động lực học chất lỏng thời gian thực quá nặng nề):
+- **Khóa góc máy cận cảnh (Smooth Dolly-in):** Khi người chơi tiếp cận 25 bàn thao tác tại địa vật thực địa, camera mượt mà trượt lại gần (chuyển tiêu cự fov 45 $\rightarrow$ 30, khóa trọng tâm vào cụm cơ cấu 3D trong bán kính 0.8m – 1.2m).
+- **Thao tác 3D trực tiếp (Tactile Diorama Inspector):** Tương tự phong cách của *The Room* hay *Sherlock Holmes*, người chơi trực tiếp xoay mô hình 3D, cắm nêm gỗ vào khe hở, luồn sợi dây gai qua rãnh ròng rọc, căn chỉnh chốt trục xe, hoặc dùng mũi dao gạt nhẹ mép giấy cạo mực.
+- **Phản hồi âm thanh vi mô (Micro-tactile Audio Feedback):** Mọi tương tác vật lý đều có phản hồi âm thanh sống động được thu âm chân thực: tiếng bùn nhão dính chặt bánh xe (`mud-squelch`), tiếng ma sát thừng gai rít trên gỗ khô (`rope-friction`), tiếng gỗ rạn nứt dưới sức ép (`wood-creak`), tiếng sột soạt của mép giấy da cổ (`parchment-rustle`).
+- **Cinematic Kết quả Ngắn gọn (Result Playback):** Sau khi hoàn tất thao tác logic, một đoạn phim ngắn 2–3 giây phát lại kết quả cơ học toàn cảnh (bánh xe lăn qua bùn lún, cổng nâng hạ xuống, kiện hàng được phân tải an toàn), sau đó camera chuyển mượt trở lại góc nhìn di chuyển của người chơi.
 
 ## 14. Hệ thống áp lực thời gian và Chuẩn bị thực địa
 
@@ -230,12 +235,15 @@ Sổ tay (Journal) là trung tâm điều phối thông tin của toàn bộ chi
 - **Quyền tự chủ của bạn đồng hành:** Mỗi người bạn đồng hành giữ vững giới hạn đạo đức và ưu tiên riêng. Họ có quyền từ chối tham gia các hành động vi phạm ranh giới cá nhân mà không làm đổ vỡ cốt truyện chính.
 - **Quy trình công bố sự thật (Q12):** Trước khi công bố, hệ thống kiểm tra danh sách chứng cứ, sự đồng thuận của nhân chứng (Consent) và tình trạng an toàn của các bên liên quan. Người chơi lựa chọn giữa: công bố công khai có đồng thuận, bảo mật qua nhóm giám sát tin cậy, hoặc ưu tiên di tản người gặp nguy hiểm.
 
+<a id="16-ngan-sach-chieu-sau-va-tai-can-bang-thoi-luong-pacing--duration-rebalancing"></a>
 ## 16. Ngân sách chiều sâu và Tái cân bằng Thời lượng (Pacing & Duration Rebalancing)
 
 Để khắc phục triệt để hiệu ứng "kéo giãn nhân tạo" (padding) làm loãng sự tôn nghiêm của bản văn Kinh Thánh, thời lượng của 3 chương Legends được co gọn nhưng tăng cường tối đa mật độ tương tác có ý nghĩa:
-- **L01 (Môsê — Xuất Hành 14):** **50–60 phút** (thay vì 80 phút). Đại cảnh quy mô nhất, nhịp độ khẩn trương giữa cuồng phong và rẽ biển. Co gọn để người chơi không phải đi bộ quá lâu trong lòng biển, giữ trọn vẹn cảm giác choáng ngợp và kịch tính.
-- **L02 (Đavít — 1 Samuel 24):** **45–50 phút** (thay vì 70 phút). Không gian hang En Ghêđi khép kín, tập trung vào trải nghiệm nín thở (stealth & restraint). Độ dài này lý tưởng để duy trì sự căng thẳng thính giác mà không gây mỏi mắt trong bóng tối.
-- **L04 (Phêrô — Gioan 21):** **40–45 phút** (thay vì 66 phút). Không gian lắng đọng, giàu chất thơ và chiều sâu tâm lý. 40 phút là độ dài vàng để chuyển tải trọn vẹn từ đêm lạnh trắng tay sang rạng đông Phục Sinh và bữa điểm tâm trao sứ vụ.
+- **L01 (Môsê — Xuất Hành 14):** đích **55 phút**, khoảng hiệu chỉnh 50–60. Co tuần tra và lượt khảo sát lặp; giữ hai tuyến, phần vượt biển và khoảng yên cuối.
+- **L02 (Đavít — 1 Samuel 24):** đích **48 phút**, khoảng hiệu chỉnh 45–50. Co phần chờ của toán phụ; giữ hai tuyến âm học, lời Đavít và cuộc đối thoại với Saun.
+- **L04 (Phêrô — Gioan 21):** đích **42 phút**, khoảng hiệu chỉnh 40–45. Co lượt chèo/thả lưới lặp; giữ đêm trắng tay, nhận ra Chúa, bữa ăn và lời trao nhiệm vụ.
+
+Các khoảng trên là dung sai biên tập quanh một đích, không phải ba ngân sách khác. Tổng từng bảng scene ở [hồ sơ 14](14-legends-depth-dossiers.md) phải khớp đích; chưa có số đo để gọi một độ dài là tối ưu.
 
 ### Định nghĩa "Legends là Cốt truyện chính" bằng Trọng số Quyết định (Narrative Weight):
 Không định lượng tầm vóc cốt truyện đơn thuần bằng tỷ lệ số phút (25–30%). Vị thế "trục chính" của Legends được đo bằng **Trọng số Quyết định**: Sau khi hoàn tất mỗi Legend, người chơi nhận được một **"Nguyên lý Chứng Nhân" (Witness Tenet)**. Nguyên lý này trực tiếp mở ra **Phương án Giải quyết Thứ Ba (Third Way Resolution)** ở các nhiệm vụ chốt chặn Mortal World:
@@ -244,8 +252,8 @@ Không định lượng tầm vóc cốt truyện đơn thuần bằng tỷ lệ
 - Hoàn tất L04 mở khóa phương án công bố bảo toàn nhân chứng độc quyền ở Q11–Q12.
 Nhờ đó, dù chiếm thời lượng tinh gọn 25–28%, Legends nắm giữ **100% chìa khóa tư tưởng và giải pháp** cho toàn bộ cuộc điều tra thế kỷ I.
 
-### Bảng phân bổ thời lượng chiến dịch chuẩn (Đích nhịp độ biên kịch v6 ~10 giờ):
-*(Lưu ý phân tầng: Bảng dưới đây là Đích nhịp độ biên kịch tuyến chính v6 (~580 phút campaign / 145 phút Legends) — mục tiêu nhịp độ v6 chưa đo đạc qua playtest người thật; Hợp đồng v3 duy trì 720 phút / 216 phút Legends làm baseline blockout target của hợp đồng chưa đo. Khoảng chênh ~71 phút cho Legends là độ co giãn thiết kế giữa hai đề xuất biên kịch và blockout, không mặc nhiên là vùng đệm gameplay đã nghiệm thu. Cả hai là ước tính thiết kế chưa qua đo đạc playtest người thật, không thay thế lẫn nhau và không phải cam kết phát hành chính thức).*
+### Bảng phân bổ thời lượng chiến dịch chuẩn (Đích nhịp độ biên kịch chính thức v6 ~10 giờ):
+Đây là bảng đích thiết kế v6 chính thức của toàn bộ hồ sơ chiến dịch (580 phút toàn game, 145 phút 3 Legends trục). Baseline hợp đồng v3 (720m/216m) phục vụ kiểm thử tương thích kỹ thuật được lưu giữ riêng trong hợp đồng kiểm thử, đối chiếu chi tiết tại [PRODUCTION_STATUS_AND_CHANGELOG.md](PRODUCTION_STATUS_AND_CHANGELOG.md).
 | Thành phần | Thời lượng mục tiêu | Tỷ trọng | Vai trò trong trải nghiệm |
 |---|---:|---:|---|
 | **3 Legends trục (L01, L02, L04)** | 55 + 48 + 42 = **145 phút** | **25%** | **Trục cốt truyện chính:** biến cố Kinh Thánh, thám hiểm nhập vai |
@@ -263,15 +271,15 @@ Nhờ đó, dù chiếm thời lượng tinh gọn 25–28%, Legends nắm giữ
 | **L01.B03** | Xuất Hành 14,15–20 | Cột mây di chuyển bọc hậu; lệnh tiến lên | Điều phối cụm gia đình; dùng *Giao tiếp* trấn an và *Tự vệ* ngăn hỗn loạn |
 | **L01.B04** | Xuất Hành 14,21–25 | Gió đông rẽ biển; dân bước ráo chân | Dẫn đoàn khóa đuôi vào lòng biển; soi đèn hiệu giữ cự ly giữa các xe |
 | **L01.B05** | Xuất Hành 14,26–29 | Biển ập lại vùi lấp chiến xa Pharaô | Hỗ trợ đẩy xe cuối lên bờ; chứng kiến quyền năng giải thoát |
-| **L01.B06** | Xuất Hành 14,30–31 | Dân kính sợ Chúa và tin Môsê | Cùng cộng đoàn cất bài ca tạ ơn trên bờ cao; commit hoàn tất L01 |
+| **L01.B06** | Xuất Hành 14,30–31 | Dân kính sợ và tin Đức Chúa cùng Môsê | Cùng nhóm nhìn lại bờ biển trong khoảng yên; commit L01. Bài ca Xh 15 nằm ngoài core này |
 | **L02.B01** | 1 Samuel 24,1–4 | Saun vào hang; Đavít ẩn trong đáy hang | Do thám vách đá En Ghêđi; căng dây định hướng trong lòng hang tối |
-| **L02.B02** | 1 Samuel 24,5–6 | Đavít cắt vạt áo Saun; lòng áy náy | Dẫn đường áp sát Saun; kiềm chế đồng đội nóng nảy đòi rút gươm sát hại |
-| **L02.B03** | 1 Samuel 24,7–8 | Đavít răn đe người mình không được hại vua | Ngăn chặn các chiến binh xông lên; giữ kỷ luật trật tự im lặng tuyệt đối |
+| **L02.B02** | 1 Samuel 24,5–6 | Đavít cắt vạt áo Saun; lòng áy náy | Quan sát từ khoảng tối; giữ toán phụ ở đường lùi [H], không dẫn Đavít thực hiện hành động nguồn |
+| **L02.B03** | 1 Samuel 24,7–8 | Đavít ngăn người mình hại vua | Giữ toán phụ lùi theo lời Đavít; không thay ông quyết định tha Saun |
 | **L02.B04** | 1 Samuel 24,9–16 | Đavít bước ra sấp mình gọi Saun | Canh gác miệng hang; chứng kiến cuộc giãi bày công chính giữa Đavít và Saun |
-| **L02.B05** | 1 Samuel 24,17–23 | Saun khóc tạ lỗi; hai bên thề ước hòa bình | Hộ tống Đavít rút lui an toàn lên núi; commit hoàn tất L02 |
-| **L04.B01** | Gioan 21,1–3 | Đêm chài lưới trắng tay trên hồ Galilê | Điều phối nhịp chèo đôi; gỡ lưới rê 3 lớp mắc cạn; chia sẻ sự im lặng trĩu nặng |
-| **L04.B02** | Gioan 21,4–8 | Tiếng gọi từ bờ; thả lưới bên phải; mẻ cá lớn | Nghe tiếng người lạ chỉ dẫn; quăng lưới bên mạn phải; chứng kiến Phêrô nhảy xuống biển |
-| **L04.B03** | Gioan 21,9–14 | Bếp than hồng, bánh và cá nướng; 153 cá lớn | Chèo thuyền cập bến; cùng kéo mẻ cá 153 con vào bờ mà lưới không rách |
+| **L02.B05** | 1 Samuel 24,17–23 | Saun đáp lời; Đavít thề về dòng dõi Saun; hai bên rời đi | Đi cùng toán phụ về điểm rút [H]; quan sát đoạn kết nguồn, commit L02 |
+| **L04.B01** | Gioan 21,1–3 | Đêm chài lưới trắng tay trên hồ Galilê | Chuẩn bị mép lưới và dây ngư cụ sáng tác [H]; không xác định loại lưới từ bản văn |
+| **L04.B02** | Gioan 21,4–8 | Tiếng gọi từ bờ; thả lưới bên phải; mẻ cá lớn | Giữ phần dây phụ; chứng kiến các môn đệ thả lưới và Phêrô xuống nước; không kích phép lạ |
+| **L04.B03** | Gioan 21,9–14 | Bếp than, bánh và cá; 153 cá lớn, lưới không rách | Phụ nhận dây ở bờ [H], rồi nhường chỗ cho bữa ăn nguồn; không đếm cá để mở cổng |
 | **L04.B04** | Gioan 21,15–17 | Ba câu hỏi: "Con có yêu mến Thầy không?" | Giữ khoảng cách cung kính bên bếp than; chứng kiến việc phục hồi và trao sứ vụ chăn chiên |
 | **L04.B05** | Gioan 21,18–19 | Lời tiên báo tương lai và mệnh lệnh: "Hãy theo Thầy!" | Quan sát Phêrô bước theo Chúa dọc dải bờ hồ rạng đông; commit hoàn tất L04 |
 
@@ -285,22 +293,11 @@ Nhờ đó, dù chiếm thời lượng tinh gọn 25–28%, Legends nắm giữ
 - **D6 — Trọng tâm Kinh Thánh:** Người chơi tự nhiên cảm nhận ba biến cố Kinh Thánh là xương sống của toàn bộ hành trình trải nghiệm.
 - **D7 — Bình đẳng định dạng:** Định dạng tương tác chi tiết và bản tóm tắt tinh gọn đều chuyển tải trọn vẹn các nhịp biến cố và chia sẻ cùng tiêu chuẩn mở cổng tiến độ.
 
-## 18. Lịch sử cập nhật (Changelog)
+## 18. Quản lý Phiên bản và Tiến độ Kỹ thuật (Changelog & Technical Governance)
 
-- **v6.0 (Hiện hành — 10/11/2026):**
-  - Tích hợp toàn diện Phần II Scene Systems C+ v6.0: Khảo cổ hiện trường 4 tầng (Sebastos C0–C+1, Antipatris 3 tuyến, Wadi W0–W2, Giêrusalem J0–J3).
-  - Chuẩn hóa Companion-Driven Traversal với 6 bước interaction grammar (`spot → propose → prepare → execute → commit → fallback`) và 4 cặp phối hợp đồng hành.
-  - Thiết lập Mechanical Resonance 4 lớp đồng bộ (cơ học, hình ảnh, âm thanh, cảm xúc) giữa 3 Legends trục và các thử thách Mortal.
-  - Hệ thống hóa Dynamic World Callback qua 4 cấp áp lực Milestone Pressure (Cấp 0–3), bản đồ nhân quả 2 chiều và 3 lớp route topology (công khai, nghề nghiệp, bảo trì).
-  - Đạo diễn Q12 thành Interactive Set-Piece 6 nhịp (B0–B5) thời gian thực với 3 route A/B/C.
-  - Hoàn thiện Atlas vật chứng E01–E12, bộ lọc claim P01–P05 với provenance và scope nghiêm ngặt.
-  - Thiết lập Ma trận bảo toàn cảnh cũ → v6 bảo đảm 100% 44 inspectable details và 31 activities từ doc 20.
-  - Định nghĩa Gameplay & Engine Contract với schema độc lập, backlog dọc P0–P5 và tiêu chuẩn kiểm thử playtest khách quan.
-- **v5.0:** Tích hợp Kịch bản Phân cảnh Chi tiết 9 nhịp (Beats 00–08) của Vertical Slice Prologue Q01, 5 định hướng chiến lược 3A, E11/E12 và P05.
-- **v3.1:** Chuyển vai điều khiển trong Legends sang Nhân Chứng Vô Danh; mở khóa 4 kỹ năng RPG; 3 bộ cơ chế thám hiểm cho 216 phút Legends; Bảng nguyên tắc thiết kế; định danh quốc tế UNSEALED WITNESS: Legacy of the Covenant.
-- **v3.0:** Tái cấu trúc chiến dịch với 3 Legends bắt buộc làm trục chính; 12 quest đời thường làm cầu nối.
-- **v2.0:** Mở rộng hệ thống điều tra đa nguồn và cơ chế đối chiếu sổ sách.
-- **v1.0:** Khung thiết kế ban đầu.
+Toàn bộ lịch sử cập nhật chi tiết từ v1.0 đến v6.0, phân tích khoảng cách thực thi giữa Runtime 0.4.0 và Thiết kế v6.0, các quyết định cổng chất lượng (Gates G2/G3/G4) và nhật ký kỹ thuật đã được chuyển vào tài liệu chuyên trách:  
+$\rightarrow$ **[PRODUCTION_STATUS_AND_CHANGELOG.md](PRODUCTION_STATUS_AND_CHANGELOG.md)**.  
+Game Design Document (02) duy trì vai trò là bộ đặc tả thiết kế hiện hành (Current Living Design Specification).
 
 ---
 

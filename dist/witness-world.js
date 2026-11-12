@@ -2,7 +2,7 @@
   'use strict';
   const D=root.WitnessContent,M=root.WitnessModel,C=root.WitnessCraft;
   root.ExpeditionCampaign={bounds:{left:-39,right:39,far:-37,near:29}};
-  let context=null,current=null,decor=null,water=null,emberLight=null,reactive=[],animators=[],placeSolids=[];
+  let context=null,current=null,decor=null,water=null,emberLight=null,reactive=[],animators=[],placeSolids=[],contactPass=0;
 
   // Vết chân nhà theo vùng (khớp các lời gọi house() trong decorate): dùng để né tán cây/cỏ khi rải cảnh.
   const HOUSES={
@@ -29,12 +29,62 @@
     return objects;
   }
 
+  // Soft contact shade under every character. The directional shadow already
+  // covers cast shadows, but its 2048 map is too coarse for the 10 cm around a
+  // foot; a single shared blob quad restores that grounding for four draws.
+  const contactTextures=new WeakMap(),contactGeometry=new WeakMap();
+  function contactMaterial(T){
+    if(contactTextures.has(T))return contactTextures.get(T);
+    const cv=typeof document!=='undefined'?document.createElement('canvas'):null;
+    if(cv){
+      cv.width=cv.height=128;
+      const ctx=cv.getContext('2d'),g=ctx.createRadialGradient(64,64,6,64,64,62);
+      g.addColorStop(0,'rgba(255,255,255,.92)');
+      g.addColorStop(.45,'rgba(255,255,255,.62)');
+      g.addColorStop(.78,'rgba(255,255,255,.20)');
+      g.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,128,128);
+    }
+    const tex=cv?new T.CanvasTexture(cv):null;
+    if(tex)tex.colorSpace=T.NoColorSpace;
+    const material=new T.MeshBasicMaterial({color:'#241a10',map:tex,transparent:true,opacity:.55,
+      depthWrite:false,toneMapped:false,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4});
+    contactTextures.set(T,material);
+    return material;
+  }
+  function attachContactShadows(T,scene){
+    const roots=[];
+    for(const root of scene.children){
+      if(!root.isGroup||!root.children.length||root.getObjectByName('witness-contact-shadow'))continue;
+      let skinned=false;
+      root.traverse(o=>{if(o.isSkinnedMesh)skinned=true;});
+      if(skinned)roots.push(root);
+    }
+    if(!roots.length)return;
+    const material=contactMaterial(T);
+    if(!contactGeometry.has(T))contactGeometry.set(T,new T.PlaneGeometry(1.32,1.32));
+    const geometry=contactGeometry.get(T);
+    for(const root of roots){
+      const plane=new T.Mesh(geometry,material);
+      plane.name='witness-contact-shadow';
+      plane.rotation.x=-Math.PI/2;
+      plane.position.y=.018;
+      plane.renderOrder=1;
+      plane.userData.keepSeparate=true;
+      plane.castShadow=false;plane.receiveShadow=false;
+      root.add(plane);
+    }
+  }
+
   const sky=root.AdventureVisuals.sky;
   root.AdventureVisuals.sky=function(T,scene,biome){
     context={T,scene,biome};
+    contactPass=0;
     const tick=sky(T,scene,biome);
     return time=>{
       tick(time);
+      // Cast arrives asynchronously on some routes; two late passes catch it.
+      if(contactPass<2&&time>1+contactPass*2.5){contactPass++;attachContactShadows(T,scene);}
       water?.userData.waterAnimate?.(time);
       if(emberLight){
         emberLight.intensity=8.8+Math.sin(time*4.3)*1.4+Math.cos(time*7.1)*.8;
@@ -904,6 +954,7 @@
       const crafted=root.WitnessCraftRenderer.create({T,scene,height});crafted.update(s);
       reactive.push(next=>crafted.update(next));animators.push(time=>crafted.tick(time));
     }
+    attachContactShadows(T,scene);
     root.WitnessGraphics?.configureScene(T,scene,biome,s.layer?.id??M.chapter(s).id);
     if(root.WitnessQ01?.active(s)&&scene.userData.graphics){scene.userData.graphics.fogDensity=s.settings.q01Lighting==='evening'?.0045:.0027;scene.userData.graphics.fogFalloff=.22;}
   }

@@ -48,6 +48,28 @@ are written to `test/artifacts/graphics/`.
 Automated browser checks use desktop Chrome / SwiftShader. They do not establish
 physical phone compatibility, device GPU performance or sustained real-device FPS.
 
+<a id="runtime-budget"></a>
+## Runtime batching and budget counters
+
+- `WitnessQ01.batch(T, group)` flattens nested static part groups by material and
+  bakes their world transform. `witness-architecture.js` applies it to
+  `q01-playable-store`; Q01 environment modules reuse the same function. Dynamic
+  nodes keep their own draw: lamp flames, drying linen, instanced foliage and
+  everything under `witness-crafted-scenes`.
+- Each character root receives one shared contact-shade quad
+  (`witness-contact-shadow`). It restores the centimetre-scale darkening that the
+  2048 directional map cannot resolve, without a screen-space pass. The quads
+  share one geometry and one material.
+- The scene pass publishes `calls`, `triangles`, `programs`, `textures` and
+  `geometries` in `scene.userData.graphicsStatus`; `test:graphics` records them
+  per scene. These counters are regression evidence, not a performance
+  certification.
+- Measured 12/11/2026, Intel Arc iGPU / ANGLE D3D11, 1600x900 ultra, Q01:
+  257 calls including the shadow pass, 366 meshes (from 439), 212 materials,
+  557k triangles. Batching removed 73 nodes; frame time moved within this
+  machine's run-to-run noise, so the counters are the reliable signal.
+- Terrain atlas anisotropy is 8. It stays clamped by the device maximum.
+
 <a id="q01-lighting"></a>
 ## Q01: timeline kịch bản và giới hạn preset
 
@@ -68,3 +90,11 @@ cách sản xuất để đối chiếu với [kịch bản 07](07-vertical-slic
 không là yêu cầu đổi renderer trong đợt rà soát tài liệu. Tình trạng G3/G4
 vẫn theo [STATUS](../STATUS.md#open); chuyển ghi chú ra khỏi screenplay không
 đóng các cổng đó.
+
+**Đích bàn giao Q01 ngày 11/11/2026:** [07 — hợp đồng camera](07-vertical-slice-screenplay.md#q01-camera)
+chốt camera liền mạch mặc định, nén đêm trong cùng khung sau khi người chơi chọn
+nghỉ và ghi rõ “Sáng hôm sau”. `recallT05` chỉ chốt sau đoạn nhớ/nghỉ/chuyển sáng,
+tránh phase `dawn` xuất hiện giữa cuộc nói ban đêm. Đêm/bình minh phải được dựng
+thật và kiểm GI/độ đọc/restore trong tác vụ H04 sau; đổi tên preset hoặc đọc phase
+chưa chứng minh đã có chúng. Chế độ giảm chuyển động/load không bị loại vì phá
+một yêu cầu “một cú máy không bao giờ ngắt”.

@@ -48,8 +48,9 @@ Q01 là cảnh môi trường bắt buộc; L04 mở rộng sau chất lượng 
 sản xuất theo phạm vi được giao. Không tự khóa lịch tám tuần, chuyển engine,
 mở rộng world hoặc tuyên bố chất lượng AAA từ mô tả thiết kế.
 
-Thời lượng chưa được đo bằng playtest; hai ngân sách thiết kế đang mâu thuẫn
-(A08 trong STATUS). Không sao chép một trong hai thành cam kết phát hành.
+Thời lượng chưa được đo bằng playtest. GDD sở hữu đích biên tập v6; hợp đồng
+giữ baseline v3 để đối chiếu (A08 trong STATUS). Không dùng baseline thay đích
+thiết kế hoặc dùng bất kỳ dự toán nào làm cam kết phát hành.
 
 <a id="acceptance"></a>
 ## Điều kiện nhận một thay đổi sản phẩm

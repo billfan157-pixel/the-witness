@@ -110,8 +110,15 @@ test('production Worker and D1: authorization, durable saves, conflict and recov
     });
     await t.test('Q01 v6 scene state round-trips through Worker/D1 and invalid scenes are rejected',async()=>{
       const seq=[['disembark'],['stranger',{response:'follow'}],['ledgerSeam'],['fire'],['rescueRoute',{route:'manual'}],['rescueStep',{step:'workers'}],['rescueStep',{step:'lever'}],['rescueStep',{step:'exit'}],['rescueStep',{step:'extract'}],['rooftop'],['yosefPrivacy'],['recallT05'],['observeB06']];
-      let state=Model.beginQ01Scene(Model.fresh({name:'Scene Player'}));
-      for(const [e,p] of seq)state=Model.q01SceneEvent(state,e,p);
+      function drive(s,steps){
+        for(const [e,p] of steps){
+          if(e==='ledgerSeam')s.quests.Q01.done=['brace','ledger'];
+          if(e==='recallT05'){s.quests.Q01.done=['brace','ledger','meal'];s.quests.Q01.plan='meal';}
+          s=Model.q01SceneEvent(s,e,p);
+        }
+        return s;
+      }
+      let state=drive(Model.beginQ01Scene(Model.fresh({name:'Scene Player'})),seq);
       const base=(await send('/api/saves/3')).data.save?.revision||0;
       const put=await send('/api/saves/3',{method:'PUT',data:payload(state,base)});
       assert.equal(put.status,200);
@@ -122,8 +129,7 @@ test('production Worker and D1: authorization, durable saves, conflict and recov
       assert.equal(got.state.sceneProgress.Q01.b06PreliminaryObserved,true);
       const bad=Model.fresh();bad.sceneProgress={Q01:{version:2}};
       assert.equal((await send('/api/saves/3',{method:'PUT',data:payload(bad,got.revision)})).status,422);
-      let mid=Model.beginQ01Scene(Model.fresh());
-      for(const [e,p] of seq.slice(0,6))mid=Model.q01SceneEvent(mid,e,p);
+      let mid=drive(Model.beginQ01Scene(Model.fresh()),seq.slice(0,6));
       const base2=(await send('/api/saves/2')).data.save?.revision||0;
       assert.equal((await send('/api/saves/2',{method:'PUT',data:payload(mid,base2)})).status,200);
       assert.deepEqual((await send('/api/saves/2')).data.save.state.sceneProgress.Q01,mid.sceneProgress.Q01);

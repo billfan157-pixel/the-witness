@@ -28,9 +28,9 @@ Kiến trúc nhân vật giải quyết trọn vẹn nghịch lý giữa *Bảo 
 
 * **Vai trò:** Người chuyển thư kiêm sao chép bản thảo tại cảng Xêdarê; tuổi trưởng thành (khoảng 23–35). Giới tính/ngoại hình/giọng tùy biến trong phạm vi art và voice.
 * **Động cơ & Tâm lý:**
-  * *Muốn:* Chứng minh cha mình (Haddai) bị vu oan, rửa sạch tiếng xấu cho gia đình.
-  * *Cần:* Học cách đứng về phía sự thật khách quan ngay cả khi sự thật ấy làm hình ảnh người cha kém hoàn hảo; nhận phần trách nhiệm của bản thân.
-  * *Vết thương cố định (T05):* Từng tận mắt chứng kiến Haddai ký nhận biên nhận khi hàng chưa kiểm đủ, nhưng đã chọn im lặng vì sợ mất việc. Nỗi sợ này là rào cản nội tâm lớn nhất cần vượt qua.
+  * *Muốn:* Chứng minh cha mình (Haddai) bị vu oan, rửa sạch tiếng xấu cho gia đình và giải phóng bản thân khỏi mặc cảm tội lỗi.
+  * *Cần:* Học cách đứng về phía sự thật khách quan ngay cả khi sự thật ấy làm hình ảnh người cha kém hoàn hảo; gánh vác trách nhiệm đối với những sinh mạng nghèo khó từng chịu thiệt thòi vì 4 bao hàng cứu trợ bị thất thoát.
+  * *Vết thương cố định (T05):* Từng tận mắt chứng kiến Haddai ký nhận biên nhận khi hàng chưa kiểm đủ vì sợ bữa ăn bị cắt, nhưng chính avatar đã chọn im lặng vì sợ mất việc chuyển thư. Nỗi sợ này là rào cản nội tâm lớn nhất cần vượt qua.
 * **Cung phát triển (Character Arc):** Từ một người muốn minh oan bằng mọi giá, sợ hãi đối diện sai lầm quá khứ $\rightarrow$ trở thành một người làm chứng có trách nhiệm, dũng cảm thừa nhận thiếu sót và bảo vệ những người vô tội trước sự uy hiếp của các thế lực kiểm soát hồ sơ.
 
 ---
@@ -104,14 +104,14 @@ Kiến trúc nhân vật giải quyết trọn vẹn nghịch lý giữa *Bảo 
 
 ### Haddai — Người cha quá cố
 * **Thân phận:** Cha của Người Chứng. Chỉ hiện diện qua ký ức, di vật và hồ sơ lưu trữ; không xuất hiện như hồn ma hay flashback toàn tri.
-* **Sự thật (T02, T04):** Vì muốn giữ nhịp cung cấp cho bữa ăn đang thiếu, ông đã phạm sai lầm ký trước biên nhận "đã nhận đủ". Khi nhận ra sự chênh lệch, ông đã dũng cảm viết Bản sửa thật (E08) gửi đi để xin đối chiếu. Ông mất do bệnh tật thông thường, để lại một di sản dang dở đòi hỏi con mình phải giải quyết.
+* **Sự thật & Bi kịch (T02, T04):** Vì muốn bảo vệ khẩu phần đang thiếu của bà con nghèo trong mùa đông, ông đã phạm sai lầm ký trước biên nhận "đã nhận đủ". Khi biết 4 bao cứu trợ bị đánh cắp đẩy một gia đình dân chài Galilê vào thảm cảnh tang thương kiệt quệ, ông cắn rứt lương tâm tột cùng: tự nhịn phần ăn của mình để san sẻ, thức trắng đêm lao lực rà soát sổ sách và gửi Bản sửa thật (E08) lên Giêrusalem xin đối chiếu. Sự lao lực trong giá rét và nỗi dày vò tinh thần khiến ông ngã bệnh phổi nặng rồi qua đời. Di sản ông để lại không phải là sự hoàn hảo, mà là lòng trắc ẩn và khát khao công lý chân thật.
 
 ### Natan — Thợ đóng thuyền lão thành
-* **Thân phận:** Bạn vong niên của Haddai, chủ xưởng thuyền bến cảng. Giữ sổ gia đình và bìa có biên nhận gốc (E01) với đường chỉ khâu gáy bất thường.
-* **Vai trò:** Người dẫn dắt Người Chứng bước vào câu chuyện, che chở ký ức bạn cũ cho tới khi Người Chứng sẵn sàng tiếp nhận sự thật toàn diện.
+* **Thân phận:** Bạn vong niên của Haddai, chủ xưởng thuyền bến cảng. Ban đầu giữ cuốn sổ gia đình có gáy khâu bất thường **và** tờ bìa hồ sơ rời kẹp biên nhận E01; Q01 trao nguyên sổ, giữ gói chứng từ rời tới Q04. Chuỗi giữ vật theo [T06 ở hồ sơ 12](12-continuity-and-state.md#q01-book-custody), không hiểu thành tháo gáy sổ để hong bìa.
+* **Vai trò:** Người đón Người Chứng trở về và giữ phần vật Haddai thực sự gửi tới xưởng. Không tự biết thời điểm ký trước hoặc đọc được ký ức im lặng T05 của avatar. Thoại Q01 theo [bản bàn giao 07](07-vertical-slice-screenplay.md#q01-handoff); sự thật/quyền biết theo hồ sơ 12. Natan không giữ sẵn một lời giải toàn diện để chờ người chơi “xứng đáng” được nghe.
 
 ### Yosef, Rina, Mattai, Sela
-* **Yosef:** Người bốc vác tại kho, nhân chứng thấy việc chuyển hàng nhưng sợ bị trả thù; quyền được ẩn danh của anh là bài học trung tâm trong Q02.
+* **Yosef:** Người bốc vác tại kho bãi Xêdarê, biết cửa/chuyến mình trực tiếp khuân và sợ bị trả thù. Q01 chỉ gieo yêu cầu được hỏi trước/giữ kín; chi tiết mẹ đợi mang chậu cây vào nhà cho thấy một việc anh muốn trở về làm, nối đời sống đã có ở hồ sơ 11/Q02. Không biến chi tiết ấy thành nguồn điều tra hoặc một cam kết chuyển nhà. Phần kể về Haddai/vết sửa nếu dùng ở Q02 theo T07 và giới hạn kết luận của hồ sơ 12, không đưa lên sớm ở Q01. Thoại đầy đủ Q01 theo 07.
 * **Rina:** Người giữ bữa chung, trực tiếp cân đo lượng hàng thực nhận B06 tại Xêdarê.
 * **Mattai:** Người canh cổng kho, lưu giữ sổ ca trực (E10) và sẵn sàng hợp tác khi được đối xử công bằng và bảo đảm an toàn.
 * **Sela:** Em gái Miriam, người muốn được công nhận năng lực tự lập gánh vác việc chung.
@@ -135,7 +135,7 @@ Kiến trúc nhân vật giải quyết trọn vẹn nghịch lý giữa *Bảo 
    * *Nhiệm vụ:* Định vị âm thanh tiếng bước chân lính Saun vọng trong vách đá vôi, di chuyển lén lút (Acoustic Stealth), kiềm chế đồng đội đang sôi sục ý muốn ám sát vua.
 3. **L04: Người Phụ Lưới Hồ Galilê (Galilean Boat-hand):**
    * *Thân phận:* Người phụ việc trẻ tuổi trên thuyền Ginosar cùng các Tông đồ.
-   * *Nhiệm vụ:* Điều phối nhịp chèo đôi, gỡ lưới rê vướng đá ngầm trong đêm lạnh, hợp lực kéo mẻ lưới 153 con cá lớn và nhóm bếp than bên bờ hồ.
+   * *Nhiệm vụ:* Điều phối nhịp chèo đôi, gỡ mép lưới / ngư cụ sáng tác [H] vướng đá ngầm trong đêm lạnh, hợp lực kéo mẻ lưới 153 con cá lớn và nhóm bếp than bên bờ hồ.
 
 ---
 
@@ -155,3 +155,30 @@ Kiến trúc nhân vật giải quyết trọn vẹn nghịch lý giữa *Bảo 
 ### 9.3 Quy trình Tương tác 6 bước (Interaction Grammar)
 `Nhận biết (Spot) → Thảo luận (Propose) → Chuẩn bị (Prepare) → Thực thi (Execute) → Bàn giao (Commit) → Khôi phục an toàn (Fallback)`.  
 Bốn cặp phối hợp tiêu biểu tạo chiều sâu gameplay: **Titus + Damar** (giằng dây/gờ đá), **Lea + Miriam** (chia tách số liệu & bảo vệ danh tính), **Titus + Lea** (mở khóa & kiểm dấu niêm), **Damar + Miriam** (hộ tống an toàn qua lối yên). Khi companion vắng mặt, luôn có phương án dự phòng (fallback) qua công sức cá nhân hoặc nhân lực địa phương, tuyệt đối không gây softlock.
+
+---
+
+<a id="10-bang-giong-dieu-nhan-vat--tam-ly-ngam-character-voice--subtext-matrix"></a>
+## 10. Bảng Giọng Điệu Nhân Vật & Tâm Lý Ngầm (Character Voice & Subtext Matrix)
+
+Nhằm đảm bảo tính nhất quán và chiều sâu điện ảnh trước khi chấp bút kịch bản thoại chi tiết, mỗi nhân vật được định hình bằng một hệ quy chuẩn từ vựng, nhịp câu và vỏ bọc tâm lý riêng biệt:
+
+Các mẫu minh họa giọng không tự cấp tri thức hoặc trở thành câu bổ sung bắt buộc. Riêng Natan/Yosef/Titus tại Q01 dùng bản thoại đầy đủ ở [07](07-vertical-slice-screenplay.md#q01-handoff); trạng thái biết trước/sau mỗi chương theo hồ sơ 12.
+
+| Nhân vật | Bản sắc Giọng điệu (Tone & Cadence) | Từ vựng & Ẩn dụ Đặc thù (Specialized Lexicon) | Tâm lý ngầm & Điểm dễ vỡ (Subtext & Psychological Armor) | Mẫu câu điển hình |
+|---|---|---|---|---|
+| **Titus** | Dứt khoát, câu ngắn theo nhịp cùng làm; Tôi–Bạn. | *Trục, nêm, cữ, đầu dây, điểm tựa, mối ghép.* Nói phần việc đang kiểm, không biến mỗi câu thành một ẩn dụ đạo đức. | Q01 lo kết cấu hỏng làm người khác bị hại và khó trao việc cho người mới; chưa biết công cụ mình bị lợi dụng. Không diễn mặc cảm về một âm mưu chưa được anh tiếp nhận. | *“Khoan kéo. Tôi còn đang giữ đầu dây.”* |
+| **Lea** | Nhanh, cảnh giác, câu ngắn có cấu trúc phòng ngự. Hay ngập ngừng, ngắt quãng hoặc hạ giọng khi nhắc đến gia đình. | Thuật ngữ văn thư và giám định: *thớ giấy, nếp gấp, mép cạo, gáy chỉ, vết mực loãng, dấu niêm sáp, biên bản đối chiếu*. | Dằn vặt vì từng làm đứt mắt xích chứng cứ; ám ảnh bởi sự đe dọa sinh kế gia đình ở quê nhà; luôn phòng thủ trước nguy cơ bị ruồng bỏ. | *"Mực này... không phải loại của văn phòng cảng. Nhưng... nếu tôi chỉ ra điều đó, liệu... mẹ tôi ở quê có yên ổn không?"* |
+| **Natan** | Chú–Con; trầm, chậm, có lúc trở lại việc tay để chừa khoảng ngồi yên. | *Thớ gỗ, tấm vải khô, đầu dây, mái chèo, bến thuyền.* Dùng vật đang có trước mặt, không giảng tâm lý bằng thuật ngữ nghề. | Đau vì mất bạn và muốn người về có chỗ ngồi. Giữ vật Haddai gửi, không giữ một lời giải đầy đủ để chờ avatar đủ trưởng thành; không biết T05 riêng. | *“Con để cuốn sổ lên vải khô. Chỗ ấy còn sáng.”* |
+| **Yosef** | Tôi–Bạn; thận trọng, có khoảng ngừng khi người khác đi ngang; vẫn được nói rõ điều mình muốn. | *Cửa kho, chuyến hàng, người nhận, ca làm, khuân bao.* | Sợ mất việc/bị trả thù, cần quyền dừng và giữ kín. Không gán “hèn nhát”, cảnh Haddai bị dồn ép hoặc một ký ức chưa có trong nguồn chỉ để tăng cảm xúc. | *“Chờ họ qua đã. Tôi chỉ biết chuyến mình đã khuân.”* |
+| **Haddai** *(Di bút)* | Nghiêm cẩn, trang trọng, chuẩn mực công quyền nhưng trĩu nặng lòng trắc ẩn và kính sợ Thiên Chúa. | Ngôn từ hành chính cổ điển: *chứng thư, biên nhận, lẽ thật, phân định, người nghèo khó, đấng xét xử công minh*. | Nỗi đau đớn tột cùng khi nhận ra sai lầm ký trước của mình đã tước đi chén cơm bát thuốc của dân nghèo; liều chết để sửa sai. | *"Bút ký trước một nét, người nghèo đói cả mùa. Nếu không đem thân này sửa lại sự thật, trước mặt Thiên Chúa tôi biết đứng làm sao?"* |
+| **Hanan** | Trơn tru, điềm đạm, bề trên. Nhịp câu dài, uyển chuyển, luôn nhân danh "đại cuộc", "trật tự chung" và "sự ổn định". | Ngôn từ đạo đức giả và quản trị: *dự phòng, ổn định, đại cuộc, lợi ích lâu dài, sự hy sinh cần thiết, trật tự bến bãi*. | Lòng tham quyền lực đội lốt ân nhân; xem sự phụ thuộc của người nghèo là bảo chứng cho uy quyền cá nhân. | *"Bốn bao ngũ cốc ấy không mất đi đâu cả. Chúng nằm trong kho dự phòng để khi có biến loạn, ta còn thứ để ban phát ân huệ."* |
+
+### Quy tắc Cấm kỵ Tuyệt đối (Taboo Lexicon) trong Hội thoại
+Để duy trì tính đắm chìm chân thực của bối cảnh lịch sử thế kỷ I, **nghiêm cấm tuyệt đối** các nhân vật sử dụng bất kỳ thuật ngữ hệ thống siêu ngôn ngữ (meta-language) nào trong toàn bộ kịch bản và thoại in-game:
+- **CẤM:** *"nguồn độc lập"*, *"phạm vi công bố"*, *"mệnh đề"*, *"canon"*, *"runtime"*, *"validator"*, *"state model"*, *"encounter"*, *"quest"*, *"trigger"*, *"claim"*, *"evidence ID"*.
+- **THAY THẾ BẰNG NGÔN NGỮ THẾ KỶ I:**
+  - Thay vì *"nguồn độc lập"* $\rightarrow$ *"hai người không quen biết cùng thấy tận mắt"*, *"nhân chứng không ăn chung một nồi"*.
+  - Thay vì *"phạm vi công bố (consent scope)"* $\rightarrow$ *"lời nói kín trong nhà"*, *"chỉ nói điều mắt thấy tai nghe, đừng bêu tên người ta ra trước công đường"*.
+  - Thay vì *"mệnh đề P01–P05"* $\rightarrow$ *"điều ta dám đoan chắc"*, *"sự thật chưa thể chối cãi"*.
+  - Thay vì *"vật chứng E01–E12"* $\rightarrow$ *"tờ biên nhận cũ"*, *"mảnh giấy cạo mép"*, *"thẻ kho đất sét"*, *"vết bánh xe lún bùn"*.

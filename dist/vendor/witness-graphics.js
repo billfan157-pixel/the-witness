@@ -55,7 +55,7 @@
       tex.colorSpace = name === 'albedo' ? T.SRGBColorSpace : T.NoColorSpace;
       tex.minFilter = T.LinearMipmapLinearFilter;
       tex.magFilter = T.LinearFilter;
-      tex.anisotropy = 4;
+      tex.anisotropy = 8;
       tex.userData.sharedMap = true;
       return tex;
     });

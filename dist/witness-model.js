@@ -10,7 +10,7 @@
   const clone=x=>JSON.parse(JSON.stringify(x));
   const error=message=>{throw new Error(message);};
   const unique=a=>[...new Set(a)];
-  function requireGroundWork(state){const p=state.spatialPositions?.[chapter(state).id+'.'+(state.layer?.id||'mortal')];if(p&&/^q01-(roof|step)/.test(p.supportId))error('Hãy trở lại đúng tầng có người hoặc vật trước khi thực hiện.');}
+  function requireGroundWork(state){const p=state.spatialPositions?.[chapter(state).id+'.'+(state.layer?.id||'mortal')];if(p&&/^q01-(roof|step|mezzanine|landing)/.test(p.supportId))error('Hãy trở lại đúng tầng có người hoặc vật trước khi thực hiện.');}
   const SKILL_KEYS=['observe','craft','commune','defend'];
 
   function baseSkills(origin='scribe'){
@@ -104,6 +104,15 @@
       if(s.chapter===7)result=[...ch.tasks.filter(a=>['anchor','support','wrap'].includes(a.id)&&!q.done.includes(a.id)&&a.needs.every(id=>q.done.includes(id))),...result];
     }
     if(s.chapter===2&&condition(s,'anonymous-unprotected')&&!q.done.includes('protect'))result=[ch.tasks[0],...result.filter(a=>a.id!=='protect')];
+    if(ch.id==='Q01'&&s.sceneProgress?.Q01){
+      const q01=s.sceneProgress.Q01;
+      result=result.filter(a=>{
+        if(a.id==='brace'||a.id==='ledger')return q01.beat>=2;
+        if(a.id==='meal'||a.plan)return q01.beat>=7;
+        if(a.commit)return q01.beat===8&&q01.b06PreliminaryObserved===true;
+        return true;
+      });
+    }
     return [...result,...bondAction(s)];
   }
 
@@ -263,9 +272,19 @@
   }
   function q01SceneEvent(state,event,payload){
     const s=clone(state);
+    if(chapter(s).id!=='Q01')error('Chỉ ghi sự kiện cảnh Q01 khi đang ở Q01.');
     if(!s.sceneProgress?.Q01)error('Cảnh Q01 v6 chưa được kích hoạt.');
-    const next=Q01.reduce(s.sceneProgress.Q01,event,payload);
-    if(JSON.stringify(next)!==JSON.stringify(s.sceneProgress.Q01))log(s,'Q01SceneEvent',{event,beat:next.beat});
+    const q=quest(s),cur=s.sceneProgress.Q01;
+    if(event==='ledgerSeam'&&(!q.done.includes('brace')||!q.done.includes('ledger'))){
+      error('Hãy giúp chú Natan giữ khung hàng và nhận cuốn sổ trước khi xác nhận đường khâu.');
+    }
+    if(event==='recallT05'&&(!q.done.includes('meal')||!q.plan)){
+      error('Hãy nghe phần việc bếp sáng và đặt phương án chỗ nghỉ hoặc bữa chung trước khi nghỉ đêm.');
+    }
+    const next=Q01.reduce(cur,event,payload);
+    if(JSON.stringify(next)!==JSON.stringify(cur)){
+      log(s,'Q01SceneEvent',{event,beat:next.beat});
+    }
     s.sceneProgress.Q01=next;
     return s;
   }
@@ -581,7 +600,7 @@
     for(const key of ['consent','flags','resources','relationships','bonds','legends','veils','positions','settings'])if(raw[key]&&typeof raw[key]==='object'&&!Array.isArray(raw[key]))s[key]={...s[key],...clone(raw[key])};
     if(raw.spatialPositions&&typeof raw.spatialPositions==='object'&&!Array.isArray(raw.spatialPositions)){
       for(const [key,p]of Object.entries(raw.spatialPositions).slice(0,48)){
-        if(!/^Q(0[1-9]|1[0-2])\.(mortal|L0[1-5]|V0[1-4])$/.test(key)||!p||p.schema!==1||![p.x,p.y,p.z].every(Number.isFinite)||Math.abs(p.x)>78||Math.abs(p.z)>78||Math.abs(p.y)>30||! /^(world|q01-room|q01-quay|q01-roof-(main|back|front)|q01-step-([0-9]|1[0-7]))$/.test(p.supportId))continue;
+        if(!/^Q(0[1-9]|1[0-2])\.(mortal|L0[1-5]|V0[1-4])$/.test(key)||!p||p.schema!==1||![p.x,p.y,p.z].every(Number.isFinite)||Math.abs(p.x)>78||Math.abs(p.z)>78||Math.abs(p.y)>30||! /^(world|q01-room|q01-quay|q01-drain|q01-mezzanine|q01-landing|q01-roof-(main|back|front)|q01-step-([0-9]|1[0-7]))$/.test(p.supportId))continue;
         s.spatialPositions[key]={schema:1,x:p.x,y:p.y,z:p.z,supportId:p.supportId};
       }
     }

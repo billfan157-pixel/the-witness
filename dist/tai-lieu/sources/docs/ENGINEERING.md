@@ -14,6 +14,7 @@ nhật thứ tự nạp, builder, standalone và consumer.
 | Q01 v6 scene state (foundation) | `witness-q01-state.js` thuần reducer; model giữ `sceneProgress.Q01` và chặn commit Q01 |
 | Điều phối và UI | witness-app, workshop-ui, field-ui, craft-renderer, witness.css |
 | Thế giới/kiến trúc | witness-world, witness-architecture, witness-q01, witness-q01-environment, witness-modular-kit |
+| Q01 PR-04 spatial candidate | `witness-q01-greybox.js` sở hữu blueprint/anchors/mesh/cơ cấu; `q01-greybox.html` + `q01-greybox-lab.js` là tuyến đi kiểm bằng engine thật, tách khỏi campaign presenter PR-05 |
 | Engine đọc được | `tools/environment-kit/engine-runtime.js`; build-engine ghép vào vendor/adventure-3d, giữ core pin hash |
 | Renderer/nhân vật | các module trong vendor; phần tùy biến ở đó vẫn là nguồn, không tự thay toàn thư mục |
 | Âm thanh/dẫn hướng | witness-audio, audio-library, ambience, compass; ghi nguồn/giấy phép của media thật |
@@ -35,7 +36,9 @@ Không tự chọn bản thắng bằng đồng hồ client, bỏ tombstone ho�
 nghĩa là v6 chưa kích hoạt và gameplay v3 giữ nguyên. `Model.restore` validate scene
 state nên Worker/D1 tự chấp nhận hoặc từ chối; không đổi schema, contentVersion,
 campaignId, API v1 hay namespace. Scene completion chỉ chặn commit, không phải nguồn
-quest completion thứ hai (`quests.Q01.route`/`Q01.COMMITTED` vẫn sở hữu ở model).
+quest completion thứ hai (`quests.Q01.route`/`Q01.COMMITTED` vẫn sở hữu ở model);
+khi v6 kích hoạt, actions Q01 mở theo nhịp (02: brace/ledger; 07: meal/choose; 08: commit),
+và q01SceneEvent kiểm tra hoàn tất task trước khi chốt ledgerSeam/recallT05.
 
 Worker phân `/api/` sang server/api.mjs, còn lại tới ASSETS. Danh tính production
 do nền tảng cấp; demo identity chỉ ở dev. `db/schema.ts` sở hữu schema;

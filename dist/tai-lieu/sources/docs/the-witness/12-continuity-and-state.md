@@ -1,22 +1,27 @@
 # 12 • Sự thật nền, continuity và hệ quả (Story Bible v6.0 — C+ Synthesis)
 
-**Revision 6.0 • 10/11/2026.** Hồ sơ 12 là **nguồn sở hữu duy nhất** của sự thật nền vụ hàng, các điều kiện xác lập vật chứng/mệnh đề (evidence/claims), chuỗi lưu giữ (source lineage) và phạm vi đồng thuận (witness consent). Các phần tóm tắt trong hồ sơ 03 Narrative Bible và 06 Campaign Quest Bible chỉ là tham chiếu diễn giải phái sinh, không sở hữu luật riêng. Đây là đặc tả thiết kế, phân biệt rõ: “Đúng trong hồ sơ tác giả”, “avatar đã biết”, “NPC đã biết” và “được phép nói với ai”. E11, E12, P05 thuộc đề xuất mở rộng v6 và hiện được hoãn, chưa đưa vào runtime/contract v3.
+**Revision 6.0 • Rà soát biên tập 11/11/2026.** Hồ sơ 12 là **nguồn sở hữu duy nhất** của sự thật nền vụ hàng, các điều kiện xác lập vật chứng/mệnh đề (evidence/claims), chuỗi lưu giữ (source lineage) và phạm vi đồng thuận (witness consent). Các phần tóm tắt trong hồ sơ 03 Narrative Bible và 06 Campaign Quest Bible chỉ là tham chiếu diễn giải phái sinh, không sở hữu luật riêng. Đây là đặc tả thiết kế, phân biệt rõ: “Đúng trong hồ sơ tác giả”, “avatar đã biết”, “NPC đã biết” và “được phép nói với ai”.
+
+**Phạm vi phiên bản:** T01–T13, E01–E12 và P01–P05 là chuẩn thiết kế truyện v6 hiện hành. Riêng E11/E12/P05 **chưa được triển khai** vào contract/runtime v3, hiện vẫn có E01–E10/P01–P04. Trạng thái chờ triển khai không làm chúng thành tình tiết chưa được chọn; việc chốt thiết kế cũng không tự cấp chúng vào save hoặc cho phép công bố P05 trong game hiện tại. Khoảng cách thực thi theo [STATUS A01](../STATUS.md#open).
 
 ## 1. Sự thật nền của vụ hàng (T01–T13)
 
-**T01.** Trước game, lô `G17` rời kho Xêdarê với 24 bao. Hai bao bị hỏng trên tuyến của Amon, có ghi nhận riêng; 18 bao đến sân chia bữa hư cấu ở Galilê. Bốn bao còn lại bị chuyển vào sân phụ do Hanan kiểm soát. 24 = 2 + 18 + 4 là công thức kiểm continuity bất biến.
+**T01.** Trước game, lô `G17` rời kho Xêdarê với 24 bao. Đây là lô ngũ cốc và thảo dược cứu trợ thiết yếu cho đợt rét độc và mùa dịch mùa đông năm trước tại vùng ven hồ Galilê. Hai bao bị hỏng trên tuyến của Amon, có ghi nhận riêng; 18 bao đến sân chia bữa ở Galilê. Bốn bao còn lại bị chuyển vào sân phụ do Hanan kiểm soát. Sự thiếu hụt 4 bao cứu trợ này đã trực tiếp đẩy một gia đình dân nghèo ở bờ đông Galilê vào cảnh kiệt quệ cơ cực (mẹ già qua đời vì thiếu thảo dược, con thơ đói lả phải đi làm tôi tớ trừ nợ). 24 = 2 + 18 + 4 là công thức kiểm continuity bất biến, mang sức nặng sinh mạng, máu và nước mắt chứ không đơn thuần là số học kế toán.
 
-**T02.** Haddai ký trước một biên nhận “đã nhận đủ tại điểm chia” khi chưa kiểm đủ. Ông muốn giữ một cam kết cung cấp để bữa đang thiếu không bị cắt; chữ ký sai vẫn là việc ông chịu trách nhiệm, nhưng không đồng nghĩa ông tham ô.
+**T02.** Haddai ký trước một biên nhận “đã nhận đủ tại điểm chia” khi chưa kiểm đủ vì muốn giữ cam kết cung cấp để bữa ăn đang thiếu của bà con không bị cắt đứt giữa mùa đông giá rét. Khi phát hiện 4 bao bị thiếu hụt đẩy người dân vào thảm cảnh, ông cắn rứt lương tâm tột cùng: tự nhịn bớt khẩu phần của bản thân để san sẻ cho người chịu nạn, thức trắng đêm lao lực rà soát sổ sách để tìm manh mối. Chữ ký sai vẫn là trách nhiệm ông phải gánh chịu, nhưng không đồng nghĩa ông tham ô.
 
-**T03.** Hanan đã ra chỉ dẫn chuyển bốn bao. Ban đầu ông có động cơ dự phòng khan hiếm thật, nhưng về sau biến hàng cứu trợ thành phương tiện tạo sự lệ thuộc. Varro giúp che đậy bằng thủ tục niêm phong cảng và cùng hưởng lợi.
+**T03.** Hanan đã ra chỉ dẫn chuyển bốn bao. Ban đầu ông có động cơ dự phòng khan hiếm thật, nhưng về sau biến hàng cứu trợ thành phương tiện tạo sự lệ thuộc và quyền lực ngầm đối với các xóm chài. Varro giúp che đậy bằng thủ tục niêm phong cảng và cùng hưởng lợi.
 
-**T04.** Khi phát hiện điều không khớp, Haddai gửi bản sửa thật (E08) tới một người giữ giấy ở Giêrusalem qua đường chuyển thư chính thức. Tài liệu bị ngăn chặn có chủ đích. Ông mất sau một đợt bệnh thông thường [H]; không có bí ẩn sát hại cha rồi bỏ ngỏ.
+**T04.** Khi phát hiện điều không khớp, Haddai gửi bản sửa thật (E08) tới một người giữ giấy ở Giêrusalem qua đường chuyển thư chính thức. Tài liệu bị ngăn chặn có chủ đích. Chính sự lao lực quá độ, nhịn ăn trong mùa đông và dầm mưa gió đi tìm sự thật đã khiến ông kiệt sức, nhiễm bệnh phổi nặng rồi qua đời [H]; không có bí ẩn sát hại cha rồi bỏ ngỏ, nhưng cái chết của ông gắn liền trực tiếp với món nợ công lý của 4 bao hàng G17.
 
 **T05.** Avatar tận mắt biết mình đã im lặng lúc có thể nói rằng hàng chưa được kiểm vì sợ mất việc. Quá khứ cố định này được biết từ Hồi I (Q01), là rào cản tâm lý cốt lõi, không lấy ở đoạn cuối để kết tội bất ngờ.
 
-**T06.** Natan giữ sổ hộ gia đình và bìa có biên nhận gốc gửi về. Dấu khâu gáy bất thường được phát hiện từ Q01, mở đối chiếu ở Q10.
+**T06.** Bộ giấy Haddai gửi về xưởng gồm cuốn sổ hộ gia đình đóng liền và một tờ bìa hồ sơ rời kẹp biên nhận gốc E01. Dấu khâu gáy bất thường thuộc **cuốn sổ**, được thấy từ Q01 và đối chiếu ở Q10; tờ bìa hồ sơ rời không khâu hoặc dán vào gáy ấy.
 
-**T07.** Lượt bữa chung thiếu hai bao ở Xêdarê Q02 có mã `B06`, xảy ra trong hiện tại. Nó cho thấy cách sửa ghi nhận vẫn tiếp diễn. Chưa có claim được phép rằng hai bao B06 chính là bốn bao G17.
+<a id="q01-book-custody"></a>
+**Chuỗi giữ vật T06 — quy ước dàn dựng [H].** Trước bàn giao Q01, Natan giữ cả hai vật trong cùng bọc vận chuyển còn ẩm. Trước mắt avatar, ông mở bọc trên vải lót khô, đặt hai vật vốn đã rời nhau lên bàn rồi trao **nguyên cuốn sổ gồm ruột/bìa gắn/gáy khâu** cho avatar; ông giữ tờ bìa hồ sơ gấp còn ẩm ở xưởng. Hai người chứng kiến việc chia giữ, không có thao tác tháo bìa, rút chỉ, bóc dán hoặc khâu lại sổ. Q01 chỉ cho xem gáy, không mở/đọc tới chữ ký trong gói chứng từ rời và không cấp E01. Q04 Natan bàn giao tờ bìa hồ sơ cùng biên nhận đã đủ điều kiện đọc; tới Q10 avatar đem đúng cuốn sổ nguyên gáy và phần giấy đã nhận ra đối chiếu. Không thay bằng prop tái tạo, không dùng việc hong giấy như một thao tác xóa/tạo dấu. Hai tên gọi **bìa sổ** và **tờ bìa hồ sơ rời** phải phân biệt trong script, prop và journal; đường khâu tự nó không xác định người sửa hoặc chứng minh một claim mới.
+
+**T07.** Lượt bữa chung thiếu hai bao ở Xêdarê Q02 có mã `B06`, xảy ra trong hiện tại. Nó cho thấy cách thức sửa ghi nhận vẫn tiếp diễn. Dù B06 không chứng minh được vụ G17 năm trước (giữ nguyên bất biến P01), Yosef tại góc sân bữa Q02 nhìn thấy avatar săm soi vết cạo mép đã xúc động tiết lộ: chính Haddai lúc sinh thời từng đứng ở đúng góc sân này dưới bóng cây vả để chất vấn về một vết cạo mực tương tự; thủ pháp cạo mỏng thớ giấy rồi dán đè mép của B06 chính là "chữ ký nghề nghiệp" của kẻ đang nắm giữ hồ sơ cảng. Điều này gắn chặt B06 với nỗi đau mất cha và di nguyện chưa thành của Haddai.
 
 **T08.** Giêrusalem giữ bản gửi và những người từng đổi nơi làm việc, không là nơi nhận 18 bao G17. Rina ở Xêdarê chỉ làm chứng B06 và việc mình trải qua. Người giữ sân Galilê là vai chức năng Q05.
 
@@ -49,6 +54,7 @@ Mỗi hub có 3 lớp route: **công khai**, **nghề nghiệp**, **bảo trì**
 **Quy tắc Lan truyền Tri thức (Knowledge Propagation):**  
 Không nhân vật nào có "thần giao cách cảm" tự động biết hết những gì người chơi tìm ra. Mọi thông tin chỉ truyền qua người – thư – sự kiện cụ thể có người gửi, người nhận, thời điểm và phạm vi sử dụng (scope). Companion chỉ phản ứng với dữ kiện họ đã thực sự tiếp nhận.
 
+<a id="3-so-chung-cu-va-dieu-co-the-ket-luan"></a>
 ## 3. Sổ chứng cứ và điều có thể kết luận
 
 | ID | Nguồn/cổng | Xác nhận được | Chưa xác nhận được |
@@ -63,14 +69,16 @@ Không nhân vật nào có "thần giao cách cảm" tự động biết hết 
 | E08 | Bản sửa của Haddai/Q10 | Ông nhận ký trước, đã muốn sửa | Mọi lời tự thuật của ông tự thành dữ kiện độc lập |
 | E09 | Người trực tiếp nhận lệnh/Q09 | Nội dung lệnh họ thực nghe, tùy phạm vi cho dùng | Điều họ không chứng kiến |
 | E10 | Sổ bàn giao ca Mattai tự ghi/Q11 | Chỉ dẫn mở kho của Hanan trong ca trực | Chữ ký/niêm tự là chứng minh tuyệt đối |
-| E11 | Bản sửa giả quy tội `[Đề xuất v6.0 hoãn ở v3]`/Q10 | Tồn tại văn bản giả mạo đổ tội cho Haddai | Chưa tự chứng minh người chủ mưu đặt làm |
-| E12 | Dấu đường chuyển thư của bản giả `[Đề xuất v6.0 hoãn ở v3]`/Q09–Q11 | Chuỗi trạm chuyển và dấu niêm cảng của Varro | Cần chuỗi giữ độc lập để chứng minh Varro |
+| E11 | Bản sửa giả quy tội/Q10 | Có bản quy tội mâu thuẫn với các nguồn đã kiểm; tính giả phải được đối chiếu, không suy từ nhãn của tác giả | Chưa tự chứng minh người chủ mưu đặt làm |
+| E12 | Hồ sơ đường chuyển bản giả/Q09–Q11 | Các chặng chuyển, người giữ và thủ tục niêm có xuất xứ kiểm được | Dấu niêm dùng chung hoặc nhiều bản sao không tự xác định người ra lệnh |
 
 **P01: B06 không khớp.** Cần E02 + E03; không suy ra T03, không suy đoán nguyên nhân hay quy kết thủ phạm.
 **P02: G17 thiếu bốn bao chưa được giải trình tại điểm chia.** Cần E04 + E05; tách hai bao hỏng khỏi số cáo buộc; giữ nghiêm ngặt ranh giới tri thức E04 (Q03) không biết trước dữ kiện của E05 (Q05).
 **P03: Haddai chịu lỗi ký trước, không đủ căn cứ nói ông lấy cả phần thiếu.** Cần E01 + E08 và đối chiếu E04/E05.  
 **P04: Hanan chỉ dẫn chuyển bốn bao ngoài phân phối.** Cần E06 + một nguồn độc lập đã kiểm E09 hoặc E10, cùng nền E04/E05.  
-**P05: Varro can thiệp chứng từ và đặt bản sửa giả `[Đề xuất v6.0 hoãn ở v3]`.** Cần E11 + E12 với chuỗi người giữ độc lập; nếu chưa đạt thì chỉ nêu nghi vấn thủ tục tại cảng.
+**P05: Varro can thiệp chứng từ và đặt bản sửa giả.** Cần E11 đã đối chiếu + E12 có nguồn độc lập trực tiếp nối Varro với việc chỉ đạo bản giả, cùng phạm vi sử dụng hợp lệ; nếu chưa đạt thì chỉ nêu điều bất thường của văn bản/thủ tục đã kiểm được. Không lấy lời nhận lỗi của avatar, nét mực hay con dấu cảng để thay mắt xích chỉ đạo.
+
+**Tuyến E12 trong thiết kế:** Q09 chỉ tiếp nhận đầu mối trạm/người bàn giao trong phạm vi họ cho phép; Q10 đối chiếu hai đường E08/E11 và ghi từng chặng còn thiếu; Q11 kiểm với người giữ biết trực tiếp việc bàn giao/chỉ đạo, không chỉ người đọc lại một bản sao. E12 chỉ đủ dùng cho P05 khi mắt xích độc lập này có căn cứ và được phép dùng. Nếu thiếu hoặc bị từ chối, giữ hồ sơ chưa đủ; E10 của Mattai vẫn chỉ xác nhận phần ông biết về Hanan, không tự xác nhận lệnh của Varro.
 
 ## 4. Ai biết điều gì, bằng đường nào
 
@@ -136,4 +144,4 @@ Legends dùng sandbox về vật chất/tri thức, nhưng được ghi tiến �
 
 **G — Rút scope ngay trước công bố:** thay bản, phụ đề, giấy giao và montage đồng bộ; bản đã giao giữ log, bản chưa giao không rò tên. **H — Load giữa hộ tống/trao bản:** không spawn người đã rời hai lần, không tự hoàn thành, không lặp phần thưởng.
 
-Các tình huống trên là ca kiểm cần chạy khi có prototype v3. Validator tài liệu có thể mô phỏng cổng và đối chiếu dữ liệu, không chứng minh UI runtime thực thi đúng. Sự thật G17/B06 vẫn giữ để tuyến hỗ trợ không mâu thuẫn; không cho L/Veil trở thành nguồn E01–E10 hoặc phán quyết P01–P04.
+Các tình huống trên là yêu cầu duyệt thiết kế; phải kiểm lại trên bản triển khai tương ứng. Validator hiện kiểm dữ liệu/chính sách v3, không nghiệm thu T09–T13/E11/E12/P05 hoặc UI v6. Sự thật G17/B06 vẫn giữ để tuyến hỗ trợ không mâu thuẫn; không cho L/Veil trở thành nguồn E01–E12 hoặc phán quyết P01–P05.

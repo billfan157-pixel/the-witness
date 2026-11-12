@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="vi">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#243337"><title>Q01 · Bến không chờ người về — Greybox</title>
+ <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
+ <style>
+  *{box-sizing:border-box}body{margin:0;background:#1a272c;color:#ebeee7;font:14px/1.5 system-ui,sans-serif}button,select{font:inherit;color:inherit;background:#34464b;border:1px solid #718183;border-radius:5px;padding:8px 11px;cursor:pointer}button:hover,button:focus-visible{background:#506365;outline:2px solid #e1c28b;outline-offset:2px}button:disabled{opacity:.45;cursor:default}a{color:#dfc89e}header{height:80px;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #4b6065;gap:16px}header p{margin:2px 0;color:#adbec1}h1{font-size:18px;margin:0;font-weight:600}h2{font-size:14px;margin:0 0 9px;color:#dfc89e}main{display:grid;grid-template-columns:minmax(0,1fr) 300px;height:calc(100dvh - 80px)}#stage{position:relative;overflow:hidden;min-height:420px;outline:none;background:#84969c}#stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}.adv-markers{position:absolute;inset:0;pointer-events:none}.adv-marker{display:none}aside{padding:18px;overflow:auto;background:#243337;border-left:1px solid #4b6065}section+section{border-top:1px solid #4b6065;margin-top:16px;padding-top:16px}.row{display:flex;gap:7px;margin:7px 0}.row>*{flex:1}label{display:block;font-size:12px;color:#b8c8ca;margin:9px 0 4px}select{width:100%}.muted,small{color:#b0c1c3}small{display:block;font-size:12px}#location{position:absolute;left:18px;top:16px;background:#203034e8;border-left:3px solid #d2b783;padding:10px 14px;pointer-events:none;font-size:12px;color:#c4d1d1}#location strong{display:block;font-size:16px;color:#eef0e7}#interact{position:absolute;bottom:52px;left:50%;transform:translateX(-50%);background:#304747f2;border-color:#c6b58e;min-width:240px;max-width:90%}#help{position:absolute;bottom:12px;left:18px;right:18px;display:flex;gap:16px;justify-content:center;pointer-events:none;color:#e6ece7;text-shadow:0 1px 4px #152023;font-size:12px}kbd{font:inherit;border:1px solid #b0c1c3;padding:1px 4px;border-radius:3px}#message{min-height:42px;padding:8px 0;color:#dfc89e}#checklist{padding-left:18px;margin:10px 0;font-size:12px}#checklist li{margin:7px 0}#checklist li.done{color:#b7d9bf}details{margin-top:12px}summary{cursor:pointer;color:#dfc89e}.touch-pad{display:none;position:absolute;bottom:92px;left:16px;grid-template-columns:42px 42px 42px;gap:4px}.touch-pad button{padding:9px}.touch-pad [data-move=w]{grid-column:2}.touch-pad [data-move=a]{grid-column:1}#map{width:100%;height:165px;background:#1b2a2d;border:1px solid #53696e;border-radius:4px;margin-top:8px}.note{font-size:12px;border-left:2px solid #788c90;padding-left:9px;margin:10px 0}.badge{letter-spacing:.1em;text-transform:uppercase;font-size:10px;color:#dfc89e}#loader{position:absolute;inset:0;display:grid;place-items:center;background:#263b41;z-index:4}#loader[hidden]{display:none}
+  @media(pointer:coarse){.touch-pad{display:grid}#help{display:none}}@media(max-width:760px){header{height:auto;min-height:82px;padding:10px 13px}header p{font-size:11px}header a{font-size:12px}main{height:auto;grid-template-columns:1fr}#stage{height:62dvh;min-height:380px}aside{border-left:0;border-top:1px solid #4b6065;padding:14px}aside section{max-width:650px}#location{left:10px;top:10px}h1{font-size:16px}#interact{bottom:35px}#help{gap:6px;bottom:8px;font-size:10px}}
+ </style>
+ <script>globalThis.ExpeditionCampaign={bounds:{left:-38,right:30,far:-36,near:25}};</script>
+ <script src="./vendor/adventure-cast.js" defer></script><script src="./vendor/character-profiles.js" defer></script>
+ <script src="./vendor/adventure-visuals.js" defer></script><script src="./vendor/witness-heightmaps.js" defer></script>
+ <script src="./vendor/witness-graphics.js" defer></script><script src="./vendor/witness-gtao.js" defer></script>
+ <script src="./assets/human-topology.js" defer></script><script src="./vendor/character-detail.js" defer></script>
+ <script src="./vendor/character-cloth.js" defer></script><script src="./vendor/adventure-character.js" defer></script>
+ <script src="./vendor/adventure-3d.js" defer></script><script src="./witness-architecture.js" defer></script>
+ <script src="./witness-q01-greybox.js" defer></script><script src="./q01-greybox-lab.js" defer></script>
+</head>
+<body>
+ <header><div><span class="badge">THE WITNESS / Q01 / PR-04</span><h1>Bến không chờ người về</h1><p>Greybox có thể chơi · 4 vùng cao độ · 2 tuyến cứu hộ · 9 Beat</p></div><a href="./index.html">Về trò chơi ↗</a></header>
+ <main><div id="stage" tabindex="0" aria-label="Không gian Q01. Dùng W A S D để di chuyển, E để thao tác, V đổi góc nhìn.">
+  <div class="adv-markers"></div><div id="location"><strong>Cầu tàu</strong><span>Đang mở không gian…</span></div>
+  <button id="interact" disabled><kbd>E</kbd> · Tới gần một điểm thao tác</button>
+  <div class="touch-pad" aria-label="Di chuyển"><button data-move="w" aria-label="Tiến">↑</button><button data-move="a" aria-label="Trái">←</button><button data-move="s" aria-label="Lùi">↓</button><button data-move="d" aria-label="Phải">→</button></div>
+  <div id="help"><span><kbd>W A S D</kbd> Đi</span><span>Kéo chuột · nhìn</span><span><kbd>E</kbd> Thao tác</span><span><kbd>V</kbd> Đổi góc</span><span>Chạm sàn · đi tới</span></div><div id="loader" role="status">Đang dựng bến cảng…</div>
+ </div><aside>
+  <section><h2>Khảo sát không gian</h2><div class="row"><button id="view">Góc thứ nhất</button><button id="lighting">Chạng vạng</button></div>
+   <label><input type="checkbox" id="annotations"> Hiện nhãn không gian</label>
+   <label for="destination">Đi bộ tới điểm kiểm</label><select id="destination"></select><button id="walk" style="width:100%;margin-top:7px">Đi theo tuyến</button>
+   <svg id="map" viewBox="0 0 310 235" role="img" aria-label="Mặt bằng Q01 và vị trí người chơi"></svg>
+   <small>Đường dẫn dùng va chạm thật. Cửa đang đóng sẽ chặn đường.</small>
+  </section>
+  <section><h2>Kiểm cơ cấu cứu hộ</h2><small>Chọn một tuyến, rồi tới từng vật và bấm E.</small><div class="row"><button data-route="mechanical">Xe / bộ tời</button><button data-route="manual">Đòn / sức người</button></div>
+   <ol id="checklist"><li>Chọn tuyến và tiếp cận nơi làm</li><li>Chuẩn bị xe / tập hợp thợ</li><li>Mở lối phụ / dịch và chèn xà</li><li>Đi lên gác, mở cửa chung, kiểm mái</li><li>Thử đường của Titus và hai người được cứu</li></ol>
+   <button id="actors" style="width:100%" disabled>Thử nhóm đi tới điểm nhận</button><div id="message" role="status" aria-live="polite">Bắt đầu từ ván thuyền; xưởng Natan ở bên phải đường bến.</div>
+   <button id="reset" style="width:100%">Bắt đầu lại lượt kiểm</button>
+  </section>
+  <section><h2>Điểm gắn Beat 00–08</h2><div id="beat-detail" class="note"></div><details><summary>Phạm vi bàn giao</summary><p class="muted">Sàn, cửa, thang, cơ cấu, tầm nhìn và các điểm đứng đã được dựng bằng cùng bộ di chuyển của game. Mô hình người là dấu tỷ lệ để thử đường.</p><p class="muted">Thoại, diễn xuất và chốt tiến trình của chín Beat thuộc PR-05. Lượt kiểm này không ghi vào bản lưu truyện.</p></details></section>
+ </aside></main>
+</body></html>

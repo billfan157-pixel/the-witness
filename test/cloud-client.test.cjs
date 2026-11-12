@@ -69,7 +69,15 @@ test('a failed initial session check can recover without discarding guest progre
   try{await c.init();assert.equal(c.info().mode,'offline');assert.equal(c.localState().profile.name,'Kept Guest');const previous=applied;server.setOffline(false);await c.refresh();assert.equal(c.info().mode,'guest');assert.equal(c.localState().profile.name,'Kept Guest');assert.equal(applied,previous);}finally{c.dispose();}
 });
 const SCENE_SEQ=[['disembark'],['stranger',{response:'follow'}],['ledgerSeam'],['fire'],['rescueRoute',{route:'mechanical'}],['rescueStep',{step:'cart'}],['rescueStep',{step:'pulley'}],['rescueStep',{step:'exit'}],['rescueStep',{step:'extract'}],['rooftop'],['yosefPrivacy'],['recallT05'],['observeB06']];
-function sceneState(name,seq){let s=M.beginQ01Scene(fresh(name));for(const [e,p] of (seq||SCENE_SEQ))s=M.q01SceneEvent(s,e,p);return s;}
+function sceneState(name,seq){
+  let s=M.beginQ01Scene(fresh(name));
+  for(const [e,p] of (seq||SCENE_SEQ)){
+    if(e==='ledgerSeam')s.quests.Q01.done=['brace','ledger'];
+    if(e==='recallT05'){s.quests.Q01.done=['brace','ledger','meal'];s.quests.Q01.plan='meal';}
+    s=M.q01SceneEvent(s,e,p);
+  }
+  return s;
+}
 test('Q01 v6 scene progress survives cloud sync and a reload without losing fields',async()=>{
   const storage=memory(),session=memory(),server=service(),s=sceneState('Scene');
   let c=create({model:M,storage,sessionStorage:session,fetch:server.fetch});

@@ -15,12 +15,14 @@
    return fx+fz<=1?ha+(hd-ha)*fx+(hb-ha)*fz:hc+(hb-hc)*(1-fx)+(hd-hc)*(1-fz);
   };
  }
- function create({height=()=>0,outdoorAllowed=()=>true}={}){
-  const bounds=[-27.5,-18.5,-17.5,-9.5],base=height(-23,-9.25)+.12,roof=base+3.24,solids=[],surfaces=[],parts=[];
+ function create({height=()=>0,outdoorAllowed=()=>true,blueprint=null}={}){
+  const bounds=blueprint?.bounds??[-27.5,-18.5,-17.5,-9.5],base=blueprint?.base??height(-23,-9.25)+.12,roof=blueprint?.roof??base+3.24,solids=[],surfaces=[],parts=[];
   function box(id,x,y,z,w,h,d,color='#c4b89e',kind='wall'){
    const b={id,min:[x-w/2,y-h/2,z-d/2],max:[x+w/2,y+h/2,z+d/2],kind};solids.push(b);parts.push({...b,color});return b;
   }
   function surface(id,r,y){surfaces.push({id,rect:r,y});}
+  if(blueprint)blueprint.populate({box,surface,solids,surfaces,parts});
+  else{
   box('foundation',-23,base-.34,-13.5,9,.68,8,'#978b74','floor');surface('q01-room',[-27.22,-18.78,-17.22,-9.5],base);
   box('west-wall',-27.36,base+1.62,-13.5,.28,3.24,8);
   box('east-wall',-18.64,base+1.62,-13.5,.28,3.24,8);
@@ -46,12 +48,14 @@
   box('well-front-guard',-19.6,roof+.45,-10.62,2.2,.9,.12,'#7c6750','guard');
   for(let i=2;i<18;i++)box('stair-rail-'+i,-20.67,base+(i+.5)*.18+.72,-10.65-(i+.5)*.3,.10,.15,.32,'#7c6750','guard');
   solids.push({id:'drying-rack-volume',min:[-25.3,roof,-13.8],max:[-23.5,roof+1.25,-12.8],kind:'prop'});
+  }
   function supports(x,z){
    const out=surfaces.filter(s=>inside(x,z,s.rect)&&(!s.contains||s.contains(x,z))).map(s=>point(x,typeof s.y==='function'?s.y(x,z):s.y,z,s.id));
-   if(!inside(x,z,bounds)&&!out.some(s=>s.supportId==='q01-quay'))out.push(point(x,height(x,z),z));return out;
+   if((blueprint?blueprint.worldAt(x,z):!inside(x,z,bounds))&&!out.some(s=>s.supportId==='q01-quay'))out.push(point(x,height(x,z),z));return out;
   }
   function collides(p,r=RADIUS,h=HEIGHT){
    for(const b of solids){
+    if(b.enabled===false)continue;
     if(b.max[1]<=p.y+STEP+EPS||b.min[1]>=p.y+h-EPS)continue;
     const dx=p.x-Math.max(b.min[0],Math.min(b.max[0],p.x)),dz=p.z-Math.max(b.min[2],Math.min(b.max[2],p.z));
     const lower=p.y+r,upper=p.y+h-r,dy=b.max[1]<lower?lower-b.max[1]:b.min[1]>upper?b.min[1]-upper:0;
@@ -60,7 +64,7 @@
   }
   function candidate(from,x,z){
    if(!outdoorAllowed(x,z))return null;
-   return supports(x,z).filter(p=>p.y<=from.y+STEP+EPS&&p.y>=from.y-DROP-EPS).sort((a,b)=>Math.abs(a.y-from.y)-Math.abs(b.y-from.y)).find(p=>!collides(p))??null;
+   return supports(x,z).filter(p=>p.y<=from.y+STEP+EPS&&p.y>=from.y-DROP-EPS).sort((a,b)=>blueprint?b.y-a.y:Math.abs(a.y-from.y)-Math.abs(b.y-from.y)).find(p=>!collides(p))??null;
   }
   function move(from,dx,dz){
    let p={...from};const count=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.075));
@@ -76,6 +80,10 @@
     const p=supports(saved.x,saved.z).find(p=>p.supportId===saved.supportId&&Math.abs(p.y-saved.y)<.24);
     if(p&&outdoorAllowed(p.x,p.z)&&!collides(p))return p;
    }
+   if(blueprint){
+    const same=supports(fallback.x,fallback.z).filter(p=>Math.abs(p.y-fallback.y)<.24).sort((a,b)=>Math.abs(a.y-fallback.y)-Math.abs(b.y-fallback.y)).find(p=>outdoorAllowed(p.x,p.z)&&!collides(p));
+    return same??{...blueprint.spawn};
+   }
    const g=supports(fallback.x,fallback.z).filter(p=>p.supportId==='world'||p.supportId==='q01-room').find(p=>!collides(p));
    return g??point(-23,height(-23,-8.6),-8.6);
   }
@@ -87,11 +95,11 @@
     let t0=(lo-origin)/delta,t1=(hi-origin)/delta;if(t0>t1)[t0,t1]=[t1,t0];near=Math.max(near,t0);far=Math.min(far,t1);if(near>far)return null;
    }return near;
   }
-  function visible(a,b,ignoreId){return !solids.some(s=>{if(s.id===ignoreId)return false;const t=lineBox(a,b,s);return t!==null&&t>EPS&&t<1-EPS;});}
+  function visible(a,b,ignoreId){return !solids.some(s=>{if(s.enabled===false||s.id===ignoreId)return false;const t=lineBox(a,b,s);return t!==null&&t>EPS&&t<1-EPS;});}
   function targetPoint(target){return point(target.at[0],Number.isFinite(target.floorY)?target.floorY:height(...target.at),target.at[1],target.surfaceId??'world');}
   function reachable(from,target){const to=targetPoint(target);return Math.abs(from.y-to.y)<1.05&&distance(from,to)<(target.range??2.5)&&visible({...from,y:from.y+1.3},{...to,y:to.y+.8},target.colliderId);}
   function camera(origin,wanted,radius=.18){
-   let t=1;for(const s of solids){const hit=lineBox(origin,wanted,s,radius);if(hit!==null)t=Math.min(t,Math.max(0,hit-.018));}
+   let t=1;for(const s of solids){if(s.enabled===false)continue;const hit=lineBox(origin,wanted,s,radius);if(hit!==null)t=Math.min(t,Math.max(0,hit-.018));}
    return point(origin.x+(wanted.x-origin.x)*t,origin.y+(wanted.y-origin.y)*t,origin.z+(wanted.z-origin.z)*t);
   }
   function walkLine(a,b){
@@ -99,16 +107,19 @@
    for(let i=1;i<=n;i++){const next=candidate(p,a.x+(b.x-a.x)*i/n,a.z+(b.z-a.z)*i/n);if(!next)return false;p=next;}
    return Math.abs(p.y-b.y)<.12;
   }
-  const nodes=[point(-23,height(-23,-8.6),-8.6),point(-23,base,-10.25,'q01-room'),point(-23,base,-11.1,'q01-room'),point(-19.8,base,-10.25,'q01-room'),
+  const nodes=blueprint?.nodes??[point(-23,height(-23,-8.6),-8.6),point(-23,base,-10.25,'q01-room'),point(-23,base,-11.1,'q01-room'),point(-19.8,base,-10.25,'q01-room'),
    ...Array.from({length:18},(_,i)=>point(-19.8,base+(i+1)*.18,-10.65-(i+.5)*.3,'q01-step-'+i)),point(-19.8,roof,-16.6,'q01-roof-back'),point(-21.35,roof,-16.6,'q01-roof-main'),point(-24.4,roof,-14.45,'q01-roof-main')];
+  let cachedGraph=null;
   function route(start,goal,planarPath){
-   const all=[start,...nodes,goal],last=all.length-1,adj=all.map(()=>[]);
+   const all=[start,...nodes,goal],last=all.length-1,adj=all.map((_,i)=>blueprint&&cachedGraph&&i>0&&i<all.length-1?cachedGraph[i-1].map(e=>({...e,to:e.to+1})):[]);
    function edge(a,b,path){if(!path?.length)return;const cost=path.reduce((n,p,i)=>n+distance(i?path[i-1]:all[a],p),0);adj[a].push({to:b,cost,path});}
-   const outdoor=p=>family(p.supportId)==='world'&&!inside(p.x,p.z,[-29,-17,-18,-7]);
+   const outdoor=p=>!blueprint&&family(p.supportId)==='world'&&!inside(p.x,p.z,[-29,-17,-18,-7]);
    for(let i=0;i<all.length;i++)for(let j=i+1;j<all.length;j++){
+    if(blueprint&&i>0&&j<last){if(cachedGraph||Math.hypot(all[i].x-all[j].x,all[i].z-all[j].z)>8||Math.abs(all[i].y-all[j].y)>2.6)continue;}
     if(outdoor(all[i])||outdoor(all[j]))continue;
     if(walkLine(all[i],all[j]))edge(i,j,[all[j]]);if(walkLine(all[j],all[i]))edge(j,i,[all[i]]);
    }
+   if(blueprint&&!cachedGraph)cachedGraph=adj.slice(1,-1).map(edges=>edges.filter(e=>e.to>0&&e.to<last).map(e=>({...e,to:e.to-1})));
    for(const k of [0,last])if(outdoor(all[k])){
     const path=planarPath?.([all[k].x,all[k].z],[nodes[0].x,nodes[0].z]);
     if(path?.length){const points=path.map(at=>point(at[0],height(...at),at[1]));edge(k,1,points);edge(1,k,[...points].reverse().slice(1).concat(all[k]));}
@@ -120,9 +131,9 @@
    if(!Number.isFinite(costs[last]))return null;const chunks=[];for(let at=last;at;at=previous[at].from)chunks.unshift(previous[at].path);return chunks.flat();
   }
   function groundClear(x,z){return !!candidate(point(x,inside(x,z,bounds)?base:height(x,z),z),x,z);}
-  return {id:'Q01-WEST-STORE',base,roof,bounds,solids,surfaces,parts,nodes,supports,collides,move,restore,visible,reachable,targetPoint,camera,route,groundClear,walkLine,
-   setOutdoorAllowed(fn){outdoorAllowed=fn;},height,
-   contains:(x,z)=>inside(x,z,[-29,-17,-18,-7]),snapshot:()=>({id:'Q01-WEST-STORE',base,roof,surfaces:surfaces.length,solids:solids.length})};
+  return {id:blueprint?.id??'Q01-WEST-STORE',blueprint,base,roof,bounds,solids,surfaces,parts,nodes,supports,collides,move,restore,visible,reachable,targetPoint,camera,route,groundClear,walkLine,
+   setOutdoorAllowed(fn){outdoorAllowed=fn;cachedGraph=null;},invalidateRoutes(){cachedGraph=null;},height,
+   contains:(x,z)=>blueprint?blueprint.contains(x,z):inside(x,z,[-29,-17,-18,-7]),snapshot:()=>({id:blueprint?.id??'Q01-WEST-STORE',base,roof,surfaces:surfaces.length,solids:solids.length})};
  }
  function install({T,scene,height,outdoorAllowed,ground,state}){
   const physics=create({height,outdoorAllowed}),group=new T.Group();group.name='q01-playable-store';const materials=new Map();
@@ -146,6 +157,9 @@
   for(const x of [-25.25,-23.55])for(const z of [-13.75,-12.85])mesh('rack-post',x,physics.roof+.6,z,.07,1.2,.07,'#745d43');
   for(let i=0;i<7;i++)mesh('drying-line',-24.4,physics.roof+1.18,-13.75+i*.15,1.7,.025,.025,'#ac9872');
   mesh('entry-lamp-bracket',-24.15,physics.base+1.8,-9.4,.12,.25,.4,'#745d43');
+  // Interior shells, steps and props are static: flatten the nested part groups
+  // so the store costs one draw per material instead of one per authored piece.
+  if(root.WitnessQ01?.batch)root.WitnessQ01.batch(T,group);
   group.userData={assetId:phaseB?'CAE-STORE-PB-05':'CAE-STORE-GOLD-04',evidence:'H',access:['interior','stairs','roof'],artAccepted:false};
   scene.add(group);physics.group=group;scene.userData.architecture=physics;return physics;
  }

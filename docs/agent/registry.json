@@ -14,6 +14,8 @@
     "kit-lab.js",
     "package-lock.json",
     "package.json",
+    "q01-greybox.html",
+    "q01-greybox-lab.js",
     "witness-ambience.js",
     "witness-app.js",
     "witness-architecture.js",
@@ -29,6 +31,7 @@
     "witness-model.js",
     "witness-modular-kit.js",
     "witness-q01-environment.js",
+    "witness-q01-greybox.js",
     "witness-q01-state.js",
     "witness-q01.js",
     "witness-relationships.js",
@@ -344,6 +347,36 @@
     "witness.css"
   ],
   "admissions": [
+    {
+      "path": "docs/environment-kit/validation/q01-pr04/verification.json",
+      "owner": "environment-qa",
+      "reason": "Actual PR-04 candidate evidence from the shared-engine browser suite: source/offline hashes, hardware, eight routes and resource release; no art or story acceptance"
+    },
+    {
+      "path": "witness-q01-greybox.js",
+      "owner": "q01-environment",
+      "reason": "PR-04 authored spatial blueprint, collision-backed rescue mechanisms and read-only PR-03 projection for PR-05"
+    },
+    {
+      "path": "q01-greybox.html",
+      "owner": "q01-environment",
+      "reason": "Playable Q01 spatial review entry using the actual engine; independent from campaign saves"
+    },
+    {
+      "path": "q01-greybox-lab.js",
+      "owner": "q01-environment",
+      "reason": "Accessible walking and mechanism/actor route checks for the PR-04 level"
+    },
+    {
+      "path": "test/q01-greybox.cjs",
+      "owner": "environment-qa",
+      "reason": "Capsule traversal, rescue prefix projection, blockers, headroom and all nine Beat attachment points"
+    },
+    {
+      "path": "test/q01-greybox-browser.mjs",
+      "owner": "environment-qa",
+      "reason": "Actual-engine first/third-person movement, rendered geometry, actor routes and offline candidate evidence"
+    },
     {
       "path": ".agents/skills/witness-change/SKILL.md",
       "owner": "agent-workflows",
@@ -978,6 +1011,9 @@
           "witness-world.js",
           "witness-architecture.js",
           "witness-q01-environment.js",
+          "witness-q01-greybox.js",
+          "q01-greybox.html",
+          "q01-greybox-lab.js",
           "tools/environment-kit/engine-runtime.js",
           "witness-audio.js",
           "assets/ART-CREDITS.md",
@@ -992,6 +1028,14 @@
           {
             "command": "node test/q01-env.cjs",
             "when": "Q01"
+          },
+          {
+            "command": "npm run test:q01-greybox",
+            "when": "Thay Q01 v6 topology, cơ cấu hoặc điểm gắn Beat"
+          },
+          {
+            "command": "npm run test:q01-greybox-browser",
+            "when": "Kiểm candidate PR-04 bằng controller thật và standalone"
           },
           {
             "command": "npm run test:graphics",
@@ -1463,6 +1507,8 @@
         ],
         "implementation": [
           "witness-architecture.js",
+          "witness-q01-greybox.js",
+          "q01-greybox-lab.js",
           "witness-world.js",
           "witness-model.js",
           "test/architecture.cjs",
@@ -1476,6 +1522,10 @@
           {
             "command": "npm run test:architecture-browser",
             "when": "Thay hình học và controller trong build thực"
+          },
+          {
+            "command": "npm run test:q01-greybox-browser",
+            "when": "Thay không gian Q01 v6/PR-04"
           }
         ],
         "updates": [

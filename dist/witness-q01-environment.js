@@ -114,7 +114,9 @@
   g.setAttribute('qbProjection',n.clone());
   for(let i=0;i<p.count;i++){
    const x=p.getX(i),y=p.getY(i),z=p.getZ(i),cx=clamp(x,-w/2+r,w/2-r),cy=clamp(y,-h/2+r,h/2-r),cz=clamp(z,-d/2+r,d/2-r),dx=x-cx,dy=y-cy,dz=z-cz,len=Math.hypot(dx,dy,dz)||1;
-   p.setXYZ(i,cx+dx/len*r,y>h/2-r?h/2:cy+dy/len*r,cz+dz/len*r);
+   // Walkable caps keep the full authored footprint. Rounding their X/Z rim
+   // left millimetre-wide unsupported strips at otherwise valid stair points.
+   if(y>h/2-r)p.setXYZ(i,x,h/2,z);else p.setXYZ(i,cx+dx/len*r,cy+dy/len*r,cz+dz/len*r);
    if(n.getY(i)>.5)n.setXYZ(i,0,1,0);else n.setXYZ(i,dx/len,dy/len,dz/len);
   }return g;
  }

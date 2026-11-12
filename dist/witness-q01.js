@@ -68,20 +68,25 @@
     return p=>get(p.kind==='step'||p.kind==='floor'?'floor':p.kind==='guard'?'wood':'plaster',p.kind==='guard'?'#aaa096':p.kind==='ceiling'?'#d0c4a9':'#f1dec0');
   }
   function batch(T,group){
-    group.updateMatrixWorld(true);const batches=new Map();
-    for(const mesh of [...group.children]){
-      if(!mesh.isMesh||mesh.isInstancedMesh||mesh.name==='q01-oil-flame'||mesh.name==='q01-drying-linen')continue;
+    group.updateMatrixWorld(true);
+    const toGroup=new T.Matrix4().copy(group.matrixWorld).invert(),batches=new Map(),meshes=[];
+    group.traverse(mesh=>{if(mesh.isMesh&&!mesh.isInstancedMesh)meshes.push(mesh);});
+    for(const mesh of meshes){
+      if(Array.isArray(mesh.material)||mesh.name==='q01-oil-flame'||mesh.name==='q01-drying-linen'||!mesh.geometry?.attributes?.position)continue;
       const key=mesh.material.uuid;if(!batches.has(key))batches.set(key,{material:mesh.material,parts:[]});
-      const g=(mesh.geometry.index?mesh.geometry.toNonIndexed():mesh.geometry.clone()).applyMatrix4(mesh.matrix);
-      batches.get(key).parts.push(g);group.remove(mesh);mesh.geometry.dispose();
+      // Nested part groups are flattened with their world transform baked in.
+      const matrix=new T.Matrix4().multiplyMatrices(toGroup,mesh.matrixWorld);
+      const g=(mesh.geometry.index?mesh.geometry.toNonIndexed():mesh.geometry.clone()).applyMatrix4(matrix);
+      batches.get(key).parts.push(g);mesh.removeFromParent();mesh.geometry.dispose();
     }
     for(const {material,parts}of batches.values()){
       const g=new T.BufferGeometry();
       for(const name of ['position','normal','uv']){
+        if(parts.some(p=>!p.attributes[name]))continue;
         const size=name==='uv'?2:3,arr=new Float32Array(parts.reduce((n,p)=>n+p.attributes.position.count*size,0));let at=0;
-        for(const p of parts){const attribute=p.attributes[name];if(attribute)arr.set(attribute.array,at);at+=p.attributes.position.count*size;}g.setAttribute(name,new T.BufferAttribute(arr,size));
+        for(const p of parts){const attribute=p.attributes[name];arr.set(attribute.array,at);at+=p.attributes.position.count*size;}g.setAttribute(name,new T.BufferAttribute(arr,size));
       }
-      g.setAttribute('uv1',g.attributes.uv.clone());g.computeBoundingSphere();
+      if(g.attributes.uv)g.setAttribute('uv1',g.attributes.uv.clone());g.computeBoundingSphere();
       const m=new T.Mesh(g,material);m.name='q01-batched-'+material.name;m.castShadow=m.receiveShadow=true;group.add(m);parts.forEach(p=>p.dispose());
     }
   }

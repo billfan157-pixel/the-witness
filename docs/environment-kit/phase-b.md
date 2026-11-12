@@ -5,6 +5,82 @@ nhiệm vụ chính, vùng chuyển vào kho phía tây, cửa, nội thất, th
 Kế thừa va chạm nhiều tầng và tiến trình; không mở quyền đi vào các kho nền.
 Mỹ thuật là phục dựng [H] có [hồ sơ nguồn](research/q01-phase-b-materials.md).
 
+## PR-04 — Không gian Q01 v6 có thể đi kiểm
+
+Nguồn không gian mới là `witness-q01-greybox.js`; mở `q01-greybox.html`
+từ liên kết trên màn hình đầu. Đây là level dùng cùng engine/Three/controller
+và capsule của game, có đi bộ theo phím hoặc chọn điểm đến. Candidate này
+không tự kích hoạt v6, gọi reducer truyện hoặc ghi bản lưu campaign.
+`tools/build.cjs` đóng gói cùng bản web/cloud và tạo `q01-greybox-offline.html`.
+Kho Phase B cũ vẫn phục vụ campaign v3; phép kiểm lịch sử bên dưới không
+chứng nhận level PR-04.
+
+Blueprint có bốn vùng chức năng, không phải bốn tầng nhà xếp chồng:
+
+| Vùng | Cao độ, kích thước sử dụng | Kết nối và công việc |
+| --- | --- | --- |
+| C0 | Sân 61 × 44 m, mốc 0; sàn thuyền +0,18 m | Ván thật, hẻm/xưởng, Q01.LOAD, bàn Natan, xe cứu hộ riêng, tay dây tới được từ sân, thợ/đòn, hiên Yosef, bếp/chỗ nghỉ, B06/bàn giao |
+| C1 | Kho 14 × 14 m; gác +2,52 m | Cửa chính rộng 2,4 m, cao thông thủy 2,35 m; xà gãy chặn lối; lối phụ qua cửa gác; hai người chờ, cùng chiếu nghỉ lên mái |
+| C−1 | Rãnh rộng 2,2 m, đáy −1,26 m | 7 bậc, nhánh cụt khảo sát; không có vật bắt buộc hoặc tuyến cứu hộ thứ ba |
+| C+1 | Sân mái +5,04 m, có giếng thang và lan can | Sàn tời/đường dây, điểm nhận đủ ba dấu người, điểm nhìn hẻm sau/bến nhỏ, cầu nối sang thang xuống C0 |
+
+Mỗi flight cứu hộ/thang trên có 14 bậc, cao 0,18 m, mặt 0,32 m, rộng
+1,8 m. Đường xuống ngoài có hai flight và chiếu đổi hướng. Tất cả độ cao
+là bố trí sáng tác [H] đã kiểm với capsule, không là số đo khảo cổ hoặc
+tiêu chuẩn xây dựng. Render và collision dùng cùng hộp nguồn; tường/cửa,
+trần, khoảng giếng, rãnh và sàn thật thay cho nền trang trí. Phần tĩnh được
+instance theo vật liệu; vật động giữ riêng để mesh và volume thay cùng lúc.
+
+**Hợp đồng nối PR-05:** `WitnessQ01Greybox.create()` trả physics cùng
+`anchors`, `beats`, `setPreview()` và `projectScene(sceneProgress.Q01)`;
+`mount(T, scene, physics)` dùng đúng Three instance, trả `actors`,
+`tick`, `setAnnotations`, `dispose`. `beats` là điểm gắn đủ 00–08, không phải
+completion. `projectScene` đọc cấu trúc `rescue.route/steps` thật của PR-03,
+không mutate state và không gọi `q01SceneEvent`. Module có sẵn trong web và
+standalone game để presenter dùng; PR-05 còn sở hữu tích hợp mặc định,
+blocking/thoại/diễn xuất, điều kiện chốt hành động và camera/sáng theo Beat.
+
+`mechanical`: chuẩn bị xe → kéo tời tại C0 → chỉ mở cánh ngăn lối phụ;
+xà lối chính vẫn chắn. `manual`: tập hợp thợ → kê/chèn xà vào chỗ tựa →
+chỉ mở lối chính; xe và cánh ngăn cơ học không đổi. Hai tuyến tới cùng
+gác; cửa chung lên mái và chốt thang ngoài mở riêng. `world.sideExit=open`
+chỉ chiếu lên đường chung, không tự mở cánh ngăn cơ học. Cánh nâng có hộp
+va chạm tại vị trí giữ cao; xà đã dịch vẫn hiện và có volume tại chỗ kê.
+Chốt chân thang ngoài ngăn việc đi tắt tới người mắc kẹt trước cứu hộ.
+
+Giữ nguyên họ support ID đã được model/server chấp nhận (`q01-room`,
+`q01-quay`, `q01-drain`, `q01-mezzanine`, `q01-landing`, `q01-roof-main`,
+`q01-step-0..13`). ID bậc có thể dùng ở nhiều flight: x/y/z + support ID
+xác định đúng patch khi restore. Không nâng schema/namespace, không sửa
+model hay bake GI cũ. Khi PR-05 chọn topology v6, phải dùng checkpoint hợp
+lệ của cảnh mới; không nạp mù cao độ mái 3,24 m của kho v3 vào mái 5,04 m.
+Titus/Simeon/người học việc trong lab là proxy tỷ lệ; lệnh thử nhóm cho
+đi đường thật, không chứng nhận choreography/điều kiện `exit`/`extract` của
+truyện đã được PR-05 triển khai.
+
+Kiểm tái lập: `npm run test:q01-greybox` và
+`npm run test:q01-greybox-browser`. Browser test nhận `WITNESS_GREYBOX_URL`,
+`WITNESS_GREYBOX_OFFLINE`, `WITNESS_GREYBOX_OUT`; mặc định xuất trace/ảnh/hash
+vào `outputs/agent-work/q01-pr04-evidence`. `WEB_ONLY=1` và `SMOKE=1` dưới
+prefix `WITNESS_GREYBOX_` chỉ dùng vòng sửa nhanh; không coi đó là matrix đầy đủ.
+Driver tăng đồng hồ animation 4× để rút thời gian chạy ma trận; mỗi frame vẫn
+qua controller/capsule và render thật. Không dùng số giây này để đo thời lượng
+chơi hoặc FPS. Trace kiểm mesh/sàn/camera mỗi 40 ms thời gian thực.
+Nhãn/mốc dựng cảnh mặc định ẩn, bật bằng “Hiện nhãn không gian”; không đặt
+bảng debug vào góc nhìn xuống hẻm. Góc nhìn Beat 05 qua lan can có khe thật,
+vẫn chặn capsule. Ca unit kiểm cả góc khuất Beat 01 và hai tia tới hẻm/bến nhỏ.
+
+Kiểm hồi quy phát hiện mép top cap bo vào khoảng vài mm ở bậc kho Phase B cũ,
+trong khi volume/surface giữ nguyên footprint. Producer `geometry()` nay giữ
+X/Z gốc của toàn top cap; `test/q01-env.cjs` bắn tia cách mỗi mép 1 mm. Không
+sửa volume để che khe hoặc hạ yêu cầu của browser test. Probe trước/sau lưu
+ở `outputs/agent-work/q01-pr04-evidence/legacy-top-edge.json`. Bake proxy AABB
+không đổi; kiểm freshness GI vẫn phải đạt trên candidate cuối.
+Kết quả đúng candidate được ghi ở STATUS sau khi chạy; G3/G4 không tự đóng.
+Snapshot máy kiểm của candidate hiện tại ở
+[verification PR-04](validation/q01-pr04/verification.json); trace/ảnh gốc ở
+`outputs/agent-work/q01-pr04-evidence`, giữ hash bản HTML ngoại tuyến và nguồn.
+
 ## Bộ kit và vật liệu
 
 - Phân vai đá xây được sửa mặt, lõi đá thô, vữa vôi, mặt lát chịu mài mòn,

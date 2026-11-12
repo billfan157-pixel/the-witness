@@ -18,6 +18,8 @@ Vật trở lại cần có lịch sử sử dụng. Một chốt cũ được g
 
 ## 2. Q01 • Bến không chờ người về
 
+**Bản bàn giao Q01 hiện hành:** dùng [07, phần 1–2](07-vertical-slice-screenplay.md#q01-handoff) cho toàn bộ Beat/thoại/camera. Các dòng nền 0.4 và đề xuất dưới đây giữ để đối chiếu công việc Q01.LOAD; không tự nhập thêm thoại hoặc đổi thứ tự vào bản bàn giao mới.
+
 **Câu hỏi cảnh.** Giúp Natan là tháo ngay thứ đang hỏng, hay hiểu thứ gì còn đang giữ cả xe?
 
 **Đã chơi được.** Bàn Q01.LOAD có vết xước bánh, hai vò ở tầng trên và chốt còn chịu tải. Natan nói: “Con nhìn chốt nứt trước rồi hãy nhìn phần trên xe. Chú vẫn đang nghe tiếng trục chịu tải.” Người chơi đặt sáu thao tác, được chằng dây trước hoặc sau khi kê nếu tiền đề đủ. Chọn tháo sớm nêu rõ đường tải mới chưa qua thử; không làm xe thật sập vì một lần học luật.
