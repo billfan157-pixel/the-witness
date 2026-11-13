@@ -1,4 +1,6 @@
 ID,name,region,evidence,priority,tri_budget,status,license,source,region_lock,access,art_accepted
+CAE-Q01-PR05,Q01 campaign finishing and rigged staging,caesarea,H,P0,0,candidate-under-test,project-authored+credited-PBR,witness-q01-art.js,caesarea,campaign,false
+CAE-Q01-AUDIO-PR05,Q01 procedural sound and partial generated speech,caesarea,H,P0,0,partial-voice-coverage,project-authored+ElevenLabs-account-terms,assets/audio/q01/voice-sources.json,caesarea,campaign+offline,false
 CAE-WALL-PIPELINE-01,Module tuong thu pipeline 4m,caesarea,H,P0,800,pipeline-prototype,project-authored,tools/environment-kit/build-kit.cjs,caesarea,closed,false
 CAE-WALL-PBR-02,Module tuong PBR KTX2 Meshopt 4m,caesarea,H,P0,800,pipeline-surface-study,CC0-1.0+project-authored,tools/environment-kit/compress-kit.mjs,caesarea,closed,false
 CAE-STORE-BLOCKOUT-03,Kho phia tay Q01 9x8m,caesarea,H,P0,3000,playable-blockout,project-authored,witness-architecture.js,caesarea,interior+stairs+roof,false

@@ -6,7 +6,7 @@ const {spawnSync}=require('node:child_process'),path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const groups={
   test:[
-    'test/campaign.cjs','test/q01-state.cjs','test/spine.cjs','test/charset.cjs','test/scene-plan.cjs',
+    'test/campaign.cjs','test/q01-state.cjs','test/q01-campaign.cjs','test/q01-audio.cjs','test/spine.cjs','test/charset.cjs','test/scene-plan.cjs',
     'test/v31-systems.cjs','test/depth.cjs','test/craft.cjs','test/architecture.cjs','test/q01-env.cjs',
     'test/q01-geometry.cjs','test/q01-greybox.cjs','test/ci-workflow.cjs'
   ],

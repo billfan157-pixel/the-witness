@@ -12,7 +12,7 @@
 <a id="q01-handoff"></a>
 ## 1. Q01 — Kịch bản thống nhất để giao triển khai
 
-**Bản bàn giao biên tập ngày 11/11/2026, đã hiệu chỉnh theo góp ý Beat 02/03–04/06–07.** Đích thiết kế Q01 của truyện v6; mọi lời thoại, bố cục, nhân vật phụ và thao tác trong phần này là **[H] sáng tác**. Đây là nguồn duy nhất sở hữu phân cảnh/thoại Q01. Hồ sơ 03/06/11 dẫn về đây; hồ sơ 12 tiếp tục sở hữu sự thật và giới hạn tri thức. Phần state foundation PR-03 đã có; cảnh 3D, diễn xuất, camera và chuyển sáng theo kịch bản còn phải triển khai, kiểm và duyệt đúng phạm vi.
+**Bản bàn giao biên tập ngày 11/11/2026, đã hiệu chỉnh theo góp ý Beat 02/03–04/06–07.** Đích thiết kế Q01 của truyện v6; mọi lời thoại, bố cục, nhân vật phụ và thao tác trong phần này là **[H] sáng tác**. Đây là nguồn duy nhất sở hữu phân cảnh/thoại Q01. Hồ sơ 03/06/11 dẫn về đây; hồ sơ 12 tiếp tục sở hữu sự thật và giới hạn tri thức. State foundation PR-03, blueprint PR-04 và candidate presenter/cảnh PR-05 đã có mã; kết quả chơi/kiểm và các phần âm thanh, hình ảnh chưa duyệt theo STATUS, không suy nghiệm thu từ hồ sơ này.
 
 ### 1.1. Mục tiêu, đầu vào và điểm ra
 
@@ -433,7 +433,7 @@ Chỉ bày phương án `Model.planAllowed` cho phép. Không đổi cứu hộ 
 | 08, sau xem B06 | `observeB06` | Không thêm trường | Vẫn Beat 08, B06 sơ bộ đã ghi, lửa `cold` |
 | 08, sau bàn giao | `Model.act` với `pay-lodging`/`give-oil` hiện hữu | Theo action hiện hành | Model cũ sở hữu route, chi phí và `Q01.COMMITTED` |
 
-Chuỗi task quest cũ vẫn là `brace -> ledger -> meal -> choose -> execution`; `Q01.LOAD` nằm ở `brace`. Mốc presentation mới đặt ba task đầu ở Beat 02/07 như trên, không đổi ID, tiền đề hoặc phần thưởng. `choose` lưu ý định tại Beat 07; `execution` chờ Beat 08 đủ scene. Phần binding này chưa có trong gameplay 3D: AI phải triển khai kiểm tiền đề vị trí/Beat ở đúng owner, không coi bảng này là bằng chứng code đã làm.
+Chuỗi task quest cũ vẫn là `brace -> ledger -> meal -> choose -> execution`; `Q01.LOAD` nằm ở `brace`. Mốc presentation mới đặt ba task đầu ở Beat 02/07 như trên, không đổi ID, tiền đề hoặc phần thưởng. `choose` lưu ý định tại Beat 07; `execution` chờ Beat 08 đủ scene. Candidate PR-05 nối phần binding qua presenter và model; các tiền đề vị trí/Beat phải được kiểm ở đúng owner, không coi bảng này là bằng chứng nghiệm thu gameplay.
 
 Khi dựng v6, giữ ID/luật task nhưng dùng đúng tên vật của T06 trong lời trình bày: *bìa sổ* gắn nguyên với cuốn sổ, *tờ bìa hồ sơ rời* kẹp E01 ở Natan. Không nạp lại câu v3 mơ hồ về “tờ bìa” rồi cho prop tách gáy trái kịch bản. Quyền giữ cuốn sổ suy từ task `ledger` đã hoàn tất, còn `ledgerSeamObserved` chỉ xác nhận đã quan sát đường khâu; không dùng hai điều ấy thay cho nhau.
 
@@ -481,6 +481,16 @@ Không cần dựng biển/Legend, nhân vật phản diện lộ diện, một 
 13. Beat 02 phải thấy hai vật đã rời nhau, avatar nhận nguyên sổ/gáy và Natan giữ tờ bìa hồ sơ kẹp E01; bọc vận chuyển ẩm khác vải lót khô. Không cắt/khâu lại gáy để giải việc chia giữ, không tự cấp E01 trước Q04.
 14. Manual tới `sideExit='open'` vẫn giữ cánh ngăn cơ học đóng. Titus đi C0–C1–C+1 trong cùng lần chơi, đứng nhận trước `extract`; kiểm load trước/trong/sau `exit` và `extract` không nhân đôi actor hoặc trộn hai checkpoint.
 15. Chi tiết mẹ/chậu cây và câu Natan nhớ bạn phải hiện qua thoại/hành động có khoảng nghe; chúng không thêm nguồn điều tra, không cấp consent và không làm Natan biết nội dung T05. Đánh giá sức nặng cảm xúc bằng đọc/dựng và người chơi thật, không bằng số câu tăng thêm.
+16. **Cổng quyết định PR-05 do người dùng giao:** tạo nhân vật mới trong campaign,
+    tự đi và tương tác từ thuyền cập bến tới khi mở Q02; cứu hai người qua một
+    tuyến, lưu/tải giữa chừng, rồi chơi lại tuyến còn lại và kiểm hậu quả khác
+    nhau. Không có softlock, teleport giả, sai thứ tự, mất vật giữ hoặc trừ phí
+    hai lần. Khi bài kiểm ấy chưa đạt, PR-05 chưa hoàn thành dù unit test xanh.
+
+**Điểm triển khai PR-05:** presenter/thoại tại `witness-q01-campaign.js`, tiền đề
+vị trí qua model và `witness-q01-interaction.js`, cảnh/diễn xuất tại
+`witness-q01-art.js`; giữ task/ID/commit hiện hành. Trạng thái và phạm vi đã kiểm
+theo STATUS, không lấy sự tồn tại của các module hoặc bài kiểm làm nghiệm thu.
 
 ---
 

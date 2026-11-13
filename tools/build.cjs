@@ -8,7 +8,7 @@ const root=path.resolve(__dirname,'..');
 const {prepareOutput,verifiedDossier}=require('./build-output.cjs');
 const dossier=verifiedDossier(root),out=prepareOutput(root,'dist');
 const files=['environment-references.html','index.html','kit-lab.html','kit-lab.js','witness.css','witness-content.js','witness-spine.js','witness-depth.js','witness-relationships.js','witness-craft.js','witness-workshop-ui.js','witness-q01-state.js','witness-model.js','witness-craft-renderer.js','witness-field-ui.js','witness-architecture.js','witness-q01.js','witness-modular-kit.js','witness-world.js','witness-ambience.js','witness-compass.js','witness-audio-library.js','witness-audio.js','witness-cloud.js','witness-app.js'];
-files.push('witness-q01-environment.js','witness-q01-greybox.js','q01-greybox.html','q01-greybox-lab.js');
+files.push('witness-q01-environment.js','witness-q01-greybox.js','witness-q01-interaction.js','witness-q01-art.js','witness-q01-campaign.js','q01-greybox.html','q01-greybox-lab.js');
 for(const f of files){const target=path.join(out,f);if(TEXT_FILE.test(f))fs.writeFileSync(target,textBytes(f));else fs.copyFileSync(path.join(root,f),target);}
 for(const dir of ['assets','vendor']){
  const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(d,e.name)):[path.join(d,e.name)]);

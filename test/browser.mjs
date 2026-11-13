@@ -29,7 +29,13 @@ try{
   await send('Page.navigate',{url:process.env.WITNESS_BASE_URL??'http://127.0.0.1:8034/'});await waitFor(`!!document.querySelector('canvas')`);await delay(1500);await shot('title-desktop.png');
   console.log(JSON.stringify(await evaluate(`({canvas:!!document.querySelector('canvas'),dialog:document.querySelector('dialog')?.innerText,webgl:!!document.querySelector('canvas')?.getContext('webgl2'),title:document.title,overflow:document.documentElement.scrollWidth>innerWidth})`)));
   assert.equal(await evaluate(`document.documentElement.scrollWidth>innerWidth`),false);assert.equal(await evaluate(`!!document.querySelector('dialog')`),false,'3D must boot without error dialog');
-  await evaluate(`document.querySelector('[data-act="new"]').click();document.querySelector('[data-act="create"]').click()`);await waitFor(`document.querySelector('dialog')?.innerText.includes('Bến không chờ')`);await evaluate(`document.querySelector('dialog [data-act="close"]').click()`);await delay(500);
+  await evaluate(`document.querySelector('[data-act="new"]').click();document.querySelector('[data-act="create"]').click()`);await waitFor(`!!globalThis.WitnessQ01Campaign?.presenter`,60000);
+  assert.equal(await evaluate(`WitnessQ01Campaign.presenter.readState().flags.q01Campaign`),true,'New-character UI selects the Q01 campaign');
+  // The general UI regression below intentionally resumes a scene-null v3 save.
+  // PR-05's new-character/two-route acceptance is q01-campaign-browser.mjs.
+  const legacyHook=await send('Page.addScriptToEvaluateOnNewDocument',{source:`localStorage.setItem('the-witness.spine.v3',${JSON.stringify(JSON.stringify(M.fresh()))});`});
+  await send('Page.reload',{ignoreCache:true});await waitFor(`!!document.querySelector('#title-actions [data-act="continue"]')`);await send('Page.removeScriptToEvaluateOnNewDocument',{identifier:legacyHook.identifier});
+  await evaluate(`document.querySelector('[data-act="continue"]').click()`);await waitFor(`document.querySelector('dialog')?.innerText.includes('Bến không chờ')`);assert.equal(await evaluate(`!!WitnessQ01Campaign.presenter`),false,'Scene-null legacy save keeps the legacy UI');await evaluate(`document.querySelector('dialog [data-act="close"]').click()`);await delay(500);
   await delay(1600);const before=await evaluate(`({x:document.querySelector('#world').dataset.playerX,z:document.querySelector('#world').dataset.playerZ})`);
   await send('Input.dispatchKeyEvent',{type:'keyDown',key:'w',code:'KeyW',windowsVirtualKeyCode:87});await delay(2400);await send('Input.dispatchKeyEvent',{type:'keyUp',key:'w',code:'KeyW',windowsVirtualKeyCode:87});await delay(300);
   console.log(JSON.stringify(await evaluate(`({before:${JSON.stringify(before)},after:{...document.querySelector('#world').dataset},hidden:document.hidden,active:document.activeElement?.outerHTML?.slice(0,150),dialogs:document.querySelectorAll('dialog').length})`)));

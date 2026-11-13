@@ -1081,10 +1081,11 @@
           + at(x0, y0 + 1) * (1 - sx) * sy + at(x0 + 1, y0 + 1) * sx * sy;
       };
     };
-    const octaves = [[4, 911, .5], [8, 337, .26], [16, 577, .15], [32, 229, .09]];
+    const octaves = [[4, 911, .5], [8, 337, .26], [16, 577, .15], [32, 229, .09]]
+      .map(([freq, seed, amp]) => [lattice(freq, seed), amp]);
     for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
       let h = 0;
-      for (const [freq, seed, amp] of octaves) h += lattice(freq, seed)(x, y) * amp;
+      for (const [sample, amp] of octaves) h += sample(x, y) * amp;
       h += Math.sin((x * 3 + y * 7) / size * Math.PI * 2) * .05;
       height[y * size + x] = h;
     }
@@ -1128,6 +1129,8 @@
       fogColor: { value: new T.Color(climate.haze) },
       foamEdge: { value: foamEdge },
       waveScale: { value: waveScale },
+      uFragmentWaves: { value: opts.fragmentWaves ? 1 : 0 },
+      uWhitecapStrength: { value: opts.whitecapStrength ?? .35 },
       uNormalMap: { value: waterNormalTexture(T) },
       uBedTex: { value: null },
       uBedRect: { value: new T.Vector4(0, 0, 1, 1) },
@@ -1194,7 +1197,7 @@
         varying vec4 vReflCoord;
         varying float vCrest;
         uniform vec3 waterColor, shallowColor, skyColor, horizonColor, sunlight, sun, fogColor, uAbsorption;
-        uniform float time, foamEdge, uHasBed, uLevelY, uHasReflection;
+        uniform float time, foamEdge, uHasBed, uLevelY, uHasReflection, waveScale, uFragmentWaves, uWhitecapStrength;
         uniform sampler2D uNormalMap, uBedTex, uReflection;
         uniform vec4 uBedRect;
         ${noise}
@@ -1205,14 +1208,41 @@
           float bed = -8. + (tap.r * 255. * 256. + tap.g * 255.) / 65535. * 16.;
           return max(0., uLevelY - bed);
         }
+        float swell(vec2 dir, float steepness, float wavelength, float speed, vec2 point,
+                    inout vec3 tangent, inout vec3 binormal) {
+          float k = 6.2831853 / wavelength;
+          float f = k * (dot(dir, point) - sqrt(9.8 / k) * speed * time);
+          float sf = sin(f), cf = cos(f);
+          tangent += vec3(-dir.x * dir.x * steepness * sf, dir.x * steepness * cf, -dir.x * dir.y * steepness * sf);
+          binormal += vec3(-dir.x * dir.y * steepness * sf, dir.y * steepness * cf, -dir.y * dir.y * steepness * sf);
+          return steepness / k * sf;
+        }
         void main() {
           vec2 point = vWater.xz;
+          vec3 waveNormal = vWaveNormal;
+          float crest = vCrest;
+          vec3 toCam = cameraPosition - vWater;
+          float viewDist = length(toCam);
+          vec3 view = toCam / max(viewDist, 1e-4);
+          // Large harbour surfaces exceed the vertex sampling rate of short
+          // waves. Analytic fragment shading avoids a visible triangle lattice
+          // while distance attenuation prevents horizon scanline aliasing.
+          if(uFragmentWaves > .5) {
+            float amp = waveScale * 1.35 / (1. + max(0., viewDist - 12.) * .042), displacement = 0.;
+            vec3 tangent = vec3(1., 0., 0.), binormal = vec3(0., 0., 1.);
+            displacement += swell(normalize(vec2(.85, .52)), amp * 1.1, 9.5, 1., point, tangent, binormal);
+            displacement += swell(normalize(vec2(-.42, .91)), amp * .8, 5.6, 1.12, point, tangent, binormal);
+            displacement += swell(normalize(vec2(.23, -.97)), amp * .5 / (1. + viewDist * .03), 3.1, 1.3, point, tangent, binormal);
+            displacement += swell(normalize(vec2(-.88, -.3)), amp * .3 / (1. + viewDist * .05), 1.7, 1.6, point, tangent, binormal);
+            waveNormal = normalize(cross(binormal, tangent));
+            crest = displacement / max(waveScale * 1.35 * 2.2, 1e-4);
+          }
           // Dual scrolling normal maps moving against each other.
           vec3 n1 = texture2D(uNormalMap, point * .16 + vec2(time * .023, time * .017)).xyz * 2. - 1.;
           vec3 n2 = texture2D(uNormalMap, point * .37 - vec2(time * .031, time * .013)).xyz * 2. - 1.;
           vec2 detail = n1.xy * .55 + n2.xy * .45;
-          vec3 normal = normalize(vec3(vWaveNormal.x + detail.x * .45, vWaveNormal.y, vWaveNormal.z + detail.y * .45));
-          vec3 view = normalize(cameraPosition - vWater);
+          float detailGain = .45 / (1. + viewDist * .032);
+          vec3 normal = normalize(vec3(waveNormal.x + detail.x * detailGain, waveNormal.y, waveNormal.z + detail.y * detailGain));
           float facing = max(.001, dot(view, normal));
           float fresnel = .02 + .98 * pow(1. - facing, 4.2);
 
@@ -1246,7 +1276,7 @@
           float lap = .5 + .5 * sin(time * 2.1 - depth * 26. + point.y * 1.3);
           float foamNoise = fbmNoise(point * 4.6 - vec2(time * .35, time * .2));
           float foam = shore * smoothstep(.30, .72, foamNoise + lap * .38);
-          foam += smoothstep(.62, .95, vCrest) * smoothstep(.4, 1.2, depth) * .35;
+          foam += smoothstep(.62, .95, crest) * smoothstep(.4, 1.2, depth) * uWhitecapStrength;
           color = mix(color, mix(horizonColor, vec3(.96), .75), clamp(foam * .88, 0., 1.));
 
           float fogDist = length(cameraPosition - vWater) * .0055;
@@ -2919,6 +2949,7 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
     // Four different clumps. Each card contains many tapered, curved fibres;
     // the transparent spaces survive mipmapping instead of forming a solid beard.
     const width = 256, height = 512, pixels = new Uint8Array(width * height * 4);
+    for (let i = 0; i < pixels.length; i += 4) { pixels[i] = 206; pixels[i + 1] = 204; pixels[i + 2] = 200; }
     for (let tile = 0; tile < 4; tile++) for (let fibre = 0; fibre < 15; fibre++) {
       const start = 5 + noise(fibre, tile + 10) * 54;
       const phase = noise(fibre + 40, tile) * Math.PI * 2;
@@ -3177,12 +3208,13 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
     const hairColor = new T.Color(look.hairColor);
     const base = new T.MeshStandardMaterial({
       color: hairColor, roughness: .82, side: T.DoubleSide,
-      alphaMap: maps(T).hairline, transparent: true, alphaTest: .02, depthWrite: false, forceSinglePass: true
+      alphaMap: maps(T).hairline, transparent: false, alphaTest: .35, depthWrite: true, forceSinglePass: true,
+      polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1
     });
     const material = new T.MeshPhysicalMaterial({
       color: hairColor, map: maps(T).hair, vertexColors: true,
       roughness: .55, metalness: 0, side: T.DoubleSide,
-      alphaTest: .05, alphaToCoverage: true, transparent: false, depthWrite: true, forceSinglePass: true,
+      alphaTest: .16, alphaToCoverage: true, transparent: false, depthWrite: true, forceSinglePass: true,
       sheen: .42, sheenColor: hairColor.clone().lerp(new T.Color("#b7a28a"), .24), sheenRoughness: .62
     });
     material.name = "groom-cards-fibre-atlas-a2c-aniso";
@@ -3219,7 +3251,7 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
           target.t.push(tangent.x, tangent.y, tangent.z);
           // Atlas rows are authored root first; DataTexture flipY stays false.
           target.uv.push((tile + (side + 1) * .5) / 4, t);
-          const rootShade = .76, tipShade = 1.12;
+          const rootShade = .90, tipShade = 1.08;
           const value = shade * (rootShade + (tipShade - rootShade) * t);
           target.colors.push(value, value * .98, value * .94);
         }
@@ -3251,7 +3283,7 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
       + Math.sin(angle * 5.0 + .5) * .055 + Math.sin(angle * 11.0) * .023;
     const underlay = batch();
     for (let row = 0; row <= 18; row++) for (let col = 0; col <= 56; col++) {
-      const a = col / 56 * Math.PI * 2, p = scalp(a, row / 18 * hairline(a), .0012);
+      const a = col / 56 * Math.PI * 2, p = scalp(a, row / 18 * hairline(a), .0016);
       underlay.p.push(...p);
       underlay.uv.push(col / 56, row / 18);
       if (row && col) { const n = row * 57 + col; underlay.indices.push(n, n - 57, n - 1, n - 1, n - 57, n - 58); }
@@ -3305,33 +3337,36 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
       card(fixed, [[x, y, z], [x + side * .005, y + .001, z + .0005], [x + side * .009, y - .001, z]], .0045, .90, [0, 1, .25]);
     }
     if (look.gender !== "female" && look.beard > .012) {
-      const length = look.beard;
-      for (let i = 0; i < 520; i++) {
-        const u = noise(i, 40) * 2 - 1, v = noise(i, 41), side = Math.abs(u);
-        const x = u * .071;
-        const top = mouth[1] - .010 + side * .040 + Math.sin(u * 17) * .003;
-        const y = top - v * (.023 + (1 - side) * .018);
-        const z = faceDepth(x, y) + .0009;
-        const strandLength = length * (.24 + noise(i, 42) * .50) * (1 - side * .42);
-        const outward = Math.sign(u) * strandLength * .14;
-        const midY = y - strandLength * .47, tipY = y - strandLength;
-        const midZ = Math.max(z + .0015, faceDepth(x + outward * .4, midY) + .0018);
-        const tipZ = Math.max(z, faceDepth(x + outward, tipY) + .0014);
-        card(beard, [[x, y, z], [x + outward * .4, midY, midZ],
-          [x + outward, tipY, tipZ]],
-        .007 + noise(i, 44) * .006, .85 + noise(i, 45) * .32, [1, side * .25, -u * .7]);
-        fibre([[x, y, z + .0014], [x + outward * .4, midY, midZ + .0015],
-          [x + outward, tipY, tipZ + .001]], .00018 + noise(i, 49) * .00014, .85 + noise(i, 50) * .5);
+      const length = look.beard, shortBeard = length < .04;
+      const beardCount = shortBeard ? 360 : 560;
+      for (let i = 0; i < beardCount; i++) {
+        const u = (i % 28) / 27 * 2 - 1 + (noise(i, 40) - .5) * .08, v = noise(i, 41), side = Math.abs(u);
+        const x = Math.max(-1, Math.min(1, u)) * (shortBeard ? .066 : .070);
+        const top = mouth[1] - (shortBeard ? .012 : .009) + side * (shortBeard ? .026 : .036) + Math.sin(u * 17) * .003;
+        const y = top - v * ((shortBeard ? .017 : .022) + (1 - side) * (shortBeard ? .015 : .018));
+        const z = faceDepth(x, y) + .0036;
+        const nLen = Math.hypot(x / .075, Math.max(.2, z - .02)) || 1;
+        const nx = (x / .075) / nLen, nz = Math.max(.2, z - .02) / nLen;
+        const strandLength = length * (.30 + noise(i, 42) * .48) * (1 - side * .40);
+        const outward = strandLength * .15;
+        const midX = x + nx * outward * .4, midY = y - strandLength * .47;
+        const tipX = x + nx * outward, tipY = y - strandLength;
+        const midZ = Math.max(z + .0024, faceDepth(midX, midY) + .0042 + nz * outward * .4);
+        const tipZ = Math.max(z + .0016, faceDepth(tipX, tipY) + .0034 + nz * outward);
+        card(beard, [[x, y, z], [midX, midY, midZ], [tipX, tipY, tipZ]],
+          (shortBeard ? .0038 + noise(i, 44) * .0028 : .0058 + noise(i, 44) * .0042), .92 + noise(i, 45) * .22, [nz, side * .18, -nx]);
+        fibre([[x, y, z + .0016], [midX, midY, midZ + .0016], [tipX, tipY, tipZ + .0012]],
+          .00022 + noise(i, 49) * .00014, .90 + noise(i, 50) * .38);
       }
       // Feathered cheek and sideburn boundary, with much shorter, sparse hairs.
       for (const side of [-1, 1]) for (let i = 0; i < 26; i++) {
         const t = i / 25, x = side * (.064 - t * .035), y = mouth[1] + .033 - t * .032 + noise(i, 47) * .002;
-        const z = faceDepth(x, y) + .0011;
-        card(beard, [[x, y, z], [x + side * .001, y - .003, z + .001], [x + side * .002, y - .006, z]], .0035, .88, [1, .4, -side * .3]);
+        const z = faceDepth(x, y) + .0020;
+        card(beard, [[x, y, z], [x + side * .001, y - .003, z + .0015], [x + side * .002, y - .006, z + .001]], .0028, .90, [.65, .35, -side * .65]);
       }
       for (const side of [-1, 1]) for (let i = 0; i < 22; i++) {
-        const x = side * (.003 + i * .0013), y = mouth[1] + .008 - i * .00020, z = faceDepth(x, y) + .0010;
-        card(beard, [[x, y, z], [x * 1.13, y - .0028, z + .0007], [x * 1.25, y - .0065, z]], .004, .90, [1, -.3 * side, 0]);
+        const x = side * (.003 + i * .0013), y = mouth[1] + .008 - i * .00020, z = faceDepth(x, y) + .0018;
+        card(beard, [[x, y, z], [x * 1.13, y - .0028, z + .0012], [x * 1.25, y - .0065, z + .0008]], .0032, .92, [1, -.25 * side, -.18 * side]);
         fibre([[x, y, z + .001], [x * 1.13, y - .0028, z + .0017], [x * 1.25, y - .0065, z + .001]], .00019, 1.0);
       }
     }
@@ -3392,11 +3427,24 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
       if (target.t.length) geometry.setAttribute("hairTangent", new T.Float32BufferAttribute(target.t, 3));
       geometry.setIndex(target.indices); geometry.computeVertexNormals();
       const jaw = name === "beard-hair-cards";
+      if (jaw) {
+        const pos = geometry.attributes.position, nrm = geometry.attributes.normal;
+        for (let i = 0; i < pos.count; i++) {
+          const vx = pos.getX(i), jL = Math.hypot(vx / .075, -.15, .6) || 1;
+          const nx = nrm.getX(i) * .35 + (vx / .075 / jL) * .65;
+          const ny = nrm.getY(i) * .35 + (-.15 / jL) * .65;
+          const nz = nrm.getZ(i) * .35 + (.6 / jL) * .65;
+          const l = Math.hypot(nx, ny, nz) || 1;
+          nrm.setXYZ(i, nx / l, ny / l, nz / l);
+        }
+        nrm.needsUpdate = true;
+      }
       const finish = moving || jaw ? material.clone() : material;
       hairShader(finish, moving, jaw);
       const object = skinned(geometry, finish, () => [["head", 1]]);
       object.name = name;
       object.renderOrder = 1;
+      if (jaw) { object.castShadow = false; object.receiveShadow = false; }
       // The atlas casts the same cutout silhouette as the visible fibres.
       object.customDepthMaterial = new T.MeshDepthMaterial({ depthPacking: T.RGBADepthPacking, map: maps(T).hair, alphaTest: .23, side: T.DoubleSide });
       if (moving || jaw) depthShader(object.customDepthMaterial, moving);
@@ -3416,6 +3464,7 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
       });
       const beardMesh = skinned(geometry, finish, () => [["head", 1]]);
       beardMesh.name = "beard-individual-fibres";
+      beardMesh.castShadow = false; beardMesh.receiveShadow = false;
       finish.onBeforeCompile = shader => {
         shader.uniforms.uJawOpen = jawOpen;
         shader.vertexShader = shader.vertexShader.replace("#include <common>", "#include <common>\nuniform float uJawOpen;")
@@ -3434,19 +3483,20 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
   function mantle(T, { shoulderY, pelvisY, length, look }) {
     const columns = 40, rows = 28, p = [], uv = [], colors = [], indices = [];
     const previous = [], pinned = [];
-    const width = .94;
+    const width = .98;
     for (let row = 0; row <= rows; row++) for (let col = 0; col <= columns; col++) {
-      const u = col / columns, v = row / rows, a = 1.65 + u * (Math.PI * 2 - 3.30);
-      const topY = shoulderY + .041 + Math.sin(a) * .022 - Math.cos(a) * .015;
+      const u = col / columns, v = row / rows, a = 1.44 + u * (Math.PI * 2 - 2.88);
+      const shoulderDrop = Math.pow(Math.abs(Math.sin(a)), 1.8) * .034;
+      const topY = shoulderY + .034 - shoulderDrop - Math.cos(a) * .012;
       let fold = 0;
-      for (const [center, amplitude, spread, drift] of [[.08,.012,.027,.05],[.24,.009,.040,-.04],[.45,.017,.055,.07],[.69,.011,.032,-.05],[.91,.016,.040,.025]]) {
+      for (const [center, amplitude, spread, drift] of [[.08,.010,.032,.04],[.24,.008,.042,-.03],[.45,.014,.055,.05],[.69,.010,.036,-.04],[.91,.013,.042,.025]]) {
         fold += bell(u - center - v * drift, spread * (.55 + v * .7)) * amplitude * (.3 + v * .7);
       }
-      const x = Math.sin(a) * (.310 - Math.min(1, v * 3) * .064 + fold);
-      const z = Math.cos(a) * (.202 - Math.min(1, v * 3) * .020 + fold);
-      const y = topY - v * length + Math.sin(u * Math.PI) * v * v * .022;
+      const x = Math.sin(a) * (.228 + v * .022 - Math.min(1, v * 2.4) * .018 + fold);
+      const z = Math.cos(a) * (.172 - Math.min(1, v * 2.4) * .010 + v * .022 + fold);
+      const y = topY - v * length + Math.sin(u * Math.PI) * v * v * .018;
       p.push(x, y, z); previous.push(x, y, z);
-      pinned.push(row === 0 && ((col >= 4 && col <= 6) || (col >= columns - 6 && col <= columns - 4)));
+      pinned.push(row === 0 && ((col >= 5 && col <= 11) || (col >= 15 && col <= 25) || (col >= columns - 11 && col <= columns - 5)));
       uv.push(u, 1 - v);
       const wear = row > rows - 2 ? .065 : 0;
       const tone = .97 - wear + (noise(col, row) - .5) * .025;
@@ -3487,7 +3537,7 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
         }
         for (let n = 0; n < pinned.length; n++) if (!pinned[n]) {
           const i = n * 3, t = clamp((p[i + 1] - pelvisY) / (shoulderY - pelvisY));
-          const rx = .243 + Math.pow(t, 3) * .067, rz = .183 + Math.pow(t, 3) * .021;
+          const rx = .235 + Math.pow(t, 2.5) * .058, rz = .178 + Math.pow(t, 2.5) * .016;
           const radius = Math.hypot(p[i] / rx, p[i + 2] / rz);
           if (radius < 1) { p[i] /= Math.max(.1, radius); p[i + 2] /= Math.max(.1, radius); }
         }
@@ -3571,6 +3621,8 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
       pinRow = 0, color, sheenColor, name = "cloth-layer", fuzzRepeat = 7, wrapX = false
     } = opts;
     const N = cols * rows;
+    const identityFrame = new T.Matrix4();
+    const previousFrame = new T.Matrix4(), frameDelta = new T.Matrix4();
     const invMass = new Float32Array(N);
     const restData = new Float32Array(N * 4);
     const clothUv = new Float32Array(N * 2);
@@ -3675,6 +3727,15 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
     }
     function cpuStep(dt, ctx) {
       const dt2 = dt * dt, damp = .985;
+      const frame = (ctx.restFrame || identityFrame).elements;
+      const delta = frameDelta.elements;
+      // Carry the simulated sheet with its attachment frame before solving
+      // relative motion. Otherwise lowering a seated pelvis drags a standing
+      // sheet through the torso, where it can remain caught on the shoulders.
+      for (const points of [pos, prev]) for (let i = 0; i < N; i++) {
+        const ix = i * 3, x = points[ix], y = points[ix + 1], z = points[ix + 2];
+        for (let a = 0; a < 3; a++) points[ix + a] = delta[a] * x + delta[4 + a] * y + delta[8 + a] * z + delta[12 + a];
+      }
       const gx = ctx.wind[0] + ctx.inertia[0], gy = -ctx.gravity + ctx.wind[1] + ctx.inertia[1], gz = ctx.wind[2] + ctx.inertia[2];
       for (let i = 0; i < N; i++) {
         const ix = i * 3;
@@ -3685,10 +3746,12 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
           pos[ix + 2] = prev[ix + 2] = ctx.pinTargets[c * 3 + 2];
           continue;
         }
+        const rx = rest[ix], ry = rest[ix + 1], rz = rest[ix + 2];
         for (let a = 0; a < 3; a++) {
           const cur = pos[ix + a], old = prev[ix + a];
           const g = a === 0 ? gx : a === 1 ? gy : gz;
-          const accel = g + (rest[ix + a] - cur) * (ctx.shape ?? 26);
+          const target = frame[a] * rx + frame[4 + a] * ry + frame[8 + a] * rz + frame[12 + a];
+          const accel = g + (target - cur) * (ctx.shape ?? 26);
           let step = (cur - old) * damp + accel * dt2;
           step = Math.max(-.02, Math.min(.02, step));
           pos[ix + a] = cur + step;
@@ -3728,15 +3791,19 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
     const INTEGRATE = `
       uniform sampler2D tCur, tPrev, tRest, tPin;
       uniform float uDt, uDamp, uGravity, uShape;
+      uniform mat4 uRestFrame, uFrameDelta;
       uniform vec3 uWind, uInertia;
       varying vec2 vUv;
       void main(){
         vec4 cur = texture2D(tCur, vUv);
         vec4 prev = texture2D(tPrev, vUv);
+        cur.xyz = (uFrameDelta * vec4(cur.xyz, 1.)).xyz;
+        prev.xyz = (uFrameDelta * vec4(prev.xyz, 1.)).xyz;
         vec4 rest = texture2D(tRest, vUv);
         vec4 pin = texture2D(tPin, vUv);
         vec3 vel = (cur.xyz - prev.xyz) * uDamp;
-        vec3 accel = vec3(0., -uGravity, 0.) + uWind + uInertia + (rest.xyz - cur.xyz) * uShape;
+        vec3 target = (uRestFrame * vec4(rest.xyz, 1.)).xyz;
+        vec3 accel = vec3(0., -uGravity, 0.) + uWind + uInertia + (target - cur.xyz) * uShape;
         vec3 step = vel + accel * uDt * uDt;
         float sl = length(step); if (sl > 0.02) step *= 0.02 / sl;
         vec3 next = cur.xyz + step;
@@ -3817,14 +3884,14 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
       Object.assign(integrateMat.uniforms, {
         tCur: { value: null }, tPrev: { value: null }, tRest: { value: restTex }, tPin: { value: pinTex },
         uDt: { value: 1 / 60 }, uDamp: { value: .985 }, uGravity: { value: 9.8 }, uShape: { value: 26 },
-        uWind: { value: new T.Vector3() }, uInertia: { value: new T.Vector3() }
+        uWind: { value: new T.Vector3() }, uInertia: { value: new T.Vector3() }, uRestFrame: { value: new T.Matrix4() }, uFrameDelta: { value: new T.Matrix4() }
       });
       Object.assign(constraintMat.uniforms, {
         tPos: { value: null }, tRest: { value: restTex }, tPin: { value: pinTex },
         uTexel: { value: new T.Vector2(1 / cols, 1 / rows) }, uStiff: { value: .8 }, uGroundY: { value: -10 }, uWrapX: { value: wrapX ? 1 : 0 },
         uCapA: { value: capA }, uCapB: { value: capB }, uCapCount: { value: 0 }
       });
-      copyMat.uniforms.tSrc = { value: restTex };
+      copyMat.uniforms.tSrc = { value: cpuPosTex };
       const blit = (mat, target) => {
         quad.material = mat;
         const old = renderer.getRenderTarget();
@@ -3838,6 +3905,8 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
       const iu = g.integrateMat.uniforms, cu = g.constraintMat.uniforms;
       iu.tCur.value = g.targets[g.cur].texture; iu.tPrev.value = g.targets[g.prev].texture;
       iu.uDt.value = dt; iu.uGravity.value = ctx.gravity; iu.uShape.value = ctx.shape ?? 26;
+      iu.uRestFrame.value.copy(ctx.restFrame || identityFrame);
+      iu.uFrameDelta.value.copy(frameDelta);
       iu.uWind.value.set(ctx.wind[0], ctx.wind[1], ctx.wind[2]);
       iu.uInertia.value.set(ctx.inertia[0], ctx.inertia[1], ctx.inertia[2]);
       const blit = (mat, target) => {
@@ -3871,6 +3940,8 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
     mesh.onBeforeRender = renderer => { clothRenderer = renderer; };
     function update(dt, ctx) {
       dt = Math.max(1 / 240, Math.min(1 / 30, dt));
+      const currentFrame = ctx.restFrame || identityFrame;
+      frameDelta.copy(previousFrame).invert().premultiply(currentFrame);
       for (let c = 0; c < cols; c++) {
         const o = (pinRow * cols + c) * 4;
         pinData[o] = ctx.pinTargets[c * 3]; pinData[o + 1] = ctx.pinTargets[c * 3 + 1]; pinData[o + 2] = ctx.pinTargets[c * 3 + 2];
@@ -3888,6 +3959,7 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
         if (ctx.renderer) gpu.renderer = ctx.renderer;
         gpuStep(dt, ctx);
       } else cpuStep(dt, ctx);
+      previousFrame.copy(currentFrame);
     }
     // Seed the CPU texture so the first frame (before any update) is not empty.
     for (let i = 0; i < N; i++) { cpuPosData[i * 4] = rest[i * 3]; cpuPosData[i * 4 + 1] = rest[i * 3 + 1]; cpuPosData[i * 4 + 2] = rest[i * 3 + 2]; cpuPosData[i * 4 + 3] = invMass[i]; }
@@ -3907,6 +3979,7 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
 
   globalThis.CharacterCloth = { create };
 })();
+
 (() => {
   "use strict";
 
@@ -4360,11 +4433,18 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
     body.castShadow = true;
     body.updateMorphTargets();
 
-    const material = (color, kind, vertexColors = true) => AdventureVisuals.surface(new T.MeshStandardMaterial({
-      color, side: T.DoubleSide, roughness: 1, vertexColors,
-      normalMap: textile(T, kind), roughnessMap: textileRoughness(T, kind),
-      normalScale: new T.Vector2(kind === "haircloth" ? .18 : .045, .045)
-    }), kind === "leather" ? "bark" : kind === "linen" ? "linen" : "wool", true);
+    const material = (color, kind, vertexColors = true) => {
+      const m = new T.MeshStandardMaterial({
+        color, side: T.DoubleSide, roughness: 1, vertexColors,
+        normalMap: textile(T, kind), roughnessMap: textileRoughness(T, kind),
+        normalScale: new T.Vector2(kind === "haircloth" ? .18 : .045, .045)
+      });
+      // Garments already carry woven normal/roughness maps. A second terrain
+      // relief layer produces harsh polygon-sized patches on a moving rig.
+      m.name = "woven-" + kind + "-normal-roughness";
+      m.customProgramCacheKey = () => "witness-woven-pbr-" + kind;
+      return kind === "leather" ? AdventureVisuals.surface(m, "bark", true) : m;
+    };
     const mainCloth = material(palette[0], look.cloth);
     const trim = new T.MeshStandardMaterial({ color: palette[2], roughness: .94 });
     const leather = material("#594634", "leather", false);
@@ -4456,7 +4536,7 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
       for (let r = 0; r < rows; r++) {
         const t = r / (rows - 1);
         const y = T.MathUtils.lerp(waistY, hem, t);
-        const width = T.MathUtils.lerp(.190, .300, t), depth = T.MathUtils.lerp(.150, .200, t);
+        const width = T.MathUtils.lerp(.190, .325, t), depth = T.MathUtils.lerp(.150, .230, t);
         for (let c = 0; c < cols; c++) {
           const angle = c / cols * Math.PI * 2;
           const radius = foldRadius(y, angle, look.cloth === "haircloth" ? .105 : .075);
@@ -4677,8 +4757,8 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
         [headPoint[1] - .04, .132, .135], [headPoint[1] + .015, .135, .136],
         [headTop - .08, .134, .132], [headTop - .025, .118, .120], [headTop + .016, .054, .065], [headTop + .026, .002, .008]
       ] : [
-        [bottom, .213, .169], [bottom + .04, .209, .167], [neckY - .05, .173, .153],
-        [headPoint[1] + .015, .145, .145], [headTop - .09, .142, .138],
+        [bottom, .246, .178], [bottom + .04, .240, .174], [neckY - .05, .226, .162],
+        [headPoint[1] + .015, .148, .145], [headTop - .09, .142, .138],
         [headTop - .025, .116, .119], [headTop + .014, .06, .072], [headTop + .026, .002, .009]
       ];
       const headcloth = fabricSurface(rows, wrapped ? .45 : .64, Math.PI * 2 - (wrapped ? .90 : 1.28), 48, .065, "headcloth");
@@ -4908,8 +4988,9 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
     let liveRenderer = null;
     let clothActive = true;
     const clothWind = new T.Vector3(), clothInertia = new T.Vector3();
+    const clothToLocal = new T.Matrix4(), clothPinFrame = new T.Matrix4(), clothBindOffset = new T.Matrix4(), clothPin = new T.Vector3();
     let prevRootX = 0, prevRootZ = 0, prevVelX = 0, prevVelZ = 0;
-    function animate(time, pace = 0, heading, posture = "idle", progress = 0) {
+    function animate(time, pace = 0, heading, posture = "idle", progress = 0, poseOptions = {}) {
       const speaking = posture === "talk" || posture === "seated-talk";
       const delta = previous === null ? 1 / 60 : Math.max(1 / 240, Math.min(.06, time - previous));
       previous = time;
@@ -4936,6 +5017,11 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
       const weightShift = Math.sin(time * .58 + phase) * (1 - Math.min(1, motion * 2)) * (1 - crouch) * (1 - seated);
       bone("pelvis").position.x += sway + weightShift * .006;
       bone("pelvis").position.y += Math.abs(Math.sin(gait)) * .019 * motion - crouch * .45 - seated * .43 + breath * .0028;
+      // A bench can sit behind the standing capsule. Shift the seated rig,
+      // including cloth pins below, while the actor's physical root stays put.
+      const seatOffset = poseOptions.seatOffset;
+      if (Array.isArray(seatOffset) && seatOffset.length === 3 && seatOffset.every(Number.isFinite))
+        bone("pelvis").position.addScaledVector(new T.Vector3(...seatOffset), seated);
       bone("pelvis").rotation.y = step * .035;
       bone("pelvis").rotation.z = weightShift * .016;
       bone("spine_03").position.z += Math.max(0, breath) * .003;
@@ -4994,8 +5080,10 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
         const calfBend = Math.PI - kneeInterior;
         const hipAlpha = Math.acos(T.MathUtils.clamp((legL1 * legL1 + reach * reach - legL2 * legL2) / (2 * legL1 * reach), -1, 1));
         const phi = Math.atan2(dz, dy);
-        const thighRot = -(phi + hipAlpha) - crouch * .25 - seated * 1.35;
-        const calfRot = calfBend + crouch * 1.88 + seated * 1.42;
+        // Sitting replaces the standing IK solution instead of adding a second
+        // hip/knee bend to its already shortened reach.
+        const thighRot = (-(phi + hipAlpha) - crouch * .25) * (1 - seated) - seated * 1.35;
+        const calfRot = (calfBend + crouch * 1.88) * (1 - seated) + seated * 1.42;
         bone("thigh_" + suffix).rotation.x = thighRot;
         bone("calf_" + suffix).rotation.x = calfRot;
         bone("foot_" + suffix).rotation.x = -terrainPitch * .82 - (thighRot + calfRot) * .55 - crouch * 1.2;
@@ -5089,15 +5177,69 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
         bone("lowerarm_r").rotation.set(-.58, 0, 0);
       }
       if (posture === "tend") {
-        bone("spine_03").rotation.x += look.gesture === "read" ? .06 : .13;
-        bone("head").rotation.x += .18;
-        const handwork = Math.sin(time * (look.gesture === "read" ? .8 : 2.3) + phase);
-        bone("upperarm_r").rotation.x -= .38 + handwork * .10;
-        bone("lowerarm_r").rotation.x -= .47;
-        bone("upperarm_l").rotation.x -= .32;
-        bone("lowerarm_l").rotation.x -= .51 - handwork * .07;
-        bone("hand_r").rotation.y += handwork * .14;
+        const work = poseOptions.work;
+        if (work === "plane") {
+          const stroke = Math.sin(time * 3.1 + phase);
+          bone("spine_03").rotation.x += .18 + stroke * .045;
+          bone("head").rotation.x += .22;
+          bone("upperarm_r").rotation.x = -.52 - stroke * .24;
+          bone("lowerarm_r").rotation.x = -.64 + stroke * .22;
+          bone("upperarm_l").rotation.x = -.48 - stroke * .22;
+          bone("lowerarm_l").rotation.x = -.62 + stroke * .20;
+        } else if (work === "saw") {
+          const stroke = Math.sin(time * 4.4 + phase);
+          bone("spine_03").rotation.x += .16 + stroke * .035;
+          bone("spine_03").rotation.y += -.08 + stroke * .04;
+          bone("head").rotation.x += .20;
+          bone("upperarm_r").rotation.x = -.42 - stroke * .28;
+          bone("lowerarm_r").rotation.x = -.58 + stroke * .26;
+          bone("upperarm_l").rotation.x = -.38;
+          bone("lowerarm_l").rotation.x = -.52;
+        } else if (work === "heave") {
+          const pull = Math.sin(time * 5.2 + phase) * .08 + (progress || .5) * .12;
+          bone("spine_03").rotation.x += .22 - pull * .35;
+          bone("head").rotation.x += .08;
+          bone("upperarm_r").rotation.x = -.68 + pull;
+          bone("lowerarm_r").rotation.x = -.95 - pull * .6;
+          bone("upperarm_l").rotation.x = -.66 + pull;
+          bone("lowerarm_l").rotation.x = -.92 - pull * .6;
+        } else if (work === "hearth") {
+          const stir = Math.sin(time * 2.2 + phase);
+          bone("spine_03").rotation.x += .10;
+          bone("head").rotation.x += .14;
+          bone("upperarm_r").rotation.x = -.46 + stir * .08;
+          bone("lowerarm_r").rotation.x = -.68;
+          bone("upperarm_r").rotation.y = stir * .08;
+          bone("upperarm_l").rotation.x = -.32;
+          bone("lowerarm_l").rotation.x = -.76;
+        } else {
+          bone("spine_03").rotation.x += look.gesture === "read" ? .06 : .13;
+          bone("head").rotation.x += .18;
+          const handwork = Math.sin(time * (look.gesture === "read" ? .8 : 2.3) + phase);
+          bone("upperarm_r").rotation.x -= .38 + handwork * .10;
+          bone("lowerarm_r").rotation.x -= .47;
+          bone("upperarm_l").rotation.x -= .32;
+          bone("lowerarm_l").rotation.x -= .51 - handwork * .07;
+          bone("hand_r").rotation.y += handwork * .14;
+        }
       }
+      if (poseOptions.work === "rope-seated" && posture.startsWith("seated")) {
+        const twist = Math.sin(time * 1.45 + phase);
+        bone("spine_03").rotation.x += .07;
+        bone("head").rotation.x += speaking ? .04 : .11;
+        bone("upperarm_r").rotation.x = -.34 + twist * .045;
+        bone("lowerarm_r").rotation.x = -.82 - twist * .06;
+        bone("upperarm_l").rotation.x = -.32 - twist * .03;
+        bone("lowerarm_l").rotation.x = -.78 + twist * .05;
+        bone("hand_r").rotation.z = -.18 + twist * .12;
+      }
+      if (poseOptions.work === "point" && !posture.startsWith("seated")) {
+        const reach = Math.sin(time * 1.8 + phase) * .04;
+        bone("upperarm_r").rotation.set(-.76 + reach, -.18, .22);
+        bone("lowerarm_r").rotation.set(-.34, 0, 0);
+      }
+      if (Number.isFinite(poseOptions.headPitch)) bone("head").rotation.x += T.MathUtils.clamp(poseOptions.headPitch, -.28, .28);
+      if (Number.isFinite(poseOptions.headYaw)) bone("head").rotation.y += T.MathUtils.clamp(poseOptions.headYaw, -.35, .35);
       if (posture === "carry" || (["basket", "jar"].includes(look.item) && !["tend", "cross"].includes(posture))) {
         for (const suffix of ["l", "r"]) {
           bone("upperarm_" + suffix).rotation.x = -.35;
@@ -5137,13 +5279,15 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
       const blink = 1 - T.MathUtils.clamp(Math.abs(((time + phase) % 4.67) - 2.1) / .075, 0, 1);
       body.morphTargetInfluences[0] = blink;
       body.morphTargetInfluences[1] = blink;
-      const speechCadence = Math.max(0, Math.sin(time * 2.2));
-      const phonemes = Math.sin(time * 8.6) * .55 + Math.sin(time * 14.2) * .32 + Math.sin(time * 22.0) * .13;
+      const speechSeed = Number.isFinite(poseOptions.speechSeed) ? poseOptions.speechSeed : phase;
+      const speechBreath = Math.pow(.5 + .5 * Math.sin(time * 1.18 + speechSeed), .32);
+      const speechCadence = (.44 + .56 * (.5 + .5 * Math.sin(time * 2.75 + speechSeed * 1.7))) * speechBreath;
+      const phonemes = Math.sin(time * 9.2 + speechSeed) * .52 + Math.sin(time * 15.1 + speechSeed * 2.1) * .33 + Math.sin(time * 23.4) * .15;
       body.morphTargetInfluences[2] = speaking ?
-        speechCadence * Math.max(0, phonemes * .26 + .06) : 0;
+        speechCadence * (0.055 + Math.max(0, phonemes) * .28) : 0;
       groom.jawOpen.value = body.morphTargetInfluences[2];
-      body.morphTargetInfluences[3] = (look.gesture === "teach" || speaking ? .20 : .08) + Math.sin(time * .6 + phase) * .035;
-      body.morphTargetInfluences[4] = speaking ? .20 + Math.sin(time * .9) * .08 : .10;
+      body.morphTargetInfluences[3] = (look.gesture === "teach" || speaking ? .22 : .08) + Math.sin(time * .65 + phase) * .04;
+      body.morphTargetInfluences[4] = speaking ? .22 + Math.sin(time * 1.05 + speechSeed) * .08 : .10;
       const tremorY = Math.sin(time * 19.3 + phase) * .0025;
       const tremorX = Math.sin(time * 23.7 + phase) * .0018;
       const gazeDart = Math.sin(time * 1.7 + phase) > .8 ? (Math.sin(time * 3.4) * .016) : 0;
@@ -5165,31 +5309,60 @@ globalThis.AdventureHumanData = {"version":1,"provenance":"MakeHuman/MPFB hm08, 
       // stride inertia, body capsules and the sampled ground/stair height.
       if (clothLayers.length && clothActive) {
         const yaw = root.rotation.y, cosH = Math.cos(yaw), sinH = Math.sin(yaw);
-        const gust = .7 + Math.sin(time * .7 + phase) * .35 + motion * .5;
-        const wx = (Math.sin(time * .43 + phase) * .5 + .9) * gust, wz = Math.cos(time * .31 + phase) * .5 * gust;
+        const gust = (.32 + Math.sin(time * .7 + phase) * .16 + motion * .45) * (1 - seated * .75);
+        const wx = (Math.sin(time * .43 + phase) * .55 + .22) * gust, wz = Math.cos(time * .31 + phase) * .45 * gust;
         clothWind.set(wx * cosH + wz * sinH, 0, -wx * sinH + wz * cosH);
         const velX = (root.position.x - prevRootX) / delta, velZ = (root.position.z - prevRootZ) / delta;
         const accX = T.MathUtils.clamp((velX - prevVelX) / delta, -9, 9), accZ = T.MathUtils.clamp((velZ - prevVelZ) / delta, -9, 9);
         prevRootX = root.position.x; prevRootZ = root.position.z; prevVelX = velX; prevVelZ = velZ;
         clothInertia.set(-accX * .012 + step * motion * .12, 0, -accZ * .012 + Math.sin(gait) * motion * .2);
-        const pelvisDelta = bone("pelvis").position.y - rest[jointIndex("pelvis")].y;
+        const pelvisShift = bone("pelvis").position.clone().sub(rest[jointIndex("pelvis")]);
+        const pelvisDelta = pelvisShift.y;
         const groundLocal = (typeof root.userData.heightAt === "function" ? root.userData.heightAt(root.position.x, root.position.z) : root.position.y) - root.position.y + .012;
-        const capsules = [
-          { a: [0, pelvisY + pelvisDelta, 0], b: [0, shoulderY + pelvisDelta, 0], r: .165 }
-        ];
+        root.updateMatrixWorld(true);
+        clothToLocal.copy(root.matrixWorld).invert();
+        const boneLocal = (name, out) => out.setFromMatrixPosition(bone(name).matrixWorld).applyMatrix4(clothToLocal);
+        const knees = {}, legCaps = ["l", "r"].flatMap(suffix => {
+          const hip = boneLocal("thigh_" + suffix, new T.Vector3()), knee = boneLocal("calf_" + suffix, new T.Vector3()), ankle = boneLocal("foot_" + suffix, new T.Vector3());
+          knees[suffix] = knee;
+          const lowShin = knee.clone().lerp(ankle, .94);
+          return [
+            { a: [hip.x, hip.y, hip.z], b: [knee.x, knee.y, knee.z], r: seated > .25 ? .132 : .108 },
+            { a: [knee.x, knee.y, knee.z], b: [lowShin.x, lowShin.y, lowShin.z], r: seated > .25 ? .122 : .102 }
+          ];
+        });
+        if (seated > .25 && knees.l && knees.r) legCaps.push({ a: [knees.l.x, knees.l.y, knees.l.z], b: [knees.r.x, knees.r.y, knees.r.z], r: .132 });
+        const spineForward = Math.sin(bone("spine_03").rotation.x) * .28;
+        const torsoCap = { a: [pelvisShift.x, pelvisY + pelvisDelta - .02, pelvisShift.z + .01], b: [pelvisShift.x, shoulderY + pelvisDelta - .03, pelvisShift.z + spineForward + .02], r: .176 };
+        const chestCap = { a: [pelvisShift.x - .085, shoulderY + pelvisDelta - .11, pelvisShift.z + spineForward * .7 + .042], b: [pelvisShift.x + .085, shoulderY + pelvisDelta - .11, pelvisShift.z + spineForward * .7 + .042], r: .124 };
+        const yokeCap = { a: [pelvisShift.x - .10, shoulderY + pelvisDelta - .03, pelvisShift.z + spineForward * .5], b: [pelvisShift.x + .10, shoulderY + pelvisDelta - .03, pelvisShift.z + spineForward * .5], r: .102 };
+        const skirtShape = Math.round(55 * (1 - seated) + 42 * seated);
         for (const layer of clothLayers) {
           const ud = layer.mesh.userData;
           const cols = ud.restPin.length / 3;
           if (!ud.pinBuf) ud.pinBuf = new Float32Array(ud.restPin.length);
-          const bDelta = bone(ud.pinBone).position.clone().sub(rest[jointIndex(ud.pinBone)]);
+          // The shoulder inherits the pelvis pose. Its local position alone
+          // misses that movement and leaves the mantle at standing height.
+          const bind = joint(ud.pinBone);
+          clothBindOffset.makeTranslation(-bind[0], -bind[1], -bind[2]);
+          clothPinFrame.copy(clothToLocal).multiply(bone(ud.pinBone).matrixWorld).multiply(clothBindOffset);
           for (let c = 0; c < cols; c++) {
-            ud.pinBuf[c * 3] = ud.restPin[c * 3] + bDelta.x;
-            ud.pinBuf[c * 3 + 1] = ud.restPin[c * 3 + 1] + bDelta.y;
-            ud.pinBuf[c * 3 + 2] = ud.restPin[c * 3 + 2] + bDelta.z;
+            clothPin.fromArray(ud.restPin, c * 3).applyMatrix4(clothPinFrame).toArray(ud.pinBuf, c * 3);
+          }
+          const isMantle = layer === mantleSim;
+          let restFrame = clothPinFrame;
+          if (!isMantle && seated > .01) {
+            if (!ud.seatMats) ud.seatMats = [new T.Matrix4(), new T.Matrix4(), new T.Matrix4(), new T.Matrix4()];
+            const [res, pivA, rotX, pivB] = ud.seatMats;
+            pivA.makeTranslation(0, pelvisY - .02, 0);
+            rotX.makeRotationX(-seated * 1.05);
+            pivB.makeTranslation(0, -(pelvisY - .02), 0);
+            restFrame = res.copy(clothPinFrame).multiply(pivA).multiply(rotX).multiply(pivB);
           }
           layer.update(delta, {
             renderer: liveRenderer, time, wind: clothWind.toArray(), inertia: clothInertia.toArray(),
-            gravity: 9.8, capsules, groundY: groundLocal, pinTargets: ud.pinBuf, stiffness: .8, shape: ud.shape ?? 26
+            gravity: 9.8, capsules: isMantle ? [torsoCap, chestCap, yokeCap] : [torsoCap, ...legCaps],
+            groundY: groundLocal, pinTargets: ud.pinBuf, restFrame, stiffness: isMantle ? .84 : .8, shape: isMantle ? 30 : Math.min(ud.shape ?? 26, skirtShape)
           });
         }
         if (mantleSim) for (const fringe of fringes) {
@@ -9555,6 +9728,9 @@ function hS(s) {
     if (b === B && y && !ft) return;
     ae(), y && ig(y), _.clear(), m.clear(), y = new Zs(), T = j0(y, B, !n && i.shadowMap.enabled, nt), AdventureVisuals.environment(bn, i, y, T.layout.biome), Bt?.setBiome(T.layout.biome), g = T.obstacles, b = B, v = B;
     T.night=!!AdventureVisuals.atmosphere(T.layout.biome).night;
+    // Retire starter terrain obstacles for the authored level. St() still adds
+    // the current campaign's real craft/prop solids to g; do not bypass those.
+    if(T.layout.authoredPhysics){T.obstacles=[];g=T.obstacles;T.blocked=()=>false;T.cameraVolumes=[];}
     if(T.layout.q01Gold&&globalThis.WitnessQ01){
       const clear=globalThis.WitnessQ01.clearLand,blocked=T.blocked;
       T.obstacles=T.obstacles.filter(([x,z,r])=>!clear(x,z,r)&&z>=-22.4);g=T.obstacles;
@@ -9771,9 +9947,10 @@ function hS(s) {
       const target = inspectFrame.at, ground = groundHeight(target[0], target[1]);
       const yaw = inspectFrame.bearing, distance = inspectFrame.distance;
       o.set(target[0], ground + inspectFrame.height, target[1]);
-      l.set(target[0] + Math.sin(yaw) * distance, ground + inspectFrame.height + distance * 0.45, target[1] + Math.cos(yaw) * distance);
-      origin = new R(target[0], ground + 0.1, target[1]);
-      w.object.visible = false;
+      if(inspectFrame.camera)l.set(...inspectFrame.camera);
+      else l.set(target[0] + Math.sin(yaw) * distance, ground + inspectFrame.height + distance * 0.45, target[1] + Math.cos(yaw) * distance);
+      origin = inspectFrame.camera ? player : new R(target[0], ground + 0.1, target[1]);
+      w.object.visible = !!inspectFrame.showPlayer;
     } else if (portrait) {
       const subject = speaker.object.position;
       const bearing = ni(De(subject), De(player)) + 0.24;
@@ -9821,7 +9998,7 @@ function hS(s) {
       o.z -= Math.sin(bearing) * framing;
       origin = player;
     }
-    l.y = Math.max(l.y, groundHeight(l.x, l.z) + 1.25);
+    if(!inspectFrame?.camera)l.y = Math.max(l.y, groundHeight(l.x, l.z) + 1.25);
     h.origin.set(origin.x, origin.y + 1.3, origin.z);
     h.direction.copy(l).sub(h.origin);
     const wanted = h.direction.length();
@@ -9870,11 +10047,12 @@ function hS(s) {
       a.fov = fov;
       a.updateProjectionMatrix();
     }
+    const trackedCamera=inspectFrame?.cameraTracking?{x:a.position.x,y:a.position.y,z:a.position.z}:null;
     a.position.lerp(l, blend);
     if(architecture()) {
-      const eye={x:player.x,y:player.y+1.45,z:player.z},clipped=architecture().camera(eye,a.position);
+      const eye={x:player.x,y:player.y+1.45,z:player.z},clipped=architecture().camera(trackedCamera||eye,a.position);
       a.position.set(clipped.x,clipped.y,clipped.z);
-      if(!fpActive&&Math.hypot(clipped.x-eye.x,clipped.y-eye.y,clipped.z-eye.z)<1.05)w.object.visible=false;
+      if(!fpActive&&!inspectFrame?.showPlayer&&Math.hypot(clipped.x-eye.x,clipped.y-eye.y,clipped.z-eye.z)<1.05)w.object.visible=false;
     }
     a.lookAt(o);
     a.updateMatrixWorld();
@@ -10024,6 +10202,9 @@ function hS(s) {
   return { inspect(at2, options = {}) {
     if (!Array.isArray(at2) || at2.length !== 2 || !at2.every(Number.isFinite)) return;
     inspectFrame = { at: [...at2], height: Number.isFinite(options.height) ? options.height : 0.85, distance: Math.max(1.6, Math.min(5, Number(options.distance) || 2.8)), bearing: Number.isFinite(options.bearing) ? options.bearing : 0.65 };
+    // Local cinematic framing still uses the normal swept camera clearance.
+    // It cannot move the avatar or open a target across the scene.
+    if(Array.isArray(options.camera)&&options.camera.length===3&&options.camera.every(Number.isFinite)&&w&&Math.hypot(options.camera[0]-w.object.position.x,options.camera[1]-w.object.position.y,options.camera[2]-w.object.position.z)<=10){inspectFrame.camera=[...options.camera];inspectFrame.showPlayer=!!options.showPlayer;inspectFrame.cameraTracking=!!options.cameraTracking;}
     z = true;
     U = [0, 0];
     C = null;
@@ -10393,6 +10574,9 @@ globalThis.Adventure3D={getCore:()=>bn,create:hS,layoutFor:Ff,expeditionFor:s=>Q
    b('load-frame',-10,.95,7.1,3,1.9,.34,'wood','prop');
    // Route nodes turn around real corners instead of cutting through props.
    for(const [x,z]of [[-10,-22],[-11,-16],[-11,-6],[-10,1],[-12,8],[-16,1],[-24,0],[-29,-2],[-31,1],[-29,5],[-31,-6.8],[-18,-4],[-20,-2],[-6,-6],[1,-4],[4,1],[4.8,4],[9.2,4],[11,1],[19,3],[-31,8],[-34,8],[-30,-22],[-11,-23]])nodes.push(P(x,0,z));
+   // Natan's table has a solid top. His path out of the workshop must first
+   // skirt its east edge and use the open front, then go round the outside.
+   for(const [x,z]of [[-2.6,1],[-2.6,-3],[0,-3],[0,5.1],[0,6.8],[-2,6.8]])nodes.push(P(x,0,z));
    for(const [x,z]of [[-27,-12],[-27,-9.35],[-23,-9.35]])nodes.push(P(x,ROOF,z,'q01-roof-main'));
    // Art/physics use these same boxes; dynamic pieces are deliberately unbatched.
    for(const p of parts)if(['rescue-side-gate','rescue-raised-panel','rescue-main-beam','rescue-rested-beam','rescue-common-door','egress-bottom-latch','counterweight-cart'].includes(p.id))p.dynamic=true;
@@ -10419,6 +10603,21 @@ globalThis.Adventure3D={getCore:()=>bn,create:hS,layoutFor:Ff,expeditionFor:s=>Q
    enable('rescue-common-door',!p.common);enable('egress-bottom-latch',!p.common);
    if(p.route==='mechanical'&&p.prepared){const c=solid('counterweight-cart');c.min[0]+=1.9;c.max[0]+=1.9;}
    ar.invalidateRoutes();ar.onPreview?.(p);return {...p};
+  };
+  // Transient controller-driven motion, used while a campaign interaction holds
+  // control. A reload discards it and reconstructs the last committed prefix.
+  // Each rendered box reads the same moving solid; there is no visual-only gate.
+  ar.animateMechanism=function(kind,fraction){
+   const t=Math.max(0,Math.min(1,fraction)),solid=id=>ar.solids.find(s=>s.id===id),reset=id=>{const s=solid(id);Object.assign(s,structuredClone(original.get(id)));return s;};
+   if(kind==='cart'){const s=reset('counterweight-cart');s.min[0]+=1.9*t;s.max[0]+=1.9*t;}
+   else if(kind==='pulley'){const s=reset('rescue-side-gate');s.enabled=true;s.min[1]+=2.45*t;s.max[1]+=2.45*t;solid('rescue-raised-panel').enabled=false;}
+   else if(kind==='lever'){
+    const s=reset('rescue-main-beam'),src=original.get('rescue-main-beam'),dest=original.get('rescue-rested-beam');s.enabled=t<1;
+    for(let k=0;k<3;k++){s.min[k]=src.min[k]+(dest.min[k]-src.min[k])*t;s.max[k]=src.max[k]+(dest.max[k]-src.max[k])*t;}
+    solid('rescue-rested-beam').enabled=t===1;
+   }
+   ar.invalidateRoutes();ar.onPreview?.({...ar.preview,cartProgress:kind==='cart'?t:undefined});
+   return {kind,fraction:t};
   };
   // PR-03 is the owner of story state. This read-only projection deliberately
   // distinguishes the route-specific panel from world.sideExit's common route.
@@ -10476,7 +10675,7 @@ globalThis.Adventure3D={getCore:()=>bn,create:hS,layoutFor:Ff,expeditionFor:s=>Q
   const actors={titus:actor('Titus',anchors.titus,'#7c969b'),simeon:actor('Simeon',anchors.simeon,'#a8b8ad'),apprentice:actor('Apprenti',anchors.apprentice,'#b9a793'),natan:actor('Natan',P(-5,0,1.1),'#a69e8d'),yosef:actor('Yosef',P(-2,0,-12),'#8e9c97'),worker1:actor('Thợ 1',P(-22.5,0,-1),'#a7937c'),worker2:actor('Thợ 2',P(-21,0,-1),'#9b967f')};
   const update=p=>{
    for(const [id,mesh]of dynamic){const s=ar.solids.find(s=>s.id===id);mesh.visible=s.enabled!==false;mesh.matrixAutoUpdate=false;transform(s,mesh.matrix);mesh.matrixWorldNeedsUpdate=true;}
-   const ra=new T.Vector3(p.route==='mechanical'&&p.prepared?-30.9:-32.8,1,-4.6),rb=new T.Vector3(-29.4,ROOF+1.5,-5.1),rd=rb.clone().sub(ra);loadRope.scale.y=rd.length()/loadLength;loadRope.position.copy(ra.add(rb).multiplyScalar(.5));loadRope.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),rd.normalize());
+   const ra=new T.Vector3(Number.isFinite(p.cartProgress)?-32.8+1.9*p.cartProgress:p.route==='mechanical'&&p.prepared?-30.9:-32.8,1,-4.6),rb=new T.Vector3(-29.4,ROOF+1.5,-5.1),rd=rb.clone().sub(ra);loadRope.scale.y=rd.length()/loadLength;loadRope.position.copy(ra.add(rb).multiplyScalar(.5));loadRope.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),rd.normalize());
    fire.visible=p.fire&&(!p.fireState||p.fireState==='burning');chocks.forEach(m=>m.visible=p.route==='mechanical'&&p.prepared);lever.rotation.z=p.route==='manual'&&p.opened?-.25:0;
    drum.rotation.z=p.opened?.7:0;
    // The engine caches static shadow maps. Moving a gate / trolley invalidates
@@ -10484,7 +10683,7 @@ globalThis.Adventure3D={getCore:()=>bn,create:hS,layoutFor:Ff,expeditionFor:s=>Q
    for(const light of scene.children)if(light.isLight&&light.shadow)light.shadow.needsUpdate=true;
   };
   ar.onPreview=update;update(ar.preview);scene.add(group);ar.group=group;scene.userData.architecture=ar;
-  return {group,actors,water,update,setLighting(evening){skyMaterial.uniforms.top.value.set(evening?'#263c56':'#7893a1');skyMaterial.uniforms.bottom.value.set(evening?'#777e83':'#d1d7ce');},setAnnotations(on){group.traverse(o=>{if(o.userData.annotation)o.visible=on;});},tick(t){water.position.y=-.65+Math.sin(t*.7)*.018;fire.children.forEach((m,i)=>m.scale.y=.94+.06*Math.sin(t*2+i));},dispose(){ar.onPreview=null;const geos=new Set(),mats=new Set(),textures=new Set();for(const parent of [group,water,skyDome])parent.traverse(o=>{if(o.isInstancedMesh)o.dispose();if(o.geometry)geos.add(o.geometry);for(const m of [o.material].flat().filter(Boolean)){mats.add(m);if(m.map)textures.add(m.map);}});textures.forEach(t=>t.dispose());geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());group.removeFromParent();water.removeFromParent();skyDome.removeFromParent();}};
+  return {group,actors,water,update,setLighting(evening){skyMaterial.uniforms.top.value.set(evening?'#263c56':'#7893a1');skyMaterial.uniforms.bottom.value.set(evening?'#777e83':'#d1d7ce');},setAnnotations(on){group.traverse(o=>{if(o.userData.annotation)o.visible=on;});},tick(t){water.position.y=-.65+Math.sin(t*.7)*.018;fire.children.forEach((m,i)=>m.scale.y=.94+.06*Math.sin(t*2+i));},dispose(){ar.onPreview=null;const geos=new Set(),mats=new Set(),textures=new Set();for(const parent of [group,water,skyDome])parent.traverse(o=>{if(o.isInstancedMesh)o.dispose();if(o.geometry)geos.add(o.geometry);for(const m of [o.material].flat().filter(Boolean)){mats.add(m);if(m.map&&!m.map.userData.sharedMap)textures.add(m.map);}});textures.forEach(t=>t.dispose());geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());group.removeFromParent();water.removeFromParent();skyDome.removeFromParent();}};
  }
  const api={VERSION,MEZZ,ROOF,RISE,RUN,anchors,beats,blueprint,create,mount};
  root.WitnessQ01Greybox=api;if(typeof module!=='undefined')module.exports=api;

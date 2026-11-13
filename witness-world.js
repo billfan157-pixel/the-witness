@@ -178,15 +178,16 @@
       const female=p.gender==='female';
       const base=root.CharacterProfiles.get(female?'magdalene':'traveler');
       if(!current?.layer){
-        const originItem=p.origin==='scribe'?'tablet':p.origin==='port'?'rope':'bag';
+        const inQ01Campaign=!!current?.flags?.q01Campaign&&current.chapter===0;
+        const originItem=inQ01Campaign?null:(p.origin==='scribe'?'tablet':p.origin==='port'?'rope':'bag');
         options={
           ...options,
           overrides:{
             ...base,
             id:'witness-avatar',name:p.name||'Người Chứng',gender:female?'female':'male',age:.29,kind:'fictional',
             tunic:{sand:'#b6a07b',green:'#59716b',blue:'#566d83'}[p.attire||'sand'],
-            mantle:'#84735a',hairColor:'#332820',headcover:female?'veil':'bare',
-            hem:female?.085:.30,beard:female?0:.025,ornament:'none',item:originItem,belt:'cord'
+            mantle:'#84735a',hairColor:'#5a4332',headcover:female?'veil':'bare',
+            hem:female?.085:.30,beard:0,ornament:'none',item:originItem,belt:'cord'
           }
         };
       }else if(current.layer.kind==='legend'){
@@ -242,6 +243,7 @@
 
   function layout(s){
     const d=descriptor(s),base=root.Adventure3D.layoutFor(d.base),src=s.layer&&(s.layer.kind==='legend'?D.legends[s.layer.id]:D.veils[s.layer.id]);
+    if(root.WitnessQ01Campaign?.active(s))return {...base,biome:'shore',q01Gold:false,authoredPhysics:true,flatGround:true,clearLegacyProps:true,start:[-6,-30],nodes:[[-6,-22]],mission:[],routes:[],decoys:[]};
     // Terrain heightmap region must be pinned before engine.load displaces the grid.
     const terrainRegion=s.layer?({L01:'jerusalem',L02:'jerusalem',L04:'galilee'}[s.layer.id]||null)
       :({caesarea:'caesarea',road:'caesarea',galilee:'galilee',ravine:'galilee',jerusalem:'jerusalem'}[d.region]||null);
@@ -308,6 +310,7 @@
   }
 
   function plan(s){
+    if(root.WitnessQ01Campaign?.active(s))return root.WitnessQ01Campaign.plan(s);
     const active=M.actions(s),q=M.quest(s),ch=M.chapter(s),objects=[],targets=[];
     if(s.layer){
       const src=s.layer.kind==='legend'?D.legends[s.layer.id]:D.veils[s.layer.id];
@@ -384,6 +387,13 @@
     root.WitnessQ01Environment?.beginScene?.();
     water=null;emberLight=null;reactive=[];animators=[];placeSolids=[];
     root.WitnessGraphics?.setQuality(s.settings?.graphics);
+    if(root.WitnessQ01Campaign?.active(s)){
+      const mounted=root.WitnessQ01Campaign.mount(context,s);
+      animators.push(time=>root.WitnessQ01Campaign.presenter?.tick(time));
+      root.WitnessGraphics?.configureScene(T,scene,biome,'Q01');
+      mounted.setTime(s.sceneProgress.Q01.phase);
+      return;
+    }
     const AV=root.AdventureVisuals;
     const ground=scene.children.find(c=>c.isMesh&&c.geometry?.parameters?.width===156);
     if(root.WitnessQ01?.active(s)&&ground)root.WitnessQ01.prepareGround(ground);
@@ -968,6 +978,7 @@
     // thực tế, không đụng engine.walk tự động (input=0 khi đang dẫn đường).
     function manualBlocked(nx,nz){
       if(!current)return false;
+      if(root.WitnessQ01Campaign?.active(current))return false;
       const sp=engine.spatial?.();if(sp&&root.WitnessArchitecture&&['roof','stairs'].includes(root.WitnessArchitecture.family(sp.supportId)))return false;
       const ch=M.chapter(current);
       for(const nd of ch.nodes){

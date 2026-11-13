@@ -1,9 +1,9 @@
 {
-  "documentRevision": 5,
+  "documentRevision": 7,
   "roadmap": "docs/environment-kit/roadmap.md",
   "standards": "docs/environment-kit/standards.md",
   "catalog": "docs/environment-kit/catalog.csv",
-  "updated": "2026-11-11",
+  "updated": "2026-11-13",
   "production": "AI",
   "requiredScene": "Q01",
   "extensionScene": "L04",
@@ -21,7 +21,7 @@
     "drawableMeshes": 77,
     "resourceReleaseCycles": 4,
     "artAccepted": false,
-    "storyPresenter": "PR-05 pending; the lab does not write campaign progress"
+    "storyPresenter": "Implemented separately in witness-q01-campaign.js; the lab remains read-only and PR-05 acceptance is open."
   },
   "deadlinePolicy": "quality-gated",
   "gates": [
@@ -102,7 +102,8 @@
     "docs/environment-kit/research/q01-gold-materials.md",
     "docs/environment-kit/q01-gold-scene.md",
     "docs/environment-kit/validation/q01-gold/verification.json",
-    "docs/environment-kit/validation/q01-pr04/verification.json"
+    "docs/environment-kit/validation/q01-pr04/verification.json",
+    "docs/environment-kit/validation/q01-pr05/verification.json"
   ],
   "limitations": [
     "pipeline surface study is not accepted final art or exact Caesarea kurkar",
@@ -111,5 +112,23 @@
     "reference board diagrams are original H illustrations; external photographs are linked only",
     "Q01 scene art candidate is not yet user-approved; G3 remains open",
     "historical comparisons do not establish the exact plan, colour or contents of the fictional warehouse"
-  ]
+  ],
+  "q01Campaign": {
+    "stage": "playable-campaign-candidate",
+    "source": "witness-q01-campaign.js",
+    "entry": "index.html",
+    "build": "67069e109a8f",
+    "verification": "docs/environment-kit/validation/q01-pr05/verification.json",
+    "gameplayGate": "passed",
+    "unseededCompleteWalks": 2,
+    "rescueRoutes": [
+      "manual",
+      "mechanical"
+    ],
+    "regressions": "in_progress",
+    "recordedVoiceSentences": 5,
+    "fullVoiceCoverage": false,
+    "artAccepted": false,
+    "humanPlaytest": false
+  }
 }

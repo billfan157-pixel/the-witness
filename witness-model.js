@@ -6,6 +6,7 @@
   const R=root.WitnessRelationships||(typeof require!=='undefined'?require('./witness-relationships.js'):null);
   const C=root.WitnessCraft||(typeof require!=='undefined'?require('./witness-craft.js'):null);
   const Q01=root.WitnessQ01State||(typeof require!=='undefined'?require('./witness-q01-state.js'):null);
+  const Q01Interaction=root.WitnessQ01Interaction||(typeof require!=='undefined'?require('./witness-q01-interaction.js'):null);
   const STORE='the-witness.spine.v3', BACKUP=STORE+'.backup',LEGACY='the-witness.campaign.v2';
   const clone=x=>JSON.parse(JSON.stringify(x));
   const error=message=>{throw new Error(message);};
@@ -260,21 +261,26 @@
     s.pendingEscort=null;log(s,ch.id+'.COMMITTED',{route:q.route});
   }
 
-  function beginQ01Scene(state){
+  function beginQ01Scene(state,options={}){
     const s=clone(state);
     if(chapter(s).id!=='Q01')error('Chỉ mở cảnh Q01 v6 khi đang ở Q01.');
     if(quest(s).route)error('Q01 đã khép, không thể mở lại cảnh v6.');
     if(s.sceneProgress?.Q01)error('Cảnh Q01 v6 đã được kích hoạt.');
     if(!s.sceneProgress)s.sceneProgress={Q01:null};
     s.sceneProgress.Q01=Q01.fresh();
+    if(options.campaign===true){
+      if(quest(s).done.length||quest(s).plan)error('Bản Q01 đang chơi dở giữ tuyến cũ; hãy tạo nhân vật mới để chơi cảnh v6.');
+      s.flags.q01Campaign=true;
+    }
     log(s,'Q01SceneStarted',{version:1});
     return s;
   }
-  function q01SceneEvent(state,event,payload){
+  function q01SceneEvent(state,event,payload,context){
     const s=clone(state);
     if(chapter(s).id!=='Q01')error('Chỉ ghi sự kiện cảnh Q01 khi đang ở Q01.');
     if(!s.sceneProgress?.Q01)error('Cảnh Q01 v6 chưa được kích hoạt.');
     const q=quest(s),cur=s.sceneProgress.Q01;
+    if(s.flags.q01Campaign)Q01Interaction.assertEvent(s,event,payload,context);
     if(event==='ledgerSeam'&&(!q.done.includes('brace')||!q.done.includes('ledger'))){
       error('Hãy giúp chú Natan giữ khung hàng và nhận cuốn sổ trước khi xác nhận đường khâu.');
     }
@@ -295,6 +301,7 @@
 
   function act(state,id,options={}){
     requireGroundWork(state);
+    if(chapter(state).id==='Q01'&&state.flags.q01Campaign)Q01Interaction.assertAction(state,id,options);
     if(state.layer)error('Hãy hoàn tất hoặc rời trải nghiệm hiện tại trước.');
     const s=clone(state),ch=chapter(s),q=quest(s);const a=actions(s).find(x=>x.id===id);if(!a)error('Việc này chưa sẵn sàng hoặc đã hoàn tất.');
     if(a.legend)error('Hãy mở chương chính bằng phần chơi hoặc bản tóm tắt.');
@@ -670,6 +677,8 @@
       s.sceneProgress={Q01:q01==null?null:Q01.restore(q01)};
       if(s.quests.Q01.route&&s.sceneProgress.Q01&&!Q01.canCommit(s.sceneProgress.Q01))error('Q01 đã khép nhưng cảnh v6 chưa đủ điều kiện.');
     }
+    if(s.flags.q01Campaign!==undefined&&typeof s.flags.q01Campaign!=='boolean')error('Cờ cảnh campaign Q01 không hợp lệ.');
+    if(s.flags.q01Campaign&&!s.sceneProgress.Q01)error('Campaign Q01 v6 thiếu tiến trình cảnh.');
     for(const key of ['money','food','tools'])if(!Number.isFinite(s.resources[key])||s.resources[key]<0||s.resources[key]>100)error('Tài nguyên trong bản lưu không hợp lệ.');
     s.events=Array.isArray(raw.events)?raw.events.filter(e=>e&&typeof e.type==='string').slice(-4000):[];
     s.finished=!!raw.finished&&!!s.quests.Q12.route&&allLegends(s);

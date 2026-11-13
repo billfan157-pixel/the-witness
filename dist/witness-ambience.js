@@ -368,6 +368,9 @@
     if(!ctx)return;
     const {T,scene,biome}=ctx;
     if(active){active.group.removeFromParent();for(const d of active.dispose)d.dispose?.();active=null;}
+    // PR-05 owns its paved harbour, smoke, lamps and time transition. Generic
+    // meadow flora is placed after World.decorate and would repopulate its quay.
+    if(root.WitnessQ01Campaign?.active(state))return;
     const climate=AV.atmosphere(biome);
     const layer=state?.layer?.id||null;
     const night=!!climate.night;

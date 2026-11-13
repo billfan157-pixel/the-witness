@@ -13,6 +13,7 @@
     "test:q01-state": "node test/q01-state.cjs",
     "test:q01-greybox": "node test/q01-greybox.cjs",
     "test:q01-greybox-browser": "node test/q01-greybox-browser.mjs",
+    "test:q01-campaign-browser": "node test/q01-campaign-browser.mjs",
     "test:browser": "node tools/run-checks.cjs browser",
     "test:craft-details": "node tools/run-checks.cjs craft-details",
     "test:graphics": "node test/graphics-browser.mjs",

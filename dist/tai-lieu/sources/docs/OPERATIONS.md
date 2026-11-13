@@ -66,6 +66,12 @@ chỉ đổi URL web, không đổi file offline ở checkout. Đọc script tr�
 không benchmark GPU song song. Evidence phải có build/hash, lệnh, môi trường,
 scope và giới hạn. Không đưa token/cookie/save thật vào report.
 
+Q01 PR-05 có cổng riêng `test:q01-campaign-browser`: form nhân vật mới tới Q02,
+hai tuyến cứu hộ, lưu/tải và hậu quả/chi phí. Job `q01-campaign-gate` trong CI
+chạy trọn chương cho từng tuyến trên gói `dist`, giữ trace/ảnh khi thất bại;
+unit/build xanh không thay cổng này. Cấu hình job không phải bằng chứng GitHub
+đã thực thi; vẫn ghi kết quả thật và candidate trong bàn giao.
+
 Art cần góc gameplay first/third, ngày/tối và tuyến hoạt động. G3 chỉ đóng khi
 có xác nhận người dùng. Playtest người thật theo [protocol 19](the-witness/19-depth-playtest.md);
 unit/browser pass không thay art, chuyên môn hoặc thiết bị vật lý. Production

@@ -1,0 +1,1074 @@
+{
+  "recordedAt": "2026-11-13T00:55:05.535Z",
+  "status": "regression-verification-in-progress",
+  "candidate": {
+    "build": "67069e109a8f",
+    "release": "0.7.0",
+    "gitBase": "42d74a1b691605f955d48dce1d92d19c4c0c6d91",
+    "uncommitted": true,
+    "standalone": "dist/ban-choi-ngoai-tuyen.html",
+    "standaloneSHA256": "cab5dfbf350936879128ca97967e0e2259f19e40225b0f3451bb279b292c0a33",
+    "sourceHashPolicy": "Runtime UTF-8 text normalized to LF, matching the build producer; standalone SHA256 uses literal bytes.",
+    "sources": {
+      "witness-q01-campaign.js": "3cc538acb99e993bf9db71f611ab2262387b3150adf269eca9036c5a9ac2ad91",
+      "witness-q01-art.js": "3e119e4ec3cc278e0c748822e2147e0e10f1954a1375df154e92223097b066fc",
+      "witness-q01-interaction.js": "d6bd6a6a7380a185784f0bfb54f6de4bc02d35e95c2b9580612edfb41db718ca",
+      "witness-q01-greybox.js": "2803adccf003c83da776e7e83759a256252204dc69105cf065a0541f135a698a",
+      "witness-q01.js": "1f41aa65b415efc0ecd14b45949729461ff2cef18bd09e2e2659a82a2db02098",
+      "witness-model.js": "b4752caa57a4f554b1b8fcd20201403fc243f8a23dc6a607b9e3356fdd7f8dbb",
+      "witness-world.js": "8fb4cd2593855944e20a5b4d407de042ce6377dbe5317d34b5da83ad356a07e0",
+      "witness-app.js": "d1aaa863f3ecc491d7cc0080d509736e64199b51425246c2fa4883a8ab36ae5f",
+      "witness-ambience.js": "796a6e89e275e62d27929a6121f2723c7aecee94542d1668ff925cbb94360c2c",
+      "witness-audio.js": "8f1ba749c3f617b3b5340429e65e23fc09f7c74a9db06844bc1ff42c87804264",
+      "witness-audio-library.js": "fd05612991f355199deebc8035f0f206fee97e89d30176eccde5ee8241c9fc44",
+      "vendor/adventure-3d.js": "1db8143c36332fa85190b16bbf998b1a63848fb55815b21aacb5ac29ed173437",
+      "vendor/adventure-visuals.js": "602d067707fc21b2f5ead8060f97c99d2365a57f7c04274c6d304932c23138ca",
+      "witness.css": "f2109e0ef5d83c46a8e35aa5f8399c9f60de82b68875d7622e29745cebb36920",
+      "vendor/adventure-character.js": "f735b673af9f4f3d162470f3e2f25f38df7d915503c3b4a71c362ee94cef5a4a",
+      "vendor/character-cloth.js": "3858208b20c256961242872203c2632cd512f65d2b1f989750fc765a77bee35b"
+    }
+  },
+  "decision": {
+    "pr05Complete": false,
+    "gameplayGate": "passed",
+    "artAccepted": false,
+    "fullVoiceCoverage": false,
+    "thisChangePushed": false,
+    "thisChangeDeployed": false
+  },
+  "campaign": {
+    "scope": "New character through campaign UI; actual controller/actor paths, dialogue, save/reload and Q02. No seed, reducer calls, position setters or completion shortcuts. Accelerated animation is not a timing/FPS or human/art acceptance.",
+    "completeRuns": 2,
+    "frames": 3065,
+    "geometryErrors": 0,
+    "reports": [
+      "outputs/agent-work/q01-pr05-final/final-candidate-v3/manual/campaign-report.json",
+      "outputs/agent-work/q01-pr05-final/final-candidate-v3/mechanical/campaign-report.json"
+    ],
+    "runs": [
+      {
+        "route": "manual",
+        "plan": "meal",
+        "view": "first",
+        "mode": "field",
+        "status": "passed",
+        "world": {
+          "fire": "cold",
+          "cart": "none",
+          "beam": "moved",
+          "sideExit": "open"
+        },
+        "physicalConsequences": {
+          "sideGate": true,
+          "mainBeam": false,
+          "cartX": -32.8
+        },
+        "resources": {
+          "money": 3,
+          "food": 2,
+          "tools": 1
+        },
+        "actorErrors": [],
+        "frames": 1592,
+        "geometryErrors": 0,
+        "presentation": [
+          {
+            "speaker": "natan",
+            "pelvis": [
+              -1.8893284994583788,
+              0.5048415857100794,
+              5.818680748279223
+            ],
+            "thighX": -1.3486001252328672,
+            "mouth": 0.02585958791082542,
+            "feet": [
+              [
+                -1.763309570858031,
+                0.014707642425711764,
+                6.215376764533938
+              ],
+              [
+                -2.1430506798777498,
+                0.01470003442677309,
+                6.148629596773965
+              ]
+            ],
+            "bench": {
+              "id": "rest-bench",
+              "min": [
+                -3.15,
+                0,
+                5.55
+              ],
+              "max": [
+                -0.8500000000000001,
+                0.46,
+                6.05
+              ],
+              "kind": "prop"
+            },
+            "cloakMaxY": 1.0196531295776368,
+            "head": [
+              -1.896397508210798,
+              1.1527224967686576,
+              5.860354698762462
+            ],
+            "headVisible": true,
+            "facing": 0.989806150067127,
+            "camera": {
+              "position": {
+                "x": -1.7401659779425593,
+                "y": 1.58,
+                "z": 7.128373471678276
+              },
+              "look": {
+                "x": -1.7137826334017532,
+                "y": 1.252190517600095,
+                "z": 6.1839980895449065
+              },
+              "view": "first"
+            },
+            "screenshot": "manual-meal-first-field-07-night-natan.png"
+          },
+          {
+            "speaker": "description",
+            "pelvis": [
+              -1.994887404969074,
+              0.5012912596457033,
+              5.806310738761431
+            ],
+            "thighX": -1.35,
+            "mouth": 0,
+            "feet": [
+              [
+                -1.802106120711765,
+                0.011521631056465309,
+                6.177403798821178
+              ],
+              [
+                -2.187668689356836,
+                0.011521631056465309,
+                6.177403798753407
+              ]
+            ],
+            "bench": {
+              "id": "rest-bench",
+              "min": [
+                -3.15,
+                0,
+                5.55
+              ],
+              "max": [
+                -0.8500000000000001,
+                0.46,
+                6.05
+              ],
+              "kind": "prop"
+            },
+            "cloakMaxY": 1.0158194732666015,
+            "head": [
+              -1.9941752304274778,
+              1.1493132118431397,
+              5.848112289868883
+            ],
+            "headVisible": true,
+            "facing": 0.9775111702018519,
+            "camera": {
+              "position": {
+                "x": -1.7401659779425593,
+                "y": 1.58,
+                "z": 7.128373471678276
+              },
+              "look": {
+                "x": -1.7137826334017532,
+                "y": 1.252190517600095,
+                "z": 6.1839980895449065
+              },
+              "view": "first"
+            },
+            "screenshot": "manual-meal-first-field-07-night-description.png"
+          },
+          {
+            "speaker": "avatar",
+            "pelvis": [
+              -1.9995991996311815,
+              0.5037077796217995,
+              5.806310738761093
+            ],
+            "thighX": -1.35,
+            "mouth": 0,
+            "feet": [
+              [
+                -1.8068179153095176,
+                0.013938151032561463,
+                6.177403798787408
+              ],
+              [
+                -2.192380483954589,
+                0.013938151032561463,
+                6.177403798786502
+              ]
+            ],
+            "bench": {
+              "id": "rest-bench",
+              "min": [
+                -3.15,
+                0,
+                5.55
+              ],
+              "max": [
+                -0.8500000000000001,
+                0.46,
+                6.05
+              ],
+              "kind": "prop"
+            },
+            "cloakMaxY": 1.0186990356445311,
+            "head": [
+              -1.9996582780592322,
+              1.1514979783534898,
+              5.849031257074793
+            ],
+            "headVisible": true,
+            "facing": 0.9766189345231145,
+            "camera": {
+              "position": {
+                "x": -1.7401659779425593,
+                "y": 1.58,
+                "z": 7.128373471678276
+              },
+              "look": {
+                "x": -1.7137826334017532,
+                "y": 1.252190517600095,
+                "z": 6.1839980895449065
+              },
+              "view": "first"
+            },
+            "screenshot": "manual-meal-first-field-07-night-avatar.png"
+          },
+          {
+            "speaker": "private",
+            "pelvis": [
+              -1.9928790971961452,
+              0.504255257568119,
+              5.806310738761099
+            ],
+            "thighX": -1.35,
+            "mouth": 0,
+            "feet": [
+              [
+                -1.8000978128736094,
+                0.014485628978880949,
+                6.177403798786961
+              ],
+              [
+                -2.185660381518681,
+                0.014485628978880949,
+                6.177403798786961
+              ]
+            ],
+            "bench": {
+              "id": "rest-bench",
+              "min": [
+                -3.15,
+                0,
+                5.55
+              ],
+              "max": [
+                -0.8500000000000001,
+                0.46,
+                6.05
+              ],
+              "kind": "prop"
+            },
+            "cloakMaxY": 1.0193512344360351,
+            "head": [
+              -1.9931127926982686,
+              1.151992073530187,
+              5.849803408342949
+            ],
+            "headVisible": true,
+            "facing": 0.9775866759442456,
+            "camera": {
+              "position": {
+                "x": -1.7401659779425593,
+                "y": 1.58,
+                "z": 7.128373471678276
+              },
+              "look": {
+                "x": -1.7137826334017532,
+                "y": 1.252190517600095,
+                "z": 6.1839980895449065
+              },
+              "view": "first"
+            },
+            "screenshot": "manual-meal-first-field-07-night-private.png"
+          }
+        ],
+        "audio": {
+          "sentences": [
+            {
+              "who": "natan",
+              "line": "Con ngồi đi. Cha con hay để mái chèo ở phía ấy.",
+              "entry": {
+                "person": "natan",
+                "text": "Con ngồi đi. Cha con hay để mái chèo ở phía ấy.",
+                "file": "assets/audio/q01/natan-night.mp3",
+                "start": 0.14,
+                "end": 3.15
+              }
+            },
+            {
+              "who": "natan",
+              "line": "Mấy hôm nay chú cứ quay sang hỏi ông ấy một câu. Hỏi xong mới nhớ ra.",
+              "entry": {
+                "person": "natan",
+                "text": "Mấy hôm nay chú cứ quay sang hỏi ông ấy một câu. Hỏi xong mới nhớ ra.",
+                "file": "assets/audio/q01/natan-night.mp3",
+                "start": 3.81,
+                "end": 8.2
+              }
+            },
+            {
+              "who": "natan",
+              "line": "Chú cũng chưa quen.",
+              "entry": {
+                "person": "natan",
+                "text": "Chú cũng chưa quen.",
+                "file": "assets/audio/q01/natan-night.mp3",
+                "start": 9,
+                "end": 10.16
+              }
+            },
+            {
+              "who": "natan",
+              "line": "Nếu con muốn nói, chú nghe.",
+              "entry": {
+                "person": "natan",
+                "text": "Nếu con muốn nói, chú nghe.",
+                "file": "assets/audio/q01/natan-night.mp3",
+                "start": 10.39,
+                "end": 11.95
+              }
+            },
+            {
+              "who": "natan",
+              "line": "Đèn còn dầu. Con cứ ngồi.",
+              "entry": {
+                "person": "natan",
+                "text": "Đèn còn dầu. Con cứ ngồi.",
+                "file": "assets/audio/q01/natan-night.mp3",
+                "start": 12.46,
+                "end": 14.24
+              }
+            }
+          ],
+          "checkpoints": [
+            {
+              "label": "harbour-enabled",
+              "context": "running",
+              "sources": 1,
+              "beds": 1,
+              "rms": 0.020395621551823857,
+              "stats": {
+                "played": 1,
+                "footsteps": 0,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.053977515548467636
+              }
+            },
+            {
+              "label": "book-received-before-seam",
+              "context": "running",
+              "sources": 2,
+              "beds": 2,
+              "rms": 0.014664714133156646,
+              "stats": {
+                "played": 213,
+                "footsteps": 193,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.07364167273044586
+              }
+            },
+            {
+              "label": "after-route-open",
+              "context": "running",
+              "sources": 3,
+              "beds": 3,
+              "rms": 0.02177617900012057,
+              "stats": {
+                "played": 41,
+                "footsteps": 33,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.06447938084602356
+              }
+            },
+            {
+              "label": "before-extraction",
+              "context": "running",
+              "sources": 3,
+              "beds": 3,
+              "rms": 0.019946470735431626,
+              "stats": {
+                "played": 75,
+                "footsteps": 75,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.0593508705496788
+              }
+            },
+            {
+              "label": "night-plan-unpaid",
+              "context": "running",
+              "sources": 3,
+              "beds": 3,
+              "rms": 0.01295359971065926,
+              "stats": {
+                "played": 132,
+                "footsteps": 126,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.028256557881832123
+              }
+            },
+            {
+              "label": "after-B06-before-payment",
+              "context": "running",
+              "sources": 2,
+              "beds": 2,
+              "rms": 0.012224311530389192,
+              "stats": {
+                "played": 61,
+                "footsteps": 52,
+                "voiceStarts": 5,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.5101704597473145
+              }
+            },
+            {
+              "label": "committed-no-repeat-cost",
+              "context": "running",
+              "sources": 4,
+              "beds": 2,
+              "rms": 0.015845662798319365,
+              "stats": {
+                "played": 43,
+                "footsteps": 40,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.05276696756482124
+              }
+            },
+            {
+              "label": "Q02-open",
+              "context": "running",
+              "sources": 2,
+              "beds": 2,
+              "rms": 0.00415966966358157,
+              "stats": {
+                "played": 25,
+                "footsteps": 20,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.012043256312608719
+              }
+            }
+          ],
+          "scope": "Actual audio decoding, output signal and recorded sentence playback; no human listening approval."
+        }
+      },
+      {
+        "route": "mechanical",
+        "plan": "lodging",
+        "view": "third",
+        "mode": "board",
+        "status": "passed",
+        "world": {
+          "fire": "cold",
+          "cart": "chocked",
+          "beam": "broken",
+          "sideExit": "open"
+        },
+        "physicalConsequences": {
+          "sideGate": false,
+          "mainBeam": true,
+          "cartX": -30.9
+        },
+        "resources": {
+          "money": 2,
+          "food": 3,
+          "tools": 1
+        },
+        "actorErrors": [],
+        "frames": 1473,
+        "geometryErrors": 0,
+        "presentation": [
+          {
+            "speaker": "natan",
+            "pelvis": [
+              -1.8533571422352388,
+              0.5065010900785067,
+              5.829038544177221
+            ],
+            "thighX": -1.3472671772376354,
+            "mouth": 0.09062998981819374,
+            "feet": [
+              [
+                -1.750068638756875,
+                0.016023042194445558,
+                6.230377464790659
+              ],
+              [
+                -2.1253021423303333,
+                0.01601145427383399,
+                6.141730344111338
+              ]
+            ],
+            "bench": {
+              "id": "rest-bench",
+              "min": [
+                -3.15,
+                0,
+                5.55
+              ],
+              "max": [
+                -0.8500000000000001,
+                0.46,
+                6.05
+              ],
+              "kind": "prop"
+            },
+            "cloakMaxY": 1.0212509536743164,
+            "head": [
+              -1.8627025539425084,
+              1.1544124841759678,
+              5.870196197924323
+            ],
+            "headVisible": true,
+            "facing": 0.9977632013556762,
+            "camera": {
+              "position": {
+                "x": -0.4759056233732881,
+                "y": 1.7460903978979092,
+                "z": 8.731046108405245
+              },
+              "look": {
+                "x": -1.6617635076529205,
+                "y": 1.05,
+                "z": 5.889978193162254
+              },
+              "view": "third"
+            },
+            "screenshot": "mechanical-lodging-third-board-07-night-natan.png"
+          },
+          {
+            "speaker": "description",
+            "pelvis": [
+              -1.9950794756275232,
+              0.5013572488879402,
+              5.80631074402253
+            ],
+            "thighX": -1.3499999999999825,
+            "mouth": 0,
+            "feet": [
+              [
+                -1.8022993456670302,
+                0.011587620298697754,
+                6.177404403732311
+              ],
+              [
+                -2.187861914310236,
+                0.011587620298697365,
+                6.177403204360826
+              ]
+            ],
+            "bench": {
+              "id": "rest-bench",
+              "min": [
+                -3.15,
+                0,
+                5.55
+              ],
+              "max": [
+                -0.8500000000000001,
+                0.46,
+                6.05
+              ],
+              "kind": "prop"
+            },
+            "cloakMaxY": 1.015898094177246,
+            "head": [
+              -1.994388503058873,
+              1.149372956423157,
+              5.848131770738613
+            ],
+            "headVisible": true,
+            "facing": 0.9952463649982459,
+            "camera": {
+              "position": {
+                "x": -0.3999999999999999,
+                "y": 1.7,
+                "z": 8.6
+              },
+              "look": {
+                "x": -1.6617635076529205,
+                "y": 1.05,
+                "z": 5.889978193162254
+              },
+              "view": "third"
+            },
+            "screenshot": "mechanical-lodging-third-board-07-night-description.png"
+          },
+          {
+            "speaker": "avatar",
+            "pelvis": [
+              -1.9923897231718772,
+              0.5051641645388345,
+              5.806310738779336
+            ],
+            "thighX": -1.35,
+            "mouth": 0,
+            "feet": [
+              [
+                -1.7996084403937094,
+                0.0153945359495965,
+                6.17740379960749
+              ],
+              [
+                -2.185171009038781,
+                0.0153945359495965,
+                6.1774037980029055
+              ]
+            ],
+            "bench": {
+              "id": "rest-bench",
+              "min": [
+                -3.15,
+                0,
+                5.55
+              ],
+              "max": [
+                -0.8500000000000001,
+                0.46,
+                6.05
+              ],
+              "kind": "prop"
+            },
+            "cloakMaxY": 1.0204339599609376,
+            "head": [
+              -1.9929132173508353,
+              1.1528116409995517,
+              5.8510851109194855
+            ],
+            "headVisible": true,
+            "facing": 0.9952024794950645,
+            "camera": {
+              "position": {
+                "x": -0.3999999999999999,
+                "y": 1.7,
+                "z": 8.6
+              },
+              "look": {
+                "x": -1.6617635076529205,
+                "y": 1.05,
+                "z": 5.889978193162254
+              },
+              "view": "third"
+            },
+            "screenshot": "mechanical-lodging-third-board-07-night-avatar.png"
+          },
+          {
+            "speaker": "private",
+            "pelvis": [
+              -1.9920261323860546,
+              0.5032734812345375,
+              5.806310738761099
+            ],
+            "thighX": -1.35,
+            "mouth": 0,
+            "feet": [
+              [
+                -1.7992448480635188,
+                0.013503852645299519,
+                6.177403798786961
+              ],
+              [
+                -2.1848074167085905,
+                0.013503852645299519,
+                6.177403798786961
+              ]
+            ],
+            "bench": {
+              "id": "rest-bench",
+              "min": [
+                -3.15,
+                0,
+                5.55
+              ],
+              "max": [
+                -0.8500000000000001,
+                0.46,
+                6.05
+              ],
+              "kind": "prop"
+            },
+            "cloakMaxY": 1.0181815338134765,
+            "head": [
+              -1.9919466615972758,
+              1.1511057965298364,
+              5.848696680962462
+            ],
+            "headVisible": true,
+            "facing": 0.9952765734697641,
+            "camera": {
+              "position": {
+                "x": -0.3999999999999999,
+                "y": 1.7,
+                "z": 8.6
+              },
+              "look": {
+                "x": -1.6617635076529205,
+                "y": 1.05,
+                "z": 5.889978193162254
+              },
+              "view": "third"
+            },
+            "screenshot": "mechanical-lodging-third-board-07-night-private.png"
+          }
+        ],
+        "audio": {
+          "sentences": [
+            {
+              "who": "natan",
+              "line": "Con ngồi đi. Cha con hay để mái chèo ở phía ấy.",
+              "entry": {
+                "person": "natan",
+                "text": "Con ngồi đi. Cha con hay để mái chèo ở phía ấy.",
+                "file": "assets/audio/q01/natan-night.mp3",
+                "start": 0.14,
+                "end": 3.15
+              }
+            },
+            {
+              "who": "natan",
+              "line": "Mấy hôm nay chú cứ quay sang hỏi ông ấy một câu. Hỏi xong mới nhớ ra.",
+              "entry": {
+                "person": "natan",
+                "text": "Mấy hôm nay chú cứ quay sang hỏi ông ấy một câu. Hỏi xong mới nhớ ra.",
+                "file": "assets/audio/q01/natan-night.mp3",
+                "start": 3.81,
+                "end": 8.2
+              }
+            },
+            {
+              "who": "natan",
+              "line": "Chú cũng chưa quen.",
+              "entry": {
+                "person": "natan",
+                "text": "Chú cũng chưa quen.",
+                "file": "assets/audio/q01/natan-night.mp3",
+                "start": 9,
+                "end": 10.16
+              }
+            },
+            {
+              "who": "natan",
+              "line": "Nếu con muốn nói, chú nghe.",
+              "entry": {
+                "person": "natan",
+                "text": "Nếu con muốn nói, chú nghe.",
+                "file": "assets/audio/q01/natan-night.mp3",
+                "start": 10.39,
+                "end": 11.95
+              }
+            },
+            {
+              "who": "natan",
+              "line": "Đèn còn dầu. Con cứ ngồi.",
+              "entry": {
+                "person": "natan",
+                "text": "Đèn còn dầu. Con cứ ngồi.",
+                "file": "assets/audio/q01/natan-night.mp3",
+                "start": 12.46,
+                "end": 14.24
+              }
+            }
+          ],
+          "checkpoints": [
+            {
+              "label": "harbour-enabled",
+              "context": "running",
+              "sources": 1,
+              "beds": 1,
+              "rms": 0.0018312047821887466,
+              "stats": {
+                "played": 1,
+                "footsteps": 0,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.004563205409795046
+              }
+            },
+            {
+              "label": "book-received-before-seam",
+              "context": "running",
+              "sources": 2,
+              "beds": 2,
+              "rms": 0.0184991972495406,
+              "stats": {
+                "played": 92,
+                "footsteps": 76,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.07600405067205429
+              }
+            },
+            {
+              "label": "after-route-open",
+              "context": "running",
+              "sources": 3,
+              "beds": 3,
+              "rms": 0.014997260855997889,
+              "stats": {
+                "played": 49,
+                "footsteps": 42,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.07375586032867432
+              }
+            },
+            {
+              "label": "before-extraction",
+              "context": "running",
+              "sources": 3,
+              "beds": 3,
+              "rms": 0.0283869504929272,
+              "stats": {
+                "played": 89,
+                "footsteps": 86,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.06797559559345245
+              }
+            },
+            {
+              "label": "night-plan-unpaid",
+              "context": "running",
+              "sources": 3,
+              "beds": 3,
+              "rms": 0.006631254673312924,
+              "stats": {
+                "played": 137,
+                "footsteps": 128,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.01699169911444187
+              }
+            },
+            {
+              "label": "after-B06-before-payment",
+              "context": "running",
+              "sources": 2,
+              "beds": 2,
+              "rms": 0.006587681152758867,
+              "stats": {
+                "played": 72,
+                "footsteps": 62,
+                "voiceStarts": 5,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.5558338165283203
+              }
+            },
+            {
+              "label": "committed-no-repeat-cost",
+              "context": "running",
+              "sources": 4,
+              "beds": 2,
+              "rms": 0.01865924826069712,
+              "stats": {
+                "played": 50,
+                "footsteps": 47,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.0603034645318985
+              }
+            },
+            {
+              "label": "Q02-open",
+              "context": "running",
+              "sources": 2,
+              "beds": 2,
+              "rms": 0.003477086228121516,
+              "stats": {
+                "played": 17,
+                "footsteps": 13,
+                "voiceStarts": 0,
+                "missing": 0,
+                "steals": 0,
+                "peak": 0.009376916103065014
+              }
+            }
+          ],
+          "scope": "Actual audio decoding, output signal and recorded sentence playback; no human listening approval."
+        }
+      }
+    ],
+    "environments": [
+      {
+        "node": "v24.14.1",
+        "platform": "win32",
+        "browser": {
+          "protocolVersion": "1.3",
+          "product": "Chrome/157.0.8103.51",
+          "revision": "@653674df293788cf4932c40d914e9e15b41a2d31",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+          "jsVersion": "15.7.112.23"
+        },
+        "render": {
+          "width": 390,
+          "height": 844,
+          "pixelRatio": 1,
+          "gpu": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      },
+      {
+        "node": "v24.14.1",
+        "platform": "win32",
+        "browser": {
+          "protocolVersion": "1.3",
+          "product": "Chrome/157.0.8103.51",
+          "revision": "@653674df293788cf4932c40d914e9e15b41a2d31",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+          "jsVersion": "15.7.112.23"
+        },
+        "render": {
+          "width": 1440,
+          "height": 900,
+          "pixelRatio": 1,
+          "gpu": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      }
+    ],
+    "network": "Both cold standalone runs block all HTTP/HTTPS."
+  },
+  "broaderGameplayBaseline": {
+    "build": "d5f98c562afe",
+    "status": "passed",
+    "completeRuns": 16,
+    "frames": 19818,
+    "report": "outputs/agent-work/q01-pr05-final-campaign/campaign-report.json",
+    "scope": "The 16-combination web baseline predates the later presentation/staging fixes; it does not certify those later changes."
+  },
+  "cpu": {
+    "checks": {
+      "governance": {
+        "status": "passed",
+        "exitCode": 0
+      },
+      "unit": {
+        "status": "passed",
+        "exitCode": 0
+      },
+      "agent-governance": {
+        "status": "passed",
+        "exitCode": 0
+      },
+      "backend": {
+        "status": "passed",
+        "exitCode": 0
+      },
+      "cache": {
+        "status": "passed",
+        "exitCode": 0
+      },
+      "build-output": {
+        "status": "passed",
+        "exitCode": 0
+      },
+      "contracts": {
+        "status": "passed",
+        "exitCode": 0
+      },
+      "gi-self-test": {
+        "status": "passed",
+        "exitCode": 0
+      }
+    },
+    "initialReport": "outputs/agent-work/q01-pr05-final/cpu/results.json",
+    "followupReport": "outputs/agent-work/q01-pr05-final/cpu-followup/results.json",
+    "fixtureCorrection": "The original throttle test crossed a wall-clock minute. The test Worker now holds one clock bucket and also checks expiration and persistence after restart. No production API or limiter policy changed.",
+    "finalCandidateReport": "outputs/agent-work/q01-pr05-final/cpu-6706/results.json"
+  },
+  "regressions": {
+    "status": "running",
+    "report": "outputs/agent-work/q01-pr05-final/final-candidate-v3/results.json",
+    "checks": [
+      {
+        "name": "campaign-manual",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "name": "campaign-mechanical",
+        "status": "passed",
+        "exitCode": 0
+      },
+      {
+        "name": "craft-browser",
+        "status": "running"
+      }
+    ],
+    "geometryFollowup": "outputs/agent-work/q01-pr05-final/geometry-final/results.json"
+  },
+  "audio": {
+    "proceduralAssets": 11,
+    "recordedSentences": 5,
+    "source": "assets/audio/q01/voice-sources.json",
+    "coverage": "Five Natan night sentences only; other roles remain without complete recorded media.",
+    "additionalGeneration": "The connected service returned busy; no take started or was charged."
+  },
+  "waterNormalProducer": {
+    "status": "passed",
+    "scope": "Deterministic water-normal CPU producer only; not GPU FPS",
+    "beforeMs": 1273.6098000000002,
+    "afterMs": 55.700199999999995,
+    "bytes": 262144,
+    "sha256": "49ec99606b52a1f6ed50dddd15f16c9cf50706c7cb927744798f96e8d61b82f8"
+  },
+  "limitations": [
+    "No human playtest or listening/acting/art approval for this candidate.",
+    "No physical-phone FPS certification.",
+    "Full cast voice recording is incomplete.",
+    "Local candidate only; no push, production deployment or live save verification performed."
+  ],
+  "rejectedIntermediateCandidates": [
+    {
+      "build": "1e2d21387d12",
+      "reason": "Through-wall night viewpoint despite a numerical manual pass",
+      "report": "outputs/agent-work/q01-pr05-final/final-candidate/results.json"
+    },
+    {
+      "build": "88c9349159fb",
+      "reason": "Excessive seated IK and standing-height mantle despite a numerical manual pass",
+      "report": "outputs/agent-work/q01-pr05-final/final-candidate-v2/results.json"
+    }
+  ]
+}

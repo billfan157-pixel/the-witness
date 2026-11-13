@@ -1,5 +1,26 @@
 # Art sources
 
+## Q01 campaign production (PR-05, 13 November 2026)
+
+- `witness-q01-art.js` adds original game geometry, signs, water, fire and smoke
+  [H] to the PR-04 spatial envelopes. Its PBR maps reuse the credited architecture
+  sets below; the character rigs reuse the existing project character pipeline.
+  These are artistic reconstructions, with `artAccepted: false` pending review.
+- `audio/q01/*.wav` are original deterministic procedural sounds [H], generated
+  by `tools/prepare-q01-sound.cjs`: sea/wind/fire beds, material foley, a bell and
+  a quiet instrumental cue. They are not field recordings or a reconstruction
+  of an ancient instrument. Seeds, file hashes and formats are recorded in
+  `audio/q01/procedural-sources.json`.
+- `audio/q01/natan-night.mp3` is AI-generated fictional speech through ElevenLabs,
+  model `eleven_v4`, using the connected library voice
+  “Quang Toan – Deep Vietnamese Storyteller”. Generation
+  `GUzMYCIZH2rUu4Scc0sr`, flow `dNgSp1YPc2drSe5XU6T5`.
+  Script: screenplay 07, Q01 Beat 07; five Natan sentences, 14.24 s.
+  `audio/q01/voice-sources.json` records provenance/hash and the limits of the
+  provider's timing alignment. Usage remains subject to the ElevenLabs account
+  terms; no CC0 or human-actor claim. Additional voice production was unavailable;
+  this file does not establish full dialogue coverage or listening approval.
+
 ## World upgrade 2026-11-10 (environment & world building)
 
 - `terrain/heightmaps/{galilee,jerusalem,caesarea}.{r16,png}` are project-authored

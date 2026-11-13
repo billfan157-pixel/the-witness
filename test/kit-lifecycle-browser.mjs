@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import {pathToFileURL} from 'node:url';
 import {browserDriver} from './browser-driver.mjs';
-const out=path.resolve('outputs/environment-kit/phase12-proof');fs.mkdirSync(out,{recursive:true});
+const out=path.resolve(process.env.WITNESS_KIT_LIFECYCLE_OUT||'outputs/environment-kit/phase12-proof');fs.mkdirSync(out,{recursive:true});
 const b=await browserDriver(out,19586,{hardware:true,serviceWorker:true,url:'http://127.0.0.1:8034/kit-lab.html',width:1200,height:850,ready:'!!globalThis.KitLab?.ready'});
 const report={checks:[],runtime:'hardware WebGL functional checks; performance measured separately'};
 try{

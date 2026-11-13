@@ -88,6 +88,15 @@ test('Q01 v6 scene progress survives cloud sync and a reload without losing fiel
     assert.equal(c.localState().sceneProgress.Q01.world.cart,'chocked');
   }finally{c.dispose();}
 });
+test('PR-05 campaign activation and spatial checkpoint survive the persistent client queue',async()=>{
+  const storage=memory(),session=memory(),server=service();let s=M.beginQ01Scene(fresh('Campaign'),{campaign:true});
+  s.spatialPositions['Q01.mortal']={schema:1,x:-6,y:0,z:-22,supportId:'world'};s=M.q01SceneEvent(s,'disembark');
+  let c=create({model:M,storage,sessionStorage:session,fetch:server.fetch});
+  try{await c.init();server.setOffline(true);c.capture(s);await c.flush();assert.equal(c.info().pending,true);c.dispose();
+    c=create({model:M,storage,sessionStorage:session,fetch:server.fetch});server.setOffline(false);await c.init();await c.flush();
+    assert.equal(c.localState().flags.q01Campaign,true);assert.deepEqual(c.localState().spatialPositions,s.spatialPositions);assert.deepEqual(c.localState().sceneProgress,s.sceneProgress);
+  }finally{c.dispose();}
+});
 test('Q01 v6 scene state survives offline outbox and a lost acknowledgement',async()=>{
   const storage=memory(),session=memory(),server=service(),s=sceneState('Outbox',SCENE_SEQ.slice(0,2));
   let c=create({model:M,storage,sessionStorage:session,fetch:server.fetch});

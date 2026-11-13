@@ -83,6 +83,67 @@ Snapshot máy kiểm của candidate hiện tại ở
 
 ## Bộ kit và vật liệu
 
+### PR-05 — Nối vào campaign và hoàn thiện candidate
+
+`witness-q01-campaign.js` dùng trực tiếp blueprint/physics PR-04, thay entry
+greybox độc lập bằng tuyến tạo nhân vật mới trong campaign. Model và
+`witness-q01-interaction.js` kiểm khoảng cách/cao độ, người cùng làm và tiền đề
+của bước; presenter không ghi trực tiếp rescue completion, vật chứng hoặc chi phí.
+Hai người được cứu, Titus và Natan dùng đường đi capsule, có điểm đứng riêng;
+load chỉ dàn lại cả nhóm tại các checkpoint được 07 cho phép.
+Người lạ vòng qua cửa/góc xưởng bằng cùng controller. Nhật ký riêng suy từ
+task và scene flag đã lưu, nên nhận sổ trước quan sát, bốn giới hạn từ mái và
+yêu cầu giữ kín vẫn đọc lại được sau restore, không cần tạo evidence hoặc consent.
+
+`witness-q01-art.js` giữ cùng vỏ va chạm, bổ sung vật liệu PBR đã có nguồn,
+nhân vật rig, đạo cụ sổ/bìa/bọc/vải riêng, biển trong thế giới, đèn dầu, khói/lửa
+cục bộ và hậu cảnh cảng [H]. Mặt nước dùng shader sóng/normal/reflection sẵn có;
+cảnh có bốn bộ ánh sáng chiều/chạng vạng/đêm/rạng sáng và chuyển sau chọn nghỉ.
+Không sử dụng GI nướng của kho v3 cho không gian mới. Hậu cảnh không mở lối đi
+ngoài boundary hoặc xác nhận một phục dựng khảo cổ.
+Lớp ambience đồng cỏ cũ không sinh lại trong sân lát của candidate. Cú máy mở
+bến dài 4,8 giây chỉ đổi camera gần thuyền, dùng swept clearance hiện hành;
+không đổi vị trí avatar hoặc tự chốt `disembark`. Chế độ giảm chuyển động/góc
+nhìn thứ nhất nhận điều khiển ngay; có nút mở cảnh tùy chọn và nhận điều khiển sớm.
+Bảng dẫn đường nhường chỗ cho đối thoại và phần việc hiện trường.
+Mặt nước lớn dùng normal/đỉnh sóng tính tại fragment để tránh hiện lưới tam giác
+của mesh xa; bọt trong lòng cảng được giảm riêng, không đổi các vùng cũ.
+Producer normal chỉ tạo bốn lattice một lần thay vì lặp cho từng pixel; đối
+chứng byte ở `outputs/agent-work/q01-pr05-final/water-normal-producer.json`
+giữ nguyên 262.144 byte. Số đo CPU đó không là chứng nhận FPS.
+Camera mở bến đi ở ngoài mạn/lái rồi nâng lên vai, sweep từ vị trí camera trước
+để không bị lan can ép vào chân avatar. Lời nhắc sau load đọc phần việc hiện tại.
+Điểm tiếp cận Titus/hai thợ/điểm nhận tách khỏi vị trí đứng của họ nhưng vẫn
+trong tiền đề model tại anchor gốc. Titus đứng riêng với hai thợ ở đòn bẩy;
+nhóm xuống thang ngoài lần lượt để giữ khoảng cách. Bài kiểm góc nhìn thứ nhất
+từ chối chốt lượt nếu camera nằm trong đầu NPC tại điểm tương tác.
+Mép các khối đặc không đi được được bo trong envelope gốc; mặt đi/bậc/cơ cấu
+động giữ nguyên. Trang trí tĩnh được batch riêng khỏi lửa/đèn/nhân vật và sổ
+đang cầm. Thân thuyền [H] nằm dưới mặt sàn; góc mở bến nhìn qua lan can từ cao
+độ đủ thấy avatar. Ở cảnh đêm, Natan ngồi cả khi nói lẫn nghe; chỉ khẩu hình
+người đang nói hoạt động. Rig ngồi lùi lên đúng ghế trong khi capsule đứng ở
+phía trước; cloth pins nhận cùng độ dịch xương, không dời root qua vật cản.
+Điểm nói chuyện ở phía sau xưởng, có điều kiện tầm nhìn tới Natan ở cả presenter
+và model. Góc nhìn thứ nhất quay về người đang trò chuyện mà không dời avatar;
+ảnh gameplay đêm và phép kiểm đầu nhân vật không bị tường che đi cùng lượt cuối.
+Rig ngồi thay nghiệm IK đứng, tránh cộng hai lần góc gập chân. Neo áo choàng
+lấy đầy đủ biến đổi xương cha; cả CPU/GPU cloth nhận cùng rest-frame và capsule
+cơ thể. Vải đã có normal/roughness riêng, không chồng relief địa hình lên áo.
+
+Âm thanh nằm ở `assets/audio/q01/`: producer `tools/prepare-q01-sound.cjs`
+sinh 11 file ambience/foley/nhạc ngắn cùng ledger hash. Bản thoại Natan có năm
+câu ở Beat 07, nguồn/giới hạn ở `voice-sources.json`; các vai còn lại chưa đủ bản
+thu vì dịch vụ tạo thoại báo bận. Không gọi đó là full voice acting.
+
+`npm run test:q01-campaign-browser` kiểm ma trận 16 tổ hợp bằng form tạo mới,
+nút trong game và controller thật. Nó kiểm nhận sổ trước chốt đường khâu,
+prefix hai tuyến, hộ tống, đặt phần việc chưa trả phí, B06, commit và mở Q02;
+trace độc lập đo mesh/body/camera/dấu chân và bước nhảy vị trí.
+`WITNESS_Q01_SMOKE=1` chọn một tổ hợp chơi trọn chương; một lượt đơn chỉ xác
+nhận tổ hợp ấy. Cổng quyết định phải gồm cả hai tuyến trên cùng candidate.
+Kết quả phải gắn đúng hash/candidate;
+không suy nghiệm thu từ mã bài kiểm. G3/G4 và artAccepted giữ nguồn duyệt cũ.
+
 - Phân vai đá xây được sửa mặt, lõi đá thô, vữa vôi, mặt lát chịu mài mòn,
   mái trát, gỗ, dây, sắt và đất nén. Hai bộ PBR bổ sung có nguồn, giấy phép,
   hash và pipeline tái tạo trong `assets/architecture/phase-b/sources.json`.

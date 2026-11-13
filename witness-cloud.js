@@ -75,9 +75,9 @@
       if((save?.revision||0)===revision){pending=clone(latest);persist();await flush();return;}
       conflict={remote:save,local:clone(latest)};emit('conflict','Có hai bản tiến trình · chọn bản cần dùng');
     }
-    async function init(){
+    async function init(options={}){
       if(busy)await busy;
-      clearTimeout(timer);clearTimeout(reconnectTimer);scopeEpoch++;ready=false;verified=false;
+      clearTimeout(timer);clearTimeout(reconnectTimer);scopeEpoch++;if(!options.background){ready=false;emit(status.mode,status.message);}verified=false;
       try{
         if(!fetcher||root.location?.protocol==='file:'){user=null;loadLocal();ready=true;return emit('guest','Đã lưu trên máy · bản ngoại tuyến');}
         const info=await api('/api/session');
@@ -132,7 +132,7 @@
       })();return busy;
     }
     async function refresh(){
-      if(!verified)return init();
+      if(!verified)return init({background:ready});
       try{const session=await api('/api/session');if((session.user?.id||null)!==(user?.id||null))return init();}catch{emit('offline','Đã giữ trên máy · sẽ đồng bộ khi có mạng');return status;}
       await flush();if(busy)await busy;
       if(user)try{await reconcile();}catch(error){emit('offline',error.message);}return status;

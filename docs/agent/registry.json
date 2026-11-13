@@ -33,6 +33,9 @@
     "witness-modular-kit.js",
     "witness-q01-environment.js",
     "witness-q01-greybox.js",
+    "witness-q01-interaction.js",
+    "witness-q01-art.js",
+    "witness-q01-campaign.js",
     "witness-q01-state.js",
     "witness-q01.js",
     "witness-relationships.js",
@@ -571,6 +574,41 @@
       "reason": "Pure Q01 v6 scene state foundation (PR-03); gated by witness-model, no engine/UI/cloud or evidence access"
     },
     {
+      "path": "witness-q01-interaction.js",
+      "owner": "game-systems",
+      "reason": "PR-05 physical preconditions for Q01 v6 campaign events/actions; consumed by witness-model, no second reducer, persistence, renderer or DOM access"
+    },
+    {
+      "path": "witness-q01-campaign.js",
+      "owner": "q01-gameplay",
+      "reason": "PR-05 campaign presenter, nine authored Beats, actual actor traversal and whole-group restoration using existing model events"
+    },
+    {
+      "path": "test/q01-campaign.cjs",
+      "owner": "gameplay-qa",
+      "reason": "Checks authoritative Q01 campaign spatial/actor preconditions, compatibility, restoration and single cost across both rescue and livelihood choices"
+    },
+    {
+      "path": "test/q01-audio.cjs",
+      "owner": "audio-qa",
+      "reason": "Verifies generated media hashes and PCM levels, recorded segment bounds, Q01 scene sound beds and the completed-LOAD audio tick regression"
+    },
+    {
+      "path": "test/q01-campaign-browser.mjs",
+      "owner": "gameplay-qa",
+      "reason": "PR-05 acceptance through new-character UI, real controller traversal, both rescue routes, saved prefixes, consequences and Q02; no seeded completion"
+    },
+    {
+      "path": "tools/prepare-q01-sound.cjs",
+      "owner": "q01-audio",
+      "reason": "Deterministic original procedural ambience, material foley and a quiet instrumental cue for PR-05; produces audio and its source/hash ledger"
+    },
+    {
+      "path": "witness-q01-art.js",
+      "owner": "q01-environment",
+      "reason": "PR-05 finishing of the shared PR-04 collision envelopes, rigged staging, authored time-of-day, particles and original procedural harbour assets"
+    },
+    {
       "path": "docs/the-witness/PRODUCTION_STATUS_AND_CHANGELOG.md",
       "owner": "domain-documentation",
       "reason": "Technical production status, runtime gap analysis, gates and version changelog separated from design bibles"
@@ -589,6 +627,11 @@
       "path": "tools/requirements-docs.txt",
       "owner": "release",
       "reason": "Pinned Python dependencies for the documentation reader export pipeline in GitHub Actions and local builds"
+    },
+    {
+      "path": "docs/environment-kit/validation/q01-pr05/verification.json",
+      "owner": "environment-qa",
+      "reason": "PR-05 candidate-bound new-character campaign acceptance, offline/audio playback and compatibility evidence, with explicit incomplete voice/art/release scope"
     }
   ],
   "requiredFiles": [

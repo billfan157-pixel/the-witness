@@ -29,10 +29,16 @@
       L04:{surface:'gravel',decay:.22,beds:[bed('lake',.64,[0,.1,-17],14),bed('fire',.24,[5.2,.3,2.1],1.8)]},
       L05:{surface:'stone',decay:.95,beds:[bed('cave',.22),bed('wind',.12)]}
     };
+    if(state?.flags?.q01Campaign&&state.chapter===0&&!state.layer){const q=state.sceneProgress.Q01,night=q.phase==='night',evening=q.phase==='evening',dawn=q.phase==='dawn',rescue=q.beat===3||q.beat===4,roof=q.beat===5;
+      const decay=night?.28:rescue?.44:evening?.34:.38;
+      const harborGain=night?.26:evening?.38:dawn?.48:.52;
+      const windGain=roof?.24:rescue?.18:night?.05:evening?.09:.13;
+      return {id:'caesarea',variant:'q01:'+q.phase+':'+q.beat,surface:'stone',decay,beds:[bed('harbor',harborGain,[-6,.1,-28],14),bed('wind',windGain),...(rescue?[bed('fire',q.beat===4?.52:.44,[-25.5,1,-9.8],3.4)]:[]),...(night?[bed('q01-quiet-score',.18)]:[])]};}
     return {id,...(profiles[id]||{surface:'stone',decay:.65,beds:[bed('wind',.16)]})};
   }
   function surfaceAt(state,point){
     const p=profile(state),[x,z]=point||[0,0];
+    if(state?.flags?.q01Campaign&&state.chapter===0&&!state.layer){const y=state.spatialPositions?.['Q01.mortal']?.y||0;return (x>=-7.4&&x<=-4.6&&z<-23.5)||(y>2.3&&y<2.9)?'wood':'stone';}
     // These rectangles follow the visible decks in WitnessWorld.decorate.
     if(p.id==='L04'&&x>=-17.4&&x<=-6.2&&z>=-17.8&&z<=-4.2)return 'wood';
     if(p.id==='caesarea'&&x>=11&&x<=23&&z>=-28&&z<=-20)return 'wood';
@@ -131,7 +137,8 @@
         if(bus==='effects'||bus==='voice'){const conv=reverb(bus);if(conv){const send=ctx.createGain();send.gain.value=bus==='voice'?.025:scene.decay>.8?.2:.055;end.connect(send).connect(conv);nodes.push(send);}}
         const item={source:src,gain,bus,loop:!!opt.loop,nodes,stopped:false};active.add(item);if(item.loop)beds.add(item);
         src.onended=()=>{active.delete(item);beds.delete(item);for(const n of nodes)try{n.disconnect();}catch{}opt.onended?.();};
-        src.start(0,opt.loop?Math.random()*Math.max(0,data.duration-.1):0);stats.played++;return item;
+        const offset=opt.loop?Math.random()*Math.max(0,data.duration-.1):clamp(opt.start||0,0,Math.max(0,data.duration-.01));
+        if(!opt.loop&&Number.isFinite(opt.end))src.start(0,offset,Math.max(.01,Math.min(data.duration,opt.end)-offset));else src.start(0,offset);stats.played++;return item;
       }catch(e){if(!failures.has(file)){failures.add(file);stats.missing++;}return null;}
     }
     async function startBeds(){
@@ -142,7 +149,7 @@
       if(startBeds.pending===rev)startBeds.pending=null;
     }
     function setScene(next){
-      state=next;const p=profile(next),key=p.id+':'+(next?.layer?.step>=7&&p.id==='L01'?'passage':'base');
+      state=next;const p=profile(next),key=p.id+':'+(p.variant||(next?.layer?.step>=7&&p.id==='L01'?'passage':'base'));
       if(scene?.key===key)return;
       clearWorld();stopVoice();for(const n of reverbs.values())n.disconnect();reverbs.clear();scene={...p,key};nextWork=0;
       if(p.id==='L01'&&next?.layer?.step>=7)scene.beds=[{sound:'wind',gain:.48},{sound:'flood',gain:.32,at:[-28,.3,-18],ref:10},{sound:'flood',gain:.32,at:[28,.3,-18],ref:10}];
@@ -173,7 +180,7 @@
       const finish=()=>{if(token!==voiceRevision)return;voiceSource=null;clearTimeout(voiceTimer);duck(false);emitVoice(null);options.onSpeechEnd?.();};
       if(entry){
         duck(true);emitVoice({person,name,status:'loading',kind:'recorded',text});
-        const source=await play(entry.file,{bus:'voice',gain:.83,onended:finish});
+        const source=await play(entry.file,{bus:'voice',gain:.83,start:entry.start,end:entry.end,onended:finish});
         if(token!==voiceRevision){drop(source);return false;}
         if(source){voiceSource=source;stats.voiceStarts++;emitVoice({person,name,status:'playing',kind:'recorded',text});caption(name+': '+text,true);return true;}
       }
@@ -313,7 +320,7 @@
       }
       // Q01 mechanical strain proximity audio
       if(!state.layer&&state.chapter===0&&Math.hypot(point[0]-(-14.1),point[1]-3.5)<4.2){
-        const isBraced=(state.workshop?.records?.['Q01.LOAD']||state.workshop?.drafts?.['Q01.LOAD']?.payload?.order||[]).includes('brace');
+        const isBraced=!!state.workshop?.records?.['Q01.LOAD']||(state.workshop?.drafts?.['Q01.LOAD']?.payload?.order||[]).includes('brace');
         if(!isBraced&&now>(tick.nextCreak||0)){
           tick.nextCreak=now+5500+Math.random()*4000;
           effect('wood-strain',{at:[-14.1,.7,3.5],gain:.38,caption:soundNames['wood-strain'],cooldown:4000,cooldownKey:'cart-strain'});

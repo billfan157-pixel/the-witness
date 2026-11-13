@@ -1,0 +1,132 @@
+{
+  "version": 2,
+  "sampleRate": 22050,
+  "channels": 1,
+  "format": "pcm_s16le",
+  "generatedBy": "tools/prepare-q01-sound.cjs",
+  "license": "Project-original deterministic procedural audio [H]",
+  "description": "Physical-modeled ambient beds, material foley and contemplative strings for Q01.",
+  "entries": [
+    {
+      "id": "harbor",
+      "file": "assets/audio/q01/harbor.wav",
+      "bytes": 529244,
+      "durationSeconds": 12,
+      "rms": 0.1734,
+      "peak": 0.56,
+      "energy": 7951.93,
+      "notes": "Mediterranean surf swells, shingle retreat and moored boat wood rub loop",
+      "sha256": "790b7546cee236a1fddf7adb4bd74e147c026167859bc8c9e922c7b2ba66354d"
+    },
+    {
+      "id": "wind",
+      "file": "assets/audio/q01/wind.wav",
+      "bytes": 441044,
+      "durationSeconds": 10,
+      "rms": 0.0912,
+      "peak": 0.38,
+      "energy": 1835.49,
+      "notes": "Caesarea corner drafts and harbor coastal breeze loop",
+      "sha256": "2dac7ffc527de9af60e3a18c5dea4a4852162a6dd1c1b55090b647377cad1e79"
+    },
+    {
+      "id": "fire",
+      "file": "assets/audio/q01/fire.wav",
+      "bytes": 352844,
+      "durationSeconds": 8,
+      "rms": 0.1968,
+      "peak": 0.62,
+      "energy": 6829.18,
+      "notes": "Thermal roar and crackling timber splinters loop",
+      "sha256": "31b1ddcb4a69c708f19be6a031ab3e8d86d70a3bd6ebd5a4584301da9d020ed8"
+    },
+    {
+      "id": "q01-quiet-score",
+      "file": "assets/audio/q01/q01-quiet-score.wav",
+      "bytes": 705644,
+      "durationSeconds": 16,
+      "rms": 0.0494,
+      "peak": 0.42,
+      "energy": 860,
+      "notes": "Karplus-Strong plucked cedar/gut-string contemplation loop",
+      "sha256": "a47fc1532b351732c1ae96c9b3dee73e6f181bc0be635c5623812d7e40866ee2"
+    },
+    {
+      "id": "wood",
+      "file": "assets/audio/q01/wood.wav",
+      "bytes": 30032,
+      "durationSeconds": 0.68,
+      "rms": 0.1026,
+      "peak": 0.66,
+      "energy": 157.69,
+      "notes": "Hand-plane shear grain and cedar bench resonance",
+      "sha256": "73d8972d7149dd5012dea4ee5f99766634ad61bad9aa59542c6b40431fb86554"
+    },
+    {
+      "id": "rope",
+      "file": "assets/audio/q01/rope.wav",
+      "bytes": 33560,
+      "durationSeconds": 0.76,
+      "rms": 0.1049,
+      "peak": 0.64,
+      "energy": 184.24,
+      "notes": "Loaded hemp braid twist and wooden block creak",
+      "sha256": "561ff3e77f804020870c43c4a2637f56dcc5176e9af485a67047a3f61a442640"
+    },
+    {
+      "id": "paper",
+      "file": "assets/audio/q01/paper.wav",
+      "bytes": 25622,
+      "durationSeconds": 0.58,
+      "rms": 0.1034,
+      "peak": 0.56,
+      "energy": 136.76,
+      "notes": "Parchment leaf turn and quill scrape grain",
+      "sha256": "853f4cb10934fc4c6c0ac788089ea95a318bd0afb7845d9d46402ff12ac9655f"
+    },
+    {
+      "id": "cloth",
+      "file": "assets/audio/q01/cloth.wav",
+      "bytes": 25622,
+      "durationSeconds": 0.58,
+      "rms": 0.0884,
+      "peak": 0.5,
+      "energy": 99.86,
+      "notes": "Heavy woven wool mantle brush",
+      "sha256": "a8c8922fcfc784ad8a1ec04b81a7171061939e6110faa1f5bc7c922b0bf77f4e"
+    },
+    {
+      "id": "step-stone",
+      "file": "assets/audio/q01/step-stone.wav",
+      "bytes": 15920,
+      "durationSeconds": 0.36,
+      "rms": 0.0914,
+      "peak": 0.6,
+      "energy": 66.32,
+      "notes": "Limestone quay pavement stride with stone reflection",
+      "sha256": "b23e1251abbd63d633c91e89585f126518968f40999a64e35a3da34ad025706f"
+    },
+    {
+      "id": "step-wood",
+      "file": "assets/audio/q01/step-wood.wav",
+      "bytes": 16802,
+      "durationSeconds": 0.38,
+      "rms": 0.1127,
+      "peak": 0.6,
+      "energy": 106.46,
+      "notes": "Seasoned timber deck/stair stride with deck resonance",
+      "sha256": "a9e2b8b990f3b922667cc39783b9cbdebf67275997bcd701f9c7cf5dda1efcc2"
+    },
+    {
+      "id": "q01-bell",
+      "file": "assets/audio/q01/q01-bell.wav",
+      "bytes": 127934,
+      "durationSeconds": 2.9,
+      "rms": 0.1614,
+      "peak": 0.72,
+      "energy": 1665.55,
+      "notes": "Cast-bronze harbor watch bell with inharmonic bronze partials",
+      "sha256": "bd0c454855a3a98939503e070efeeab7ed965bbb09c54379b3311292f9f1af11"
+    }
+  ]
+}

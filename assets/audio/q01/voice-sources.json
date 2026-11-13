@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "evidence": "H",
+  "kind": "AI-generated fictional character speech",
+  "status": "generated-awaiting-human-audio-review",
+  "file": "assets/audio/q01/natan-night.mp3",
+  "sha256": "801e32dd47455502b43fdf2c64c2e56945e847c9ec8b0c38ef9d2181e067755c",
+  "provider": "ElevenLabs",
+  "model": "eleven_v4",
+  "voice": {
+    "id": "ZsjEJaLQy3sgvwxicmDx",
+    "name": "Quang Toan – Deep Vietnamese Storyteller"
+  },
+  "flowId": "dNgSp1YPc2drSe5XU6T5",
+  "generationId": "GUzMYCIZH2rUu4Scc0sr",
+  "durationSeconds": 14.24,
+  "sourceScript": "docs/the-witness/07-vertical-slice-screenplay.md#q01-beat-07",
+  "alignment": "Provider Scribe word timing, manually mapped to five runtime sentences; no claim of human performance or independent listening approval.",
+  "usage": "Generated output through the connected account; subject to ElevenLabs account terms. No CC0 claim.",
+  "coverage": "Five Natan sentences only. Other character recordings are incomplete; additional generation was unavailable."
+}

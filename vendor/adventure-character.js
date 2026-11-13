@@ -451,11 +451,18 @@
     body.castShadow = true;
     body.updateMorphTargets();
 
-    const material = (color, kind, vertexColors = true) => AdventureVisuals.surface(new T.MeshStandardMaterial({
-      color, side: T.DoubleSide, roughness: 1, vertexColors,
-      normalMap: textile(T, kind), roughnessMap: textileRoughness(T, kind),
-      normalScale: new T.Vector2(kind === "haircloth" ? .18 : .045, .045)
-    }), kind === "leather" ? "bark" : kind === "linen" ? "linen" : "wool", true);
+    const material = (color, kind, vertexColors = true) => {
+      const m = new T.MeshStandardMaterial({
+        color, side: T.DoubleSide, roughness: 1, vertexColors,
+        normalMap: textile(T, kind), roughnessMap: textileRoughness(T, kind),
+        normalScale: new T.Vector2(kind === "haircloth" ? .18 : .045, .045)
+      });
+      // Garments already carry woven normal/roughness maps. A second terrain
+      // relief layer produces harsh polygon-sized patches on a moving rig.
+      m.name = "woven-" + kind + "-normal-roughness";
+      m.customProgramCacheKey = () => "witness-woven-pbr-" + kind;
+      return kind === "leather" ? AdventureVisuals.surface(m, "bark", true) : m;
+    };
     const mainCloth = material(palette[0], look.cloth);
     const trim = new T.MeshStandardMaterial({ color: palette[2], roughness: .94 });
     const leather = material("#594634", "leather", false);
@@ -547,7 +554,7 @@
       for (let r = 0; r < rows; r++) {
         const t = r / (rows - 1);
         const y = T.MathUtils.lerp(waistY, hem, t);
-        const width = T.MathUtils.lerp(.190, .300, t), depth = T.MathUtils.lerp(.150, .200, t);
+        const width = T.MathUtils.lerp(.190, .325, t), depth = T.MathUtils.lerp(.150, .230, t);
         for (let c = 0; c < cols; c++) {
           const angle = c / cols * Math.PI * 2;
           const radius = foldRadius(y, angle, look.cloth === "haircloth" ? .105 : .075);
@@ -768,8 +775,8 @@
         [headPoint[1] - .04, .132, .135], [headPoint[1] + .015, .135, .136],
         [headTop - .08, .134, .132], [headTop - .025, .118, .120], [headTop + .016, .054, .065], [headTop + .026, .002, .008]
       ] : [
-        [bottom, .213, .169], [bottom + .04, .209, .167], [neckY - .05, .173, .153],
-        [headPoint[1] + .015, .145, .145], [headTop - .09, .142, .138],
+        [bottom, .246, .178], [bottom + .04, .240, .174], [neckY - .05, .226, .162],
+        [headPoint[1] + .015, .148, .145], [headTop - .09, .142, .138],
         [headTop - .025, .116, .119], [headTop + .014, .06, .072], [headTop + .026, .002, .009]
       ];
       const headcloth = fabricSurface(rows, wrapped ? .45 : .64, Math.PI * 2 - (wrapped ? .90 : 1.28), 48, .065, "headcloth");
@@ -999,8 +1006,9 @@
     let liveRenderer = null;
     let clothActive = true;
     const clothWind = new T.Vector3(), clothInertia = new T.Vector3();
+    const clothToLocal = new T.Matrix4(), clothPinFrame = new T.Matrix4(), clothBindOffset = new T.Matrix4(), clothPin = new T.Vector3();
     let prevRootX = 0, prevRootZ = 0, prevVelX = 0, prevVelZ = 0;
-    function animate(time, pace = 0, heading, posture = "idle", progress = 0) {
+    function animate(time, pace = 0, heading, posture = "idle", progress = 0, poseOptions = {}) {
       const speaking = posture === "talk" || posture === "seated-talk";
       const delta = previous === null ? 1 / 60 : Math.max(1 / 240, Math.min(.06, time - previous));
       previous = time;
@@ -1027,6 +1035,11 @@
       const weightShift = Math.sin(time * .58 + phase) * (1 - Math.min(1, motion * 2)) * (1 - crouch) * (1 - seated);
       bone("pelvis").position.x += sway + weightShift * .006;
       bone("pelvis").position.y += Math.abs(Math.sin(gait)) * .019 * motion - crouch * .45 - seated * .43 + breath * .0028;
+      // A bench can sit behind the standing capsule. Shift the seated rig,
+      // including cloth pins below, while the actor's physical root stays put.
+      const seatOffset = poseOptions.seatOffset;
+      if (Array.isArray(seatOffset) && seatOffset.length === 3 && seatOffset.every(Number.isFinite))
+        bone("pelvis").position.addScaledVector(new T.Vector3(...seatOffset), seated);
       bone("pelvis").rotation.y = step * .035;
       bone("pelvis").rotation.z = weightShift * .016;
       bone("spine_03").position.z += Math.max(0, breath) * .003;
@@ -1085,8 +1098,10 @@
         const calfBend = Math.PI - kneeInterior;
         const hipAlpha = Math.acos(T.MathUtils.clamp((legL1 * legL1 + reach * reach - legL2 * legL2) / (2 * legL1 * reach), -1, 1));
         const phi = Math.atan2(dz, dy);
-        const thighRot = -(phi + hipAlpha) - crouch * .25 - seated * 1.35;
-        const calfRot = calfBend + crouch * 1.88 + seated * 1.42;
+        // Sitting replaces the standing IK solution instead of adding a second
+        // hip/knee bend to its already shortened reach.
+        const thighRot = (-(phi + hipAlpha) - crouch * .25) * (1 - seated) - seated * 1.35;
+        const calfRot = (calfBend + crouch * 1.88) * (1 - seated) + seated * 1.42;
         bone("thigh_" + suffix).rotation.x = thighRot;
         bone("calf_" + suffix).rotation.x = calfRot;
         bone("foot_" + suffix).rotation.x = -terrainPitch * .82 - (thighRot + calfRot) * .55 - crouch * 1.2;
@@ -1180,15 +1195,69 @@
         bone("lowerarm_r").rotation.set(-.58, 0, 0);
       }
       if (posture === "tend") {
-        bone("spine_03").rotation.x += look.gesture === "read" ? .06 : .13;
-        bone("head").rotation.x += .18;
-        const handwork = Math.sin(time * (look.gesture === "read" ? .8 : 2.3) + phase);
-        bone("upperarm_r").rotation.x -= .38 + handwork * .10;
-        bone("lowerarm_r").rotation.x -= .47;
-        bone("upperarm_l").rotation.x -= .32;
-        bone("lowerarm_l").rotation.x -= .51 - handwork * .07;
-        bone("hand_r").rotation.y += handwork * .14;
+        const work = poseOptions.work;
+        if (work === "plane") {
+          const stroke = Math.sin(time * 3.1 + phase);
+          bone("spine_03").rotation.x += .18 + stroke * .045;
+          bone("head").rotation.x += .22;
+          bone("upperarm_r").rotation.x = -.52 - stroke * .24;
+          bone("lowerarm_r").rotation.x = -.64 + stroke * .22;
+          bone("upperarm_l").rotation.x = -.48 - stroke * .22;
+          bone("lowerarm_l").rotation.x = -.62 + stroke * .20;
+        } else if (work === "saw") {
+          const stroke = Math.sin(time * 4.4 + phase);
+          bone("spine_03").rotation.x += .16 + stroke * .035;
+          bone("spine_03").rotation.y += -.08 + stroke * .04;
+          bone("head").rotation.x += .20;
+          bone("upperarm_r").rotation.x = -.42 - stroke * .28;
+          bone("lowerarm_r").rotation.x = -.58 + stroke * .26;
+          bone("upperarm_l").rotation.x = -.38;
+          bone("lowerarm_l").rotation.x = -.52;
+        } else if (work === "heave") {
+          const pull = Math.sin(time * 5.2 + phase) * .08 + (progress || .5) * .12;
+          bone("spine_03").rotation.x += .22 - pull * .35;
+          bone("head").rotation.x += .08;
+          bone("upperarm_r").rotation.x = -.68 + pull;
+          bone("lowerarm_r").rotation.x = -.95 - pull * .6;
+          bone("upperarm_l").rotation.x = -.66 + pull;
+          bone("lowerarm_l").rotation.x = -.92 - pull * .6;
+        } else if (work === "hearth") {
+          const stir = Math.sin(time * 2.2 + phase);
+          bone("spine_03").rotation.x += .10;
+          bone("head").rotation.x += .14;
+          bone("upperarm_r").rotation.x = -.46 + stir * .08;
+          bone("lowerarm_r").rotation.x = -.68;
+          bone("upperarm_r").rotation.y = stir * .08;
+          bone("upperarm_l").rotation.x = -.32;
+          bone("lowerarm_l").rotation.x = -.76;
+        } else {
+          bone("spine_03").rotation.x += look.gesture === "read" ? .06 : .13;
+          bone("head").rotation.x += .18;
+          const handwork = Math.sin(time * (look.gesture === "read" ? .8 : 2.3) + phase);
+          bone("upperarm_r").rotation.x -= .38 + handwork * .10;
+          bone("lowerarm_r").rotation.x -= .47;
+          bone("upperarm_l").rotation.x -= .32;
+          bone("lowerarm_l").rotation.x -= .51 - handwork * .07;
+          bone("hand_r").rotation.y += handwork * .14;
+        }
       }
+      if (poseOptions.work === "rope-seated" && posture.startsWith("seated")) {
+        const twist = Math.sin(time * 1.45 + phase);
+        bone("spine_03").rotation.x += .07;
+        bone("head").rotation.x += speaking ? .04 : .11;
+        bone("upperarm_r").rotation.x = -.34 + twist * .045;
+        bone("lowerarm_r").rotation.x = -.82 - twist * .06;
+        bone("upperarm_l").rotation.x = -.32 - twist * .03;
+        bone("lowerarm_l").rotation.x = -.78 + twist * .05;
+        bone("hand_r").rotation.z = -.18 + twist * .12;
+      }
+      if (poseOptions.work === "point" && !posture.startsWith("seated")) {
+        const reach = Math.sin(time * 1.8 + phase) * .04;
+        bone("upperarm_r").rotation.set(-.76 + reach, -.18, .22);
+        bone("lowerarm_r").rotation.set(-.34, 0, 0);
+      }
+      if (Number.isFinite(poseOptions.headPitch)) bone("head").rotation.x += T.MathUtils.clamp(poseOptions.headPitch, -.28, .28);
+      if (Number.isFinite(poseOptions.headYaw)) bone("head").rotation.y += T.MathUtils.clamp(poseOptions.headYaw, -.35, .35);
       if (posture === "carry" || (["basket", "jar"].includes(look.item) && !["tend", "cross"].includes(posture))) {
         for (const suffix of ["l", "r"]) {
           bone("upperarm_" + suffix).rotation.x = -.35;
@@ -1228,13 +1297,15 @@
       const blink = 1 - T.MathUtils.clamp(Math.abs(((time + phase) % 4.67) - 2.1) / .075, 0, 1);
       body.morphTargetInfluences[0] = blink;
       body.morphTargetInfluences[1] = blink;
-      const speechCadence = Math.max(0, Math.sin(time * 2.2));
-      const phonemes = Math.sin(time * 8.6) * .55 + Math.sin(time * 14.2) * .32 + Math.sin(time * 22.0) * .13;
+      const speechSeed = Number.isFinite(poseOptions.speechSeed) ? poseOptions.speechSeed : phase;
+      const speechBreath = Math.pow(.5 + .5 * Math.sin(time * 1.18 + speechSeed), .32);
+      const speechCadence = (.44 + .56 * (.5 + .5 * Math.sin(time * 2.75 + speechSeed * 1.7))) * speechBreath;
+      const phonemes = Math.sin(time * 9.2 + speechSeed) * .52 + Math.sin(time * 15.1 + speechSeed * 2.1) * .33 + Math.sin(time * 23.4) * .15;
       body.morphTargetInfluences[2] = speaking ?
-        speechCadence * Math.max(0, phonemes * .26 + .06) : 0;
+        speechCadence * (0.055 + Math.max(0, phonemes) * .28) : 0;
       groom.jawOpen.value = body.morphTargetInfluences[2];
-      body.morphTargetInfluences[3] = (look.gesture === "teach" || speaking ? .20 : .08) + Math.sin(time * .6 + phase) * .035;
-      body.morphTargetInfluences[4] = speaking ? .20 + Math.sin(time * .9) * .08 : .10;
+      body.morphTargetInfluences[3] = (look.gesture === "teach" || speaking ? .22 : .08) + Math.sin(time * .65 + phase) * .04;
+      body.morphTargetInfluences[4] = speaking ? .22 + Math.sin(time * 1.05 + speechSeed) * .08 : .10;
       const tremorY = Math.sin(time * 19.3 + phase) * .0025;
       const tremorX = Math.sin(time * 23.7 + phase) * .0018;
       const gazeDart = Math.sin(time * 1.7 + phase) > .8 ? (Math.sin(time * 3.4) * .016) : 0;
@@ -1256,31 +1327,60 @@
       // stride inertia, body capsules and the sampled ground/stair height.
       if (clothLayers.length && clothActive) {
         const yaw = root.rotation.y, cosH = Math.cos(yaw), sinH = Math.sin(yaw);
-        const gust = .7 + Math.sin(time * .7 + phase) * .35 + motion * .5;
-        const wx = (Math.sin(time * .43 + phase) * .5 + .9) * gust, wz = Math.cos(time * .31 + phase) * .5 * gust;
+        const gust = (.32 + Math.sin(time * .7 + phase) * .16 + motion * .45) * (1 - seated * .75);
+        const wx = (Math.sin(time * .43 + phase) * .55 + .22) * gust, wz = Math.cos(time * .31 + phase) * .45 * gust;
         clothWind.set(wx * cosH + wz * sinH, 0, -wx * sinH + wz * cosH);
         const velX = (root.position.x - prevRootX) / delta, velZ = (root.position.z - prevRootZ) / delta;
         const accX = T.MathUtils.clamp((velX - prevVelX) / delta, -9, 9), accZ = T.MathUtils.clamp((velZ - prevVelZ) / delta, -9, 9);
         prevRootX = root.position.x; prevRootZ = root.position.z; prevVelX = velX; prevVelZ = velZ;
         clothInertia.set(-accX * .012 + step * motion * .12, 0, -accZ * .012 + Math.sin(gait) * motion * .2);
-        const pelvisDelta = bone("pelvis").position.y - rest[jointIndex("pelvis")].y;
+        const pelvisShift = bone("pelvis").position.clone().sub(rest[jointIndex("pelvis")]);
+        const pelvisDelta = pelvisShift.y;
         const groundLocal = (typeof root.userData.heightAt === "function" ? root.userData.heightAt(root.position.x, root.position.z) : root.position.y) - root.position.y + .012;
-        const capsules = [
-          { a: [0, pelvisY + pelvisDelta, 0], b: [0, shoulderY + pelvisDelta, 0], r: .165 }
-        ];
+        root.updateMatrixWorld(true);
+        clothToLocal.copy(root.matrixWorld).invert();
+        const boneLocal = (name, out) => out.setFromMatrixPosition(bone(name).matrixWorld).applyMatrix4(clothToLocal);
+        const knees = {}, legCaps = ["l", "r"].flatMap(suffix => {
+          const hip = boneLocal("thigh_" + suffix, new T.Vector3()), knee = boneLocal("calf_" + suffix, new T.Vector3()), ankle = boneLocal("foot_" + suffix, new T.Vector3());
+          knees[suffix] = knee;
+          const lowShin = knee.clone().lerp(ankle, .94);
+          return [
+            { a: [hip.x, hip.y, hip.z], b: [knee.x, knee.y, knee.z], r: seated > .25 ? .132 : .108 },
+            { a: [knee.x, knee.y, knee.z], b: [lowShin.x, lowShin.y, lowShin.z], r: seated > .25 ? .122 : .102 }
+          ];
+        });
+        if (seated > .25 && knees.l && knees.r) legCaps.push({ a: [knees.l.x, knees.l.y, knees.l.z], b: [knees.r.x, knees.r.y, knees.r.z], r: .132 });
+        const spineForward = Math.sin(bone("spine_03").rotation.x) * .28;
+        const torsoCap = { a: [pelvisShift.x, pelvisY + pelvisDelta - .02, pelvisShift.z + .01], b: [pelvisShift.x, shoulderY + pelvisDelta - .03, pelvisShift.z + spineForward + .02], r: .176 };
+        const chestCap = { a: [pelvisShift.x - .085, shoulderY + pelvisDelta - .11, pelvisShift.z + spineForward * .7 + .042], b: [pelvisShift.x + .085, shoulderY + pelvisDelta - .11, pelvisShift.z + spineForward * .7 + .042], r: .124 };
+        const yokeCap = { a: [pelvisShift.x - .10, shoulderY + pelvisDelta - .03, pelvisShift.z + spineForward * .5], b: [pelvisShift.x + .10, shoulderY + pelvisDelta - .03, pelvisShift.z + spineForward * .5], r: .102 };
+        const skirtShape = Math.round(55 * (1 - seated) + 42 * seated);
         for (const layer of clothLayers) {
           const ud = layer.mesh.userData;
           const cols = ud.restPin.length / 3;
           if (!ud.pinBuf) ud.pinBuf = new Float32Array(ud.restPin.length);
-          const bDelta = bone(ud.pinBone).position.clone().sub(rest[jointIndex(ud.pinBone)]);
+          // The shoulder inherits the pelvis pose. Its local position alone
+          // misses that movement and leaves the mantle at standing height.
+          const bind = joint(ud.pinBone);
+          clothBindOffset.makeTranslation(-bind[0], -bind[1], -bind[2]);
+          clothPinFrame.copy(clothToLocal).multiply(bone(ud.pinBone).matrixWorld).multiply(clothBindOffset);
           for (let c = 0; c < cols; c++) {
-            ud.pinBuf[c * 3] = ud.restPin[c * 3] + bDelta.x;
-            ud.pinBuf[c * 3 + 1] = ud.restPin[c * 3 + 1] + bDelta.y;
-            ud.pinBuf[c * 3 + 2] = ud.restPin[c * 3 + 2] + bDelta.z;
+            clothPin.fromArray(ud.restPin, c * 3).applyMatrix4(clothPinFrame).toArray(ud.pinBuf, c * 3);
+          }
+          const isMantle = layer === mantleSim;
+          let restFrame = clothPinFrame;
+          if (!isMantle && seated > .01) {
+            if (!ud.seatMats) ud.seatMats = [new T.Matrix4(), new T.Matrix4(), new T.Matrix4(), new T.Matrix4()];
+            const [res, pivA, rotX, pivB] = ud.seatMats;
+            pivA.makeTranslation(0, pelvisY - .02, 0);
+            rotX.makeRotationX(-seated * 1.05);
+            pivB.makeTranslation(0, -(pelvisY - .02), 0);
+            restFrame = res.copy(clothPinFrame).multiply(pivA).multiply(rotX).multiply(pivB);
           }
           layer.update(delta, {
             renderer: liveRenderer, time, wind: clothWind.toArray(), inertia: clothInertia.toArray(),
-            gravity: 9.8, capsules, groundY: groundLocal, pinTargets: ud.pinBuf, stiffness: .8, shape: ud.shape ?? 26
+            gravity: 9.8, capsules: isMantle ? [torsoCap, chestCap, yokeCap] : [torsoCap, ...legCaps],
+            groundY: groundLocal, pinTargets: ud.pinBuf, restFrame, stiffness: isMantle ? .84 : .8, shape: isMantle ? 30 : Math.min(ud.shape ?? 26, skirtShape)
           });
         }
         if (mantleSim) for (const fringe of fringes) {

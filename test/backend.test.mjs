@@ -9,7 +9,10 @@ import Model from '../witness-model.js';
 
 test('production Worker and D1: authorization, durable saves, conflict and recovery',async t=>{
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'witness-backend-test-')),scriptPath=path.join(dir,'worker.mjs');
-  await build({entryPoints:['server/worker.mjs'],outfile:scriptPath,bundle:true,format:'esm',platform:'browser',target:'es2022'});
+  // This fixture may perform 90 D1 writes across a real minute boundary. Keep
+  // the Worker's clock in one bucket; production keeps its unmodified clock.
+  const fixtureNow=Date.now();
+  await build({entryPoints:['server/worker.mjs'],outfile:scriptPath,bundle:true,format:'esm',platform:'browser',target:'es2022',banner:{js:`Date.now=()=>${fixtureNow};`}});
   const config={modules:true,scriptPath,modulesRoot:dir,compatibilityDate:'2026-07-30',d1Databases:['DB'],d1Persist:path.join(dir,'d1')};
   let mf=new Miniflare(config);
   try{
@@ -97,6 +100,11 @@ test('production Worker and D1: authorization, durable saves, conflict and recov
       for(let n=0;n<90;n++)assert.equal((await send('/api/account',{user:'limited',method:'PUT',data:{displayName:'Test'}})).status,200);
       const limited=await send('/api/account',{user:'limited',method:'PUT',data:{displayName:'Test'}});assert.equal(limited.status,429);assert.equal(limited.headers.get('retry-after'),'60');
       assert.equal((await send('/api/account',{user:'limited'})).status,200);
+      assert.deepEqual(await db.prepare('SELECT window_start,request_count FROM write_limits WHERE user_id=?').bind('limited').first(),{window_start:Math.floor(fixtureNow/60000),request_count:91});
+      assert.equal((await send('/api/account',{user:'rollover',method:'PUT',data:{displayName:'Test'}})).status,200);
+      await db.prepare('UPDATE write_limits SET window_start=?,request_count=90 WHERE user_id=?').bind(Math.floor(fixtureNow/60000)-1,'rollover').run();
+      assert.equal((await send('/api/account',{user:'rollover',method:'PUT',data:{displayName:'Test'}})).status,200);
+      assert.equal((await db.prepare('SELECT request_count FROM write_limits WHERE user_id=?').bind('rollover').first()).request_count,1);
     });
     await t.test('account erasure cascades to saves, history, audit and limits for that account only',async()=>{
       assert.equal((await send('/api/account',{user:'player_B',method:'DELETE',data:{confirm:'no'}})).status,422);
@@ -107,6 +115,7 @@ test('production Worker and D1: authorization, durable saves, conflict and recov
     await t.test('D1 data survives destroying and restarting the Worker runtime',async()=>{
       await mf.dispose();mf=new Miniflare(config);
       const response=await send('/api/saves/2');assert.equal(response.status,200);assert.equal(response.data.save.revision,14);assert.equal(response.data.save.state.flags.iteration,2);
+      assert.equal((await send('/api/account',{user:'limited',method:'PUT',data:{displayName:'Test'}})).status,429);
     });
     await t.test('Q01 v6 scene state round-trips through Worker/D1 and invalid scenes are rejected',async()=>{
       const seq=[['disembark'],['stranger',{response:'follow'}],['ledgerSeam'],['fire'],['rescueRoute',{route:'manual'}],['rescueStep',{step:'workers'}],['rescueStep',{step:'lever'}],['rescueStep',{step:'exit'}],['rescueStep',{step:'extract'}],['rooftop'],['yosefPrivacy'],['recallT05'],['observeB06']];
@@ -133,6 +142,14 @@ test('production Worker and D1: authorization, durable saves, conflict and recov
       const base2=(await send('/api/saves/2')).data.save?.revision||0;
       assert.equal((await send('/api/saves/2',{method:'PUT',data:payload(mid,base2)})).status,200);
       assert.deepEqual((await send('/api/saves/2')).data.save.state.sceneProgress.Q01,mid.sceneProgress.Q01);
+      let campaign=Model.beginQ01Scene(Model.fresh({name:'Campaign Player'}),{campaign:true});
+      campaign.spatialPositions['Q01.mortal']={schema:1,x:-6,y:0,z:-22,supportId:'world'};
+      campaign=Model.q01SceneEvent(campaign,'disembark');
+      const actual=await send('/api/saves/3',{method:'PUT',data:payload(campaign,got.revision)});assert.equal(actual.status,200);
+      const restored=(await send('/api/saves/3')).data.save.state;
+      assert.equal(restored.flags.q01Campaign,true);assert.deepEqual(restored.spatialPositions,campaign.spatialPositions);assert.deepEqual(restored.sceneProgress,campaign.sceneProgress);
+      const malformed=Model.fresh();malformed.flags.q01Campaign=true;
+      assert.equal((await send('/api/saves/3',{method:'PUT',data:payload(malformed,actual.data.save.revision)})).status,422);
     });
   }finally{await mf.dispose();fs.rmSync(dir,{recursive:true,force:true});}
 });

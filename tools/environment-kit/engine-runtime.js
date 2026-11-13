@@ -50,6 +50,9 @@ function hS(s) {
     if (b === B && y && !ft) return;
     ae(), y && ig(y), _.clear(), m.clear(), y = new Zs(), T = j0(y, B, !n && i.shadowMap.enabled, nt), AdventureVisuals.environment(bn, i, y, T.layout.biome), Bt?.setBiome(T.layout.biome), g = T.obstacles, b = B, v = B;
     T.night=!!AdventureVisuals.atmosphere(T.layout.biome).night;
+    // Retire starter terrain obstacles for the authored level. St() still adds
+    // the current campaign's real craft/prop solids to g; do not bypass those.
+    if(T.layout.authoredPhysics){T.obstacles=[];g=T.obstacles;T.blocked=()=>false;T.cameraVolumes=[];}
     if(T.layout.q01Gold&&globalThis.WitnessQ01){
       const clear=globalThis.WitnessQ01.clearLand,blocked=T.blocked;
       T.obstacles=T.obstacles.filter(([x,z,r])=>!clear(x,z,r)&&z>=-22.4);g=T.obstacles;
@@ -266,9 +269,10 @@ function hS(s) {
       const target = inspectFrame.at, ground = groundHeight(target[0], target[1]);
       const yaw = inspectFrame.bearing, distance = inspectFrame.distance;
       o.set(target[0], ground + inspectFrame.height, target[1]);
-      l.set(target[0] + Math.sin(yaw) * distance, ground + inspectFrame.height + distance * 0.45, target[1] + Math.cos(yaw) * distance);
-      origin = new R(target[0], ground + 0.1, target[1]);
-      w.object.visible = false;
+      if(inspectFrame.camera)l.set(...inspectFrame.camera);
+      else l.set(target[0] + Math.sin(yaw) * distance, ground + inspectFrame.height + distance * 0.45, target[1] + Math.cos(yaw) * distance);
+      origin = inspectFrame.camera ? player : new R(target[0], ground + 0.1, target[1]);
+      w.object.visible = !!inspectFrame.showPlayer;
     } else if (portrait) {
       const subject = speaker.object.position;
       const bearing = ni(De(subject), De(player)) + 0.24;
@@ -316,7 +320,7 @@ function hS(s) {
       o.z -= Math.sin(bearing) * framing;
       origin = player;
     }
-    l.y = Math.max(l.y, groundHeight(l.x, l.z) + 1.25);
+    if(!inspectFrame?.camera)l.y = Math.max(l.y, groundHeight(l.x, l.z) + 1.25);
     h.origin.set(origin.x, origin.y + 1.3, origin.z);
     h.direction.copy(l).sub(h.origin);
     const wanted = h.direction.length();
@@ -365,11 +369,12 @@ function hS(s) {
       a.fov = fov;
       a.updateProjectionMatrix();
     }
+    const trackedCamera=inspectFrame?.cameraTracking?{x:a.position.x,y:a.position.y,z:a.position.z}:null;
     a.position.lerp(l, blend);
     if(architecture()) {
-      const eye={x:player.x,y:player.y+1.45,z:player.z},clipped=architecture().camera(eye,a.position);
+      const eye={x:player.x,y:player.y+1.45,z:player.z},clipped=architecture().camera(trackedCamera||eye,a.position);
       a.position.set(clipped.x,clipped.y,clipped.z);
-      if(!fpActive&&Math.hypot(clipped.x-eye.x,clipped.y-eye.y,clipped.z-eye.z)<1.05)w.object.visible=false;
+      if(!fpActive&&!inspectFrame?.showPlayer&&Math.hypot(clipped.x-eye.x,clipped.y-eye.y,clipped.z-eye.z)<1.05)w.object.visible=false;
     }
     a.lookAt(o);
     a.updateMatrixWorld();
@@ -519,6 +524,9 @@ function hS(s) {
   return { inspect(at2, options = {}) {
     if (!Array.isArray(at2) || at2.length !== 2 || !at2.every(Number.isFinite)) return;
     inspectFrame = { at: [...at2], height: Number.isFinite(options.height) ? options.height : 0.85, distance: Math.max(1.6, Math.min(5, Number(options.distance) || 2.8)), bearing: Number.isFinite(options.bearing) ? options.bearing : 0.65 };
+    // Local cinematic framing still uses the normal swept camera clearance.
+    // It cannot move the avatar or open a target across the scene.
+    if(Array.isArray(options.camera)&&options.camera.length===3&&options.camera.every(Number.isFinite)&&w&&Math.hypot(options.camera[0]-w.object.position.x,options.camera[1]-w.object.position.y,options.camera[2]-w.object.position.z)<=10){inspectFrame.camera=[...options.camera];inspectFrame.showPlayer=!!options.showPlayer;inspectFrame.cameraTracking=!!options.cameraTracking;}
     z = true;
     U = [0, 0];
     C = null;

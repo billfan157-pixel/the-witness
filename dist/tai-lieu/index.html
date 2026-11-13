@@ -1,4 +1,4 @@
-<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>THE WITNESS · Nguồn chuẩn</title><style>*{box-sizing:border-box}body{margin:0;background:#f5f2eb;color:#202f2e;font:17px/1.7 system-ui}aside{position:fixed;inset:0 auto 0 0;width:280px;padding:24px;overflow:auto;background:#e9e3d7}nav a{display:block;margin:9px 0;font-size:14px}main{margin-left:280px;max-width:1100px;padding:40px}article{padding:24px 0;border-bottom:1px solid #bdb6a7;overflow-wrap:anywhere}h1,h2,h3{line-height:1.3}a{color:#745120}input,select,button{max-width:100%;font:inherit;padding:7px;margin:7px 0}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #bdb6a7;padding:8px;text-align:left}pre{white-space:pre-wrap}img{max-width:100%}[hidden]{display:none!important}@media(max-width:800px){aside{position:static;width:auto}main{margin:0;padding:22px}table{display:block;overflow:auto}}@media print{aside,.no-print{display:none}main{margin:0}article{break-before:page}}</style><body><aside><strong>THE WITNESS</strong><p>6 trang lõi · chi tiết theo nhu cầu</p><input id="search" aria-label="Tìm tài liệu"><div id="result" role="status"></div><select id="quest-jump" aria-label="Chapter"><option value="">Q01–Q12</option><option value="#chapter-11-q01">Q01</option><option value="#chapter-11-q02">Q02</option><option value="#chapter-11-q03">Q03</option><option value="#chapter-11-q04">Q04</option><option value="#chapter-11-q05">Q05</option><option value="#chapter-11-q06">Q06</option><option value="#chapter-11-q07">Q07</option><option value="#chapter-11-q08">Q08</option><option value="#chapter-11-q09">Q09</option><option value="#chapter-11-q10">Q10</option><option value="#chapter-11-q11">Q11</option><option value="#chapter-11-q12">Q12</option></select><select id="legend-jump" aria-label="Legend"><option value="">Legends</option><option value="#chapter-14-l01">L01</option><option value="#chapter-14-l02">L02</option><option value="#chapter-14-l04">L04</option></select><nav><a href="#overview">Nguồn chuẩn của THE WITNESS</a><a href="#core-product">Hợp đồng sản phẩm</a><a href="#core-story">Nguồn nội dung và thiết kế truyện</a><a href="#core-engineering">Nguồn kỹ thuật và pipeline</a><a href="#core-operations">Cách làm việc và cập nhật nguồn</a><a href="#core-status">Trạng thái và quyết định cần biết</a><a href="#reference-docs-environment-kit-readme-md">Môi trường THE WITNESS — chỉ mục</a><a href="#reference-docs-environment-kit-look-bible-md">Định hướng hình ảnh bộ tài nguyên môi trường</a><a href="#reference-docs-environment-kit-phase-3-md">Kiến trúc đi lại được tại Q01</a><a href="#reference-docs-environment-kit-phase-b-md">Giai đoạn B — Q01 Environment Art</a><a href="#reference-docs-environment-kit-q01-gold-scene-md">Q01 — bản cảnh mẫu để duyệt hình ảnh</a><a href="#reference-docs-environment-kit-research-q01-gold-materials-md">Q01 — căn cứ vật liệu và nhân vật chuẩn</a><a href="#reference-docs-environment-kit-research-q01-phase-b-materials-md">Q01 Phase B — vật liệu, mép cảng và chuyển tiếp vào kho</a><a href="#reference-docs-environment-kit-research-source-register-md">Nguồn tham chiếu môi trường Q01 và L04</a><a href="#reference-docs-environment-kit-roadmap-md">Lộ trình phát triển bộ tài nguyên môi trường THE WITNESS</a><a href="#reference-docs-environment-kit-standards-md">Tiêu chuẩn bộ tài nguyên môi trường</a><a href="#chapter-02">02 • Game Design Document</a><a href="#chapter-03">03 • Narrative Bible (Kịch bản Tổng hợp &amp; Scene Bible C+ · v6.0)</a><a href="#chapter-04">04 • World Bible</a><a href="#chapter-05">05 • Character Bible (Story Bible v6.0 — C+ Synthesis)</a><a href="#chapter-06">06 • Chiến dịch và nhiệm vụ</a><a href="#chapter-07">07 • Kịch bản phân cảnh trục mở màn — Prologue Q01, Chapter Q03 &amp; Legend L01</a><a href="#chapter-08">08 • Tài liệu tham chiếu Kinh Thánh và chuyển thể</a><a href="#chapter-10">10 • Nguồn nghiên cứu và sổ luận cứ</a><a href="#chapter-11">11 • Hồ sơ chiều sâu 12 cầu nối Mortal</a><a href="#chapter-12">12 • Sự thật nền, continuity và hệ quả (Story Bible v6.0 — C+ Synthesis)</a><a href="#chapter-14">14 • Hồ sơ chiều sâu Legends — Ba chương trục truyện</a><a href="#chapter-15">15 • Packet nguồn, thế giới và danh sách duyệt</a><a href="#chapter-18">18 • Chi tiết cảnh, thoại và dấu trở lại</a><a href="#chapter-19">19 • Protocol kiểm tra chiều sâu trải nghiệm</a><a href="#chapter-22">Graphics rendering upgrade</a><a href="#chapter-23">Backend, tài khoản và bản lưu đám mây — 0.7.0</a><a href="#chapter-24">24 — Nghiên cứu điều khiển và trải nghiệm người dùng</a><a href="#reference-docs-the-witness-production-status-and-changelog-md">PRODUCTION STATUS, RUNTIME GAPS &amp; VERSION CHANGELOG</a><a href="#reference-docs-the-witness-readme-md">THE WITNESS — Legacy of the Covenant</a></nav><button id="print">In / PDF</button></aside><main><header><h1>Chứng Nhân: Di Sản Giao Ước</h1><p>Bản xuất nguồn ngày 2026-11-12. Thiết kế, hiện trạng và nghiệm thu được phân biệt theo vai trò; xem STATUS trước khi làm.</p></header><article id="overview" data-chapter><small>canonical · docs/README.md</small><h1>Nguồn chuẩn của THE WITNESS</h1>
+<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>THE WITNESS · Nguồn chuẩn</title><style>*{box-sizing:border-box}body{margin:0;background:#f5f2eb;color:#202f2e;font:17px/1.7 system-ui}aside{position:fixed;inset:0 auto 0 0;width:280px;padding:24px;overflow:auto;background:#e9e3d7}nav a{display:block;margin:9px 0;font-size:14px}main{margin-left:280px;max-width:1100px;padding:40px}article{padding:24px 0;border-bottom:1px solid #bdb6a7;overflow-wrap:anywhere}h1,h2,h3{line-height:1.3}a{color:#745120}input,select,button{max-width:100%;font:inherit;padding:7px;margin:7px 0}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #bdb6a7;padding:8px;text-align:left}pre{white-space:pre-wrap}img{max-width:100%}[hidden]{display:none!important}@media(max-width:800px){aside{position:static;width:auto}main{margin:0;padding:22px}table{display:block;overflow:auto}}@media print{aside,.no-print{display:none}main{margin:0}article{break-before:page}}</style><body><aside><strong>THE WITNESS</strong><p>6 trang lõi · chi tiết theo nhu cầu</p><input id="search" aria-label="Tìm tài liệu"><div id="result" role="status"></div><select id="quest-jump" aria-label="Chapter"><option value="">Q01–Q12</option><option value="#chapter-11-q01">Q01</option><option value="#chapter-11-q02">Q02</option><option value="#chapter-11-q03">Q03</option><option value="#chapter-11-q04">Q04</option><option value="#chapter-11-q05">Q05</option><option value="#chapter-11-q06">Q06</option><option value="#chapter-11-q07">Q07</option><option value="#chapter-11-q08">Q08</option><option value="#chapter-11-q09">Q09</option><option value="#chapter-11-q10">Q10</option><option value="#chapter-11-q11">Q11</option><option value="#chapter-11-q12">Q12</option></select><select id="legend-jump" aria-label="Legend"><option value="">Legends</option><option value="#chapter-14-l01">L01</option><option value="#chapter-14-l02">L02</option><option value="#chapter-14-l04">L04</option></select><nav><a href="#overview">Nguồn chuẩn của THE WITNESS</a><a href="#core-product">Hợp đồng sản phẩm</a><a href="#core-story">Nguồn nội dung và thiết kế truyện</a><a href="#core-engineering">Nguồn kỹ thuật và pipeline</a><a href="#core-operations">Cách làm việc và cập nhật nguồn</a><a href="#core-status">Trạng thái và quyết định cần biết</a><a href="#reference-docs-environment-kit-readme-md">Môi trường THE WITNESS — chỉ mục</a><a href="#reference-docs-environment-kit-look-bible-md">Định hướng hình ảnh bộ tài nguyên môi trường</a><a href="#reference-docs-environment-kit-phase-3-md">Kiến trúc đi lại được tại Q01</a><a href="#reference-docs-environment-kit-phase-b-md">Giai đoạn B — Q01 Environment Art</a><a href="#reference-docs-environment-kit-q01-gold-scene-md">Q01 — bản cảnh mẫu để duyệt hình ảnh</a><a href="#reference-docs-environment-kit-research-q01-gold-materials-md">Q01 — căn cứ vật liệu và nhân vật chuẩn</a><a href="#reference-docs-environment-kit-research-q01-phase-b-materials-md">Q01 Phase B — vật liệu, mép cảng và chuyển tiếp vào kho</a><a href="#reference-docs-environment-kit-research-source-register-md">Nguồn tham chiếu môi trường Q01 và L04</a><a href="#reference-docs-environment-kit-roadmap-md">Lộ trình phát triển bộ tài nguyên môi trường THE WITNESS</a><a href="#reference-docs-environment-kit-standards-md">Tiêu chuẩn bộ tài nguyên môi trường</a><a href="#chapter-02">02 • Game Design Document</a><a href="#chapter-03">03 • Narrative Bible (Kịch bản Tổng hợp &amp; Scene Bible C+ · v6.0)</a><a href="#chapter-04">04 • World Bible</a><a href="#chapter-05">05 • Character Bible (Story Bible v6.0 — C+ Synthesis)</a><a href="#chapter-06">06 • Chiến dịch và nhiệm vụ</a><a href="#chapter-07">07 • Kịch bản phân cảnh trục mở màn — Prologue Q01, Chapter Q03 &amp; Legend L01</a><a href="#chapter-08">08 • Tài liệu tham chiếu Kinh Thánh và chuyển thể</a><a href="#chapter-10">10 • Nguồn nghiên cứu và sổ luận cứ</a><a href="#chapter-11">11 • Hồ sơ chiều sâu 12 cầu nối Mortal</a><a href="#chapter-12">12 • Sự thật nền, continuity và hệ quả (Story Bible v6.0 — C+ Synthesis)</a><a href="#chapter-14">14 • Hồ sơ chiều sâu Legends — Ba chương trục truyện</a><a href="#chapter-15">15 • Packet nguồn, thế giới và danh sách duyệt</a><a href="#chapter-18">18 • Chi tiết cảnh, thoại và dấu trở lại</a><a href="#chapter-19">19 • Protocol kiểm tra chiều sâu trải nghiệm</a><a href="#chapter-22">Graphics rendering upgrade</a><a href="#chapter-23">Backend, tài khoản và bản lưu đám mây — 0.7.0</a><a href="#chapter-24">24 — Nghiên cứu điều khiển và trải nghiệm người dùng</a><a href="#reference-docs-the-witness-production-status-and-changelog-md">PRODUCTION STATUS, RUNTIME GAPS &amp; VERSION CHANGELOG</a><a href="#reference-docs-the-witness-readme-md">THE WITNESS — Legacy of the Covenant</a></nav><button id="print">In / PDF</button></aside><main><header><h1>Chứng Nhân: Di Sản Giao Ước</h1><p>Bản xuất nguồn ngày 2026-11-13. Thiết kế, hiện trạng và nghiệm thu được phân biệt theo vai trò; xem STATUS trước khi làm.</p></header><article id="overview" data-chapter><small>canonical · docs/README.md</small><h1>Nguồn chuẩn của THE WITNESS</h1>
 <p><a id="start"></a></p>
 <h2>Bắt đầu theo công việc</h2>
 <p>Chọn <strong>một</strong> skill ở AGENTS, đọc <a href="#core-status">trạng thái</a>, rồi đọc đúng phần nguồn
@@ -266,6 +266,10 @@ nhật thứ tự nạp, builder, standalone và consumer.</p>
 <td><code>witness-q01-greybox.js</code> sở hữu blueprint/anchors/mesh/cơ cấu; <code>q01-greybox.html</code> + <code>q01-greybox-lab.js</code> là tuyến đi kiểm bằng engine thật, tách khỏi campaign presenter PR-05</td>
 </tr>
 <tr>
+<td>Q01 PR-05 campaign</td>
+<td><code>witness-q01-campaign.js</code> nối chín Beat, thoại và choreography vào campaign; <code>witness-q01-interaction.js</code> giữ tiền đề vị trí/người tại model; <code>witness-q01-art.js</code> dựng hình ảnh trên cùng blueprint PR-04</td>
+</tr>
+<tr>
 <td>Engine đọc được</td>
 <td><code>tools/environment-kit/engine-runtime.js</code>; build-engine ghép vào vendor/adventure-3d, giữ core pin hash</td>
 </tr>
@@ -299,6 +303,14 @@ campaignId, API v1 hay namespace. Scene completion chỉ chặn commit, không p
 quest completion thứ hai (<code>quests.Q01.route</code>/<code>Q01.COMMITTED</code> vẫn sở hữu ở model);
 khi v6 kích hoạt, actions Q01 mở theo nhịp (02: brace/ledger; 07: meal/choose; 08: commit),
 và q01SceneEvent kiểm tra hoàn tất task trước khi chốt ledgerSeam/recallT05.</p>
+<p>PR-05 bật scene qua <code>beginQ01Scene(fresh(profile), {campaign:true})</code> tại form
+tạo nhân vật; cờ tùy chọn <code>flags.q01Campaign</code> bật tiền đề không gian của model,
+không tạo nguồn completion khác. Save scene-null đang đi dở giữ giao diện v3;
+save foundation đã có scene được presenter tiếp tục. Không đổi schema/API/D1.
+Trong <code>exit</code>/<code>extract</code> chưa chốt, load phục hồi cả nhóm theo checkpoint của 07,
+không hứa lưu từng vị trí actor. Cơ cấu đang chuyển động không được chốt trước
+khi tới cữ; đóng menu không tự bỏ khóa tương tác. Hình ảnh v6 dùng ánh trực tiếp,
+IBL/AO và đèn cục bộ; không áp trường GI của kho v3 lên topology v6.</p>
 <p>Worker phân <code>/api/</code> sang server/api.mjs, còn lại tới ASSETS. Danh tính production
 do nền tảng cấp; demo identity chỉ ở dev. <code>db/schema.ts</code> sở hữu schema;
 <code>npm run db:generate</code> sinh migration mới; không sửa migration đã áp dụng.
@@ -450,6 +462,11 @@ tiết lấy từ Git, không nuôi nhiều sổ lặp lại cùng sự kiện.<
 chỉ đổi URL web, không đổi file offline ở checkout. Đọc script trước khi chạy;
 không benchmark GPU song song. Evidence phải có build/hash, lệnh, môi trường,
 scope và giới hạn. Không đưa token/cookie/save thật vào report.</p>
+<p>Q01 PR-05 có cổng riêng <code>test:q01-campaign-browser</code>: form nhân vật mới tới Q02,
+hai tuyến cứu hộ, lưu/tải và hậu quả/chi phí. Job <code>q01-campaign-gate</code> trong CI
+chạy trọn chương cho từng tuyến trên gói <code>dist</code>, giữ trace/ảnh khi thất bại;
+unit/build xanh không thay cổng này. Cấu hình job không phải bằng chứng GitHub
+đã thực thi; vẫn ghi kết quả thật và candidate trong bàn giao.</p>
 <p>Art cần góc gameplay first/third, ngày/tối và tuyến hoạt động. G3 chỉ đóng khi
 có xác nhận người dùng. Playtest người thật theo <a href="#chapter-19">protocol 19</a>;
 unit/browser pass không thay art, chuyên môn hoặc thiết bị vật lý. Production
@@ -479,13 +496,18 @@ theo; số đo/evidence và gate vẫn ở nguồn sở hữu. Code đang dùng 
 <tbody>
 <tr>
 <td>A01</td>
-<td>T01–T13/E01–E12/P01–P05 là thiết kế truyện v6 đã chọn; runtime/contract vẫn 10 evidence/4 claims. Q01 có state foundation và greybox PR-04 riêng; presenter/gameplay chín Beat thuộc PR-05</td>
-<td>Phân biệt thiết kế, không gian đã dựng và gameplay chờ gắn; nâng cấp phải đồng bộ content/model/UI/restore/server và kiểm tương thích, không chỉ thêm ID vào JSON</td>
+<td>T01–T13/E01–E12/P01–P05 là thiết kế truyện v6 đã chọn; runtime/contract vẫn 10 evidence/4 claims. Q01 đã nối campaign; <code>67069e109a8f</code> qua hai lượt nhân vật mới tới Q02, PR-05 còn mở về thu âm/chất lượng mỹ thuật-diễn xuất</td>
+<td>Kết quả đúng candidate ở D024; không suy hoàn thành PR-05 từ unit hoặc cổng gameplay</td>
 </tr>
 <tr>
 <td>A02</td>
 <td>Q01 G3 awaiting_visual_review; G4 in_progress</td>
 <td>Duyệt góc gameplay, giữ artAccepted false nếu chưa có xác nhận</td>
+</tr>
+<tr>
+<td>A03</td>
+<td>PR-05 có 11 asset âm thanh procedural và năm câu Natan đã tạo; chưa đủ thoại các vai khác, chưa có listening/art approval. Dịch vụ tạo thêm thoại báo bận</td>
+<td>Giữ đúng phạm vi âm thanh; không gọi là full voice acting hoặc tự đóng nghiệm thu hình ảnh/diễn xuất</td>
 </tr>
 <tr>
 <td>A05</td>
@@ -717,6 +739,50 @@ Không sao chép bản HEAD cũ đè lên chúng để “chuẩn hóa”.</p>
   3) Khởi động máy chủ cục bộ <code>tools/serve.cjs</code> trước các cổng browser trong <code>ci.yml</code>. Cả hai môi trường Node 22 và
   Node 24 tái lập chuẩn xác cùng revision <code>36e9366f06b6</code>; đạt 100% các bộ kiểm tra governance, unit, backend, graphics
   và greybox smoke. Không đổi ID/schema/canon hay trạng thái duyệt art G3/G4.</p>
+</li>
+<li>
+<p><strong>D024 — Candidate campaign Q01 PR-05 (13/11/2026).</strong> Form tạo nhân vật mới
+  kích hoạt chín Beat v6 trong campaign chính. Save cũ có scene null giữ tuyến
+  v3; không đổi schema 2, contentVersion 3.0, ID, API/D1 hoặc nguồn commit.
+  Presenter dùng vị trí/support thật, đường đi capsule cho Titus/Simeon/người
+  học việc/Natan, cơ cấu dùng cùng mesh và collider, checkpoint cả nhóm theo 07.
+  Giữ nguyên sổ/gáy ở avatar và tờ bìa rời ở Natan; nhật ký riêng không cấp
+  evidence hoặc quyền công bố. Đặt phần việc ở Beat 07; bàn giao Beat 08 mới
+  trừ một lần và mở Q02. Cảnh có PBR, rig, đèn/khói/lửa/nước, bốn thời điểm,
+  mở bến tùy chọn và âm thanh nhúng ngoại tuyến. Đã sửa đường tiếp cận cảnh đêm,
+  chặn nói xuyên tường, IK ngồi và neo/rest-frame vải theo xương cha; camera
+  không dời avatar. Hồi quy bắt được lỗi biến <code>root</code> tại chốt tuyến Q03, đã
+  đổi sang module X đang dùng. Bài kiểm throttle giữ một clock bucket trong
+  fixture và kiểm thêm hết hạn/khởi động lại; chính sách API không đổi.
+  Cổng gameplay đạt trên <code>67069e109a8f</code>: hai lượt tạo mới tới Q02, nâng xà /
+  góp bếp / first / hiện trường tại 390 × 844 và tời / góc bàn / third / bảng
+  tại 1440 × 900. Cả hai cold HTML chặn HTTP/HTTPS, bật âm thanh, sáu reload,
+  3.065 mẫu kiểm độc lập không lỗi mesh/body/camera/sàn/bước nhảy. Vật giữ và
+  chi phí còn đúng sau mở Q02; năm câu Natan phát hết mỗi lượt. Hồi quy còn
+  đang chạy; bằng chứng sở hữu tại
+  <a href="sources/docs/environment-kit/validation/q01-pr05/verification.json">verification PR-05</a>.
+  Ma trận web 16 lượt ở <code>d5f98c562afe</code> là baseline trước các sửa dàn dựng,
+  không chứng nhận code mới. Hai lượt có số đo xanh ở <code>1e2d21387d12</code> /
+  <code>88c9349159fb</code> đã bị loại khỏi nhận bản cuối khi xem ảnh đêm phát hiện lỗi;
+  fixture cảnh đêm có seed chỉ dùng chẩn đoán rig. PR-05 chưa đóng: mới có năm
+  câu Natan thu sẵn, còn thiếu thu âm các vai và chưa có listening/diễn xuất/
+  mỹ thuật hoặc playtest người thật. G3/G4 giữ nguyên; chưa commit/push/deploy.</p>
+</li>
+<li>
+<p><strong>D025 — Nâng cấp trình bày điện ảnh, ánh sáng, animation, âm thanh và mỹ thuật Q01 v6 (14/11/2026).</strong>
+  Nâng cấp toàn diện lớp trình bày trên nền PR-05 tại <code>witness-q01-art.js</code>,
+  <code>witness-q01-campaign.js</code>, <code>witness-audio.js</code>,
+  <code>vendor/adventure-character.js</code>, <code>tools/prepare-q01-sound.cjs</code>
+  (11 file WAV 22050 Hz ở <code>assets/audio/q01/</code>), <code>witness.css</code> và <code>witness-cloud.js</code>
+  (giữ nguyên nút continue khi refresh nền): bầu trời thủ tục <code>q01-aaa-sky</code> bám camera không rách đỉnh,
+  nước phản chiếu vi sóng + độ sâu ven kè, kiến trúc cảng/kè/xưởng/mái có gối cầu thang, trụ đá, ròng rọc quay,
+  lò nướng, cửa chớp, tháp hải đăng Drusion có lửa hiệu, đội hình mái không chồng lấn, camera OTS/Beat 07,
+  biểu cảm/động tác lao động nhân vật và cấu hình âm thanh không gian theo Beat. Bảo toàn nguyên vẹn collision
+  <code>q01-pr05-structure</code>, schema/ID, accessibility (<code>first</code>, <code>calm</code>, phụ đề, dẫn đường) và round-trip save/Worker/D1.
+  Kiểm hậu chỉnh (gói <code>dist/</code> revision <code>d4d0fc582554</code>): <code>build</code> 6/6, <code>test:build-output</code> 9/9, <code>check:agents</code> (0 lỗi),
+  <code>test:agents</code>, <code>npm test</code> 15/15, <code>test:backend</code> 29/29, <code>test:graphics</code> 5/5 (<code>glError: 0</code>), <code>test:character</code>,
+  <code>test:q01-greybox-browser</code> (web + offline) và ma trận 16 tổ hợp <code>test/q01-campaign-browser.mjs</code> (<code>WITNESS_Q01_AUDIO=1</code>)
+  đều PASS. Giữ nguyên <code>artAccepted: false</code>, G3 <code>awaiting_visual_review</code>, G4 <code>in_progress</code>; chưa commit/push/deploy.</p>
 </li>
 </ul>
 <p><a id="story-review-2026-11-11"></a></p>
@@ -1161,6 +1227,62 @@ Snapshot máy kiểm của candidate hiện tại ở
 <a href="sources/docs/environment-kit/validation/q01-pr04/verification.json">verification PR-04</a>; trace/ảnh gốc ở
 <code>outputs/agent-work/q01-pr04-evidence</code>, giữ hash bản HTML ngoại tuyến và nguồn.</p>
 <h2>Bộ kit và vật liệu</h2>
+<h3>PR-05 — Nối vào campaign và hoàn thiện candidate</h3>
+<p><code>witness-q01-campaign.js</code> dùng trực tiếp blueprint/physics PR-04, thay entry
+greybox độc lập bằng tuyến tạo nhân vật mới trong campaign. Model và
+<code>witness-q01-interaction.js</code> kiểm khoảng cách/cao độ, người cùng làm và tiền đề
+của bước; presenter không ghi trực tiếp rescue completion, vật chứng hoặc chi phí.
+Hai người được cứu, Titus và Natan dùng đường đi capsule, có điểm đứng riêng;
+load chỉ dàn lại cả nhóm tại các checkpoint được 07 cho phép.
+Người lạ vòng qua cửa/góc xưởng bằng cùng controller. Nhật ký riêng suy từ
+task và scene flag đã lưu, nên nhận sổ trước quan sát, bốn giới hạn từ mái và
+yêu cầu giữ kín vẫn đọc lại được sau restore, không cần tạo evidence hoặc consent.</p>
+<p><code>witness-q01-art.js</code> giữ cùng vỏ va chạm, bổ sung vật liệu PBR đã có nguồn,
+nhân vật rig, đạo cụ sổ/bìa/bọc/vải riêng, biển trong thế giới, đèn dầu, khói/lửa
+cục bộ và hậu cảnh cảng [H]. Mặt nước dùng shader sóng/normal/reflection sẵn có;
+cảnh có bốn bộ ánh sáng chiều/chạng vạng/đêm/rạng sáng và chuyển sau chọn nghỉ.
+Không sử dụng GI nướng của kho v3 cho không gian mới. Hậu cảnh không mở lối đi
+ngoài boundary hoặc xác nhận một phục dựng khảo cổ.
+Lớp ambience đồng cỏ cũ không sinh lại trong sân lát của candidate. Cú máy mở
+bến dài 4,8 giây chỉ đổi camera gần thuyền, dùng swept clearance hiện hành;
+không đổi vị trí avatar hoặc tự chốt <code>disembark</code>. Chế độ giảm chuyển động/góc
+nhìn thứ nhất nhận điều khiển ngay; có nút mở cảnh tùy chọn và nhận điều khiển sớm.
+Bảng dẫn đường nhường chỗ cho đối thoại và phần việc hiện trường.
+Mặt nước lớn dùng normal/đỉnh sóng tính tại fragment để tránh hiện lưới tam giác
+của mesh xa; bọt trong lòng cảng được giảm riêng, không đổi các vùng cũ.
+Producer normal chỉ tạo bốn lattice một lần thay vì lặp cho từng pixel; đối
+chứng byte ở <code>outputs/agent-work/q01-pr05-final/water-normal-producer.json</code>
+giữ nguyên 262.144 byte. Số đo CPU đó không là chứng nhận FPS.
+Camera mở bến đi ở ngoài mạn/lái rồi nâng lên vai, sweep từ vị trí camera trước
+để không bị lan can ép vào chân avatar. Lời nhắc sau load đọc phần việc hiện tại.
+Điểm tiếp cận Titus/hai thợ/điểm nhận tách khỏi vị trí đứng của họ nhưng vẫn
+trong tiền đề model tại anchor gốc. Titus đứng riêng với hai thợ ở đòn bẩy;
+nhóm xuống thang ngoài lần lượt để giữ khoảng cách. Bài kiểm góc nhìn thứ nhất
+từ chối chốt lượt nếu camera nằm trong đầu NPC tại điểm tương tác.
+Mép các khối đặc không đi được được bo trong envelope gốc; mặt đi/bậc/cơ cấu
+động giữ nguyên. Trang trí tĩnh được batch riêng khỏi lửa/đèn/nhân vật và sổ
+đang cầm. Thân thuyền [H] nằm dưới mặt sàn; góc mở bến nhìn qua lan can từ cao
+độ đủ thấy avatar. Ở cảnh đêm, Natan ngồi cả khi nói lẫn nghe; chỉ khẩu hình
+người đang nói hoạt động. Rig ngồi lùi lên đúng ghế trong khi capsule đứng ở
+phía trước; cloth pins nhận cùng độ dịch xương, không dời root qua vật cản.
+Điểm nói chuyện ở phía sau xưởng, có điều kiện tầm nhìn tới Natan ở cả presenter
+và model. Góc nhìn thứ nhất quay về người đang trò chuyện mà không dời avatar;
+ảnh gameplay đêm và phép kiểm đầu nhân vật không bị tường che đi cùng lượt cuối.
+Rig ngồi thay nghiệm IK đứng, tránh cộng hai lần góc gập chân. Neo áo choàng
+lấy đầy đủ biến đổi xương cha; cả CPU/GPU cloth nhận cùng rest-frame và capsule
+cơ thể. Vải đã có normal/roughness riêng, không chồng relief địa hình lên áo.</p>
+<p>Âm thanh nằm ở <code>assets/audio/q01/</code>: producer <code>tools/prepare-q01-sound.cjs</code>
+sinh 11 file ambience/foley/nhạc ngắn cùng ledger hash. Bản thoại Natan có năm
+câu ở Beat 07, nguồn/giới hạn ở <code>voice-sources.json</code>; các vai còn lại chưa đủ bản
+thu vì dịch vụ tạo thoại báo bận. Không gọi đó là full voice acting.</p>
+<p><code>npm run test:q01-campaign-browser</code> kiểm ma trận 16 tổ hợp bằng form tạo mới,
+nút trong game và controller thật. Nó kiểm nhận sổ trước chốt đường khâu,
+prefix hai tuyến, hộ tống, đặt phần việc chưa trả phí, B06, commit và mở Q02;
+trace độc lập đo mesh/body/camera/dấu chân và bước nhảy vị trí.
+<code>WITNESS_Q01_SMOKE=1</code> chọn một tổ hợp chơi trọn chương; một lượt đơn chỉ xác
+nhận tổ hợp ấy. Cổng quyết định phải gồm cả hai tuyến trên cùng candidate.
+Kết quả phải gắn đúng hash/candidate;
+không suy nghiệm thu từ mã bài kiểm. G3/G4 và artAccepted giữ nguồn duyệt cũ.</p>
 <ul>
 <li>Phân vai đá xây được sửa mặt, lõi đá thô, vữa vôi, mặt lát chịu mài mòn,
   mái trát, gỗ, dây, sắt và đất nén. Hai bộ PBR bổ sung có nguồn, giấy phép,
@@ -3804,7 +3926,7 @@ Toàn bộ đặc tả chi tiết và quy chuẩn kiến trúc của 5 Trụ c�
 <p><strong>Bàn giao Q01:</strong> phần 1–2 là kịch bản thống nhất 42 phút đích, gồm thoại, camera, sáng/tối, tri thức và ánh xạ state; đọc từ <a href="#q01-handoff">Q01 handoff</a>. Q03/L01 ở phần 3–4 giữ phạm vi riêng.</p>
 <p><a id="q01-handoff"></a></p>
 <h2>1. Q01 — Kịch bản thống nhất để giao triển khai</h2>
-<p><strong>Bản bàn giao biên tập ngày 11/11/2026, đã hiệu chỉnh theo góp ý Beat 02/03–04/06–07.</strong> Đích thiết kế Q01 của truyện v6; mọi lời thoại, bố cục, nhân vật phụ và thao tác trong phần này là <strong>[H] sáng tác</strong>. Đây là nguồn duy nhất sở hữu phân cảnh/thoại Q01. Hồ sơ 03/06/11 dẫn về đây; hồ sơ 12 tiếp tục sở hữu sự thật và giới hạn tri thức. Phần state foundation PR-03 đã có; cảnh 3D, diễn xuất, camera và chuyển sáng theo kịch bản còn phải triển khai, kiểm và duyệt đúng phạm vi.</p>
+<p><strong>Bản bàn giao biên tập ngày 11/11/2026, đã hiệu chỉnh theo góp ý Beat 02/03–04/06–07.</strong> Đích thiết kế Q01 của truyện v6; mọi lời thoại, bố cục, nhân vật phụ và thao tác trong phần này là <strong>[H] sáng tác</strong>. Đây là nguồn duy nhất sở hữu phân cảnh/thoại Q01. Hồ sơ 03/06/11 dẫn về đây; hồ sơ 12 tiếp tục sở hữu sự thật và giới hạn tri thức. State foundation PR-03, blueprint PR-04 và candidate presenter/cảnh PR-05 đã có mã; kết quả chơi/kiểm và các phần âm thanh, hình ảnh chưa duyệt theo STATUS, không suy nghiệm thu từ hồ sơ này.</p>
 <h3>1.1. Mục tiêu, đầu vào và điểm ra</h3>
 <p>Người Chứng trở về Xêdarê sau khi Haddai mất vì một đợt bệnh thông thường. Người chơi tìm lại một quan hệ thân thuộc, cùng cứu hai người ở kho phía tây, nhận ra sự im lặng của mình và mang một câu hỏi cụ thể sang Q02. Không mở đầu bằng một đoạn L01, không biến Q01 thành cảnh phá án hoàn chỉnh.</p>
 <p>Đầu vào là game mới hoặc save Q01 phù hợp. Đích ra: đã nhận sổ gia đình, hoàn tất một tuyến cứu hộ, tiếp nhận yêu cầu giữ kín của Yosef, nhớ T05, thấy sơ bộ B06 và thực hiện bàn giao theo lựa chọn <code>lodging</code> hoặc <code>meal</code>. Chỉ model hiện hành ghi <code>Q01.COMMITTED</code>; Q02 mở sau đó. Q01 không cấp E01/E02/E03, không xác lập P01, không nhận diện người gây cháy.</p>
@@ -4352,7 +4474,7 @@ Toàn bộ đặc tả chi tiết và quy chuẩn kiến trúc của 5 Trụ c�
 </tr>
 </tbody>
 </table>
-<p>Chuỗi task quest cũ vẫn là <code>brace -&gt; ledger -&gt; meal -&gt; choose -&gt; execution</code>; <code>Q01.LOAD</code> nằm ở <code>brace</code>. Mốc presentation mới đặt ba task đầu ở Beat 02/07 như trên, không đổi ID, tiền đề hoặc phần thưởng. <code>choose</code> lưu ý định tại Beat 07; <code>execution</code> chờ Beat 08 đủ scene. Phần binding này chưa có trong gameplay 3D: AI phải triển khai kiểm tiền đề vị trí/Beat ở đúng owner, không coi bảng này là bằng chứng code đã làm.</p>
+<p>Chuỗi task quest cũ vẫn là <code>brace -&gt; ledger -&gt; meal -&gt; choose -&gt; execution</code>; <code>Q01.LOAD</code> nằm ở <code>brace</code>. Mốc presentation mới đặt ba task đầu ở Beat 02/07 như trên, không đổi ID, tiền đề hoặc phần thưởng. <code>choose</code> lưu ý định tại Beat 07; <code>execution</code> chờ Beat 08 đủ scene. Candidate PR-05 nối phần binding qua presenter và model; các tiền đề vị trí/Beat phải được kiểm ở đúng owner, không coi bảng này là bằng chứng nghiệm thu gameplay.</p>
 <p>Khi dựng v6, giữ ID/luật task nhưng dùng đúng tên vật của T06 trong lời trình bày: <em>bìa sổ</em> gắn nguyên với cuốn sổ, <em>tờ bìa hồ sơ rời</em> kẹp E01 ở Natan. Không nạp lại câu v3 mơ hồ về “tờ bìa” rồi cho prop tách gáy trái kịch bản. Quyền giữ cuốn sổ suy từ task <code>ledger</code> đã hoàn tất, còn <code>ledgerSeamObserved</code> chỉ xác nhận đã quan sát đường khâu; không dùng hai điều ấy thay cho nhau.</p>
 <p><a id="q01-restore"></a></p>
 <h3>2.10. Thoát, khôi phục và giới hạn của foundation</h3>
@@ -4396,7 +4518,16 @@ Toàn bộ đặc tả chi tiết và quy chuẩn kiến trúc của 5 Trụ c�
 <li>Beat 02 phải thấy hai vật đã rời nhau, avatar nhận nguyên sổ/gáy và Natan giữ tờ bìa hồ sơ kẹp E01; bọc vận chuyển ẩm khác vải lót khô. Không cắt/khâu lại gáy để giải việc chia giữ, không tự cấp E01 trước Q04.</li>
 <li>Manual tới <code>sideExit='open'</code> vẫn giữ cánh ngăn cơ học đóng. Titus đi C0–C1–C+1 trong cùng lần chơi, đứng nhận trước <code>extract</code>; kiểm load trước/trong/sau <code>exit</code> và <code>extract</code> không nhân đôi actor hoặc trộn hai checkpoint.</li>
 <li>Chi tiết mẹ/chậu cây và câu Natan nhớ bạn phải hiện qua thoại/hành động có khoảng nghe; chúng không thêm nguồn điều tra, không cấp consent và không làm Natan biết nội dung T05. Đánh giá sức nặng cảm xúc bằng đọc/dựng và người chơi thật, không bằng số câu tăng thêm.</li>
+<li><strong>Cổng quyết định PR-05 do người dùng giao:</strong> tạo nhân vật mới trong campaign,
+    tự đi và tương tác từ thuyền cập bến tới khi mở Q02; cứu hai người qua một
+    tuyến, lưu/tải giữa chừng, rồi chơi lại tuyến còn lại và kiểm hậu quả khác
+    nhau. Không có softlock, teleport giả, sai thứ tự, mất vật giữ hoặc trừ phí
+    hai lần. Khi bài kiểm ấy chưa đạt, PR-05 chưa hoàn thành dù unit test xanh.</li>
 </ol>
+<p><strong>Điểm triển khai PR-05:</strong> presenter/thoại tại <code>witness-q01-campaign.js</code>, tiền đề
+vị trí qua model và <code>witness-q01-interaction.js</code>, cảnh/diễn xuất tại
+<code>witness-q01-art.js</code>; giữ task/ID/commit hiện hành. Trạng thái và phạm vi đã kiểm
+theo STATUS, không lấy sự tồn tại của các module hoặc bài kiểm làm nghiệm thu.</p>
 <hr />
 <h2>3. Kịch bản Phân cảnh Chi tiết Q03: Con Đường Biến Mất (Đường Đồi / Antipatris)</h2>
 <h3>3.1. Thiết lập Bối cảnh &amp; Mục tiêu (Scene Context &amp; Objectives)</h3>

@@ -145,6 +145,9 @@
    b('load-frame',-10,.95,7.1,3,1.9,.34,'wood','prop');
    // Route nodes turn around real corners instead of cutting through props.
    for(const [x,z]of [[-10,-22],[-11,-16],[-11,-6],[-10,1],[-12,8],[-16,1],[-24,0],[-29,-2],[-31,1],[-29,5],[-31,-6.8],[-18,-4],[-20,-2],[-6,-6],[1,-4],[4,1],[4.8,4],[9.2,4],[11,1],[19,3],[-31,8],[-34,8],[-30,-22],[-11,-23]])nodes.push(P(x,0,z));
+   // Natan's table has a solid top. His path out of the workshop must first
+   // skirt its east edge and use the open front, then go round the outside.
+   for(const [x,z]of [[-2.6,1],[-2.6,-3],[0,-3],[0,5.1],[0,6.8],[-2,6.8]])nodes.push(P(x,0,z));
    for(const [x,z]of [[-27,-12],[-27,-9.35],[-23,-9.35]])nodes.push(P(x,ROOF,z,'q01-roof-main'));
    // Art/physics use these same boxes; dynamic pieces are deliberately unbatched.
    for(const p of parts)if(['rescue-side-gate','rescue-raised-panel','rescue-main-beam','rescue-rested-beam','rescue-common-door','egress-bottom-latch','counterweight-cart'].includes(p.id))p.dynamic=true;
@@ -171,6 +174,21 @@
    enable('rescue-common-door',!p.common);enable('egress-bottom-latch',!p.common);
    if(p.route==='mechanical'&&p.prepared){const c=solid('counterweight-cart');c.min[0]+=1.9;c.max[0]+=1.9;}
    ar.invalidateRoutes();ar.onPreview?.(p);return {...p};
+  };
+  // Transient controller-driven motion, used while a campaign interaction holds
+  // control. A reload discards it and reconstructs the last committed prefix.
+  // Each rendered box reads the same moving solid; there is no visual-only gate.
+  ar.animateMechanism=function(kind,fraction){
+   const t=Math.max(0,Math.min(1,fraction)),solid=id=>ar.solids.find(s=>s.id===id),reset=id=>{const s=solid(id);Object.assign(s,structuredClone(original.get(id)));return s;};
+   if(kind==='cart'){const s=reset('counterweight-cart');s.min[0]+=1.9*t;s.max[0]+=1.9*t;}
+   else if(kind==='pulley'){const s=reset('rescue-side-gate');s.enabled=true;s.min[1]+=2.45*t;s.max[1]+=2.45*t;solid('rescue-raised-panel').enabled=false;}
+   else if(kind==='lever'){
+    const s=reset('rescue-main-beam'),src=original.get('rescue-main-beam'),dest=original.get('rescue-rested-beam');s.enabled=t<1;
+    for(let k=0;k<3;k++){s.min[k]=src.min[k]+(dest.min[k]-src.min[k])*t;s.max[k]=src.max[k]+(dest.max[k]-src.max[k])*t;}
+    solid('rescue-rested-beam').enabled=t===1;
+   }
+   ar.invalidateRoutes();ar.onPreview?.({...ar.preview,cartProgress:kind==='cart'?t:undefined});
+   return {kind,fraction:t};
   };
   // PR-03 is the owner of story state. This read-only projection deliberately
   // distinguishes the route-specific panel from world.sideExit's common route.
@@ -228,7 +246,7 @@
   const actors={titus:actor('Titus',anchors.titus,'#7c969b'),simeon:actor('Simeon',anchors.simeon,'#a8b8ad'),apprentice:actor('Apprenti',anchors.apprentice,'#b9a793'),natan:actor('Natan',P(-5,0,1.1),'#a69e8d'),yosef:actor('Yosef',P(-2,0,-12),'#8e9c97'),worker1:actor('Thợ 1',P(-22.5,0,-1),'#a7937c'),worker2:actor('Thợ 2',P(-21,0,-1),'#9b967f')};
   const update=p=>{
    for(const [id,mesh]of dynamic){const s=ar.solids.find(s=>s.id===id);mesh.visible=s.enabled!==false;mesh.matrixAutoUpdate=false;transform(s,mesh.matrix);mesh.matrixWorldNeedsUpdate=true;}
-   const ra=new T.Vector3(p.route==='mechanical'&&p.prepared?-30.9:-32.8,1,-4.6),rb=new T.Vector3(-29.4,ROOF+1.5,-5.1),rd=rb.clone().sub(ra);loadRope.scale.y=rd.length()/loadLength;loadRope.position.copy(ra.add(rb).multiplyScalar(.5));loadRope.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),rd.normalize());
+   const ra=new T.Vector3(Number.isFinite(p.cartProgress)?-32.8+1.9*p.cartProgress:p.route==='mechanical'&&p.prepared?-30.9:-32.8,1,-4.6),rb=new T.Vector3(-29.4,ROOF+1.5,-5.1),rd=rb.clone().sub(ra);loadRope.scale.y=rd.length()/loadLength;loadRope.position.copy(ra.add(rb).multiplyScalar(.5));loadRope.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),rd.normalize());
    fire.visible=p.fire&&(!p.fireState||p.fireState==='burning');chocks.forEach(m=>m.visible=p.route==='mechanical'&&p.prepared);lever.rotation.z=p.route==='manual'&&p.opened?-.25:0;
    drum.rotation.z=p.opened?.7:0;
    // The engine caches static shadow maps. Moving a gate / trolley invalidates
@@ -236,7 +254,7 @@
    for(const light of scene.children)if(light.isLight&&light.shadow)light.shadow.needsUpdate=true;
   };
   ar.onPreview=update;update(ar.preview);scene.add(group);ar.group=group;scene.userData.architecture=ar;
-  return {group,actors,water,update,setLighting(evening){skyMaterial.uniforms.top.value.set(evening?'#263c56':'#7893a1');skyMaterial.uniforms.bottom.value.set(evening?'#777e83':'#d1d7ce');},setAnnotations(on){group.traverse(o=>{if(o.userData.annotation)o.visible=on;});},tick(t){water.position.y=-.65+Math.sin(t*.7)*.018;fire.children.forEach((m,i)=>m.scale.y=.94+.06*Math.sin(t*2+i));},dispose(){ar.onPreview=null;const geos=new Set(),mats=new Set(),textures=new Set();for(const parent of [group,water,skyDome])parent.traverse(o=>{if(o.isInstancedMesh)o.dispose();if(o.geometry)geos.add(o.geometry);for(const m of [o.material].flat().filter(Boolean)){mats.add(m);if(m.map)textures.add(m.map);}});textures.forEach(t=>t.dispose());geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());group.removeFromParent();water.removeFromParent();skyDome.removeFromParent();}};
+  return {group,actors,water,update,setLighting(evening){skyMaterial.uniforms.top.value.set(evening?'#263c56':'#7893a1');skyMaterial.uniforms.bottom.value.set(evening?'#777e83':'#d1d7ce');},setAnnotations(on){group.traverse(o=>{if(o.userData.annotation)o.visible=on;});},tick(t){water.position.y=-.65+Math.sin(t*.7)*.018;fire.children.forEach((m,i)=>m.scale.y=.94+.06*Math.sin(t*2+i));},dispose(){ar.onPreview=null;const geos=new Set(),mats=new Set(),textures=new Set();for(const parent of [group,water,skyDome])parent.traverse(o=>{if(o.isInstancedMesh)o.dispose();if(o.geometry)geos.add(o.geometry);for(const m of [o.material].flat().filter(Boolean)){mats.add(m);if(m.map&&!m.map.userData.sharedMap)textures.add(m.map);}});textures.forEach(t=>t.dispose());geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());group.removeFromParent();water.removeFromParent();skyDome.removeFromParent();}};
  }
  const api={VERSION,MEZZ,ROOF,RISE,RUN,anchors,beats,blueprint,create,mount};
  root.WitnessQ01Greybox=api;if(typeof module!=='undefined')module.exports=api;

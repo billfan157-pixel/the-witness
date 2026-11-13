@@ -41,6 +41,7 @@
     // Four different clumps. Each card contains many tapered, curved fibres;
     // the transparent spaces survive mipmapping instead of forming a solid beard.
     const width = 256, height = 512, pixels = new Uint8Array(width * height * 4);
+    for (let i = 0; i < pixels.length; i += 4) { pixels[i] = 206; pixels[i + 1] = 204; pixels[i + 2] = 200; }
     for (let tile = 0; tile < 4; tile++) for (let fibre = 0; fibre < 15; fibre++) {
       const start = 5 + noise(fibre, tile + 10) * 54;
       const phase = noise(fibre + 40, tile) * Math.PI * 2;
@@ -299,12 +300,13 @@
     const hairColor = new T.Color(look.hairColor);
     const base = new T.MeshStandardMaterial({
       color: hairColor, roughness: .82, side: T.DoubleSide,
-      alphaMap: maps(T).hairline, transparent: true, alphaTest: .02, depthWrite: false, forceSinglePass: true
+      alphaMap: maps(T).hairline, transparent: false, alphaTest: .35, depthWrite: true, forceSinglePass: true,
+      polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1
     });
     const material = new T.MeshPhysicalMaterial({
       color: hairColor, map: maps(T).hair, vertexColors: true,
       roughness: .55, metalness: 0, side: T.DoubleSide,
-      alphaTest: .05, alphaToCoverage: true, transparent: false, depthWrite: true, forceSinglePass: true,
+      alphaTest: .16, alphaToCoverage: true, transparent: false, depthWrite: true, forceSinglePass: true,
       sheen: .42, sheenColor: hairColor.clone().lerp(new T.Color("#b7a28a"), .24), sheenRoughness: .62
     });
     material.name = "groom-cards-fibre-atlas-a2c-aniso";
@@ -341,7 +343,7 @@
           target.t.push(tangent.x, tangent.y, tangent.z);
           // Atlas rows are authored root first; DataTexture flipY stays false.
           target.uv.push((tile + (side + 1) * .5) / 4, t);
-          const rootShade = .76, tipShade = 1.12;
+          const rootShade = .90, tipShade = 1.08;
           const value = shade * (rootShade + (tipShade - rootShade) * t);
           target.colors.push(value, value * .98, value * .94);
         }
@@ -373,7 +375,7 @@
       + Math.sin(angle * 5.0 + .5) * .055 + Math.sin(angle * 11.0) * .023;
     const underlay = batch();
     for (let row = 0; row <= 18; row++) for (let col = 0; col <= 56; col++) {
-      const a = col / 56 * Math.PI * 2, p = scalp(a, row / 18 * hairline(a), .0012);
+      const a = col / 56 * Math.PI * 2, p = scalp(a, row / 18 * hairline(a), .0016);
       underlay.p.push(...p);
       underlay.uv.push(col / 56, row / 18);
       if (row && col) { const n = row * 57 + col; underlay.indices.push(n, n - 57, n - 1, n - 1, n - 57, n - 58); }
@@ -427,33 +429,36 @@
       card(fixed, [[x, y, z], [x + side * .005, y + .001, z + .0005], [x + side * .009, y - .001, z]], .0045, .90, [0, 1, .25]);
     }
     if (look.gender !== "female" && look.beard > .012) {
-      const length = look.beard;
-      for (let i = 0; i < 520; i++) {
-        const u = noise(i, 40) * 2 - 1, v = noise(i, 41), side = Math.abs(u);
-        const x = u * .071;
-        const top = mouth[1] - .010 + side * .040 + Math.sin(u * 17) * .003;
-        const y = top - v * (.023 + (1 - side) * .018);
-        const z = faceDepth(x, y) + .0009;
-        const strandLength = length * (.24 + noise(i, 42) * .50) * (1 - side * .42);
-        const outward = Math.sign(u) * strandLength * .14;
-        const midY = y - strandLength * .47, tipY = y - strandLength;
-        const midZ = Math.max(z + .0015, faceDepth(x + outward * .4, midY) + .0018);
-        const tipZ = Math.max(z, faceDepth(x + outward, tipY) + .0014);
-        card(beard, [[x, y, z], [x + outward * .4, midY, midZ],
-          [x + outward, tipY, tipZ]],
-        .007 + noise(i, 44) * .006, .85 + noise(i, 45) * .32, [1, side * .25, -u * .7]);
-        fibre([[x, y, z + .0014], [x + outward * .4, midY, midZ + .0015],
-          [x + outward, tipY, tipZ + .001]], .00018 + noise(i, 49) * .00014, .85 + noise(i, 50) * .5);
+      const length = look.beard, shortBeard = length < .04;
+      const beardCount = shortBeard ? 360 : 560;
+      for (let i = 0; i < beardCount; i++) {
+        const u = (i % 28) / 27 * 2 - 1 + (noise(i, 40) - .5) * .08, v = noise(i, 41), side = Math.abs(u);
+        const x = Math.max(-1, Math.min(1, u)) * (shortBeard ? .066 : .070);
+        const top = mouth[1] - (shortBeard ? .012 : .009) + side * (shortBeard ? .026 : .036) + Math.sin(u * 17) * .003;
+        const y = top - v * ((shortBeard ? .017 : .022) + (1 - side) * (shortBeard ? .015 : .018));
+        const z = faceDepth(x, y) + .0036;
+        const nLen = Math.hypot(x / .075, Math.max(.2, z - .02)) || 1;
+        const nx = (x / .075) / nLen, nz = Math.max(.2, z - .02) / nLen;
+        const strandLength = length * (.30 + noise(i, 42) * .48) * (1 - side * .40);
+        const outward = strandLength * .15;
+        const midX = x + nx * outward * .4, midY = y - strandLength * .47;
+        const tipX = x + nx * outward, tipY = y - strandLength;
+        const midZ = Math.max(z + .0024, faceDepth(midX, midY) + .0042 + nz * outward * .4);
+        const tipZ = Math.max(z + .0016, faceDepth(tipX, tipY) + .0034 + nz * outward);
+        card(beard, [[x, y, z], [midX, midY, midZ], [tipX, tipY, tipZ]],
+          (shortBeard ? .0038 + noise(i, 44) * .0028 : .0058 + noise(i, 44) * .0042), .92 + noise(i, 45) * .22, [nz, side * .18, -nx]);
+        fibre([[x, y, z + .0016], [midX, midY, midZ + .0016], [tipX, tipY, tipZ + .0012]],
+          .00022 + noise(i, 49) * .00014, .90 + noise(i, 50) * .38);
       }
       // Feathered cheek and sideburn boundary, with much shorter, sparse hairs.
       for (const side of [-1, 1]) for (let i = 0; i < 26; i++) {
         const t = i / 25, x = side * (.064 - t * .035), y = mouth[1] + .033 - t * .032 + noise(i, 47) * .002;
-        const z = faceDepth(x, y) + .0011;
-        card(beard, [[x, y, z], [x + side * .001, y - .003, z + .001], [x + side * .002, y - .006, z]], .0035, .88, [1, .4, -side * .3]);
+        const z = faceDepth(x, y) + .0020;
+        card(beard, [[x, y, z], [x + side * .001, y - .003, z + .0015], [x + side * .002, y - .006, z + .001]], .0028, .90, [.65, .35, -side * .65]);
       }
       for (const side of [-1, 1]) for (let i = 0; i < 22; i++) {
-        const x = side * (.003 + i * .0013), y = mouth[1] + .008 - i * .00020, z = faceDepth(x, y) + .0010;
-        card(beard, [[x, y, z], [x * 1.13, y - .0028, z + .0007], [x * 1.25, y - .0065, z]], .004, .90, [1, -.3 * side, 0]);
+        const x = side * (.003 + i * .0013), y = mouth[1] + .008 - i * .00020, z = faceDepth(x, y) + .0018;
+        card(beard, [[x, y, z], [x * 1.13, y - .0028, z + .0012], [x * 1.25, y - .0065, z + .0008]], .0032, .92, [1, -.25 * side, -.18 * side]);
         fibre([[x, y, z + .001], [x * 1.13, y - .0028, z + .0017], [x * 1.25, y - .0065, z + .001]], .00019, 1.0);
       }
     }
@@ -514,11 +519,24 @@
       if (target.t.length) geometry.setAttribute("hairTangent", new T.Float32BufferAttribute(target.t, 3));
       geometry.setIndex(target.indices); geometry.computeVertexNormals();
       const jaw = name === "beard-hair-cards";
+      if (jaw) {
+        const pos = geometry.attributes.position, nrm = geometry.attributes.normal;
+        for (let i = 0; i < pos.count; i++) {
+          const vx = pos.getX(i), jL = Math.hypot(vx / .075, -.15, .6) || 1;
+          const nx = nrm.getX(i) * .35 + (vx / .075 / jL) * .65;
+          const ny = nrm.getY(i) * .35 + (-.15 / jL) * .65;
+          const nz = nrm.getZ(i) * .35 + (.6 / jL) * .65;
+          const l = Math.hypot(nx, ny, nz) || 1;
+          nrm.setXYZ(i, nx / l, ny / l, nz / l);
+        }
+        nrm.needsUpdate = true;
+      }
       const finish = moving || jaw ? material.clone() : material;
       hairShader(finish, moving, jaw);
       const object = skinned(geometry, finish, () => [["head", 1]]);
       object.name = name;
       object.renderOrder = 1;
+      if (jaw) { object.castShadow = false; object.receiveShadow = false; }
       // The atlas casts the same cutout silhouette as the visible fibres.
       object.customDepthMaterial = new T.MeshDepthMaterial({ depthPacking: T.RGBADepthPacking, map: maps(T).hair, alphaTest: .23, side: T.DoubleSide });
       if (moving || jaw) depthShader(object.customDepthMaterial, moving);
@@ -538,6 +556,7 @@
       });
       const beardMesh = skinned(geometry, finish, () => [["head", 1]]);
       beardMesh.name = "beard-individual-fibres";
+      beardMesh.castShadow = false; beardMesh.receiveShadow = false;
       finish.onBeforeCompile = shader => {
         shader.uniforms.uJawOpen = jawOpen;
         shader.vertexShader = shader.vertexShader.replace("#include <common>", "#include <common>\nuniform float uJawOpen;")
@@ -556,19 +575,20 @@
   function mantle(T, { shoulderY, pelvisY, length, look }) {
     const columns = 40, rows = 28, p = [], uv = [], colors = [], indices = [];
     const previous = [], pinned = [];
-    const width = .94;
+    const width = .98;
     for (let row = 0; row <= rows; row++) for (let col = 0; col <= columns; col++) {
-      const u = col / columns, v = row / rows, a = 1.65 + u * (Math.PI * 2 - 3.30);
-      const topY = shoulderY + .041 + Math.sin(a) * .022 - Math.cos(a) * .015;
+      const u = col / columns, v = row / rows, a = 1.44 + u * (Math.PI * 2 - 2.88);
+      const shoulderDrop = Math.pow(Math.abs(Math.sin(a)), 1.8) * .034;
+      const topY = shoulderY + .034 - shoulderDrop - Math.cos(a) * .012;
       let fold = 0;
-      for (const [center, amplitude, spread, drift] of [[.08,.012,.027,.05],[.24,.009,.040,-.04],[.45,.017,.055,.07],[.69,.011,.032,-.05],[.91,.016,.040,.025]]) {
+      for (const [center, amplitude, spread, drift] of [[.08,.010,.032,.04],[.24,.008,.042,-.03],[.45,.014,.055,.05],[.69,.010,.036,-.04],[.91,.013,.042,.025]]) {
         fold += bell(u - center - v * drift, spread * (.55 + v * .7)) * amplitude * (.3 + v * .7);
       }
-      const x = Math.sin(a) * (.310 - Math.min(1, v * 3) * .064 + fold);
-      const z = Math.cos(a) * (.202 - Math.min(1, v * 3) * .020 + fold);
-      const y = topY - v * length + Math.sin(u * Math.PI) * v * v * .022;
+      const x = Math.sin(a) * (.228 + v * .022 - Math.min(1, v * 2.4) * .018 + fold);
+      const z = Math.cos(a) * (.172 - Math.min(1, v * 2.4) * .010 + v * .022 + fold);
+      const y = topY - v * length + Math.sin(u * Math.PI) * v * v * .018;
       p.push(x, y, z); previous.push(x, y, z);
-      pinned.push(row === 0 && ((col >= 4 && col <= 6) || (col >= columns - 6 && col <= columns - 4)));
+      pinned.push(row === 0 && ((col >= 5 && col <= 11) || (col >= 15 && col <= 25) || (col >= columns - 11 && col <= columns - 5)));
       uv.push(u, 1 - v);
       const wear = row > rows - 2 ? .065 : 0;
       const tone = .97 - wear + (noise(col, row) - .5) * .025;
@@ -609,7 +629,7 @@
         }
         for (let n = 0; n < pinned.length; n++) if (!pinned[n]) {
           const i = n * 3, t = clamp((p[i + 1] - pelvisY) / (shoulderY - pelvisY));
-          const rx = .243 + Math.pow(t, 3) * .067, rz = .183 + Math.pow(t, 3) * .021;
+          const rx = .235 + Math.pow(t, 2.5) * .058, rz = .178 + Math.pow(t, 2.5) * .016;
           const radius = Math.hypot(p[i] / rx, p[i + 2] / rz);
           if (radius < 1) { p[i] /= Math.max(.1, radius); p[i + 2] /= Math.max(.1, radius); }
         }

@@ -754,10 +754,11 @@
           + at(x0, y0 + 1) * (1 - sx) * sy + at(x0 + 1, y0 + 1) * sx * sy;
       };
     };
-    const octaves = [[4, 911, .5], [8, 337, .26], [16, 577, .15], [32, 229, .09]];
+    const octaves = [[4, 911, .5], [8, 337, .26], [16, 577, .15], [32, 229, .09]]
+      .map(([freq, seed, amp]) => [lattice(freq, seed), amp]);
     for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
       let h = 0;
-      for (const [freq, seed, amp] of octaves) h += lattice(freq, seed)(x, y) * amp;
+      for (const [sample, amp] of octaves) h += sample(x, y) * amp;
       h += Math.sin((x * 3 + y * 7) / size * Math.PI * 2) * .05;
       height[y * size + x] = h;
     }
@@ -801,6 +802,8 @@
       fogColor: { value: new T.Color(climate.haze) },
       foamEdge: { value: foamEdge },
       waveScale: { value: waveScale },
+      uFragmentWaves: { value: opts.fragmentWaves ? 1 : 0 },
+      uWhitecapStrength: { value: opts.whitecapStrength ?? .35 },
       uNormalMap: { value: waterNormalTexture(T) },
       uBedTex: { value: null },
       uBedRect: { value: new T.Vector4(0, 0, 1, 1) },
@@ -867,7 +870,7 @@
         varying vec4 vReflCoord;
         varying float vCrest;
         uniform vec3 waterColor, shallowColor, skyColor, horizonColor, sunlight, sun, fogColor, uAbsorption;
-        uniform float time, foamEdge, uHasBed, uLevelY, uHasReflection;
+        uniform float time, foamEdge, uHasBed, uLevelY, uHasReflection, waveScale, uFragmentWaves, uWhitecapStrength;
         uniform sampler2D uNormalMap, uBedTex, uReflection;
         uniform vec4 uBedRect;
         ${noise}
@@ -878,14 +881,41 @@
           float bed = -8. + (tap.r * 255. * 256. + tap.g * 255.) / 65535. * 16.;
           return max(0., uLevelY - bed);
         }
+        float swell(vec2 dir, float steepness, float wavelength, float speed, vec2 point,
+                    inout vec3 tangent, inout vec3 binormal) {
+          float k = 6.2831853 / wavelength;
+          float f = k * (dot(dir, point) - sqrt(9.8 / k) * speed * time);
+          float sf = sin(f), cf = cos(f);
+          tangent += vec3(-dir.x * dir.x * steepness * sf, dir.x * steepness * cf, -dir.x * dir.y * steepness * sf);
+          binormal += vec3(-dir.x * dir.y * steepness * sf, dir.y * steepness * cf, -dir.y * dir.y * steepness * sf);
+          return steepness / k * sf;
+        }
         void main() {
           vec2 point = vWater.xz;
+          vec3 waveNormal = vWaveNormal;
+          float crest = vCrest;
+          vec3 toCam = cameraPosition - vWater;
+          float viewDist = length(toCam);
+          vec3 view = toCam / max(viewDist, 1e-4);
+          // Large harbour surfaces exceed the vertex sampling rate of short
+          // waves. Analytic fragment shading avoids a visible triangle lattice
+          // while distance attenuation prevents horizon scanline aliasing.
+          if(uFragmentWaves > .5) {
+            float amp = waveScale * 1.35 / (1. + max(0., viewDist - 12.) * .042), displacement = 0.;
+            vec3 tangent = vec3(1., 0., 0.), binormal = vec3(0., 0., 1.);
+            displacement += swell(normalize(vec2(.85, .52)), amp * 1.1, 9.5, 1., point, tangent, binormal);
+            displacement += swell(normalize(vec2(-.42, .91)), amp * .8, 5.6, 1.12, point, tangent, binormal);
+            displacement += swell(normalize(vec2(.23, -.97)), amp * .5 / (1. + viewDist * .03), 3.1, 1.3, point, tangent, binormal);
+            displacement += swell(normalize(vec2(-.88, -.3)), amp * .3 / (1. + viewDist * .05), 1.7, 1.6, point, tangent, binormal);
+            waveNormal = normalize(cross(binormal, tangent));
+            crest = displacement / max(waveScale * 1.35 * 2.2, 1e-4);
+          }
           // Dual scrolling normal maps moving against each other.
           vec3 n1 = texture2D(uNormalMap, point * .16 + vec2(time * .023, time * .017)).xyz * 2. - 1.;
           vec3 n2 = texture2D(uNormalMap, point * .37 - vec2(time * .031, time * .013)).xyz * 2. - 1.;
           vec2 detail = n1.xy * .55 + n2.xy * .45;
-          vec3 normal = normalize(vec3(vWaveNormal.x + detail.x * .45, vWaveNormal.y, vWaveNormal.z + detail.y * .45));
-          vec3 view = normalize(cameraPosition - vWater);
+          float detailGain = .45 / (1. + viewDist * .032);
+          vec3 normal = normalize(vec3(waveNormal.x + detail.x * detailGain, waveNormal.y, waveNormal.z + detail.y * detailGain));
           float facing = max(.001, dot(view, normal));
           float fresnel = .02 + .98 * pow(1. - facing, 4.2);
 
@@ -919,7 +949,7 @@
           float lap = .5 + .5 * sin(time * 2.1 - depth * 26. + point.y * 1.3);
           float foamNoise = fbmNoise(point * 4.6 - vec2(time * .35, time * .2));
           float foam = shore * smoothstep(.30, .72, foamNoise + lap * .38);
-          foam += smoothstep(.62, .95, vCrest) * smoothstep(.4, 1.2, depth) * .35;
+          foam += smoothstep(.62, .95, crest) * smoothstep(.4, 1.2, depth) * uWhitecapStrength;
           color = mix(color, mix(horizonColor, vec3(.96), .75), clamp(foam * .88, 0., 1.));
 
           float fogDist = length(cameraPosition - vWater) * .0055;

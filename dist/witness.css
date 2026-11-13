@@ -923,3 +923,42 @@ dialog.inspection-dialog::backdrop{background:rgba(8,18,17,.08);backdrop-filter:
 .audio-slider input{width:100%;min-width:0;accent-color:#61785c;cursor:pointer;min-height:30px}
 .audio-slider output{text-align:right;font-variant-numeric:tabular-nums}
 @media(max-width:600px){.audio-caption{bottom:160px;font-size:.78rem;max-width:92%}.audio-settings{padding:10px}.audio-slider{grid-template-columns:minmax(90px,1fr) minmax(80px,1fr) 35px;gap:8px;font-size:.82rem}.voice-controls{gap:8px}}
+/* Q01: the scene stays visible behind player-paced dialogue and assistance. */
+@keyframes q01PresenterIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+.q01-presenter{position:fixed;z-index:40;bottom:max(26px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(780px,calc(100vw - 36px));padding:20px 26px 19px;background:linear-gradient(125deg,rgba(15,21,21,.96),rgba(27,31,28,.93));border:1px solid rgba(224,199,145,.34);border-top:2px solid #c9aa72;box-shadow:0 24px 86px rgba(0,0,0,.66),inset 0 1px 0 rgba(255,244,218,.11);backdrop-filter:blur(16px);color:#f0e7d4;border-radius:3px;animation:q01PresenterIn .22s cubic-bezier(.2,.7,.2,1) both}
+.q01-presenter::before{content:"";position:fixed;inset:auto -50vw -40px -50vw;height:210px;background:radial-gradient(ellipse at 50% 100%,rgba(8,12,12,.52),transparent 72%);pointer-events:none;z-index:-1}
+html[data-motion=calm] .q01-presenter{animation:none}
+@media(prefers-reduced-motion:reduce){.q01-presenter{animation:none}}
+.q01-presenter[hidden],.q01-route-guide[hidden]{display:none}
+.q01-dialogue-head{display:flex;align-items:center;gap:12px;color:#d6b780;font:600 11px Manrope,sans-serif;letter-spacing:.13em;text-transform:uppercase;padding-bottom:8px;border-bottom:1px solid rgba(211,180,126,.14)}
+.q01-dialogue-head em{font-style:normal;font-weight:500;color:#9eac9e;letter-spacing:.08em;text-transform:none}
+.q01-pips{display:inline-flex;align-items:center;gap:5px;margin-left:auto}
+.q01-pips i{width:5px;height:5px;border-radius:50%;background:rgba(214,183,128,.25);transition:background .15s,transform .15s}
+.q01-pips i.is-done{background:rgba(214,183,128,.55)}
+.q01-pips i.is-on{background:#e2c68f;transform:scale(1.25)}
+.q01-dialogue-head small{margin-left:auto;font-size:10px;letter-spacing:.08em;color:#a4b0a5}
+.q01-pips+small{margin-left:4px}
+.q01-dialogue-head button{padding:0 7px;min-height:28px;background:transparent;border:0;color:#d8c8a6;font-size:22px;cursor:pointer}
+.q01-dialogue-head button:hover,.q01-dialogue-head button:focus-visible{color:#f5ead2}
+.q01-spoken{font:400 clamp(17px,1.5vw,22px)/1.65 Lora,Georgia,serif;margin:14px 0 18px;text-wrap:pretty;color:#f3ebda}
+.q01-presenter[data-speaker=private] .q01-spoken,.q01-presenter[data-speaker=description] .q01-spoken{font-style:italic;color:#dfc8a4}
+.q01-dialogue-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.q01-dialogue-actions button,.q01-load-steps button{font-size:12px;min-height:38px;padding:9px 15px;border:1px solid rgba(202,175,118,.34);color:#e2d7be;background:rgba(255,255,255,.04);border-radius:3px;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.q01-dialogue-actions button:hover:not(:disabled),.q01-dialogue-actions button:focus-visible:not(:disabled){background:rgba(202,175,118,.14);border-color:rgba(224,199,145,.62)}
+.q01-dialogue-actions button:disabled{opacity:.38;cursor:default}
+.q01-dialogue-actions .primary{background:linear-gradient(180deg,#ceb383,#b99d6a);color:#141e1a;border:1px solid #dec391;font-weight:700}
+.q01-dialogue-actions .primary:hover:not(:disabled),.q01-dialogue-actions .primary:focus-visible:not(:disabled){background:linear-gradient(180deg,#d8be90,#c2a573)}
+.q01-load-steps{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.q01-work-status{font-size:12px;color:#c9b88d}
+.q01-route-guide{position:fixed;z-index:12;top:104px;right:24px;width:264px;background:linear-gradient(125deg,rgba(20,31,27,.92),rgba(20,30,27,.76));padding:17px 18px;border:1px solid rgba(190,165,112,.18);border-left:2px solid #c3a46e;color:#e5dfd0;backdrop-filter:blur(10px);box-shadow:0 14px 40px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,244,218,.07);border-radius:2px}
+.q01-chapter-label{display:block;color:#b8a074;letter-spacing:.17em;font-size:9px;margin-bottom:8px;font-weight:600}
+.q01-route-guide strong{font:500 17px/1.4 Lora,Georgia,serif;color:#f3ead7}
+.q01-route-guide p{font-size:11.5px;line-height:1.65;color:#bcc7bb;margin:9px 0 13px}
+.q01-route-guide>div{display:flex;flex-direction:column;gap:7px}
+.q01-route-guide button{background:rgba(255,255,255,.03);border:1px solid rgba(182,155,99,.36);text-align:left;color:#dcd0b4;font:500 11.5px Manrope,sans-serif;padding:9px 11px;border-radius:2px;cursor:pointer;transition:background .15s,border-color .15s}
+.q01-route-guide button:hover,.q01-route-guide button:focus-visible{background:rgba(195,164,110,.15);border-color:rgba(220,192,135,.66);color:#f5ebd6}
+html[data-q01=campaign] #objective,html[data-q01=campaign] #companion-hud{display:none}
+html[data-q01=campaign] .q01-presenter:not([hidden])~#subtitle,html[data-q01=campaign]:has(.q01-presenter:not([hidden])) .adv-markers{visibility:hidden}
+html[data-q01=campaign] .adv-marker.is-near{opacity:.22}
+html[data-q01=campaign] .toast{top:max(78px,env(safe-area-inset-top) + 66px);bottom:auto}
+@media(max-width:720px){.q01-route-guide{right:12px;top:83px;width:210px;padding:10px 12px}.q01-route-guide p{display:none}.q01-route-guide strong{font-size:14px}.q01-route-guide>div{margin-top:8px}.q01-presenter{bottom:16px;padding:15px 17px}.q01-spoken{font-size:17px}.q01-dialogue-actions{gap:6px}.q01-dialogue-actions button{padding:8px 10px}.q01-route-guide button{min-height:36px}.q01-dialogue-head em,.q01-pips{display:none}}

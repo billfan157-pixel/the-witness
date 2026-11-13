@@ -15,6 +15,8 @@
   }
 
   const loaded=M.load();
+  const Q01Campaign=globalThis.WitnessQ01Campaign;
+  let q01Presenter=null;
   let state=loaded.state,engine,controls,title=true,dialog=null,last=null,activePuzzle=null,toastTimer,subTimer,checkpointTime=0,walking=false,escortLive=false,storageWarning=false,currentTarget=null,audioOn=false,legendOrder=[],legendHint=0,attuneChosen=false;
   const cloud=WitnessCloud.create({model:M,onStatus(info){
     const text=info.storageFailed?'Bộ nhớ máy đã đầy · hãy xuất bản lưu':info.message;
@@ -98,7 +100,7 @@
     if(!result.persisted)$('#save-status').textContent='Chưa lưu được trên máy · hãy xuất bản lưu';
     if(!result.persisted&&!storageWarning){storageWarning=true;toast('Máy chưa cho lưu tiến độ. Bạn có thể xuất bản lưu từ menu.');}
   }
-  function update(next){state=next;save();W.setState(state);refresh();}
+  function update(next){state=next;save();W.setState(state);refresh();q01Presenter?.sync();}
   function stopMotion(){controls?.enable(false);engine?.controls(0,0);}
   function applyView(){
     if(!state)return;
@@ -112,7 +114,7 @@
     save();applyView();
     toast(state.settings.cameraMode==='first'?'Góc nhìn thứ nhất · nhấn V để trở lại. Kéo hoặc bấm chuột để nhìn, WASD để đi.':'Góc nhìn thứ ba.');
   }
-  function close(){audio.stopVoice();audio.setMode(title?'title':'world');if(dialog){dialog.close();dialog.remove();dialog=null;}document.body.classList.remove('inspect-active');activePuzzle=null;if(engine){engine.pause(title);if(!title)controls?.enable(true);}refreshField();}
+  function close(){audio.stopVoice();audio.setMode(title?'title':'world');if(dialog){dialog.close();dialog.remove();dialog=null;}document.body.classList.remove('inspect-active');activePuzzle=null;if(engine){const held=!!q01Presenter?.blocking;engine.pause(title||held);controls?.enable(!title&&!held);}refreshField();}
   function show(label,content,footer='',wide=false){
     audio.stopVoice();audio.setMode('dialogue');
     document.body.classList.remove('inspect-active');
@@ -141,6 +143,7 @@
   }
 
   function launchWorld(){
+    q01Presenter?.dispose();q01Presenter=null;Q01Campaign?.release();
     const s=initial(),desc=W.descriptor(s);W.setState(s);currentTarget=null;last=null;walking=false;escortLive=false;
     try{
       if(!engine){
@@ -159,9 +162,10 @@
       const key=M.chapter(s).id+'.'+(s.layer?.id||'mortal');
       let point=s.positions[key];if(!Array.isArray(point)||point.length!==2||!point.every(Number.isFinite))point=null;
       if(s.pendingEscort){const n=M.chapter(s).nodes.find(n=>n.id===s.pendingEscort.target);point=n?[n.at[0]-1,n.at[1]+1]:null;}
-      engine.load(desc.base,point,W.layout(s),true);W.decorate(s);engine.restoreSpatial?.(s.spatialPositions?.[key]);engine.mount($('#world'),$('.adv-markers'));
+      engine.load(desc.base,point,W.layout(s),true);W.decorate(s);if(!Q01Campaign?.active(s))engine.restoreSpatial?.(s.spatialPositions?.[key]);engine.mount($('#world'),$('.adv-markers'));
       const p=W.plan(s);engine.update(p.objects,p.targets,{carrying:!!s.pendingEscort});
-      engine.pause(title);controls.enable(!title);applyView();
+      if(Q01Campaign?.active(s))q01Presenter=Q01Campaign.createPresenter({engine,getState:()=>state,write:update,toast,audio,refresh,log:pushLog,isTitle:()=>title,isPaused:()=>!!dialog||document.hidden,stop:stopMotion,resume:()=>controls?.enable(!title&&!dialog),load:()=>perform('brace'),onAdvance:()=>{checkpointPosition();advance();}});
+      engine.pause(title||!!q01Presenter?.blocking);controls.enable(!title&&!q01Presenter?.blocking);applyView();
       audioOn=!!s.settings.sound;
       refresh();
     }catch(e){
@@ -174,6 +178,7 @@
   function refresh(){
     if(!engine)return;
     const s=initial();W.setState(s);audio.configure(s.settings);audio.setScene(s);audio.setMode(title?'title':dialog?'dialogue':'world');const p=W.plan(s);
+    document.documentElement.dataset.q01=Q01Campaign?.active(s)?'campaign':'legacy';
     const activeAction=M.actions(s)[0];
     const carrying=!!(!s.layer&&(s.pendingEscort||['load','give-oil','supplies'].includes(activeAction?.id)));
     engine.update(p.objects,p.targets,{carrying});
@@ -187,7 +192,7 @@
 
     $('#title-screen').hidden=!title;$('#hud-top').hidden=title;$('#hud-bottom').hidden=title;$('#objective').hidden=title;
     const sceneLight=$('#q01-light-toggle');
-    if(sceneLight){sceneLight.hidden=title||!globalThis.WitnessQ01?.active(s);sceneLight.querySelector('.tool-label').textContent=s.settings.q01Lighting==='evening'?'Ban ngày':'Buổi tối';sceneLight.setAttribute('aria-label',s.settings.q01Lighting==='evening'?'Chuyển Q01 sang ban ngày':'Chuyển Q01 sang buổi tối');}
+    if(sceneLight){sceneLight.hidden=title||Q01Campaign?.active(s)||!globalThis.WitnessQ01?.active(s);sceneLight.querySelector('.tool-label').textContent=s.settings.q01Lighting==='evening'?'Ban ngày':'Buổi tối';sceneLight.setAttribute('aria-label',s.settings.q01Lighting==='evening'?'Chuyển Q01 sang ban ngày':'Chuyển Q01 sang buổi tối');}
     const coarse=matchMedia('(pointer: coarse)').matches||matchMedia('(any-pointer: coarse)').matches;
     $('#touch-controls').hidden=title||!coarse;
     if(title){
@@ -207,9 +212,13 @@
     $('#quest-number').textContent=s.layer?(s.layer.kind==='legend'?D.legends[s.layer.id].name.toUpperCase()+' · '+(D.legends[s.layer.id].witnessRole||'CHỨNG NHÂN'):'ẨN DỤ TRONG GIẤC MƠ'):`${ch.id} · ${ch.act}`;
     $('#objective-title').textContent=s.pendingEscort?'Đi cùng tới nơi nhận':a?.title||'Lời chứng còn ở lại';
     $('#objective-detail').textContent=s.layer?a?.text:a?.legend?a.text:q.route?(ch.ending[q.route]||ch.quiet):s.pendingEscort?'Theo sát người đi cùng. Bạn có thể dừng và chờ nhau.':a?.text||ch.lead;
+    if(Q01Campaign?.active(s)){
+      const [,label,detail]=Q01Campaign.goal(s);$('#objective-title').textContent=label;$('#objective-detail').textContent=detail;
+      const panel=$('#q01-route-guide');if(panel)panel.hidden=title||s.settings.guideMode==='off'||!!CRAFT.field(s)||!!q01Presenter?.blocking;
+    }
 
     const quietBtn=$('#quiet-trigger');
-    if(quietBtn)quietBtn.hidden=!!s.layer||!ch.quietScene;
+    if(quietBtn)quietBtn.hidden=!!s.layer||Q01Campaign?.active(s)||!ch.quietScene;
 
     const ws=$('#witness-status');
     if(ws){
@@ -353,7 +362,7 @@
         const src=state.layer.kind==='legend'?D.legends[state.layer.id]:D.veils[state.layer.id];
         show(state.layer.kind==='legend'?'CHƯƠNG CHUYỂN THỂ':'GIẤC MƠ HƯ CẤU',`<p>${esc(src.summary||src.question)}</p>`,primary('Tiếp tục cảnh đang dở','close'));
         heading(src.title);
-      }else introChapter();
+      }else if(Q01Campaign?.active(state)){subline(state.sceneProgress.Q01.beat===0?'Sóng dưới chân kè. Theo tiếng bào, qua hẻm tới xưởng Natan.':Q01Campaign.goal(state)[2]);q01Presenter?.sync();}else introChapter();
     });
   }
 
@@ -390,6 +399,7 @@
     if(!target){guide();return;}
     if(!engine.within(target)){guide(target,true);return;}
     currentTarget=target;
+    if(Q01Campaign?.active(state)&&String(target).startsWith('q01:')){q01Presenter?.interact(target);return;}
     if(String(target).startsWith('architecture:')){const d=WitnessArchitecture.describe(target);show('KHÔNG GIAN BẾN CẢNG',`<p>${esc(d.body)}</p>`,primary('Trở lại','close'));heading(d.title);return;}
     if(String(target).startsWith('craft:')){inspectSceneDetail(target);return;}
     if(String(target).startsWith('field:')){operateField(target);return;}
@@ -644,7 +654,7 @@
           }
           const draftPath=result.state.workshop?.drafts?.['Q03.TRACK']?.payload?.path||[];
           if(draftPath[draftPath.length-1]==='porch'){
-            const evalRes=root.WitnessDepth?.evaluate?.(result.state,f.def,{path:draftPath});
+            const evalRes=X.evaluate(result.state,f.def,{path:draftPath});
             if(evalRes&&evalRes.ok){
               FeedbackAudio.effect('cart-rumble',spot.at);
               subline('Tuyến đường xe đã liền mạch và đứng vững trước thực địa! Nghe rõ tiếng bánh xe lăn đều trên nền đá.');
@@ -700,7 +710,7 @@
 
   function guide(target,autoOpen=false){
     if(title||dialog||!state)return;
-    const s=state,a=M.actions(s)[0],plan=W.plan(s);const id=target||(CRAFT.field(s)?plan.targets.find(t=>t.main)?.id:a?.target);if(!id)return;
+    const s=state,a=M.actions(s)[0],plan=W.plan(s);const id=target||(CRAFT.field(s)?plan.targets.find(t=>t.main)?.id:Q01Campaign?.active(s)?'q01:'+Q01Campaign.goal(s)[0]:a?.target);if(!id)return;
     const at=engine.locate(id)||plan.targets.find(t=>t.id===id)?.at||(s.layer?a?.at:M.chapter(s).nodes.find(n=>n.id===id)?.at);if(!at)return;
     const arrived=()=>{
       walking=false;
@@ -868,6 +878,8 @@
       html+=Object.entries(state.veils).map(([id,v])=>`<div class="entry"><small>GIẤC MƠ HƯ CẤU</small><h3>${esc(D.veils[id].title)}</h3><p>${v.reflection?esc(v.reflection):'Chưa chọn một lời phản tư. Game không gán câu trả lời thay bạn.'}</p></div>`).join('');
     }
     if(tab==='log'){
+      const notes=Q01Campaign?.notes(state)||[];
+      if(notes.length)html+='<h3>Nhật ký riêng · Bến Xêdarê</h3>'+notes.map(n=>`<div class="entry"><h3>${esc(n.title)}</h3><p>${esc(n.text)}</p></div>`).join('')+'<h3>Đối thoại trong phiên này</h3>';
       html+=sessionLog.length?sessionLog.map(item=>`<div class="entry"><small>${esc(item.time)} · ${esc(item.speaker)}</small><p>${esc(item.text)}</p></div>`).join(''):'<p>Các đoạn đối thoại, nhịp nguồn Kinh Thánh và âm thanh không gian trong phiên chơi sẽ được lưu lại tại đây để bạn đọc lại bất cứ lúc nào.</p>';
     }
     show('GIỮ ĐIỀU ĐÃ XẢY RA',html,primary('Trở lại hành trình','close'),true);
@@ -1048,7 +1060,7 @@
       else if(act==='new'){FeedbackAudio.page();newGame();}
       else if(act==='about'){FeedbackAudio.page();about();}
       else if(act==='continue'){FeedbackAudio.page();start();}
-      else if(act==='create'){FeedbackAudio.page();const f=new FormData($('#character-form'));state=M.fresh(Object.fromEntries(f.entries()));save();start();}
+      else if(act==='create'){FeedbackAudio.page();const f=new FormData($('#character-form'));state=M.beginQ01Scene(M.fresh(Object.fromEntries(f.entries())),{campaign:true});save();start();}
       else if(act==='interact'){FeedbackAudio.choice();interact();}
       else if(act==='action'){FeedbackAudio.choice();showAction(id);}
       else if(act==='perform'){FeedbackAudio.click();perform(id);}

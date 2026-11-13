@@ -14,6 +14,8 @@
       pinRow = 0, color, sheenColor, name = "cloth-layer", fuzzRepeat = 7, wrapX = false
     } = opts;
     const N = cols * rows;
+    const identityFrame = new T.Matrix4();
+    const previousFrame = new T.Matrix4(), frameDelta = new T.Matrix4();
     const invMass = new Float32Array(N);
     const restData = new Float32Array(N * 4);
     const clothUv = new Float32Array(N * 2);
@@ -118,6 +120,15 @@
     }
     function cpuStep(dt, ctx) {
       const dt2 = dt * dt, damp = .985;
+      const frame = (ctx.restFrame || identityFrame).elements;
+      const delta = frameDelta.elements;
+      // Carry the simulated sheet with its attachment frame before solving
+      // relative motion. Otherwise lowering a seated pelvis drags a standing
+      // sheet through the torso, where it can remain caught on the shoulders.
+      for (const points of [pos, prev]) for (let i = 0; i < N; i++) {
+        const ix = i * 3, x = points[ix], y = points[ix + 1], z = points[ix + 2];
+        for (let a = 0; a < 3; a++) points[ix + a] = delta[a] * x + delta[4 + a] * y + delta[8 + a] * z + delta[12 + a];
+      }
       const gx = ctx.wind[0] + ctx.inertia[0], gy = -ctx.gravity + ctx.wind[1] + ctx.inertia[1], gz = ctx.wind[2] + ctx.inertia[2];
       for (let i = 0; i < N; i++) {
         const ix = i * 3;
@@ -128,10 +139,12 @@
           pos[ix + 2] = prev[ix + 2] = ctx.pinTargets[c * 3 + 2];
           continue;
         }
+        const rx = rest[ix], ry = rest[ix + 1], rz = rest[ix + 2];
         for (let a = 0; a < 3; a++) {
           const cur = pos[ix + a], old = prev[ix + a];
           const g = a === 0 ? gx : a === 1 ? gy : gz;
-          const accel = g + (rest[ix + a] - cur) * (ctx.shape ?? 26);
+          const target = frame[a] * rx + frame[4 + a] * ry + frame[8 + a] * rz + frame[12 + a];
+          const accel = g + (target - cur) * (ctx.shape ?? 26);
           let step = (cur - old) * damp + accel * dt2;
           step = Math.max(-.02, Math.min(.02, step));
           pos[ix + a] = cur + step;
@@ -171,15 +184,19 @@
     const INTEGRATE = `
       uniform sampler2D tCur, tPrev, tRest, tPin;
       uniform float uDt, uDamp, uGravity, uShape;
+      uniform mat4 uRestFrame, uFrameDelta;
       uniform vec3 uWind, uInertia;
       varying vec2 vUv;
       void main(){
         vec4 cur = texture2D(tCur, vUv);
         vec4 prev = texture2D(tPrev, vUv);
+        cur.xyz = (uFrameDelta * vec4(cur.xyz, 1.)).xyz;
+        prev.xyz = (uFrameDelta * vec4(prev.xyz, 1.)).xyz;
         vec4 rest = texture2D(tRest, vUv);
         vec4 pin = texture2D(tPin, vUv);
         vec3 vel = (cur.xyz - prev.xyz) * uDamp;
-        vec3 accel = vec3(0., -uGravity, 0.) + uWind + uInertia + (rest.xyz - cur.xyz) * uShape;
+        vec3 target = (uRestFrame * vec4(rest.xyz, 1.)).xyz;
+        vec3 accel = vec3(0., -uGravity, 0.) + uWind + uInertia + (target - cur.xyz) * uShape;
         vec3 step = vel + accel * uDt * uDt;
         float sl = length(step); if (sl > 0.02) step *= 0.02 / sl;
         vec3 next = cur.xyz + step;
@@ -260,14 +277,14 @@
       Object.assign(integrateMat.uniforms, {
         tCur: { value: null }, tPrev: { value: null }, tRest: { value: restTex }, tPin: { value: pinTex },
         uDt: { value: 1 / 60 }, uDamp: { value: .985 }, uGravity: { value: 9.8 }, uShape: { value: 26 },
-        uWind: { value: new T.Vector3() }, uInertia: { value: new T.Vector3() }
+        uWind: { value: new T.Vector3() }, uInertia: { value: new T.Vector3() }, uRestFrame: { value: new T.Matrix4() }, uFrameDelta: { value: new T.Matrix4() }
       });
       Object.assign(constraintMat.uniforms, {
         tPos: { value: null }, tRest: { value: restTex }, tPin: { value: pinTex },
         uTexel: { value: new T.Vector2(1 / cols, 1 / rows) }, uStiff: { value: .8 }, uGroundY: { value: -10 }, uWrapX: { value: wrapX ? 1 : 0 },
         uCapA: { value: capA }, uCapB: { value: capB }, uCapCount: { value: 0 }
       });
-      copyMat.uniforms.tSrc = { value: restTex };
+      copyMat.uniforms.tSrc = { value: cpuPosTex };
       const blit = (mat, target) => {
         quad.material = mat;
         const old = renderer.getRenderTarget();
@@ -281,6 +298,8 @@
       const iu = g.integrateMat.uniforms, cu = g.constraintMat.uniforms;
       iu.tCur.value = g.targets[g.cur].texture; iu.tPrev.value = g.targets[g.prev].texture;
       iu.uDt.value = dt; iu.uGravity.value = ctx.gravity; iu.uShape.value = ctx.shape ?? 26;
+      iu.uRestFrame.value.copy(ctx.restFrame || identityFrame);
+      iu.uFrameDelta.value.copy(frameDelta);
       iu.uWind.value.set(ctx.wind[0], ctx.wind[1], ctx.wind[2]);
       iu.uInertia.value.set(ctx.inertia[0], ctx.inertia[1], ctx.inertia[2]);
       const blit = (mat, target) => {
@@ -314,6 +333,8 @@
     mesh.onBeforeRender = renderer => { clothRenderer = renderer; };
     function update(dt, ctx) {
       dt = Math.max(1 / 240, Math.min(1 / 30, dt));
+      const currentFrame = ctx.restFrame || identityFrame;
+      frameDelta.copy(previousFrame).invert().premultiply(currentFrame);
       for (let c = 0; c < cols; c++) {
         const o = (pinRow * cols + c) * 4;
         pinData[o] = ctx.pinTargets[c * 3]; pinData[o + 1] = ctx.pinTargets[c * 3 + 1]; pinData[o + 2] = ctx.pinTargets[c * 3 + 2];
@@ -331,6 +352,7 @@
         if (ctx.renderer) gpu.renderer = ctx.renderer;
         gpuStep(dt, ctx);
       } else cpuStep(dt, ctx);
+      previousFrame.copy(currentFrame);
     }
     // Seed the CPU texture so the first frame (before any update) is not empty.
     for (let i = 0; i < N; i++) { cpuPosData[i * 4] = rest[i * 3]; cpuPosData[i * 4 + 1] = rest[i * 3 + 1]; cpuPosData[i * 4 + 2] = rest[i * 3 + 2]; cpuPosData[i * 4 + 3] = invMass[i]; }

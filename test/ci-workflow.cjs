@@ -84,10 +84,13 @@ for(const workflow of workflows){
 }
 
 const called=script=>allSteps.some(s=>s.value.includes('npm run '+script)||s.value.includes('npm '+script+' '));
-const requiredScripts=['test','test:agents','test:backend','check:agents','build','test:build-output','test:graphics','test:q01-greybox-browser','test:architecture-browser'];
+const requiredScripts=['test','test:agents','test:backend','check:agents','build','test:build-output','test:graphics','test:q01-greybox-browser','test:architecture-browser','test:q01-campaign-browser'];
 for(const script of requiredScripts)assert(called(script),'No workflow runs '+script);
 const softwareSteps=allSteps.filter(s=>s.env.WITNESS_QA_HARDWARE==='0');
 assert(softwareSteps.length>=2,'The browser gates must force software rendering on a runner without a GPU');
 assert(softwareSteps.some(s=>/test:graphics/.test(s.value)),'The graphics gate must run on the software rasteriser');
 assert(allSteps.some(s=>s.env.WITNESS_GREYBOX_SMOKE==='1'),'The greybox gate in CI must run the smoke case');
+const campaign=workflows.find(w=>w.jobs.some(j=>j.id==='q01-campaign-gate'));
+assert(campaign&&/route: mechanical/.test(campaign.raw)&&/route: manual/.test(campaign.raw),'Campaign CI must include both complete rescue routes');
+assert(allSteps.some(s=>/test:q01-campaign-browser/.test(s.value)&&s.env.WITNESS_QA_HARDWARE==='0'&&s.env.WITNESS_Q01_PACKAGE_ROOT==='dist'),'Campaign acceptance must exercise the packaged build on the software runner');
 console.log(JSON.stringify({status:'passed',workflows:workflowFiles,steps:allSteps.length,requiredScripts:requiredScripts.length,softwareSteps:softwareSteps.length}));

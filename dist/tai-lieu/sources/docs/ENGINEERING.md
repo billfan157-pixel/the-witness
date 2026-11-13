@@ -15,6 +15,7 @@ nhật thứ tự nạp, builder, standalone và consumer.
 | Điều phối và UI | witness-app, workshop-ui, field-ui, craft-renderer, witness.css |
 | Thế giới/kiến trúc | witness-world, witness-architecture, witness-q01, witness-q01-environment, witness-modular-kit |
 | Q01 PR-04 spatial candidate | `witness-q01-greybox.js` sở hữu blueprint/anchors/mesh/cơ cấu; `q01-greybox.html` + `q01-greybox-lab.js` là tuyến đi kiểm bằng engine thật, tách khỏi campaign presenter PR-05 |
+| Q01 PR-05 campaign | `witness-q01-campaign.js` nối chín Beat, thoại và choreography vào campaign; `witness-q01-interaction.js` giữ tiền đề vị trí/người tại model; `witness-q01-art.js` dựng hình ảnh trên cùng blueprint PR-04 |
 | Engine đọc được | `tools/environment-kit/engine-runtime.js`; build-engine ghép vào vendor/adventure-3d, giữ core pin hash |
 | Renderer/nhân vật | các module trong vendor; phần tùy biến ở đó vẫn là nguồn, không tự thay toàn thư mục |
 | Âm thanh/dẫn hướng | witness-audio, audio-library, ambience, compass; ghi nguồn/giấy phép của media thật |
@@ -39,6 +40,15 @@ campaignId, API v1 hay namespace. Scene completion chỉ chặn commit, không p
 quest completion thứ hai (`quests.Q01.route`/`Q01.COMMITTED` vẫn sở hữu ở model);
 khi v6 kích hoạt, actions Q01 mở theo nhịp (02: brace/ledger; 07: meal/choose; 08: commit),
 và q01SceneEvent kiểm tra hoàn tất task trước khi chốt ledgerSeam/recallT05.
+
+PR-05 bật scene qua `beginQ01Scene(fresh(profile), {campaign:true})` tại form
+tạo nhân vật; cờ tùy chọn `flags.q01Campaign` bật tiền đề không gian của model,
+không tạo nguồn completion khác. Save scene-null đang đi dở giữ giao diện v3;
+save foundation đã có scene được presenter tiếp tục. Không đổi schema/API/D1.
+Trong `exit`/`extract` chưa chốt, load phục hồi cả nhóm theo checkpoint của 07,
+không hứa lưu từng vị trí actor. Cơ cấu đang chuyển động không được chốt trước
+khi tới cữ; đóng menu không tự bỏ khóa tương tác. Hình ảnh v6 dùng ánh trực tiếp,
+IBL/AO và đèn cục bộ; không áp trường GI của kho v3 lên topology v6.
 
 Worker phân `/api/` sang server/api.mjs, còn lại tới ASSETS. Danh tính production
 do nền tảng cấp; demo identity chỉ ở dev. `db/schema.ts` sở hữu schema;

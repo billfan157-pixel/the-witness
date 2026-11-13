@@ -9,7 +9,7 @@
   root.__registerWitnessAtmospheres(climates);
   const active=s=>!!s&&!s.layer&&root.WitnessModel.chapter(s).id==='Q01';
   const climate=s=>s?.settings?.q01Lighting==='evening'?'q01-evening':'q01-day';
-  function selectClimate(s){root.__registerWitnessAtmospheres({shore:active(s)?climates[climate(s)]:shoreClimate});if(root.WitnessQ01Environment)root.WitnessQ01Environment.enabled=active(s);}
+  function selectClimate(s){root.__registerWitnessAtmospheres({shore:active(s)?climates[climate(s)]:shoreClimate});if(root.WitnessQ01Environment)root.WitnessQ01Environment.enabled=active(s)&&!s.flags?.q01Campaign;}
   const clearLand=(x,z,r=0)=>root.WitnessQ01Environment?.enabled?(r?root.WitnessQ01Environment.clearVolume(x,z,r):root.WitnessQ01Environment.clear(x,z)):x>-30&&x<-17&&z>-22.4&&z<8;
   const clearVegetation=(x,z)=>z<(root.WitnessQ01Environment?.enabled?root.WitnessQ01Environment.shore(x)+.6:-22.4)||clearLand(x,z);
   function prepareGround(ground){

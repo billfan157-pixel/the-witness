@@ -9,8 +9,9 @@ theo; số đo/evidence và gate vẫn ở nguồn sở hữu. Code đang dùng 
 
 | ID | Đang lệch/chưa xác nhận | Hành động khi chạm miền |
 | --- | --- | --- |
-| A01 | T01–T13/E01–E12/P01–P05 là thiết kế truyện v6 đã chọn; runtime/contract vẫn 10 evidence/4 claims. Q01 có state foundation và greybox PR-04 riêng; presenter/gameplay chín Beat thuộc PR-05 | Phân biệt thiết kế, không gian đã dựng và gameplay chờ gắn; nâng cấp phải đồng bộ content/model/UI/restore/server và kiểm tương thích, không chỉ thêm ID vào JSON |
+| A01 | T01–T13/E01–E12/P01–P05 là thiết kế truyện v6 đã chọn; runtime/contract vẫn 10 evidence/4 claims. Q01 đã nối campaign; `67069e109a8f` qua hai lượt nhân vật mới tới Q02, PR-05 còn mở về thu âm/chất lượng mỹ thuật-diễn xuất | Kết quả đúng candidate ở D024; không suy hoàn thành PR-05 từ unit hoặc cổng gameplay |
 | A02 | Q01 G3 awaiting_visual_review; G4 in_progress | Duyệt góc gameplay, giữ artAccepted false nếu chưa có xác nhận |
+| A03 | PR-05 có 11 asset âm thanh procedural và năm câu Natan đã tạo; chưa đủ thoại các vai khác, chưa có listening/art approval. Dịch vụ tạo thêm thoại báo bận | Giữ đúng phạm vi âm thanh; không gọi là full voice acting hoặc tự đóng nghiệm thu hình ảnh/diễn xuất |
 | A05 | Report Phase B được nhắc nhưng chưa có trong checkout khi audit; gold/phase3 là mốc cũ | Kiểm file/hash/build trước khi dùng claim; không tạo báo cáo giả |
 | A07 | Chưa kiểm lại production trong các tác vụ quản trị | Không suy deploy từ build/push; kiểm live riêng khi được giao |
 | A08 | Đích v6 đã đồng bộ: L01/L02/L04 = 55/48/42 phút (145/580m); contract giữ baseline v3 216/720m; cả hai chưa đo | GDD sở hữu đích biên tập, hồ sơ 14 phải cộng đúng; baseline hợp đồng không phải đích v6 hoặc buffer đã nghiệm thu. Chỉ khóa thời lượng phát hành sau playtest người thật |
@@ -213,6 +214,48 @@ Không sao chép bản HEAD cũ đè lên chúng để “chuẩn hóa”.
   3) Khởi động máy chủ cục bộ `tools/serve.cjs` trước các cổng browser trong `ci.yml`. Cả hai môi trường Node 22 và
   Node 24 tái lập chuẩn xác cùng revision `36e9366f06b6`; đạt 100% các bộ kiểm tra governance, unit, backend, graphics
   và greybox smoke. Không đổi ID/schema/canon hay trạng thái duyệt art G3/G4.
+
+- **D024 — Candidate campaign Q01 PR-05 (13/11/2026).** Form tạo nhân vật mới
+  kích hoạt chín Beat v6 trong campaign chính. Save cũ có scene null giữ tuyến
+  v3; không đổi schema 2, contentVersion 3.0, ID, API/D1 hoặc nguồn commit.
+  Presenter dùng vị trí/support thật, đường đi capsule cho Titus/Simeon/người
+  học việc/Natan, cơ cấu dùng cùng mesh và collider, checkpoint cả nhóm theo 07.
+  Giữ nguyên sổ/gáy ở avatar và tờ bìa rời ở Natan; nhật ký riêng không cấp
+  evidence hoặc quyền công bố. Đặt phần việc ở Beat 07; bàn giao Beat 08 mới
+  trừ một lần và mở Q02. Cảnh có PBR, rig, đèn/khói/lửa/nước, bốn thời điểm,
+  mở bến tùy chọn và âm thanh nhúng ngoại tuyến. Đã sửa đường tiếp cận cảnh đêm,
+  chặn nói xuyên tường, IK ngồi và neo/rest-frame vải theo xương cha; camera
+  không dời avatar. Hồi quy bắt được lỗi biến `root` tại chốt tuyến Q03, đã
+  đổi sang module X đang dùng. Bài kiểm throttle giữ một clock bucket trong
+  fixture và kiểm thêm hết hạn/khởi động lại; chính sách API không đổi.
+  Cổng gameplay đạt trên `67069e109a8f`: hai lượt tạo mới tới Q02, nâng xà /
+  góp bếp / first / hiện trường tại 390 × 844 và tời / góc bàn / third / bảng
+  tại 1440 × 900. Cả hai cold HTML chặn HTTP/HTTPS, bật âm thanh, sáu reload,
+  3.065 mẫu kiểm độc lập không lỗi mesh/body/camera/sàn/bước nhảy. Vật giữ và
+  chi phí còn đúng sau mở Q02; năm câu Natan phát hết mỗi lượt. Hồi quy còn
+  đang chạy; bằng chứng sở hữu tại
+  [verification PR-05](environment-kit/validation/q01-pr05/verification.json).
+  Ma trận web 16 lượt ở `d5f98c562afe` là baseline trước các sửa dàn dựng,
+  không chứng nhận code mới. Hai lượt có số đo xanh ở `1e2d21387d12` /
+  `88c9349159fb` đã bị loại khỏi nhận bản cuối khi xem ảnh đêm phát hiện lỗi;
+  fixture cảnh đêm có seed chỉ dùng chẩn đoán rig. PR-05 chưa đóng: mới có năm
+  câu Natan thu sẵn, còn thiếu thu âm các vai và chưa có listening/diễn xuất/
+  mỹ thuật hoặc playtest người thật. G3/G4 giữ nguyên; chưa commit/push/deploy.
+
+- **D025 — Nâng cấp trình bày điện ảnh, ánh sáng, animation, âm thanh và mỹ thuật Q01 v6 (14/11/2026).**
+  Nâng cấp toàn diện lớp trình bày trên nền PR-05 tại `witness-q01-art.js`,
+  `witness-q01-campaign.js`, `witness-audio.js`,
+  `vendor/adventure-character.js`, `tools/prepare-q01-sound.cjs`
+  (11 file WAV 22050 Hz ở `assets/audio/q01/`), `witness.css` và `witness-cloud.js`
+  (giữ nguyên nút continue khi refresh nền): bầu trời thủ tục `q01-aaa-sky` bám camera không rách đỉnh,
+  nước phản chiếu vi sóng + độ sâu ven kè, kiến trúc cảng/kè/xưởng/mái có gối cầu thang, trụ đá, ròng rọc quay,
+  lò nướng, cửa chớp, tháp hải đăng Drusion có lửa hiệu, đội hình mái không chồng lấn, camera OTS/Beat 07,
+  biểu cảm/động tác lao động nhân vật và cấu hình âm thanh không gian theo Beat. Bảo toàn nguyên vẹn collision
+  `q01-pr05-structure`, schema/ID, accessibility (`first`, `calm`, phụ đề, dẫn đường) và round-trip save/Worker/D1.
+  Kiểm hậu chỉnh (gói `dist/` revision `d4d0fc582554`): `build` 6/6, `test:build-output` 9/9, `check:agents` (0 lỗi),
+  `test:agents`, `npm test` 15/15, `test:backend` 29/29, `test:graphics` 5/5 (`glError: 0`), `test:character`,
+  `test:q01-greybox-browser` (web + offline) và ma trận 16 tổ hợp `test/q01-campaign-browser.mjs` (`WITNESS_Q01_AUDIO=1`)
+  đều PASS. Giữ nguyên `artAccepted: false`, G3 `awaiting_visual_review`, G4 `in_progress`; chưa commit/push/deploy.
 
 <a id="story-review-2026-11-11"></a>
 ### Kết quả đối chiếu bản nhận định
