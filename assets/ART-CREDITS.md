@@ -20,6 +20,19 @@
   provider's timing alignment. Usage remains subject to the ElevenLabs account
   terms; no CC0 or human-actor claim. Additional voice production was unavailable;
   this file does not establish full dialogue coverage or listening approval.
+- `audio/q01/vieneu/**` and `audio/q01/vieneu-sources.json` are local experimental
+  Vietnamese speech assets [H] synthesized via **VieNeu-TTS v3 Turbo**
+  (`pnnbao-ump/VieNeu-TTS-v3-Turbo`, sha `61b85e3d937fbbacb387714180e8182823512523`)
+  with `OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano-ONNX`
+  (`ceff0d0749bfb3fa2d61149794ec6feef0d1e1ae`), both **Apache-2.0**, executed
+  locally on CPU ONNX Runtime (`fp32`) by `tools/vieneu-tts.cjs` +
+  `tools/vieneu-tts-worker.py` + `tools/vieneu-cast.json`. Zero external voice
+  cloning (`allowVoiceCloning: false`; only curated built-in preset voices used:
+  Natan Beat 07 `Thiền Tâm Đức` & `Thiện Minh`, Titus `Hải Đăng`, Yosef `Xuân Vĩnh`,
+  Rina `Ngọc Linh`; 28 runtime clips + 2 Natan Beat 07 comparison reels against
+  untouched ElevenLabs baseline). Neither model weights nor browser TTS inference
+  are shipped; all VieNeu takes retain `reviewStatus: "generated-awaiting-human-audio-review"`
+  pending listening approval.
 
 ## World upgrade 2026-11-10 (environment & world building)
 

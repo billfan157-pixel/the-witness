@@ -30,12 +30,71 @@
     return value >>> 0;
   }
 
-  function geometry(T, positions, indices, colors = null) {
+  // Deterministic 2D hash & smooth value/FBM/Voronoi noise for 3A procedural micro-surfaces
+  function fract(x) {
+    return x - Math.floor(x);
+  }
+
+  function hash2(x, y) {
+    return fract(Math.sin(x * 127.1 + y * 311.7) * 43758.5453123);
+  }
+
+  function noise2(x, y) {
+    const ix = Math.floor(x), iy = Math.floor(y);
+    const fx = x - ix, fy = y - iy;
+    const ux = fx * fx * (3 - 2 * fx);
+    const uy = fy * fy * (3 - 2 * fy);
+    const a = hash2(ix, iy);
+    const b = hash2(ix + 1, iy);
+    const c = hash2(ix, iy + 1);
+    const d = hash2(ix + 1, iy + 1);
+    return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
+  }
+
+  function tileNoise2(x, y, periodX, periodY) {
+    const ix = ((Math.floor(x) % periodX) + periodX) % periodX;
+    const iy = ((Math.floor(y) % periodY) + periodY) % periodY;
+    const ix1 = (ix + 1) % periodX;
+    const iy1 = (iy + 1) % periodY;
+    const fx = x - Math.floor(x), fy = y - Math.floor(y);
+    const ux = fx * fx * (3 - 2 * fx);
+    const uy = fy * fy * (3 - 2 * fy);
+    const a = hash2(ix, iy);
+    const b = hash2(ix1, iy);
+    const c = hash2(ix, iy1);
+    const d = hash2(ix1, iy1);
+    return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
+  }
+
+  function voronoiTile(x, y, cells) {
+    const gx = Math.floor(x), gy = Math.floor(y);
+    const fx = x - gx, fy = y - gy;
+    let d1 = 8.0, d2 = 8.0;
+    for (let oy = -1; oy <= 1; oy++) {
+      for (let ox = -1; ox <= 1; ox++) {
+        const cx = ((gx + ox) % cells + cells) % cells;
+        const cy = ((gy + oy) % cells + cells) % cells;
+        const px = ox + hash2(cx, cy) * .82 + .09 - fx;
+        const py = oy + hash2(cy + 19, cx + 47) * .82 + .09 - fy;
+        const d = px * px + py * py;
+        if (d < d1) { d2 = d1; d1 = d; }
+        else if (d < d2) { d2 = d; }
+      }
+    }
+    const s1 = Math.sqrt(d1), s2 = Math.sqrt(d2);
+    return { cell: s1, crease: Math.max(0, 1 - (s2 - s1) * 4.5) };
+  }
+
+  function geometry(T, positions, indices, colors = null, precomputedNormals = null) {
     const result = new T.BufferGeometry();
     result.setAttribute("position", new T.Float32BufferAttribute(positions, 3));
     result.setIndex(Array.isArray(indices) ? indices : new T.BufferAttribute(indices, 1));
     if (colors) result.setAttribute("color", new T.Float32BufferAttribute(colors, 3));
-    result.computeVertexNormals();
+    if (precomputedNormals) {
+      result.setAttribute("normal", new T.Float32BufferAttribute(precomputedNormals, 3));
+    } else {
+      result.computeVertexNormals();
+    }
     return result;
   }
 
@@ -52,129 +111,206 @@
     return positions;
   }
 
+  // 3A High-Definition Procedural Textile & Leather Normal Maps (512x512 seamless)
   const textileCache = new WeakMap();
   function textile(T, kind) {
     if (!textileCache.has(T)) textileCache.set(T, new Map());
     const cache = textileCache.get(T);
     if (cache.has(kind)) return cache.get(kind);
-    const size = 256;
+    const size = 512;
     const height = new Float32Array(size * size);
-    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
-      const idx = y * size + x;
-      if (kind === "linen") {
-        const u = x * Math.PI / 2, v = y * Math.PI / 2;
-        const warp = Math.cos(u) * Math.sin(v) * .42;
-        const slub = Math.sin(x * 12.9898 + y * 78.233) * .12;
-        const micro = Math.sin(x * 37.1 + y * 53.7) * .06;
-        height[idx] = warp + slub + micro;
-      } else if (kind === "wool") {
-        const twill = Math.cos((x + y) * Math.PI / 3) * Math.sin((x - y) * Math.PI / 3) * .55;
-        const fuzz = Math.sin(x * 23.4 + y * 45.6) * .22 + Math.sin(x * 67.8 - y * 89.1) * .11;
-        height[idx] = twill + fuzz;
-      } else if (kind === "haircloth") {
-        const coarse = Math.sin(x * Math.PI / 5) * .65;
-        const brist = Math.sin(x * 31.2 + y * 17.8) * .35 + Math.sin(y * 43.1) * .25;
-        height[idx] = coarse + brist;
-      } else {
-        const cell = Math.sin(x * .25) * Math.cos(y * .25);
-        const grain = Math.sin(x * 15.3 + y * 28.7) * .35 + Math.sin(x * 47.1 + y * 63.9) * .15;
-        height[idx] = cell * .45 + grain;
+    for (let y = 0; y < size; y++) {
+      const ny = y / size;
+      for (let x = 0; x < size; x++) {
+        const nx = x / size;
+        const idx = y * size + x;
+        if (kind === "linen") {
+          // Plain-weave hand-spun flax linen: power-of-2 cycle count avoids hardware mipmap aliasing while macro slubs add natural character
+          const warpPhase = nx * 8 * Math.PI * 2;
+          const weftPhase = ny * 8 * Math.PI * 2;
+          const warpSlub = .76 + .48 * tileNoise2(nx * 4, ny * 12, 4, 12);
+          const weftSlub = .76 + .48 * tileNoise2(nx * 12, ny * 4, 12, 4);
+          const warp = (Math.cos(warpPhase) * .5 + .5) * warpSlub;
+          const weft = (Math.cos(weftPhase) * .5 + .5) * weftSlub;
+          const overUnder = Math.sin(warpPhase * .5) * Math.sin(weftPhase * .5);
+          const weight = .5 + .22 * overUnder;
+          const macroSlub = (tileNoise2(nx * 6, ny * 6, 6, 6) - .5) * .28;
+          const microFuzz = (tileNoise2(nx * 20, ny * 20, 20, 20) - .5) * .16;
+          height[idx] = (warp * weight + weft * (1 - weight)) * .38 + macroSlub + microFuzz;
+        } else if (kind === "wool") {
+          // Balanced Levantine twill/herringbone wool with carded-fiber variation (power-of-2 period prevents diagonal screen moire)
+          const diagA = (nx * 8 + ny * 8) * Math.PI * 2;
+          const diagB = (nx * 8 - ny * 8) * Math.PI * 2;
+          const twill = Math.cos(diagA) * .16 + Math.sin(diagB) * .12;
+          const yarnSlub = (tileNoise2(nx * 8, ny * 16, 8, 16) - .5) * .36;
+          const felt1 = (tileNoise2(nx * 12, ny * 12, 12, 12) - .5) * .34;
+          const felt2 = (tileNoise2(nx * 28, ny * 28, 28, 28) - .5) * .20;
+          height[idx] = twill + yarnSlub + felt1 + felt2;
+        } else if (kind === "haircloth") {
+          // Coarse goat-hair cilice / sackcloth with heavy slub cords and bristles
+          const cord = Math.sin(nx * 8 * Math.PI * 2) * .30 + Math.cos(ny * 8 * Math.PI * 2) * .22;
+          const bristle = (tileNoise2(nx * 24, ny * 8, 24, 8) - .5) * .48;
+          const knot = Math.pow(tileNoise2(nx * 10, ny * 10, 10, 10), 2.5) * .42;
+          height[idx] = cord + bristle + knot;
+        } else {
+          // Full-grain vegetable-tanned leather with Voronoi cellular pebbles, pores & micro-creases
+          const v1 = voronoiTile(nx * 16, ny * 16, 16);
+          const v2 = voronoiTile(nx * 32, ny * 32, 32);
+          const pebble = (1 - v1.cell * .65) * .50 - v1.crease * .26;
+          const subGrain = (1 - v2.cell * .55) * .22 - v2.crease * .12;
+          const pore = Math.pow(tileNoise2(nx * 40, ny * 40, 40, 40), 4) * -.20;
+          height[idx] = pebble + subGrain + pore;
+        }
       }
     }
     const pixels = new Uint8Array(size * size * 4);
-    const scale = kind === "haircloth" ? 2.4 : kind === "wool" ? 1.8 : kind === "leather" ? 1.4 : 1.2;
-    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
-      const p = (y * size + x) * 4;
-      const xPrev = (x - 1 + size) % size, xNext = (x + 1) % size;
+    const scale = kind === "haircloth" ? .95 : kind === "wool" ? .65 : kind === "leather" ? 1.25 : .58;
+    for (let y = 0; y < size; y++) {
       const yPrev = (y - 1 + size) % size, yNext = (y + 1) % size;
-      const dx = (height[y * size + xNext] - height[y * size + xPrev]) * scale;
-      const dy = (height[yNext * size + x] - height[yPrev * size + x]) * scale;
-      const len = Math.hypot(dx, dy, 1.0);
-      pixels[p] = Math.round(((-dx / len) * .5 + .5) * 255);
-      pixels[p + 1] = Math.round(((-dy / len) * .5 + .5) * 255);
-      pixels[p + 2] = Math.round(((1.0 / len) * .5 + .5) * 255);
-      pixels[p + 3] = 255;
+      for (let x = 0; x < size; x++) {
+        const p = (y * size + x) * 4;
+        const xPrev = (x - 1 + size) % size, xNext = (x + 1) % size;
+        // 3x3 Sobel operator for crisp, low-aliasing tangent normals
+        const tl = height[yPrev * size + xPrev], tc = height[yPrev * size + x], tr = height[yPrev * size + xNext];
+        const ml = height[y * size + xPrev], mr = height[y * size + xNext];
+        const bl = height[yNext * size + xPrev], bc = height[yNext * size + x], br = height[yNext * size + xNext];
+        const dx = ((tr + 2 * mr + br) - (tl + 2 * ml + bl)) * .25 * scale;
+        const dy = ((bl + 2 * bc + br) - (tl + 2 * tc + tr)) * .25 * scale;
+        const len = Math.hypot(dx, dy, 1.0);
+        pixels[p] = Math.round(((-dx / len) * .5 + .5) * 255);
+        pixels[p + 1] = Math.round(((-dy / len) * .5 + .5) * 255);
+        pixels[p + 2] = Math.round(((1.0 / len) * .5 + .5) * 255);
+        pixels[p + 3] = 255;
+      }
     }
     const normal = new T.DataTexture(pixels, size, size, T.RGBAFormat);
     normal.wrapS = normal.wrapT = T.RepeatWrapping;
     normal.magFilter = T.LinearFilter;
     normal.minFilter = T.LinearMipmapLinearFilter;
+    normal.anisotropy = 4;
     normal.generateMipmaps = true;
-    normal.repeat.set(kind === "leather" ? 12 : 24, kind === "leather" ? 12 : 18);
+    normal.repeat.set(kind === "leather" ? 8 : 6, kind === "leather" ? 8 : 5);
     normal.needsUpdate = true;
     cache.set(kind, normal);
     return normal;
   }
 
   const textileRoughCache = new WeakMap();
-  // Per-weave roughness: linen is matte and slightly uneven, wool is fuzzier
-  // still, leather keeps a low sheen where the grain runs.
   function textileRoughness(T, kind) {
     if (!textileRoughCache.has(T)) textileRoughCache.set(T, new Map());
     const cache = textileRoughCache.get(T);
     if (cache.has(kind)) return cache.get(kind);
-    const size = 128;
+    const size = 256;
     const pixels = new Uint8Array(size * size * 4);
-    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
-      const p = (y * size + x) * 4;
-      let value;
-      if (kind === "linen") {
-        const warp = Math.cos(x * Math.PI / 2) * Math.sin(y * Math.PI / 2) * .05;
-        const slub = Math.sin(x * 12.9898 + y * 78.233) * .05;
-        value = .93 + warp + slub;
-      } else if (kind === "wool") {
-        const fibre = Math.sin(x * 23.4 + y * 45.6) * .03 + Math.sin(x * 67.8 - y * 89.1) * .02;
-        value = .96 + fibre;
-      } else if (kind === "haircloth") {
-        value = .93 + Math.sin(x * 31.2 + y * 17.8) * .04 + Math.sin(y * 43.1) * .03;
-      } else {
-        value = .82 + Math.sin(x * .25) * Math.cos(y * .25) * .05 + Math.sin(x * 15.3 + y * 28.7) * .035;
+    for (let y = 0; y < size; y++) {
+      const ny = y / size;
+      for (let x = 0; x < size; x++) {
+        const nx = x / size;
+        const p = (y * size + x) * 4;
+        let value;
+        if (kind === "linen") {
+          const slub = (tileNoise2(nx * 6, ny * 12, 6, 12) - .5) * .09;
+          const weave = Math.cos(nx * 8 * Math.PI * 2) * Math.sin(ny * 8 * Math.PI * 2) * .025;
+          value = .90 + slub + weave;
+        } else if (kind === "wool") {
+          const carded = (tileNoise2(nx * 10, ny * 10, 10, 10) - .5) * .07;
+          value = .94 + carded;
+        } else if (kind === "haircloth") {
+          const coarse = (tileNoise2(nx * 12, ny * 8, 12, 8) - .5) * .11;
+          value = .91 + coarse;
+        } else {
+          // Leather: polished crowns on pebbles (lower roughness) and matte crevices (higher roughness)
+          const v = voronoiTile(nx * 16, ny * 16, 16);
+          const wear = (tileNoise2(nx * 8, ny * 8, 8, 8) - .5) * .12;
+          value = .54 + v.crease * .28 + v.cell * .10 + wear;
+        }
+        const level = Math.round(Math.max(0, Math.min(1, value)) * 255);
+        pixels[p] = level; pixels[p + 1] = level; pixels[p + 2] = level; pixels[p + 3] = 255;
       }
-      const level = Math.round(Math.max(0, Math.min(1, value)) * 255);
-      pixels[p] = level; pixels[p + 1] = level; pixels[p + 2] = level; pixels[p + 3] = 255;
     }
     const texture = new T.DataTexture(pixels, size, size, T.RGBAFormat);
     texture.wrapS = texture.wrapT = T.RepeatWrapping;
     texture.magFilter = T.LinearFilter;
     texture.minFilter = T.LinearMipmapLinearFilter;
+    texture.anisotropy = 4;
     texture.generateMipmaps = true;
-    texture.repeat.set(kind === "leather" ? 12 : 24, kind === "leather" ? 12 : 18);
+    texture.repeat.set(kind === "leather" ? 8 : 6, kind === "leather" ? 8 : 5);
     texture.needsUpdate = true;
     cache.set(kind, texture);
     return texture;
   }
 
+  // 3A Sclera Texture with Multi-Branching Dendritic Episcleral Capillaries & Pinguecula Warmth
   const scleraCache = new WeakMap();
   function scleraTexture(T) {
     if (!scleraCache.has(T)) scleraCache.set(T, null);
     const cached = scleraCache.get(T);
     if (cached) return cached;
-    const size = 128;
+    const size = 256;
     const pixels = new Uint8Array(size * size * 4);
     const half = size / 2;
-    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
-      const p = (y * size + x) * 4;
-      const dx = (x - half) / half, dy = (y - half) / half;
-      const r = Math.hypot(dx, dy);
-      let red = 238, green = 234, blue = 227;
-      const rim = Math.min(1.0, Math.max(0.0, (r - .45) / .55));
-      red -= Math.round(rim * 38);
-      green -= Math.round(rim * 42);
-      blue -= Math.round(rim * 46);
-      const horizontalDist = Math.abs(dx);
-      if (horizontalDist > .25) {
-        const veinAngle = Math.atan2(dy, dx);
-        const veinNoise = Math.sin(veinAngle * 28.0 + r * 35.0) * Math.cos(r * 50.0);
-        const veinSharp = Math.pow(Math.max(0.0, veinNoise), 8.0);
-        const veinMask = Math.min(1.0, (horizontalDist - .25) / .55) * veinSharp;
-        red = Math.round(red * (1.0 - veinMask * .65) + 185 * (veinMask * .65));
-        green = Math.round(green * (1.0 - veinMask * .75) + 52 * (veinMask * .75));
-        blue = Math.round(blue * (1.0 - veinMask * .75) + 45 * (veinMask * .75));
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const p = (y * size + x) * 4;
+        const dx = (x - half) / half, dy = (y - half) / half;
+        const r = Math.hypot(dx, dy);
+        const angle = Math.atan2(dy, dx);
+        // Warm ivory base with subtle organic tissue variation
+        const tissueNoise = noise2(dx * 6 + 3.1, dy * 6 + 7.4);
+        let red = 241 - tissueNoise * 7;
+        let green = 235 - tissueNoise * 9;
+        let blue = 226 - tissueNoise * 11;
+
+        // Subtle yellowish pinguecula warmth along the horizontal palpebral fissure
+        const fissureWarmth = Math.exp(-((dy / .28) ** 2)) * Math.exp(-(((r - .52) / .24) ** 2));
+        red += fissureWarmth * 4;
+        green -= fissureWarmth * 3;
+        blue -= fissureWarmth * 12;
+
+        // Perilimbal scleral scatter shadow ring around the cornea margin
+        const limbalHalo = Math.exp(-(((r - .36) / .08) ** 2)) * .12;
+        red *= (1 - limbalHalo);
+        green *= (1 - limbalHalo * 1.05);
+        blue *= (1 - limbalHalo * 1.1);
+
+        // Outer orbital blood-rich retrobulbar darkening
+        const rim = Math.min(1.0, Math.max(0.0, (r - .42) / .58));
+        red -= rim * 34;
+        green -= rim * 48;
+        blue -= rim * 54;
+
+        // Multi-scale branching dendritic blood vessels originating from canthi
+        const canthusBias = Math.pow(Math.abs(dx), .65) * Math.min(1.0, Math.max(0.0, (r - .28) / .62));
+        if (canthusBias > .02) {
+          const warp1 = (noise2(dx * 9 + 1.7, dy * 9 + 4.3) - .5) * .45;
+          const warp2 = (noise2(dx * 22 + 8.2, dy * 22 + 2.9) - .5) * .22;
+          const trunkTheta = (angle + warp1 + warp2 * (1 - r * .5)) * 18.0;
+          const branchTheta = (angle * 2.3 - warp1 * 1.8 + warp2 * 2.4 + r * 3.2) * 34.0;
+          const microTheta = (angle * 4.1 + warp2 * 3.5 - r * 6.0) * 62.0;
+
+          const trunk = Math.pow(Math.max(0, 1 - Math.abs(Math.sin(trunkTheta)) * 3.8), 4.0);
+          const branch = Math.pow(Math.max(0, 1 - Math.abs(Math.sin(branchTheta)) * 4.5), 5.0) * .65;
+          const micro = Math.pow(Math.max(0, 1 - Math.abs(Math.sin(microTheta)) * 5.2), 6.0) * .38;
+
+          const vesselMask = Math.min(1.0, (trunk + branch + micro) * canthusBias * 1.35);
+          const deepVein = Math.pow(Math.max(0, 1 - Math.abs(Math.cos(trunkTheta * .6 + 1.1)) * 3.2), 4.0) * canthusBias * .35;
+
+          // Deep episcleral veins (slightly bluish-crimson)
+          red = red * (1 - deepVein) + 148 * deepVein;
+          green = green * (1 - deepVein) + 74 * deepVein;
+          blue = blue * (1 - deepVein) + 88 * deepVein;
+
+          // Superficial conjunctival arterioles (oxygenated crimson)
+          red = red * (1 - vesselMask * .68) + 188 * (vesselMask * .68);
+          green = green * (1 - vesselMask * .82) + 42 * (vesselMask * .82);
+          blue = blue * (1 - vesselMask * .84) + 38 * (vesselMask * .84);
+        }
+
+        pixels[p] = Math.round(Math.max(0, Math.min(255, red)));
+        pixels[p + 1] = Math.round(Math.max(0, Math.min(255, green)));
+        pixels[p + 2] = Math.round(Math.max(0, Math.min(255, blue)));
+        pixels[p + 3] = 255;
       }
-      pixels[p] = red;
-      pixels[p + 1] = green;
-      pixels[p + 2] = blue;
-      pixels[p + 3] = 255;
     }
     const texture = new T.DataTexture(pixels, size, size, T.RGBAFormat);
     texture.magFilter = T.LinearFilter;
@@ -185,53 +321,143 @@
     return texture;
   }
 
+  // 3A Iris Albedo & Normal Maps (512x512) with Crypts of Fuchs, Collarette, Contraction Furrows & Pupillary Ruff
   const eyeTextureCache = new WeakMap();
-  function irisTexture(T, hairColorHex) {
+  function irisTextures(T, hairColorHex) {
     if (!eyeTextureCache.has(T)) eyeTextureCache.set(T, new Map());
     const cache = eyeTextureCache.get(T);
     const key = hairColorHex || "#423124";
     if (cache.has(key)) return cache.get(key);
-    const size = 128;
+    const size = 512;
     const pixels = new Uint8Array(size * size * 4);
-    const baseColor = new T.Color(key).multiplyScalar(1.25);
-    const stromaColor = baseColor.clone().lerp(new T.Color("#825a36"), .45);
-    const limbalColor = new T.Color("#140d08");
-    const pupilColor = new T.Color("#060504");
+    const normalPixels = new Uint8Array(size * size * 4);
+    const heightField = new Float32Array(size * size);
+
+    const baseColor = new T.Color(key).multiplyScalar(1.28);
+    const stromaColor = baseColor.clone().lerp(new T.Color("#8f6239"), .48);
+    const amberRingColor = baseColor.clone().lerp(new T.Color("#b88042"), .55);
+    const cryptColor = baseColor.clone().multiplyScalar(.42);
+    const ruffColor = new T.Color("#1f120b");
+    const limbalColor = new T.Color("#100a06");
+    const pupilColor = new T.Color("#040303");
     const half = size / 2;
-    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
-      const p = (y * size + x) * 4;
-      const dx = (x - half) / half, dy = (y - half) / half;
-      const r = Math.hypot(dx, dy);
-      const angle = Math.atan2(dy, dx);
-      if (r > 1.0) {
-        pixels[p] = 210; pixels[p + 1] = 205; pixels[p + 2] = 196; pixels[p + 3] = 0;
-        continue;
-      }
-      let c;
-      if (r < .28) {
-        c = pupilColor;
-      } else {
-        const fiber = Math.sin(angle * 32.0) * .12 + Math.sin(angle * 64.0) * .06 + Math.cos(angle * 16.0) * .08;
-        const collarette = Math.exp(-(((r - .52) / .12) ** 2)) * .20;
-        const t = (r - .28) / .72;
-        c = stromaColor.clone().lerp(baseColor, t).multiplyScalar(1.0 + fiber + collarette);
-        if (r > .82) {
-          const limbalBlend = (r - .82) / .18;
-          c.lerp(limbalColor, limbalBlend);
+
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const idx = y * size + x;
+        const p = idx * 4;
+        const dx = (x - half) / half, dy = (y - half) / half;
+        const r = Math.hypot(dx, dy);
+        const angle = Math.atan2(dy, dx);
+
+        if (r > 1.0) {
+          pixels[p] = 210; pixels[p + 1] = 205; pixels[p + 2] = 196; pixels[p + 3] = 0;
+          heightField[idx] = 0;
+          continue;
         }
+
+        if (r < .25) {
+          pixels[p] = Math.round(pupilColor.r * 255);
+          pixels[p + 1] = Math.round(pupilColor.g * 255);
+          pixels[p + 2] = Math.round(pupilColor.b * 255);
+          pixels[p + 3] = 255;
+          heightField[idx] = -.15;
+          continue;
+        }
+
+        const t = (r - .25) / .75;
+        // Organic angular warp so radial trabeculae weave and anastomose around crypts
+        const angularWarp = (noise2(Math.cos(angle) * 3.5 + r * 6.0, Math.sin(angle) * 3.5 + r * 6.0) - .5) * .22;
+        const warpedAngle = angle + angularWarp * Math.sin(t * Math.PI);
+
+        // Multi-frequency radial stroma fibers (trabeculae)
+        const f1 = Math.sin(warpedAngle * 42.0) * .11;
+        const f2 = Math.sin(warpedAngle * 86.0 + 1.3) * .07;
+        const f3 = Math.cos(warpedAngle * 144.0 - .7) * .045;
+        const fibers = f1 + f2 + f3;
+
+        // Irregular zigzag Collarette ridge at r ~ 0.48
+        const collaretteRadius = .48 + (noise2(Math.cos(angle) * 4.2 + 2.1, Math.sin(angle) * 4.2 + 5.7) - .5) * .065;
+        const collaretteDist = (r - collaretteRadius) / .095;
+        const collaretteRidge = Math.exp(-(collaretteDist * collaretteDist));
+
+        // Crypts of Fuchs: diamond/lacunar openings near the collarette and ciliary zone
+        const cryptNoise = noise2(Math.cos(warpedAngle) * 7.5 + r * 11.0, Math.sin(warpedAngle) * 7.5 - r * 11.0);
+        const cryptMask = Math.pow(Math.max(0, cryptNoise - .52) / .48, 2.2)
+          * Math.exp(-(((r - .54) / .20) ** 2));
+
+        // Concentric contraction furrows in outer ciliary zone
+        const furrow = Math.sin((r - .58) * 52.0 + angularWarp * 4.0) * .045
+          * Math.max(0, Math.min(1, (r - .55) / .25)) * (1 - Math.max(0, (r - .85) / .15));
+
+        // Pupillary ruff (dark beaded pigment frill at pupil margin r = 0.25..0.295)
+        const ruffFactor = Math.max(0, 1 - (r - .25) / .048);
+        const ruffBeads = .75 + .25 * Math.sin(angle * 72.0);
+
+        let c = stromaColor.clone().lerp(baseColor, Math.min(1, t * 1.15));
+        c.lerp(amberRingColor, collaretteRidge * .46);
+        c.multiplyScalar(1.0 + fibers + collaretteRidge * .18 + furrow);
+        c.lerp(cryptColor, cryptMask * .72);
+        c.lerp(ruffColor, ruffFactor * ruffBeads * .88);
+
+        // Melanin pigment freckle spots
+        const freckle = Math.pow(noise2(dx * 18 + 9.2, dy * 18 + 3.4), 5.0);
+        if (freckle > .45 && r > .35 && r < .82) {
+          c.lerp(ruffColor, (freckle - .45) * .85);
+        }
+
+        // Dark limbal ring blending softly at outer iris margin
+        if (r > .78) {
+          const limbalBlend = Math.pow((r - .78) / .22, 1.35);
+          c.lerp(limbalColor, limbalBlend * .92);
+        }
+
+        // Concave iris bowl height + stroma fiber relief + collarette ridge - crypt pits
+        const bowlCone = -Math.cos(t * Math.PI * .5) * .35;
+        heightField[idx] = bowlCone + fibers * .42 + collaretteRidge * .28 - cryptMask * .45 + furrow * .30;
+
+        pixels[p] = Math.round(Math.min(255, Math.max(0, c.r * 255)));
+        pixels[p + 1] = Math.round(Math.min(255, Math.max(0, c.g * 255)));
+        pixels[p + 2] = Math.round(Math.min(255, Math.max(0, c.b * 255)));
+        pixels[p + 3] = 255;
       }
-      pixels[p] = Math.round(Math.min(255, Math.max(0, c.r * 255)));
-      pixels[p + 1] = Math.round(Math.min(255, Math.max(0, c.g * 255)));
-      pixels[p + 2] = Math.round(Math.min(255, Math.max(0, c.b * 255)));
-      pixels[p + 3] = 255;
     }
-    const texture = new T.DataTexture(pixels, size, size, T.RGBAFormat);
-    texture.magFilter = T.LinearFilter;
-    texture.minFilter = T.LinearMipmapLinearFilter;
-    texture.generateMipmaps = true;
-    texture.needsUpdate = true;
-    cache.set(key, texture);
-    return texture;
+
+    // Compute tangent-space normal map from iris height field
+    for (let y = 0; y < size; y++) {
+      const yPrev = Math.max(0, y - 1), yNext = Math.min(size - 1, y + 1);
+      for (let x = 0; x < size; x++) {
+        const xPrev = Math.max(0, x - 1), xNext = Math.min(size - 1, x + 1);
+        const p = (y * size + x) * 4;
+        const dx = (heightField[y * size + xNext] - heightField[y * size + xPrev]) * 2.6;
+        const dy = (heightField[yNext * size + x] - heightField[yPrev * size + x]) * 2.6;
+        const len = Math.hypot(dx, dy, 1.0);
+        normalPixels[p] = Math.round(((-dx / len) * .5 + .5) * 255);
+        normalPixels[p + 1] = Math.round(((-dy / len) * .5 + .5) * 255);
+        normalPixels[p + 2] = Math.round(((1.0 / len) * .5 + .5) * 255);
+        normalPixels[p + 3] = 255;
+      }
+    }
+
+    const albedo = new T.DataTexture(pixels, size, size, T.RGBAFormat);
+    albedo.magFilter = T.LinearFilter;
+    albedo.minFilter = T.LinearMipmapLinearFilter;
+    albedo.generateMipmaps = true;
+    albedo.needsUpdate = true;
+
+    const normal = new T.DataTexture(normalPixels, size, size, T.RGBAFormat);
+    normal.magFilter = T.LinearFilter;
+    normal.minFilter = T.LinearMipmapLinearFilter;
+    normal.generateMipmaps = true;
+    normal.needsUpdate = true;
+
+    const bundle = { albedo, normal };
+    cache.set(key, bundle);
+    return bundle;
+  }
+
+  function irisTexture(T, hairColorHex) {
+    return irisTextures(T, hairColorHex).albedo;
   }
 
   function create(T, role, options = {}) {
@@ -270,6 +496,7 @@
     root.updateMatrixWorld(true);
     const skeleton = new T.Skeleton(bones);
     const bone = name => bones[jointIndex(name)];
+    const hasBone = name => jointIndices.has(name);
     const rest = bones.map(item => item.position.clone());
 
     function skinned(part, material, influences) {
@@ -300,9 +527,10 @@
     const positions = new Float32Array(template.positions);
     function feature(name, amount) {
       const morph = source.morphs[name];
+      if (!morph) return;
       addMorph(positions, morph, amount);
-      for (const [name, delta] of Object.entries(morph.landmarks)) {
-        for (let axis = 0; axis < 3; axis++) landmarks[name][axis] += delta[axis] * amount;
+      for (const [lmName, delta] of Object.entries(morph.landmarks)) {
+        for (let axis = 0; axis < 3; axis++) landmarks[lmName][axis] += delta[axis] * amount;
       }
     }
     feature("head-age-incr", look.age);
@@ -315,17 +543,40 @@
     for (const side of ["l", "r"]) feature(side + "-cheek-bones-incr", look.cheek);
     CharacterDetail.sculpt(positions, landmarks, look);
 
+    // Precompute welded vertex normals on the complete anatomical mesh BEFORE sleeve culling
+    // so the arm boundary under the sleeve cuff never exhibits a lighting normal discontinuity.
+    const fullTempGeo = new T.BufferGeometry();
+    fullTempGeo.setAttribute("position", new T.Float32BufferAttribute(positions, 3));
+    fullTempGeo.setIndex(new T.BufferAttribute(source.indices, 1));
+    fullTempGeo.computeVertexNormals();
+    const fullNormals = new Float32Array(fullTempGeo.attributes.normal.array);
+    fullTempGeo.dispose();
+
+    // 3A Biophysical Chromophore & Anatomical Zone Vertex Mapping (Melanin, Hemoglobin, Venous, AO)
     const skinColor = new T.Color(palette[3]);
-    const lips = skinColor.clone().lerp(new T.Color("#8e4b42"), .55);
-    const cheek = skinColor.clone().lerp(new T.Color("#aa5e48"), .32);
-    const foreheadTone = skinColor.clone().lerp(new T.Color("#d5aa78"), .22);
-    const earTone = skinColor.clone().lerp(new T.Color("#b84c38"), .48);
-    const noseTone = skinColor.clone().lerp(new T.Color("#ac5543"), .36);
-    const eyeSocketTone = skinColor.clone().lerp(new T.Color("#64453b"), .38);
-    const chinShadow = skinColor.clone().lerp(female ? new T.Color("#7e6858") : new T.Color("#564f48"), aged ? .28 : .16);
+    const lips = skinColor.clone().lerp(new T.Color(female ? "#96463e" : "#8b473e"), female ? .58 : .52);
+    const lipVermilion = skinColor.clone().lerp(new T.Color("#6e312b"), .62);
+    const cheek = skinColor.clone().lerp(new T.Color("#aa5642"), .34);
+    const foreheadTone = skinColor.clone().lerp(new T.Color("#d6aa76"), .24);
+    const earTone = skinColor.clone().lerp(new T.Color("#bc4834"), .52);
+    const noseTone = skinColor.clone().lerp(new T.Color("#ad523f"), .38);
+    const eyeSocketTone = skinColor.clone().lerp(new T.Color("#5f3f36"), .40);
+    const tearTroughTone = skinColor.clone().lerp(new T.Color("#523a3c"), .34 + look.age * .14);
+    const chinShadow = skinColor.clone().lerp(female ? new T.Color("#7e6858") : new T.Color("#524b45"), aged ? .30 : .18);
+    const noseHighlight = skinColor.clone().lerp(new T.Color("#e4ba8e"), .32);
+    const cheekHighlight = skinColor.clone().lerp(new T.Color("#dba97d"), .24);
+    const jointHemoglobin = skinColor.clone().lerp(new T.Color("#9e4d3c"), .28);
+    const sunBronzeTone = skinColor.clone().lerp(new T.Color("#8b5738"), .22);
+    const palmarLightTone = skinColor.clone().lerp(new T.Color("#DFB998"), .26);
+
     const colors = new Float32Array(positions.length);
     const eye = landmarks["joint-l-eye"];
     const neckJoint = template.joints[jointIndex("neck_01")];
+    const elbowJointY = joint("lowerarm_l")[1];
+    const wristJointY = joint("hand_l")[1];
+    const kneeJointY = joint("calf_l")[1];
+    const ankleJointY = joint("foot_l")[1];
+
     const facePoints = [];
     for (let i = 0; i < positions.length; i += 3) {
       if (positions[i + 1] > neckJoint[1] - .12 && positions[i + 2] > .075) {
@@ -347,80 +598,133 @@
     }
     const mouthY = eye[1] - .065;
     const mouth = [0, mouthY, faceDepth(0, mouthY)];
-    const noseHighlight = skinColor.clone().lerp(new T.Color("#e2b78c"), .30);
-    const cheekHighlight = skinColor.clone().lerp(new T.Color("#d9a97e"), .22);
-    const beardShadow = skinColor.clone().lerp(new T.Color("#4a3a30"), .42);
+
     for (let index = 0; index < source.vertexCount; index++) {
       const offset = index * 3;
       const x = positions[offset], y = positions[offset + 1], z = positions[offset + 2];
-      const lipDistance = ((x - mouth[0]) / .029) ** 2 + ((y - mouth[1]) / .004) ** 2 + ((z - mouth[2]) / .025) ** 2;
-      const cheekDistance = ((Math.abs(x) - .055) / .043) ** 2 + ((y - eye[1] + .035) / .05) ** 2;
-      const noseBridge = (x / .013) ** 2 + ((y - eye[1] + .006) / .030) ** 2;
-      const noseTip = (x / .017) ** 2 + ((y - eye[1] + .034) / .016) ** 2;
-      const nostril = ((Math.abs(x) - .0165) / .0060) ** 2 + ((y - eye[1] + .0435) / .0050) ** 2;
-      const cheekBone = ((Math.abs(x) - .050) / .019) ** 2 + ((y - eye[1] + .020) / .019) ** 2;
-      const jawLine = ((Math.abs(x) - .066) / .024) ** 2 + ((y - mouth[1] + .050) / .028) ** 2;
-      const nasolabial = ((Math.abs(x) - .028) / .0095) ** 2 + ((y - mouth[1] + .020) / .020) ** 2;
-      const philtrum = (x / .0055) ** 2 + ((y - mouth[1] + .014) / .0095) ** 2;
-      const noseWall = (x / .026) ** 2 + ((y - eye[1] + .022) / .030) ** 2;
-      const browShadow = ((Math.abs(x) - Math.abs(eye[0])) / .020) ** 2 + ((y - eye[1] - .017) / .009) ** 2;
+      const nx = fullNormals[offset], ny = fullNormals[offset + 1], nz = fullNormals[offset + 2];
+      const absX = Math.abs(x);
+
       let color = skinColor.clone();
-      if (y > neckJoint[1] - .02) {
-        if (y > eye[1] + .025) {
-          const fWeight = Math.min(1.0, Math.exp(-((x / .055) ** 2 + ((y - eye[1] - .045) / .04) ** 2)));
-          color.lerp(foreheadTone, fWeight * .7);
-        } else if (y < eye[1] - .05) {
-          color.lerp(chinShadow, .45);
+
+      if (y > neckJoint[1] - .035) {
+        const lipDistance = ((x - mouth[0]) / .029) ** 2 + ((y - mouth[1]) / .0042) ** 2 + ((z - mouth[2]) / .025) ** 2;
+        const mouthParting = ((x - mouth[0]) / .022) ** 2 + ((y - mouth[1]) / .0014) ** 2 + ((z - mouth[2]) / .018) ** 2;
+        const cupidBow = ((absX - .0055) / .005) ** 2 + ((y - mouth[1] - .0045) / .0025) ** 2;
+        const cheekDistance = ((absX - .055) / .043) ** 2 + ((y - eye[1] + .035) / .05) ** 2;
+        const noseBridge = (x / .013) ** 2 + ((y - eye[1] + .006) / .030) ** 2;
+        const noseTip = (x / .017) ** 2 + ((y - eye[1] + .034) / .016) ** 2;
+        const nostril = ((absX - .0165) / .0060) ** 2 + ((y - eye[1] + .0435) / .0050) ** 2;
+        const cheekBone = ((absX - .050) / .019) ** 2 + ((y - eye[1] + .020) / .019) ** 2;
+        const jawLine = ((absX - .066) / .024) ** 2 + ((y - mouth[1] + .050) / .028) ** 2;
+        const nasolabial = ((absX - .028) / .0090) ** 2 + ((y - mouth[1] + .019) / .021) ** 2;
+        const philtrum = (x / .0052) ** 2 + ((y - mouth[1] + .014) / .0095) ** 2;
+        const noseWall = (x / .026) ** 2 + ((y - eye[1] + .022) / .030) ** 2;
+        const browShadow = ((absX - Math.abs(eye[0])) / .021) ** 2 + ((y - eye[1] - .017) / .009) ** 2;
+        const tearTrough = ((absX - Math.abs(eye[0]) * .88) / .018) ** 2 + ((y - eye[1] + .013) / .0065) ** 2;
+        const templeHollow = ((absX - .068) / .018) ** 2 + ((y - eye[1] - .012) / .024) ** 2;
+        const mentolabial = (x / .018) ** 2 + ((y - mouth[1] + .018) / .0055) ** 2;
+
+        // Yellow-golden bone proximity on forehead & brow ridge
+        if (y > eye[1] + .022) {
+          const fWeight = Math.min(1.0, Math.exp(-((x / .056) ** 2 + ((y - eye[1] - .045) / .042) ** 2)));
+          color.lerp(foreheadTone, fWeight * .68);
+        } else if (y < eye[1] - .048) {
+          color.lerp(chinShadow, .44);
         }
-        if (Math.abs(x) > .072 && y > eye[1] - .045 && y < eye[1] + .045 && z < .02) {
-          color.lerp(earTone, .65);
+
+        // Subsurface vascular redness in thin-skinned ears & helix rim
+        if (absX > .072 && y > eye[1] - .045 && y < eye[1] + .045 && z < .022) {
+          const earHelix = T.MathUtils.smoothstep(absX, .072, .096);
+          color.lerp(earTone, .48 + earHelix * .25);
         }
-        if (Math.abs(x) < .022 && Math.abs(y - eye[1] + .018) < .028 && z > .075) {
+
+        // Nasal vascular warmth & structural plane shading
+        if (absX < .023 && Math.abs(y - eye[1] + .018) < .029 && z > .075) {
           color.lerp(noseTone, .50);
         }
-        // Nose structure: lit bridge and tip, shadowed nostril wings and side walls.
-        color.lerp(noseHighlight, Math.exp(-noseBridge) * .26);
-        color.lerp(noseHighlight, Math.exp(-noseTip) * .30);
-        color.multiplyScalar(1 - Math.exp(-nostril) * .38);
-        color.multiplyScalar(1 - Math.exp(-noseWall) * .10);
-        // Cheekbone plane, mandible edge, nasolabial fold and philtrum groove.
-        color.lerp(cheekHighlight, Math.exp(-cheekBone) * .20);
-        color.multiplyScalar(1 - Math.exp(-jawLine) * .16);
-        color.multiplyScalar(1 - Math.exp(-nasolabial) * .13);
-        color.multiplyScalar(1 - Math.exp(-philtrum) * .12);
-        const eyeDist = Math.hypot(Math.abs(x) - Math.abs(eye[0]), y - eye[1]);
-        if (eyeDist < .026 && z > .035) {
-          color.lerp(eyeSocketTone, (1.0 - eyeDist / .026) * .45);
+        color.lerp(noseHighlight, Math.exp(-noseBridge) * .27);
+        color.lerp(noseHighlight, Math.exp(-noseTip) * .32);
+        color.multiplyScalar(1 - Math.exp(-nostril) * .42);
+        color.multiplyScalar(1 - Math.exp(-noseWall) * .11);
+
+        // Cheekbone highlight, cupid's bow highlight, jaw, nasolabial, philtrum & mentolabial folds
+        color.lerp(cheekHighlight, Math.exp(-cheekBone) * .22);
+        color.lerp(noseHighlight, Math.exp(-cupidBow) * .16);
+        color.multiplyScalar(1 - Math.exp(-jawLine) * .17);
+        color.multiplyScalar(1 - Math.exp(-nasolabial) * (.14 + look.age * .08));
+        color.multiplyScalar(1 - Math.exp(-philtrum) * .13);
+        color.multiplyScalar(1 - Math.exp(-mentolabial) * .11);
+        color.multiplyScalar(1 - Math.exp(-templeHollow) * (.07 + look.age * .06));
+
+        // Orbital socket & infraorbital tear trough venous tint
+        const eyeDist = Math.hypot(absX - Math.abs(eye[0]), y - eye[1]);
+        if (eyeDist < .027 && z > .035) {
+          color.lerp(eyeSocketTone, (1.0 - eyeDist / .027) * .46);
         }
-        // Brow ridge shadow falling across the upper lid.
-        color.multiplyScalar(1 - Math.exp(-browShadow) * .18);
-        // Beard shadow keeps the mass reading as hair growing out of skin.
+        color.lerp(tearTroughTone, Math.exp(-tearTrough) * .38);
+        color.multiplyScalar(1 - Math.exp(-browShadow) * .19);
+
+        // Micro-pore & age weathering variation on facial skin
+        const poreMicro = (noise2(x * 380 + y * 120, y * 380 - z * 210) - .5) * (.035 + look.age * .045);
+        color.multiplyScalar(1 + poreMicro);
+
+        // Follicular beard stubble & root shadow
         if (beardValue > .02) {
-          const beardTop = mouth[1] - .004 + Math.abs(x) / .078 * .044;
-          const beardBottom = mouth[1] - .040 - beardValue * .75 + Math.abs(x) / .078 * .064;
-          if (y < beardTop + .008 && y > beardBottom && Math.abs(x) < .080 && z > .085) {
+          const beardTop = mouth[1] - .004 + absX / .078 * .044;
+          const beardBottom = mouth[1] - .040 - beardValue * .75 + absX / .078 * .064;
+          if (y < beardTop + .008 && y > beardBottom && absX < .081 && z > .082) {
             const feather = 1 - T.MathUtils.smoothstep(y, beardTop - .012, beardTop + .006);
             const lower = T.MathUtils.smoothstep(y, beardBottom - .005, beardBottom + .012);
-            const side = 1 - T.MathUtils.smoothstep(Math.abs(x), .067, .081);
-            const grain = .88 + .12 * Math.sin(x * 1700 + y * 2300) ** 2;
-            color.lerp(new T.Color(palette[4]), feather * lower * side * grain * .63);
+            const side = 1 - T.MathUtils.smoothstep(absX, .067, .081);
+            const follicle = .84 + .16 * noise2(x * 620, y * 740);
+            color.lerp(new T.Color(palette[4]), feather * lower * side * follicle * .65);
           }
         }
-        if (y < neckJoint[1] + .03 && z < .05) {
+
+        // Submandibular & sternocleidomastoid neck shadow
+        if (y < neckJoint[1] + .035 && (z < .055 || ny < -.25)) {
           color.multiplyScalar(.82);
         }
-        color.lerp(cheek, Math.exp(-cheekDistance) * .55)
-             .lerp(lips, Math.exp(-lipDistance) * .88);
+
+        // Cheek blush, lip vermilion & oral commissure crevice
+        color.lerp(cheek, Math.exp(-cheekDistance) * .56)
+             .lerp(lips, Math.exp(-lipDistance) * .88)
+             .lerp(lipVermilion, Math.exp(-mouthParting) * .55);
       } else {
-        if (y < .88 && Math.abs(x) > .22) {
-          color.lerp(new T.Color("#9e5847"), .20);
+        // Limb & extremity anatomical chromophores (sun-exposed forearms, knuckles, elbows, knees, ankles, soles)
+        if (absX > .14 && y < neckJoint[1] - .05) {
+          // Dorsal forearm sun-bronzing vs lighter palmar inner wrist/hand
+          const sunExposure = T.MathUtils.clamp((ny * .5 + nz * .5 + .3), 0, 1);
+          color.lerp(sunBronzeTone, sunExposure * .32);
+          if (y < wristJointY + .04 && ny < -.15) {
+            color.lerp(palmarLightTone, .36);
+          }
+          // Elbow & knuckle hemoglobin flush
+          const elbowFlush = Math.exp(-(((y - elbowJointY) / .045) ** 2));
+          const knuckleFlush = y < wristJointY - .015 ? Math.exp(-(((y - (wristJointY - .055)) / .035) ** 2)) : 0;
+          color.lerp(jointHemoglobin, (elbowFlush * .45 + knuckleFlush * .65));
+          // Inter-digital finger crevice AO
+          if (y < wristJointY - .02) {
+            const fingerCrevice = Math.max(0, 1 - Math.abs(nx) * 1.35) * .12;
+            color.multiplyScalar(1 - fingerCrevice);
+          }
+        }
+        // Lower leg, knee, ankle & foot vascularity and ground contact AO
+        if (y < .65) {
+          const kneeFlush = Math.exp(-(((y - kneeJointY) / .055) ** 2)) * Math.max(0, nz);
+          const ankleFlush = Math.exp(-(((y - ankleJointY) / .040) ** 2));
+          color.lerp(jointHemoglobin, kneeFlush * .38 + ankleFlush * .48);
+          // Dust/weathering and plantar sole shading near the ground
+          const footAO = T.MathUtils.smoothstep(.045, .002, y) * .22;
+          color.multiplyScalar(1 - footAO);
         }
       }
       color.toArray(colors, offset);
     }
-    // Clothing masks are standard for a dressed character: covered upper-arm
-    // skin should never poke through the sleeve during breathing or gestures.
-    const shoulderRest = joint("upperarm_l")[1] + .075;
+
+    // Clothing masks: hide covered upper-arm skin cleanly inside sleeves so culled edges never peek past the cuff
+    const shoulderRest = joint("upperarm_l")[1] + .044;
     let cuffY = T.MathUtils.lerp(shoulderRest, joint("lowerarm_l")[1], Math.min(1, look.sleeve / .78));
     if (look.sleeve > .78) cuffY = T.MathUtils.lerp(cuffY, joint("hand_l")[1], (look.sleeve - .78) * 1.2);
     const visibleSkin = [];
@@ -428,10 +732,10 @@
       const ids = [source.indices[i], source.indices[i + 1], source.indices[i + 2]];
       const x = ids.reduce((sum, id) => sum + positions[id * 3], 0) / 3;
       const y = ids.reduce((sum, id) => sum + positions[id * 3 + 1], 0) / 3;
-      if (Math.abs(x) > .075 && y > cuffY - .006 && y < neckJoint[1] - .010) continue;
+      if (Math.abs(x) > .075 && y > cuffY + .008 && y < neckJoint[1] - .010) continue;
       visibleSkin.push(...ids);
     }
-    const bodyGeometry = geometry(T, positions, visibleSkin, colors);
+    const bodyGeometry = geometry(T, positions, visibleSkin, colors, fullNormals);
     bodyGeometry.setAttribute("skinIndex", new T.Uint8BufferAttribute(source.skinIndex, 4));
     bodyGeometry.setAttribute("skinWeight", new T.Uint8BufferAttribute(source.skinWeight, 4, true));
     bodyGeometry.morphTargetsRelative = true;
@@ -442,6 +746,18 @@
     });
     bodyGeometry.morphAttributes.position.push(...CharacterDetail.expressions(T, positions, landmarks, mouth));
     const skinMaterial = CharacterDetail.skin(T, bodyGeometry, look, landmarks, mouth);
+    // Augment skin material with 3A dual-lobe pore specular & vellus peach-fuzz sheen if supported
+    if (skinMaterial) {
+      if ("sheen" in skinMaterial && !skinMaterial.sheen) {
+        skinMaterial.sheen = .28;
+        skinMaterial.sheenColor = skinColor.clone().lerp(new T.Color("#ffdfc7"), .65);
+        skinMaterial.sheenRoughness = .72;
+      }
+      if ("clearcoat" in skinMaterial && !skinMaterial.clearcoat) {
+        skinMaterial.clearcoat = .08;
+        skinMaterial.clearcoatRoughness = .36;
+      }
+    }
     const body = new T.SkinnedMesh(bodyGeometry, skinMaterial);
     body.name = "anatomical-body";
     root.add(body);
@@ -451,22 +767,47 @@
     body.castShadow = true;
     body.updateMorphTargets();
 
+    // 3A Physical Fabric & Leather Materials with Microfiber Sheen & Grazing Retroreflection
     const material = (color, kind, vertexColors = true) => {
-      const m = new T.MeshStandardMaterial({
-        color, side: T.DoubleSide, roughness: 1, vertexColors,
-        normalMap: textile(T, kind), roughnessMap: textileRoughness(T, kind),
-        normalScale: new T.Vector2(kind === "haircloth" ? .18 : .045, .045)
+      const baseCol = new T.Color(color);
+      const sheenCol = baseCol.clone().lerp(new T.Color("#fff5e4"), kind === "wool" ? .42 : kind === "linen" ? .32 : .20);
+      const isLeather = kind === "leather";
+      const m = new T.MeshPhysicalMaterial({
+        color: baseCol,
+        side: T.DoubleSide,
+        shadowSide: T.BackSide,
+        roughness: isLeather ? .68 : 1.0,
+        metalness: 0,
+        vertexColors,
+        normalMap: textile(T, kind),
+        roughnessMap: textileRoughness(T, kind),
+        normalScale: new T.Vector2(
+          kind === "haircloth" ? .09 : kind === "wool" ? .034 : isLeather ? .070 : .030,
+          kind === "haircloth" ? .08 : kind === "wool" ? .034 : isLeather ? .070 : .030
+        ),
+        sheen: isLeather ? .08 : kind === "wool" ? .58 : kind === "haircloth" ? .42 : .35,
+        sheenColor: sheenCol,
+        sheenRoughness: isLeather ? .65 : kind === "wool" ? .82 : .74,
+        clearcoat: isLeather ? .18 : 0,
+        clearcoatRoughness: isLeather ? .42 : 1.0
       });
-      // Garments already carry woven normal/roughness maps. A second terrain
-      // relief layer produces harsh polygon-sized patches on a moving rig.
       m.name = "woven-" + kind + "-normal-roughness";
       m.customProgramCacheKey = () => "witness-woven-pbr-" + kind;
-      return kind === "leather" ? AdventureVisuals.surface(m, "bark", true) : m;
+      return m;
     };
+
     const mainCloth = material(palette[0], look.cloth);
-    const trim = new T.MeshStandardMaterial({ color: palette[2], roughness: .94 });
+    const trim = new T.MeshPhysicalMaterial({
+      color: palette[2], roughness: .88, sheen: .42, shadowSide: T.BackSide,
+      sheenColor: new T.Color(palette[2]).lerp(new T.Color("#fff3dd"), .35), sheenRoughness: .76
+    });
     const leather = material("#594634", "leather", false);
-    const cordMaterial = new T.MeshStandardMaterial({ color: "#a99776", roughness: 1 });
+    const sandalLeather = material("#4d3a29", "leather", true);
+    const cordMaterial = new T.MeshPhysicalMaterial({
+      color: "#b4a07a", roughness: .90, side: T.DoubleSide, shadowSide: T.BackSide, normalMap: textile(T, "linen"),
+      normalScale: new T.Vector2(.032, .032), sheen: .30, sheenColor: new T.Color("#e8dec8")
+    });
+
     const shoulderY = joint("upperarm_l")[1];
     const neckY = joint("neck_01")[1];
     const pelvisY = joint("pelvis")[1];
@@ -484,20 +825,18 @@
       return [["spine_03", level], ["pelvis", 1 - level]];
     }
 
-    // Fold layers run at incommensurate rates so cloth never reads as one set of
-    // parallel ridges; the same function drives the stitched edges.
+    // Multi-frequency cloth drapery kept safely below 56-segment Nyquist without faceted sawtooth creases
     function foldRadius(height, angle, folds) {
-      const tension = Math.exp(-(((height - pelvisY - .08) / .15) ** 2));
-      const drape = Math.sin(angle * 9.0 + height * 1.7) * .52
-        + Math.sin(angle * 17 - height * 2.9 + 1.1) * .30
-        + Math.sin(angle * 31 + height * 4.6 + 2.3) * .13
-        + Math.sin(angle * 4 + height * 1.1) * .34;
-      return 1 + folds * drape * (1 + tension * .65);
+      const waistTension = Math.exp(-(((height - pelvisY - .08) / .13) ** 2));
+      const shoulderAnchor = Math.exp(-(((height - shoulderY) / .11) ** 2)) * .40;
+      const drape = Math.sin(angle * 8.0 + height * 1.7) * .48
+        + Math.sin(angle * 13 - height * 2.5 + 1.1) * .24
+        + Math.sin(angle * 4 + height * 1.1) * .32;
+      return 1 + folds * drape * (1 + waistTension * .28 - shoulderAnchor);
     }
+
     function fabricSurface(sections, start, sweep, segments, folds, style = "tunic") {
       const vertices = [], indices = [], tones = [], uv = [];
-      // Interpolating the profile gives the waist, shoulder and hood continuous
-      // curvature. Fold amplitude grows at the cinch and falls at taut seams.
       const curve = new T.CatmullRomCurve3(sections.map(row => new T.Vector3(...row)), false, "catmullrom", .22);
       const count = (sections.length - 1) * 5;
       for (let row = 0; row <= count; row++) {
@@ -507,63 +846,82 @@
           const angle = start + segment / segments * sweep;
           const neckEase = T.MathUtils.smoothstep(height, neckY - .03, neckY + .07);
           const radius = foldRadius(height, angle, folds);
-          // Cloth settles over the shoulders instead of ending in a flat shelf.
           const shoulderBlend = style === "tunic" ? T.MathUtils.smoothstep(height, shoulderY - .20, shoulderY + .02) : 0;
           const drapeOver = -Math.abs(Math.cos(angle)) * .009 * shoulderBlend;
           const fall = style === "mantle" ? Math.sin(angle * 2.5) * .035 * (1 - row / count) : 0;
-          const hemWave = style === "tunic" && row < 3
+          const hemWave = style === "tunic" && row < 3 && Math.abs(height - hem) < .15
             ? Math.sin(angle * 3 + .6) * .009 + Math.sin(angle * 5 + 1.4) * .004 : 0;
           const neckLine = style === "tunic" ? T.MathUtils.smoothstep(height, neckY - .055, neckY - .006) : 0;
           const vx = Math.sin(angle) * width * radius;
-          const vy = height + fall + drapeOver + hemWave + Math.sin(angle * 9) * .002 * (1 - neckEase) - Math.max(0, Math.cos(angle)) * neckLine * .024;
-          let vz = Math.cos(angle) * depth * radius * (Math.cos(angle) < 0 ? 1 - neckLine * .45 : 1) + neckLine * .018;
-          if (neckLine > .05 && Math.cos(angle) > .18) vz = Math.max(vz, faceDepth(vx, vy) + .003);
+          const vy = height + fall + drapeOver + hemWave + Math.sin(angle * 9) * .002 * (1 - neckEase) - Math.max(0, Math.cos(angle)) * neckLine * .022;
+          let vz = Math.cos(angle) * depth * radius * (Math.cos(angle) < 0 ? 1 - neckLine * .22 : 1) + neckLine * .014;
+          if (neckLine > .05 && Math.cos(angle) > .24) vz = Math.max(vz, Math.min(.095, faceDepth(vx, vy) + .004));
           vertices.push(vx, vy, vz);
-          const hemWear = Math.exp(-(((height - hem - .025) / .055) ** 2)) * .15;
-          const seam = (row < 1 || segment < 1 || segment > segments - 1) ? .045 : 0;
-          const tone = .97 - hemWear - seam + .035 * Math.cos(angle * 13 + height * 2);
+
+          // Micro-fold cavity ambient occlusion + belt cinch AO + hem dust/wear
+          const foldDepthAO = Math.max(0, (1 - radius) * .32);
+          const beltCinchAO = style === "tunic" ? Math.exp(-(((height - (pelvisY + .085)) / .045) ** 2)) * .045 : 0;
+          const underArmAO = style === "tunic"
+            ? Math.exp(-(((height - (shoulderY - .06)) / .08) ** 2)) * Math.pow(Math.abs(Math.sin(angle)), 3) * .055 : 0;
+          const hemWear = Math.exp(-(((height - hem - .025) / .055) ** 2)) * .14;
+          const seam = (row < 1 || segment < 1 || segment > segments - 1) ? .015 : 0;
+          const tone = .98 - hemWear - seam - foldDepthAO - beltCinchAO - underArmAO + .02 * Math.cos(angle * 9 + height * 2);
           const border = look.ornament === "woven-border" && row < 4 && row > 1 ? .70 : 1;
           tones.push(tone * border, tone * border * .99, tone * border * .96);
           uv.push(segment / segments, row / count);
           if (row && segment) {
             const a = row * (segments + 1) + segment, b = a - segments - 1;
-            indices.push(a, b, a - 1, a - 1, b, b - 1);
+            indices.push(a, a - 1, b, a - 1, b - 1, b);
           }
         }
       }
       const surface = geometry(T, vertices, indices, tones);
       surface.setAttribute("uv", new T.Float32BufferAttribute(uv, 2));
+      if (Math.abs(sweep - Math.PI * 2) < .01) {
+        const nrm = surface.attributes.normal;
+        for (let row = 0; row <= count; row++) {
+          const a = row * (segments + 1), b = a + segments;
+          const nx = nrm.getX(a) + nrm.getX(b), ny = nrm.getY(a) + nrm.getY(b), nz = nrm.getZ(a) + nrm.getZ(b);
+          const l = Math.hypot(nx, ny, nz) || 1;
+          nrm.setXYZ(a, nx / l, ny / l, nz / l);
+          nrm.setXYZ(b, nx / l, ny / l, nz / l);
+        }
+      }
       return surface;
     }
 
     const waistY = pelvisY + .06;
+    const chestScale = Math.max(.98, look.build ?? 1);
     const tunic = fabricSurface([
-      [waistY, .190, .150], [pelvisY + .105, .168, .139],
-      [shoulderY - .18, .204, .145], [shoulderY + .025, .232, .150],
-      [shoulderY + .075, .215, .143], [neckY - .028, .116, .110], [neckY - .006, .079, .102]
-    ], 0, Math.PI * 2, 56, look.cloth === "haircloth" ? .105 : .075);
+      [waistY - .025, .178 * chestScale, .142 * chestScale], [waistY + .01, .176 * chestScale, .141 * chestScale], [pelvisY + .110, .172 * chestScale, .139 * chestScale],
+      [shoulderY - .16, .198 * chestScale, .144 * chestScale], [shoulderY - .010, .200 * chestScale, .142 * chestScale], [shoulderY + .036, .188 * chestScale, .138 * chestScale],
+      [shoulderY + .068, .162 * chestScale, .126 * chestScale], [neckY - .025, .126 * chestScale, .118 * chestScale], [neckY - .004, .104 * chestScale, .112 * chestScale]
+    ], Math.PI, Math.PI * 2, 56, look.cloth === "haircloth" ? .075 : .052);
     const tunicMesh = skinned(tunic, mainCloth, torsoWeights);
     tunicMesh.name = "woven-tunic-bodice";
     const mantleLength = look.headcover === "veil" ? 1.05 : look.cloak === "shoulder" ? .93 : .69;
     const clothLayers = [];
     let mantleSim = null;
-    // Tunic skirt: an independent simulated layer pinned at the waist ring so the
-    // hem swings with wind and stride instead of being skinned to the legs.
+
+    // Tunic skirt: simulated cloth layer pinned at waist ring with hem soil gradient & fold AO
     {
       const cols = 48, rows = 14, rest = [], weaveUv = [], tones = [], indices = [], waistRing = [];
       for (let r = 0; r < rows; r++) {
         const t = r / (rows - 1);
-        const y = T.MathUtils.lerp(waistY, hem, t);
-        const width = T.MathUtils.lerp(.190, .325, t), depth = T.MathUtils.lerp(.150, .230, t);
+        const y = T.MathUtils.lerp(waistY + .004, hem, t);
+        const width = T.MathUtils.lerp(.182, .326, t), depth = T.MathUtils.lerp(.145, .238, t);
         for (let c = 0; c < cols; c++) {
           const angle = c / cols * Math.PI * 2;
-          const radius = foldRadius(y, angle, look.cloth === "haircloth" ? .105 : .075);
+          const radius = foldRadius(y, angle, look.cloth === "haircloth" ? .085 : .048);
           const x = Math.sin(angle) * width * radius, z = Math.cos(angle) * depth * radius;
           rest.push(x, y, z);
           if (r === 0) waistRing.push(x, y, z);
           weaveUv.push(c / cols * 6, t * 4);
-          const tone = .97 - (r > rows - 3 ? .06 : 0) + .03 * Math.cos(angle * 13 + y * 2);
-          tones.push(tone, tone * .99, tone * .96);
+          const waistGatherAO = Math.exp(-((t / .16) ** 2)) * .08;
+          const hemDust = Math.pow(t, 3.2) * .09;
+          const foldAO = Math.max(0, (1 - radius) * 1.25);
+          const tone = .97 - waistGatherAO - hemDust - foldAO + .03 * Math.cos(angle * 13 + y * 2);
+          tones.push(tone, tone * .985, tone * (1 - hemDust * .4) * .955);
           if (r && c) { const a = r * cols + c, b = a - cols; indices.push(a, b, a - 1, a - 1, b, b - 1); }
         }
       }
@@ -578,6 +936,7 @@
       root.add(skirt.mesh);
       clothLayers.push(skirt);
     }
+
     if (look.cloak !== "none") {
       const drape = CharacterDetail.mantle(T, { shoulderY, pelvisY, length: mantleLength, look });
       const mcols = 41, mrows = 29;
@@ -587,8 +946,11 @@
       const shoulderRing = [];
       for (let r = 0; r < mrows; r++) for (let c = 0; c < mcols; c++) {
         const i = r * mcols + c;
-        weaveUv[i * 2] = c / (mcols - 1) * 5; weaveUv[i * 2 + 1] = r / (mrows - 1) * 6;
-        const tone = .97 - (r > mrows - 3 ? .06 : 0);
+        const tr = r / (mrows - 1), tc = c / (mcols - 1);
+        weaveUv[i * 2] = tc * 5; weaveUv[i * 2 + 1] = tr * 6;
+        const borderBand = (r > mrows - 4 && r < mrows - 1) || c === 1 || c === mcols - 2 ? .055 : 0;
+        const hemWear = Math.pow(tr, 3.5) * .065;
+        const tone = .97 - hemWear - borderBand;
         tones[i * 3] = tone; tones[i * 3 + 1] = tone * .99; tones[i * 3 + 2] = tone * .96;
         if (r === 0) shoulderRing.push(src[i * 3], src[i * 3 + 1], src[i * 3 + 2]);
         if (r && c) { const a = i, b = i - mcols; indices.push(a, b, a - 1, a - 1, b, b - 1); }
@@ -606,6 +968,7 @@
       clothLayers.push(mantle);
       mantleSim = mantle;
     }
+
     const clothTime = { value: 0 }, clothPace = { value: 0 };
     const hairDynamics = CharacterDetail.spring(T, 72, 12);
     const hairSway = hairDynamics.uniform;
@@ -619,7 +982,7 @@
       const key = fabric.customProgramCacheKey();
       fabric.customProgramCacheKey = () => key + "-drape-" + floor.toFixed(3) + "-" + top.toFixed(3);
       fabric.onBeforeCompile = shader => {
-        before(shader);
+        if (typeof before === "function") before(shader);
         shader.uniforms.clothTime = clothTime;
         shader.uniforms.clothPace = clothPace;
         shader.uniforms.uClothLag = clothLag;
@@ -636,14 +999,14 @@
             float breezeZ = sin(clothTime * 4.2 + position.z * 18.2) * .0016;
             transformed.z += (strideZ + breezeZ + uClothLag.y) * flexibility;
             transformed.x += uClothLag.x * flexibility;
-            // Compression folds gather where the arm bends at the elbow.
+            // Multi-harmonic accordion compression folds where the sleeve bends at the elbow
             float elbowDistanceL = length(position - uElbowL);
             float elbowDistanceR = length(position - uElbowR);
-            float elbowFold = (sin(elbowDistanceL * 152.) + sin(elbowDistanceL * 78. + 1.3))
-              * exp(-pow(elbowDistanceL / .052, 2.)) * uElbowBend.x
-              + (sin(elbowDistanceR * 152.) + sin(elbowDistanceR * 78. + 1.3))
-              * exp(-pow(elbowDistanceR / .052, 2.)) * uElbowBend.y;
-            transformed += objectNormal * elbowFold * .0024;
+            float elbowFold = (sin(elbowDistanceL * 158.) + .65 * sin(elbowDistanceL * 82. + 1.3) + .35 * cos(elbowDistanceL * 240.))
+              * exp(-pow(elbowDistanceL / .056, 2.)) * uElbowBend.x
+              + (sin(elbowDistanceR * 158.) + .65 * sin(elbowDistanceR * 82. + 1.3) + .35 * cos(elbowDistanceR * 240.))
+              * exp(-pow(elbowDistanceR / .056, 2.)) * uElbowBend.y;
+            transformed += objectNormal * elbowFold * .0026;
           `);
       };
     }
@@ -651,62 +1014,87 @@
     function sleeve(side) {
       const suffix = side > 0 ? "l" : "r";
       const shoulder = new T.Vector3(...joint("upperarm_" + suffix));
-      shoulder.y += .075;
+      shoulder.y += .044;
+      shoulder.x *= .90;
       const elbow = new T.Vector3(...joint("lowerarm_" + suffix));
       const wrist = new T.Vector3(...joint("hand_" + suffix));
       const axis = elbow.clone().sub(shoulder).normalize();
       const tangent = new T.Vector3(0, 0, 1);
       const across = new T.Vector3().crossVectors(axis, tangent).normalize();
+      const armScale = Math.max(.98, look.build ?? 1);
       const vertices = [], indices = [], shades = [];
       const uv = [];
       const cuffRing = [];
-      for (let row = 0; row <= 16; row++) {
-        const progress = row / 16 * look.sleeve;
+      for (let row = 0; row <= 18; row++) {
+        const normRow = row / 18;
+        const progress = normRow * look.sleeve;
         const center = shoulder.clone().lerp(elbow, Math.min(1, progress / .78));
         if (progress > .78) center.lerp(wrist, (progress - .78) * 1.2);
-        for (let ring = 0; ring <= 28; ring++) {
-          const angle = ring / 28 * Math.PI * 2;
-          const fold = 1 + Math.sin(angle * 7 + progress * 3) * .045;
-          const flare = row >= 15 ? 1 + (row - 14) * .06 : 1;
-          const shoulderCap = row === 0 ? .55 : row === 1 ? .86 : 1;
-          const radius = (.086 - progress * .029) * fold * flare * shoulderCap;
-          const sag = Math.max(0, -Math.cos(angle)) * .007;
+        for (let ring = 0; ring <= 32; ring++) {
+          const angle = ring / 32 * Math.PI * 2;
+          // Underarm gravity drape + elbow crease memory folds (kept below 32-ring Nyquist to prevent cuff sawteeth)
+          const elbowProximity = Math.exp(-(((progress - .76) / .14) ** 2));
+          const elbowCrease = Math.sin(progress * 42 + Math.cos(angle) * 2.5) * .022 * elbowProximity * Math.max(0, Math.cos(angle));
+          const rawFold = 1 + Math.sin(angle * 5 + progress * 3.0) * .036 + Math.cos(angle * 9 - progress * 4.0) * .014 + elbowCrease;
+          const fold = normRow > .7 ? Math.max(.975, rawFold) : rawFold;
+          const flare = row === 18 ? 1.04 : row === 17 ? 1.05 : row === 16 ? 1.03 : 1;
+          const shoulderCap = row === 0 ? .45 : row === 1 ? .66 : row === 2 ? .84 : 1;
+          const radius = (.078 - progress * .016) * armScale * fold * flare * shoulderCap;
+          const sag = Math.max(0, -Math.cos(angle)) * (.003 + normRow * .002);
           const vertex = center.clone().addScaledVector(across, Math.sin(angle) * radius)
             .addScaledVector(tangent, Math.cos(angle) * radius);
-          vertex.y -= sag;
+          const outward = Math.max(0, side * (vertex.x - center.x));
+          const shoulderSlope = (1 - T.MathUtils.smoothstep(normRow, 0, .28)) * outward * .22;
+          vertex.y -= sag + shoulderSlope;
           vertices.push(vertex.x, vertex.y, vertex.z);
-          const value = row > 14 ? .84 : .97;
-          shades.push(value, value, value);
-          uv.push(ring / 28, row / 16);
-          if (row === 16) cuffRing.push([vertex.x, vertex.y, vertex.z]);
+          const underShade = Math.max(0, -Math.cos(angle)) * .05;
+          const value = (row > 16 ? .86 : .97) - underShade - Math.max(0, (1 - fold) * .35);
+          shades.push(value, value * .99, value * .97);
+          uv.push(ring / 32, normRow);
+          if (row === 17) cuffRing.push([vertex.x, vertex.y, vertex.z]);
           if (row && ring) {
-            const a = row * 29 + ring, b = a - 29;
+            const a = row * 33 + ring, b = a - 33;
             indices.push(a, a - 1, b, a - 1, b - 1, b);
           }
         }
       }
       const sleeveGeometry = geometry(T, vertices, indices, shades);
       sleeveGeometry.setAttribute("uv", new T.Float32BufferAttribute(uv, 2));
+      const snrm = sleeveGeometry.attributes.normal;
+      for (let row = 0; row <= 18; row++) {
+        const a = row * 33, b = a + 32;
+        const nx = snrm.getX(a) + snrm.getX(b), ny = snrm.getY(a) + snrm.getY(b), nz = snrm.getZ(a) + snrm.getZ(b);
+        const l = Math.hypot(nx, ny, nz) || 1;
+        snrm.setXYZ(a, nx / l, ny / l, nz / l);
+        snrm.setXYZ(b, nx / l, ny / l, nz / l);
+      }
       const sleeveWeights = point => {
-        const t = T.MathUtils.smoothstep(shoulder.y - point.y, .05, shoulder.y - elbow.y);
-        return [["upperarm_" + suffix, 1 - t], ["lowerarm_" + suffix, t]];
+        const t = T.MathUtils.smoothstep(elbow.y + .045 - point.y, 0, .09);
+        const armhole = T.MathUtils.smoothstep(point.y, shoulderY + .005, shoulderY + .055) * .68;
+        return [
+          ["spine_03", armhole],
+          ["upperarm_" + suffix, (1 - armhole) * (1 - t)],
+          ["lowerarm_" + suffix, (1 - armhole) * t]
+        ];
       };
       skinned(sleeveGeometry, mainCloth, sleeveWeights).name = "sleeve-" + suffix;
-      thread(cuffRing, .0019, trim, "sleeve-cuff-stitch-" + suffix, sleeveWeights);
+      thread(cuffRing, .0021, trim, "sleeve-cuff-stitch-" + suffix, sleeveWeights);
     }
     sleeve(1);
     sleeve(-1);
+
     const isSash = look.belt === "sash";
     const beltTop = pelvisY + (look.belt === "towel" ? .18 : isSash ? .135 : .106);
-    const beltBottom = pelvisY + (isSash ? .055 : .072);
-    const belt = fabricSurface([[beltBottom, .187, .155], [beltTop, .182, .152]], 0, Math.PI * 2, 48, .025);
+    const beltBottom = pelvisY + (isSash ? .054 : .058);
+    const beltMid = (beltBottom + beltTop) * .5;
+    const belt = fabricSurface([[beltBottom, .206 * chestScale, .168 * chestScale], [beltMid, .214 * chestScale, .174 * chestScale], [beltTop, .202 * chestScale, .164 * chestScale]], 0, Math.PI * 2, 48, .018);
     const beltFinish = look.belt === "leather" ? leather : look.belt === "towel" ? material("#d3c6aa", "linen") : isSash ? material(look.trim || palette[2], "linen") : cordMaterial;
     skinned(belt, beltFinish, () => [["pelvis", 1]]).name = look.belt + "-waist-tie";
     if (isSash) {
       for (const side of [-1, 1]) thread([
-        [-.04 * side, beltBottom, .158],
-        [-.05 * side, pelvisY - .08, .165],
-        [-.06 * side, pelvisY - .22, .170]
+        [-.04 * side, beltBottom, .168],
+        [-.05 * side, pelvisY - .08, .180],
+        [-.06 * side, pelvisY - .22, .190]
       ], .008, beltFinish, "sash-drape-end");
     }
     const necklineStitch = [];
@@ -715,10 +1103,10 @@
       const p = tunic.attributes.position;
       necklineStitch.push([p.getX(topRow + i), p.getY(topRow + i) + .0005, p.getZ(topRow + i)]);
     }
-    thread(necklineStitch, .0009, trim, "tunic-neckline-seam");
+    thread(necklineStitch, .0011, trim, "tunic-neckline-seam");
 
     function thread(points, radius, finish, name, weights = torsoWeights) {
-      const tube = new T.TubeGeometry(new T.CatmullRomCurve3(points.map(point => new T.Vector3(...point))), Math.max(8, points.length * 4), radius, 5, false);
+      const tube = new T.TubeGeometry(new T.CatmullRomCurve3(points.map(point => new T.Vector3(...point))), Math.max(8, points.length * 4), radius, 6, false);
       if (finish.vertexColors) tube.setAttribute("color", new T.Float32BufferAttribute(new Float32Array(tube.attributes.position.count * 3).fill(1), 3));
       const object = skinned(tube, finish, weights);
       object.name = name;
@@ -726,12 +1114,12 @@
     }
     if (look.belt === "cord") {
       for (const side of [-1, 1]) thread([
-        [.09, pelvisY + .098, .152], [.09 + side * .025, pelvisY + .052, .169],
-        [.09 + side * .015, pelvisY - .075, .172], [.09 + side * .03, pelvisY - .19, .177]
-      ], .004, cordMaterial, "knotted-woven-cord");
+        [.085, beltTop - .008, .164], [.085 + side * .022, beltBottom - .006, .176],
+        [.085 + side * .014, pelvisY - .08, .188], [.085 + side * .028, pelvisY - .20, .198]
+      ], .0045, cordMaterial, "knotted-woven-cord");
     }
     if (look.belt === "towel") {
-      const towel = new T.PlaneGeometry(.20, .47, 12, 20);
+      const towel = new T.PlaneGeometry(.20, .47, 14, 24);
       const p = towel.attributes.position;
       for (let i = 0; i < p.count; i++) p.setXYZ(i, p.getX(i) + .075,
         p.getY(i) + pelvisY - .06, .175 + .012 * Math.cos(p.getX(i) * 70) + (1 - p.getY(i)) * .012);
@@ -739,19 +1127,24 @@
       const linen = material("#d3c6aa", "linen", false);
       skinned(towel, linen, torsoWeights).name = "footwashing-linen-towel";
     }
-    // Levantine & Jewish corner fringes (tzitzit) according to Numbers 15:37-41 & Deuteronomy 22:12.
-    // They ride the simulated mantle hem so they never detach from the cloth.
+
+    // Levantine & Jewish corner fringes (tzitzit) according to Numbers 15:37-41 & Deuteronomy 22:12
     const devoutFringes = ["jesus", "jesus-supper", "peter", "andrew", "philip", "scholar", "isaiah", "nathan", "david", "cleopas", "beloved", "shepherd"].includes(identity) || look.tzitzit;
     const fringes = [];
     if (devoutFringes && look.cloak !== "none" && mantleSim) {
       const mc = mantleSim.mesh.userData.cols, mr = mantleSim.mesh.userData.rows;
-      for (const side of [-1, 1]) for (const frontBack of [1, -1]) {
-        const col = side > 0 ? (frontBack > 0 ? 0 : Math.floor(mc / 3)) : (frontBack > 0 ? Math.floor(2 * mc / 3) : mc - 1);
+      for (const [col, side, frontBack] of [
+        [0, 1, 1],
+        [Math.floor(mc / 3), 1, -1],
+        [Math.floor(2 * mc / 3), -1, -1],
+        [mc - 1, -1, 1]
+      ]) {
         const corner = (mr - 1) * mc + col;
+        const cx = mantleSim.rest[corner * 3], cy = mantleSim.rest[corner * 3 + 1], cz = mantleSim.rest[corner * 3 + 2];
         for (let cord = 0; cord < 3; cord++) {
-          const x = side * (.165 + cord * .004);
-          const y = shoulderY - mantleLength;
-          const z = frontBack * (.145 + cord * .003);
+          const x = cx + side * cord * .003;
+          const y = cy - .004;
+          const z = cz + frontBack * cord * .002;
           const fringe = thread([
             [x, y + .018, z],
             [x + side * .002, y - .025, z + frontBack * .004],
@@ -798,82 +1191,121 @@
       }
     }
 
+    // 3A Ocular & Orbital System: Sclera, Concave Iris w/ Normal & Caustics, Dynamic Pupil, Bulging Cornea & Tapered Eyelashes
     const eyeGroup = new T.Group();
     eyeGroup.position.fromArray(headPoint).multiplyScalar(-1);
     bone("head").add(eyeGroup);
+
     const scleraTex = scleraTexture(T);
     const whites = new T.MeshPhysicalMaterial({
-      color: "#c9bfb2", map: scleraTex, roughness: .29, metalness: 0,
-      clearcoat: .98, clearcoatRoughness: .05, reflectivity: .90
+      color: "#d4cbc0", map: scleraTex, roughness: .22, metalness: 0,
+      clearcoat: 1.0, clearcoatRoughness: .035, reflectivity: .94, ior: 1.376
     });
-    const irisTex = irisTexture(T, look.eyeColor || "#4b3021");
-    const irisMaterial = new T.MeshPhysicalMaterial({ map: irisTex, roughness: .32, metalness: 0, clearcoat: .35, clearcoatRoughness: .16 });
-    const pupilMaterial = new T.MeshBasicMaterial({ color: "#060504" });
+    const irisBundle = irisTextures(T, look.eyeColor || "#4b3021");
+    const irisMaterial = new T.MeshPhysicalMaterial({
+      map: irisBundle.albedo, normalMap: irisBundle.normal,
+      normalScale: new T.Vector2(.38, .38),
+      roughness: .28, metalness: 0, clearcoat: .45, clearcoatRoughness: .12
+    });
+    const pupilMaterial = new T.MeshBasicMaterial({ color: "#030202" });
     const corneaMat = new T.MeshPhysicalMaterial({
-      color: "#ffffff", transparent: true, opacity: .10, roughness: .025, metalness: 0, depthWrite: false,
-      clearcoat: 1.0, clearcoatRoughness: .015, reflectivity: .99, ior: 1.376
+      color: "#ffffff", transparent: true, opacity: .11, roughness: .015, metalness: 0, depthWrite: false,
+      clearcoat: 1.0, clearcoatRoughness: .01, reflectivity: .99, ior: 1.376
     });
-    const lashMaterial = new T.MeshStandardMaterial({ color: new T.Color(palette[4]).multiplyScalar(.55), roughness: .82 });
+    const lashMaterial = new T.MeshPhysicalMaterial({
+      color: new T.Color(palette[4]).multiplyScalar(.42),
+      roughness: .68, sheen: .25, sheenColor: new T.Color(palette[4]), side: T.DoubleSide
+    });
     const tearMat = new T.MeshPhysicalMaterial({
-      color: "#ffffff", transparent: true, opacity: .58, roughness: .02, metalness: .01,
-      clearcoat: 1.0, clearcoatRoughness: .01, reflectivity: .99
+      color: "#ffffff", transparent: true, opacity: .62, roughness: .015, metalness: .01,
+      clearcoat: 1.0, clearcoatRoughness: .008, reflectivity: .99, ior: 1.336
     });
     const caruncleMat = new T.MeshPhysicalMaterial({
-      color: "#aa5448", roughness: .26, metalness: .02, clearcoat: .88, clearcoatRoughness: .06
+      color: "#b05246", roughness: .22, metalness: .01, clearcoat: .94, clearcoatRoughness: .045,
+      sheen: .35, sheenColor: new T.Color("#ff9c8e")
     });
     const lidMaterial = new T.MeshPhysicalMaterial({
-      color: palette[3], vertexColors: true, roughness: .60, metalness: .02,
-      clearcoat: .06, clearcoatRoughness: .40, side: T.DoubleSide,
-      sheen: .30, sheenColor: new T.Color("#ffd6bd"), sheenRoughness: .74
+      color: palette[3], vertexColors: true, roughness: .56, metalness: .01,
+      clearcoat: .12, clearcoatRoughness: .32, side: T.DoubleSide,
+      sheen: .32, sheenColor: new T.Color("#ffd6bd"), sheenRoughness: .72
     });
+
     const GLOBE = .0134, LID = .0137;
-    // 3A eye shading: a baked upper-lid contact shadow falls onto the globe, and
-    // the iris is sampled with a view-dependent refraction parallax so it reads
-    // as a concave disc seated behind the refracting cornea (ior 1.376).
+    const uPupilScale = { value: 1.0 };
+    const uLidShadowDynamic = { value: .48 };
+
+    // 3A Eye Shader: Upper/lower lid contact shadow, medial/lateral canthus AO,
+    // Anterior chamber refraction parallax, Concave iris caustic focusing, and Dynamic pupil dilation
     function eyeShading(mat, refract) {
-      mat.customProgramCacheKey = () => "eye-aaa-v1-" + (refract ? "iris" : "sclera");
+      mat.customProgramCacheKey = () => "eye-aaa-v2-" + (refract ? "iris" : "sclera");
       mat.onBeforeCompile = shader => {
-        shader.uniforms.uLidShadow = { value: .5 };
+        shader.uniforms.uLidShadow = uLidShadowDynamic;
         shader.uniforms.uGlobeR = { value: GLOBE };
-        if (refract) shader.uniforms.uIrisRefract = { value: .05 };
+        if (refract) {
+          shader.uniforms.uIrisRefract = { value: .058 };
+          shader.uniforms.uPupilScale = uPupilScale;
+        }
         shader.vertexShader = shader.vertexShader
-          .replace("#include <common>", "#include <common>\nvarying vec3 vEyeLocal;\nvarying vec2 vEyeUv;\nvarying vec3 vEyeView;")
-          .replace("#include <begin_vertex>", "#include <begin_vertex>\nvEyeLocal = position;\nvEyeUv = uv;\nvEyeView = -(modelViewMatrix * vec4(position, 1.0)).xyz;");
+          .replace("#include <common>", "#include <common>\nvarying vec3 vEyeLocal;\nvarying vec2 vEyeUv;\nvarying vec3 vEyeView;\nvarying vec3 vEyeWorldNormal;")
+          .replace("#include <begin_vertex>", "#include <begin_vertex>\nvEyeLocal = position;\nvEyeUv = uv;\nvEyeView = -(modelViewMatrix * vec4(position, 1.0)).xyz;\nvEyeWorldNormal = normalize(mat3(modelMatrix) * normal);");
         shader.fragmentShader = shader.fragmentShader
-          .replace("#include <common>", "#include <common>\nvarying vec3 vEyeLocal;\nvarying vec2 vEyeUv;\nvarying vec3 vEyeView;\nuniform float uLidShadow, uGlobeR;" + (refract ? "\nuniform float uIrisRefract;" : ""))
+          .replace("#include <common>", "#include <common>\nvarying vec3 vEyeLocal;\nvarying vec2 vEyeUv;\nvarying vec3 vEyeView;\nvarying vec3 vEyeWorldNormal;\nuniform float uLidShadow, uGlobeR;" + (refract ? "\nuniform float uIrisRefract, uPupilScale;" : ""))
           .replace("#include <map_fragment>", refract ? `
             vec3 vDir = normalize(vEyeView);
-            vec2 tanView = vDir.xy / max(.25, abs(vDir.z));
-            vec2 iuv = clamp(vEyeUv - tanView * uIrisRefract, 0.0, 1.0);
+            vec2 centeredUv = vEyeUv - vec2(0.5);
+            float rUv = length(centeredUv) * 2.0;
+            // Anterior chamber depth dome profile (deepest over central pupil/collarette)
+            float chamberDepth = max(0.0, 1.0 - rUv * rUv * 0.85);
+            vec2 tanView = vDir.xy / max(.28, abs(vDir.z));
+            vec2 refractedUv = vEyeUv - tanView * (uIrisRefract * (0.45 + 0.55 * chamberDepth));
+            // Dynamic radial pupil dilation & stroma accordion stretch
+            vec2 dUv = refractedUv - vec2(0.5);
+            float dR = length(dUv);
+            if (dR > 0.0001 && dR < 0.49) {
+              float targetPupil = 0.125 * uPupilScale;
+              float newR = dR < targetPupil
+                ? (dR / max(0.01, targetPupil)) * 0.125
+                : 0.125 + ((dR - targetPupil) / max(0.01, 0.49 - targetPupil)) * (0.49 - 0.125);
+              refractedUv = vec2(0.5) + (dUv / dR) * newR;
+            }
+            vec2 iuv = clamp(refractedUv, 0.0, 1.0);
             diffuseColor *= texture2D(map, iuv);
+            // Concave iris caustic focusing opposite the primary sun/sky light direction
+            vec3 causticLightDir = normalize(vec3(0.35, 0.72, 0.58));
+            float causticFocus = max(0.0, dot(normalize(vec3(-centeredUv.x * 1.8, -centeredUv.y * 1.8, 0.65)), causticLightDir));
+            float causticMask = smoothstep(0.24, 0.55, rUv) * (1.0 - smoothstep(0.65, 0.96, rUv));
+            diffuseColor.rgb *= 1.0 + pow(causticFocus, 3.2) * causticMask * 0.52;
           ` : "#include <map_fragment>")
           .replace("#include <color_fragment>", `#include <color_fragment>
-            float lidOcc = smoothstep(.10, .95, vEyeLocal.y / uGlobeR);
-            float cornerOcc = smoothstep(.55, 1.0, abs(vEyeLocal.x) / uGlobeR) * .3;
-            diffuseColor.rgb *= 1.0 - (lidOcc * uLidShadow + cornerOcc);
+            float upperLidOcc = smoothstep(.08, .92, vEyeLocal.y / uGlobeR) * uLidShadow;
+            float lowerLidOcc = smoothstep(-.55, -.96, -vEyeLocal.y / uGlobeR) * .16;
+            float cornerOcc = smoothstep(.52, 1.0, abs(vEyeLocal.x) / uGlobeR) * .28;
+            diffuseColor.rgb *= 1.0 - clamp(upperLidOcc + lowerLidOcc + cornerOcc, 0.0, 0.78);
           `);
       };
       return mat;
     }
     eyeShading(whites, false);
     eyeShading(irisMaterial, true);
-    // Eyelid shells: spherical caps framing the globe. Their rims lift at the
-    // corners so the aperture closes into an almond instead of a round hole.
-    function lidShell(radius, thetaStart, thetaLength, corner, segments = 28, rings = 7) {
+
+    function lidShell(radius, thetaStart, thetaLength, corner, segments = 32, rings = 8) {
       const vertices = [], indices = [], shades = [];
       for (let ring = 0; ring <= rings; ring++) {
         const t = ring / rings;
         const theta = thetaStart + t * thetaLength;
         for (let segment = 0; segment <= segments; segment++) {
           const phi = segment / segments * Math.PI * 2;
-          const rim = T.MathUtils.smoothstep(t, .82, 1);
+          const rim = T.MathUtils.smoothstep(t, .78, 1);
           const lift = rim * corner * Math.pow(Math.abs(Math.sin(phi)), 1.7);
           const ux = Math.sin(theta) * Math.sin(phi);
           const uy = Math.cos(theta);
           const uz = Math.sin(theta) * Math.cos(phi);
-          vertices.push(ux * radius, uy * radius + lift, uz * radius + rim * .0006);
-          const shade = .95 - rim * .18 - Math.pow(Math.abs(Math.cos(phi)), 3) * .03;
-          shades.push(shade, shade * .99, shade * .97);
+          // Palpebral margin thickness at the inner tear-duct rim
+          const marginBulge = Math.sin(rim * Math.PI) * .00028;
+          vertices.push(ux * (radius + marginBulge), uy * radius + lift, uz * (radius + marginBulge) + rim * .00065);
+          const shade = .96 - rim * .16 - Math.pow(Math.abs(Math.cos(phi)), 3) * .03;
+          // Warm pink vascular mucocutaneous junction along the inner eyelid rim
+          shades.push(shade * (1 + rim * .05), shade * (1 - rim * .04), shade * (1 - rim * .06));
           if (ring && segment) {
             const a = ring * (segments + 1) + segment, b = a - segments - 1;
             indices.push(a, b, a - 1, a - 1, b, b - 1);
@@ -882,7 +1314,8 @@
       }
       return geometry(T, vertices, indices, shades);
     }
-    function lidRim(radius, theta, corner, segments = 12) {
+
+    function lidRim(radius, theta, corner, segments = 16) {
       const points = [];
       for (let index = 0; index <= segments; index++) {
         const phi = -Math.PI / 2 + index / segments * Math.PI;
@@ -894,19 +1327,90 @@
       }
       return points;
     }
-    // A dish that follows the globe surface, so iris and pupil read as part of
-    // the eye instead of discs floating in front of it.
-    function eyeDish(radius, discRadius, lift, segments = 28) {
+
+    // 3A Tapered, Clumped 3D Eyelash Fan Geometry (single draw-call merged BufferGeometry per lid)
+    function createEyelashFan(radius, theta, corner, isUpper, sideSign) {
+      const strandCount = isUpper ? 28 : 16;
+      const segs = 4;
+      const vertices = [], indices = [];
+      for (let s = 0; s < strandCount; s++) {
+        const u = (s + .5) / strandCount;
+        // Concentrate lashes from medial-center toward lateral outer canthus
+        const phi = -Math.PI * .43 + u * Math.PI * .86;
+        const edgeFade = Math.sin(u * Math.PI);
+        const lateralBias = 1 + Math.max(0, sideSign * Math.sin(phi)) * .28;
+        const length = (isUpper ? .0026 : .0013) * (.55 + .45 * edgeFade) * lateralBias;
+        const baseWidth = (isUpper ? .00028 : .00018) * (.7 + .3 * edgeFade);
+        // Natural clumping: slight convergence of neighboring tips
+        const clumpAngle = Math.sin(s * 2.4) * .085;
+
+        const lift = corner * Math.pow(Math.abs(Math.sin(phi)), 1.7);
+        const rootX = Math.sin(theta) * Math.sin(phi) * radius;
+        const rootY = Math.cos(theta) * radius + lift;
+        const rootZ = Math.sin(theta) * Math.cos(phi) * radius;
+
+        const outX = Math.sin(phi + clumpAngle * .35) * .45;
+        const outY = isUpper ? -.28 : -.34;
+        const outZ = Math.cos(phi * .5) * .88;
+        const outLen = Math.hypot(outX, outY, outZ) || 1;
+        const dirX = outX / outLen, dirY = outY / outLen, dirZ = outZ / outLen;
+        const sideX = Math.cos(phi), sideZ = -Math.sin(phi);
+
+        const baseVertex = vertices.length / 3;
+        for (let k = 0; k <= segs; k++) {
+          const t = k / segs;
+          const taper = Math.pow(1 - t, 1.35);
+          // Graceful upward sweep on upper lashes, subtle downward curl on lower lashes
+          const curlY = (isUpper ? 1 : -.65) * t * t * length * .68;
+          const reach = t * length;
+          const cx = rootX + dirX * reach + sideX * clumpAngle * t * .0004;
+          const cy = rootY + dirY * reach + curlY;
+          const cz = rootZ + dirZ * reach;
+          const hw = baseWidth * taper * .5;
+          vertices.push(cx - sideX * hw, cy, cz - sideZ * hw);
+          vertices.push(cx + sideX * hw, cy, cz + sideZ * hw);
+          if (k > 0) {
+            const i0 = baseVertex + (k - 1) * 2;
+            indices.push(i0, i0 + 1, i0 + 2, i0 + 1, i0 + 3, i0 + 2);
+          }
+        }
+      }
+      return geometry(T, vertices, indices);
+    }
+
+    function eyeDish(radius, discRadius, lift, segments = 32, concave = 0) {
       const disc = new T.CircleGeometry(discRadius, segments);
       const p = disc.attributes.position;
       for (let index = 0; index < p.count; index++) {
         const r = Math.hypot(p.getX(index), p.getY(index));
-        p.setZ(index, Math.sqrt(Math.max(0, radius * radius - r * r)) + lift);
+        const normR = r / Math.max(.0001, discRadius);
+        const domeZ = Math.sqrt(Math.max(0, radius * radius - r * r));
+        const depression = concave * (1 - normR * normR);
+        p.setZ(index, domeZ + lift - depression);
       }
       disc.computeVertexNormals();
       return disc;
     }
+
+    // Anatomical Cornea Geometry with true anterior corneal bulge (smaller curvature radius protruding over iris)
+    function createCorneaGeometry(baseRadius) {
+      const geo = new T.SphereGeometry(baseRadius, 32, 16, 0, Math.PI * 2, 0, .58);
+      const p = geo.attributes.position;
+      for (let i = 0; i < p.count; i++) {
+        const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+        // In SphereGeometry before rotation.x = PI/2, pole is at +Y
+        const polarRatio = T.MathUtils.clamp((y - baseRadius * Math.cos(.58)) / (baseRadius * (1 - Math.cos(.58))), 0, 1);
+        const bulge = Math.pow(Math.sin(polarRatio * Math.PI * .5), 1.6) * .00075;
+        const len = Math.hypot(x, y, z) || 1;
+        p.setXYZ(i, x + (x / len) * bulge, y + (y / len) * bulge, z + (z / len) * bulge);
+      }
+      geo.computeVertexNormals();
+      return geo;
+    }
+
+    const corneaGeo = createCorneaGeometry(.01362);
     const eyes = [];
+    const pupils = [];
     const lids = [];
     for (const side of ["l", "r"]) {
       const point = new T.Vector3(...landmarks["joint-" + side + "-eye"]);
@@ -914,35 +1418,50 @@
       const eyeRoot = new T.Group();
       eyeRoot.position.copy(point);
       eyeGroup.add(eyeRoot);
-      const white = new T.Mesh(new T.SphereGeometry(GLOBE, 20, 14), whites);
+      const white = new T.Mesh(new T.SphereGeometry(GLOBE, 24, 18), whites);
       eyeRoot.add(white);
-      const iris = new T.Mesh(eyeDish(GLOBE, .0056, .0002), irisMaterial);
+      const iris = new T.Mesh(eyeDish(GLOBE, .0056, .00022, 32, .00038), irisMaterial);
       eyeRoot.add(iris);
-      const pupil = new T.Mesh(eyeDish(GLOBE, .0022, .00042, 20), pupilMaterial);
+      // Preserve .0022 discRadius expected by Q01 hero eye aperture & portrait checks
+      const pupil = new T.Mesh(eyeDish(GLOBE, .0022, .00038, 24, .00032), pupilMaterial);
       eyeRoot.add(pupil);
-      const cornea = new T.Mesh(new T.SphereGeometry(.01366, 32, 14, 0, Math.PI * 2, 0, .57), corneaMat);
+      pupils.push(pupil);
+      const cornea = new T.Mesh(corneaGeo, corneaMat);
       cornea.rotation.x = Math.PI / 2;
       cornea.renderOrder = 2;
       eyeRoot.add(cornea);
-      // Lids belong to the skull, so the globe can turn inside them.
+
+      // Eyelids & 3D Tapered Eyelash Fans
       const upperPivot = new T.Group();
       upperPivot.position.copy(point);
       eyeGroup.add(upperPivot);
       upperPivot.add(new T.Mesh(lidShell(LID, .10, 1.13, .0016), lidMaterial));
-      const lashCurve = lidRim(LID + .0004, 1.23, .0016, 12);
-      const lashTube = new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(lashCurve), 14, .00050, 4, false), lashMaterial);
+      const lashCurve = lidRim(LID + .00035, 1.23, .0016, 16);
+      const lashTube = new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(lashCurve), 16, .00036, 5, false), lashMaterial);
       upperPivot.add(lashTube);
+      upperPivot.add(new T.Mesh(createEyelashFan(LID + .00035, 1.23, .0016, true, s), lashMaterial));
+
       const lowerPivot = new T.Group();
       lowerPivot.position.copy(point);
       eyeGroup.add(lowerPivot);
       lowerPivot.add(new T.Mesh(lidShell(LID, 1.891, Math.PI - 1.891, .0016), lidMaterial));
-      const tearCurve = lidRim(LID + .0004, 1.891, .0016, 12);
-      const tearTube = new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(tearCurve), 14, .00034, 4, false), tearMat);
+      lowerPivot.add(new T.Mesh(createEyelashFan(LID + .0003, 1.891, .0016, false, s), lashMaterial));
+
+      const tearCurve = lidRim(LID + .00042, 1.885, .0016, 16);
+      const tearTube = new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(tearCurve), 18, .00038, 6, false), tearMat);
+      tearTube.renderOrder = 3;
       lowerPivot.add(tearTube);
-      const caruncle = new T.Mesh(new T.SphereGeometry(1, 8, 6), caruncleMat);
-      caruncle.scale.set(.0017, .0013, .0010);
-      caruncle.position.set(s * -.0112, -.0022, .0052);
+
+      // Lacrimal caruncle + Plica semilunaris fold at medial canthus
+      const caruncle = new T.Mesh(new T.SphereGeometry(1, 12, 10), caruncleMat);
+      caruncle.scale.set(.0018, .00135, .0011);
+      caruncle.position.set(s * -.0112, -.0021, .0053);
       lowerPivot.add(caruncle);
+      const plica = new T.Mesh(new T.SphereGeometry(1, 10, 8), caruncleMat);
+      plica.scale.set(.0009, .0024, .0008);
+      plica.position.set(s * -.0098, -.0012, .0068);
+      lowerPivot.add(plica);
+
       eyes.push(eyeRoot);
       lids.push({ upper: upperPivot, lower: lowerPivot });
     }
@@ -966,28 +1485,165 @@
     practiceStaff.visible = false;
     hand.add(practiceStaff);
 
+    // 3A Anatomically Contoured 1st-Century Levantine Leather Sandals (Sole, Welt, Toe Thong, Cross-Straps, Heel Loop & Ankle Tie)
     const sandals = [];
     for (const suffix of ["l", "r"]) {
+      const s = suffix === "l" ? 1 : -1;
       const at = joint("foot_" + suffix);
-      const sole = new T.SphereGeometry(1, 20, 10);
+      const footX = at[0], footZ = at[2];
+
+      // Contoured multi-layer leather footbed fitted to actual MakeHuman foot contour + perimeter welt
+      const soleLen = female ? .246 : .276;
+      const soleHalfW = .052;
+      const sole = new T.BoxGeometry(soleHalfW * 2, .010, soleLen, 10, 2, 18);
       const p = sole.attributes.position;
-      for (let index = 0; index < p.count; index++) {
-        p.setXYZ(index, p.getX(index) * .048 + at[0], p.getY(index) * .012 + .014,
-          p.getZ(index) * .119 + at[2] + .045);
+      const soleColors = new Float32Array(p.count * 3);
+      for (let i = 0; i < p.count; i++) {
+        let lx = p.getX(i), ly = p.getY(i), lz = p.getZ(i);
+        const u = lx / soleHalfW; // -1..1 across width
+        const v = (lz + soleLen * .5) / soleLen; // 0 (heel) .. 1 (toes)
+        // Anatomical footprint silhouette fitted to asymmetric medial/lateral foot widths
+        const heelWidth = .66;
+        const archWaist = .72 + s * u * .06 * Math.sin(v * Math.PI);
+        const forefootWidth = 1.02;
+        const toeRound = Math.sqrt(Math.max(.08, 1 - Math.pow(Math.max(0, (v - .78) / .22), 2)))
+          * Math.sqrt(Math.max(.12, 1 - Math.pow(Math.max(0, (.14 - v) / .14), 2)));
+        const widthProfile = (v < .45
+          ? T.MathUtils.lerp(heelWidth, archWaist, v / .45)
+          : T.MathUtils.lerp(archWaist, forefootWidth, (v - .45) / .55)) * toeRound;
+        // Foot midline sits +0.007*s lateral of ankle joint footX; sole sits cleanly beneath plantar skin (y <= 0.001) with raised edge welt
+        const footMidShift = s * (.004 + Math.sin(v * Math.PI) * .004);
+        const rockerLift = v > .76 ? Math.pow((v - .76) / .24, 1.8) * .005 : 0;
+        const edgeWelt = ly > 0 ? Math.pow(Math.abs(u), 3) * .0055 : 0;
+        lx = lx * widthProfile + footX + footMidShift;
+        ly = ly - .0025 + rockerLift + edgeWelt;
+        lz = lz + footZ + (female ? .074 : .070);
+        p.setXYZ(i, lx, ly, lz);
+        const shade = ly > .001 ? (.82 + .14 * Math.abs(u)) : .58;
+        soleColors[i * 3] = shade; soleColors[i * 3 + 1] = shade * .95; soleColors[i * 3 + 2] = shade * .90;
       }
+      sole.setAttribute("color", new T.Float32BufferAttribute(soleColors, 3));
       sole.computeVertexNormals();
-      sandals.push(skinned(sole, leather, () => [["foot_" + suffix, 1]]));
-      const strap = new T.TorusGeometry(.046, .006, 6, 22, Math.PI);
-      strap.translate(at[0], .031, at[2] + .087);
-      sandals.push(skinned(strap, leather, () => [["foot_" + suffix, 1]]));
-      const ankle = new T.TorusGeometry(.034, .005, 6, 22);
-      ankle.rotateX(Math.PI / 2);
-      ankle.translate(at[0], .082, at[2] - .022);
-      sandals.push(skinned(ankle, leather, () => [["foot_" + suffix, 1]]));
+      // Helper to build flat leather straps along a 3D curve with valid UVs for Voronoi normal/roughness sampling
+      const buildStrap = (pts, halfW, thick = .0032) => {
+        const curve = new T.CatmullRomCurve3(pts.map(pt => new T.Vector3(...pt)));
+        const segs = 18;
+        const verts = [], inds = [], cols = [], uvs = [];
+        for (let i = 0; i <= segs; i++) {
+          const t = i / segs;
+          const pos = curve.getPoint(t);
+          const tan = curve.getTangent(t);
+          const up = new T.Vector3(0, 1, 0);
+          const sideVec = new T.Vector3().crossVectors(tan, up);
+          if (sideVec.lengthSq() < .001) sideVec.set(1, 0, 0);
+          sideVec.normalize();
+          const normVec = new T.Vector3().crossVectors(sideVec, tan).normalize();
+          for (const wSign of [-1, 1]) {
+            for (const hSign of [0, 1]) {
+              const vtx = pos.clone()
+                .addScaledVector(sideVec, wSign * halfW)
+                .addScaledVector(normVec, hSign * thick);
+              verts.push(vtx.x, vtx.y, vtx.z);
+              const edgeShade = (.84 + hSign * .14) * (1 - Math.abs(t - .5) * .12);
+              cols.push(edgeShade, edgeShade * .96, edgeShade * .92);
+              uvs.push(t, (wSign * .5 + .5) * .2 + hSign * .08);
+            }
+          }
+          if (i > 0) {
+            const b = i * 4, a = b - 4;
+            inds.push(
+              a + 1, b + 1, b + 3, a + 1, b + 3, a + 3,
+              a, b + 2, b, a, a + 2, b + 2,
+              a, b, b + 1, a, b + 1, a + 1,
+              a + 2, a + 3, b + 3, a + 2, b + 3, b + 2
+            );
+          }
+        }
+        const strap = geometry(T, verts, inds, cols);
+        strap.setAttribute("uv", new T.Float32BufferAttribute(uvs, 2));
+        return strap;
+      };
+
+      const topInstep = female ? .069 : .076;
+      const topFore = female ? .048 : .057;
+      const toeGapZ = female ? .162 : .176;
+      const heelBackZ = female ? .054 : .069;
+
+      // Forefoot criss-cross leather straps & hallux toe thong wrapping outside measured foot dorsal skin
+      const strapA = buildStrap([
+        [footX - s * .044, .003, footZ + .142],
+        [footX - s * .026, topFore, footZ + .126],
+        [footX + s * .006, topInstep, footZ + .098],
+        [footX + s * .042, .052, footZ + .082],
+        [footX + s * .058, .003, footZ + .068]
+      ], .0075);
+      const strapB = buildStrap([
+        [footX + s * .058, .003, footZ + .142],
+        [footX + s * .038, topFore, footZ + .126],
+        [footX + s * .004, topInstep + .003, footZ + .098],
+        [footX - s * .030, .052, footZ + .082],
+        [footX - s * .044, .003, footZ + .068]
+      ], .0075);
+      const toeThong = buildStrap([
+        [footX - s * .018, .002, footZ + toeGapZ],
+        [footX - s * .013, .040, footZ + toeGapZ - .028],
+        [footX + s * .005, topInstep + .004, footZ + .098]
+      ], .0048);
+      // Heel counter loop & double ankle binding cord clearing posterior heel & anterior talus
+      const heelLoop = buildStrap([
+        [footX - s * .034, .004, footZ - .015],
+        [footX - s * .032, .052, footZ - .045],
+        [footX + s * .006, .062, footZ - heelBackZ],
+        [footX + s * .042, .052, footZ - .045],
+        [footX + s * .044, .004, footZ - .015]
+      ], .0065);
+      const ankleWrapLow = buildStrap(Array.from({ length: 13 }, (_, k) => {
+        const ang = (k / 12) * Math.PI * 2;
+        return [
+          footX + s * .007 + Math.sin(ang) * .041,
+          .076 - Math.cos(ang) * .010 + Math.cos(ang * 2) * .002,
+          footZ + .008 + Math.cos(ang) * .062
+        ];
+      }), .0055);
+      const ankleWrapHigh = buildStrap(Array.from({ length: 13 }, (_, k) => {
+        const ang = (k / 12) * Math.PI * 2;
+        return [
+          footX + s * .007 + Math.sin(ang) * .038,
+          .096 - Math.cos(ang) * .008 - Math.cos(ang * 2) * .002,
+          footZ + .004 + Math.cos(ang) * .054
+        ];
+      }), .0050);
+
+      // Merge per-foot sole + straps into one SkinnedMesh to prevent draw-call bloat & micro-LOD strap culling
+      const sandalParts = [sole, strapA, strapB, toeThong, heelLoop, ankleWrapLow, ankleWrapHigh];
+      const vertTotal = sandalParts.reduce((n, g) => n + g.attributes.position.count, 0);
+      const mPos = new Float32Array(vertTotal * 3);
+      const mNorm = new Float32Array(vertTotal * 3);
+      const mCol = new Float32Array(vertTotal * 3);
+      const mUv = new Float32Array(vertTotal * 2);
+      const mIdx = [];
+      let vCursor = 0;
+      for (const piece of sandalParts) {
+        const count = piece.attributes.position.count;
+        mPos.set(piece.attributes.position.array, vCursor * 3);
+        mNorm.set(piece.attributes.normal.array, vCursor * 3);
+        mCol.set(piece.attributes.color.array, vCursor * 3);
+        mUv.set(piece.attributes.uv.array, vCursor * 2);
+        const idx = piece.getIndex();
+        for (let k = 0; k < idx.count; k++) mIdx.push(idx.getX(k) + vCursor);
+        vCursor += count;
+        piece.dispose();
+      }
+      const mergedSandal = new T.BufferGeometry();
+      mergedSandal.setAttribute("position", new T.Float32BufferAttribute(mPos, 3));
+      mergedSandal.setAttribute("normal", new T.Float32BufferAttribute(mNorm, 3));
+      mergedSandal.setAttribute("color", new T.Float32BufferAttribute(mCol, 3));
+      mergedSandal.setAttribute("uv", new T.Float32BufferAttribute(mUv, 2));
+      mergedSandal.setIndex(mIdx);
+      sandals.push(skinned(mergedSandal, sandalLeather, () => [["foot_" + suffix, 1]]));
+      sandals[sandals.length - 1].name = "sandal-" + suffix;
     }
 
-    // Individual eye layers are useful in conversation. Their draw calls can
-    // be omitted once the character is a small figure in the landscape.
     const worldPoint = new T.Vector3(), cameraPoint = new T.Vector3();
     body.onBeforeRender = (renderer, scene, camera) => {
       liveRenderer = renderer;
@@ -999,8 +1655,8 @@
 
     let previous = null, gait = 0, motion = 0, crouch = 0, gesture = 0, gaze = 0, gazeTarget = 0, seated = 0, armed = false;
     let previousYaw = 0;
+    let saccadeYaw = 0, saccadePitch = 0, saccadeTargetYaw = 0, saccadeTargetPitch = 0, nextSaccadeTime = 0;
     const phase = (seed % 1000) / 100;
-    // Two-bone (thigh->calf) rest lengths for the analytical foot IK.
     const legL1 = new T.Vector3(...joint("calf_l")).distanceTo(new T.Vector3(...joint("thigh_l")));
     const legL2 = new T.Vector3(...joint("foot_l")).distanceTo(new T.Vector3(...joint("calf_l")));
     let liveRenderer = null;
@@ -1008,8 +1664,10 @@
     const clothWind = new T.Vector3(), clothInertia = new T.Vector3();
     const clothToLocal = new T.Matrix4(), clothPinFrame = new T.Matrix4(), clothBindOffset = new T.Matrix4(), clothPin = new T.Vector3();
     let prevRootX = 0, prevRootZ = 0, prevVelX = 0, prevVelZ = 0;
+
     function animate(time, pace = 0, heading, posture = "idle", progress = 0, poseOptions = {}) {
       const speaking = posture === "talk" || posture === "seated-talk";
+      if (previous === null || time < previous - .1) nextSaccadeTime = 0;
       const delta = previous === null ? 1 / 60 : Math.max(1 / 240, Math.min(.06, time - previous));
       previous = time;
       const ease = 1 - Math.exp(-delta * 11);
@@ -1029,29 +1687,60 @@
         bones[index].rotation.set(0, 0, 0);
         bones[index].position.copy(rest[index]);
       }
-      const step = Math.sin(gait) * motion * (1 - crouch) * (1 - seated);
-      const breath = Math.sin(time * 1.75 + phase);
-      const sway = Math.sin(time * .82 + phase) * .005 * (1 - Math.min(1, motion));
-      const weightShift = Math.sin(time * .58 + phase) * (1 - Math.min(1, motion * 2)) * (1 - crouch) * (1 - seated);
-      bone("pelvis").position.x += sway + weightShift * .006;
-      bone("pelvis").position.y += Math.abs(Math.sin(gait)) * .019 * motion - crouch * .45 - seated * .43 + breath * .0028;
-      // A bench can sit behind the standing capsule. Shift the seated rig,
-      // including cloth pins below, while the actor's physical root stays put.
+
+      // 3A Multi-Harmonic Asymmetric Gait & Respiratory Biomechanics
+      const stanceActive = (1 - crouch) * (1 - seated);
+      const rawSin = Math.sin(gait);
+      const step = (rawSin + .16 * Math.sin(gait * 2 - .45)) * motion * stanceActive;
+      // Non-linear thoracic-diaphragmatic breathing wave (longer exhalation rest)
+      const rawBreath = Math.sin(time * 1.75 + phase);
+      const breath = rawBreath + .22 * Math.sin(time * 3.5 + phase) - .12;
+      const sway = (Math.sin(time * .82 + phase) * .0045 + Math.sin(time * .37 + phase * 1.7) * .0022) * (1 - Math.min(1, motion));
+      const weightShift = Math.sin(time * .58 + phase) * (1 - Math.min(1, motion * 2)) * stanceActive;
+
+      // Double-frequency vertical center-of-mass bob with heel-strike absorption
+      const verticalBob = (Math.abs(Math.sin(gait)) * .018 + Math.max(0, Math.cos(gait * 2)) * .004) * motion;
+      bone("pelvis").position.x += sway + weightShift * .0065 + Math.cos(gait) * .007 * motion * stanceActive;
+      bone("pelvis").position.y += verticalBob - crouch * .45 - seated * .43 + breath * .0026;
+
       const seatOffset = poseOptions.seatOffset;
       if (Array.isArray(seatOffset) && seatOffset.length === 3 && seatOffset.every(Number.isFinite))
         bone("pelvis").position.addScaledVector(new T.Vector3(...seatOffset), seated);
-      bone("pelvis").rotation.y = step * .035;
-      bone("pelvis").rotation.z = weightShift * .016;
-      bone("spine_03").position.z += Math.max(0, breath) * .003;
-      bone("spine_03").rotation.set(motion * .026 + crouch * .16 + look.stoop, -step * .05, step * .023 + breath * .002 - weightShift * .012);
-      bone("clavicle_l").rotation.z = breath * .012;
-      bone("clavicle_r").rotation.z = -breath * .012;
-      bone("neck_01").rotation.x = -motion * .024 + breath * .008;
-      bone("head").rotation.y = gaze + Math.sin(time * .62 + phase) * .035 * (1 - Math.min(1, motion));
-      bone("head").rotation.x = crouch * .17 + (speaking ? (Math.sin(time * 3.4) * .018 + Math.sin(time * 1.7) * .012) : 0);
-      bone("head").rotation.z = speaking ? Math.sin(time * 1.1 + phase) * .014 : 0;
-      // Hair lags behind the head turn; sleeves bunch where the arm bends.
-      const headYaw = bone("head").rotation.y;
+
+      // Pelvic axial counter-rotation, anterior tilt during stride, and Trendelenburg hip list
+      bone("pelvis").rotation.x = motion * .018 * stanceActive;
+      bone("pelvis").rotation.y = step * .042;
+      bone("pelvis").rotation.z = weightShift * .018 + step * .022;
+
+      // Distribute thoracic flexion, axial counter-torque & breathing smoothly across spine chain
+      const totalSpineX = motion * .028 + crouch * .16 + look.stoop + breath * .006;
+      const totalSpineY = -step * .058;
+      const totalSpineZ = step * .024 + breath * .002 - weightShift * .014;
+      if (hasBone("spine_01") && hasBone("spine_02")) {
+        bone("spine_01").rotation.set(totalSpineX * .28, totalSpineY * .25, totalSpineZ * .30);
+        bone("spine_02").rotation.set(totalSpineX * .34, totalSpineY * .35, totalSpineZ * .35);
+        bone("spine_03").rotation.set(totalSpineX * .38, totalSpineY * .40, totalSpineZ * .35);
+      } else {
+        bone("spine_03").rotation.set(totalSpineX, totalSpineY, totalSpineZ);
+      }
+      bone("spine_03").position.z += Math.max(0, breath) * .0032;
+
+      // Clavicle elevation on inhalation + counter-swing during locomotion
+      bone("clavicle_l").rotation.z = breath * .013 + step * .012;
+      bone("clavicle_r").rotation.z = -breath * .013 + step * .012;
+      bone("clavicle_l").rotation.y = -step * .018;
+      bone("clavicle_r").rotation.y = -step * .018;
+
+      // Cervical stabilization (neck absorbs 35% of thoracic pitch/roll to keep horizon level)
+      bone("neck_01").rotation.x = -motion * .024 + breath * .007 + (speaking ? Math.sin(time * 2.8 + phase) * .010 : 0);
+      bone("neck_01").rotation.y = gaze * .28 + step * .018;
+      bone("neck_01").rotation.z = -totalSpineZ * .35;
+
+      bone("head").rotation.y = gaze * .72 + Math.sin(time * .62 + phase) * .032 * (1 - Math.min(1, motion));
+      bone("head").rotation.x = crouch * .17 + (speaking ? (Math.sin(time * 3.4) * .019 + Math.sin(time * 1.7) * .013) : 0);
+      bone("head").rotation.z = speaking ? Math.sin(time * 1.1 + phase) * .015 : -weightShift * .008;
+
+      const headYaw = bone("head").rotation.y + bone("neck_01").rotation.y;
       const yawRate = (headYaw - previousYaw) / Math.max(.001, delta);
       previousYaw = headYaw;
       hairDynamics.update(-yawRate * .022 + Math.sin(time * 1.6 + phase) * .0014,
@@ -1077,64 +1766,89 @@
         const hBack = hAt(rPos.x + sinH * 0.24, rPos.z + cosH * 0.24);
         terrainPitch = T.MathUtils.clamp((hFront - hBack) / 0.48, -0.55, 0.55);
         terrainRoll = T.MathUtils.clamp((dHL - dHR) / (stanceW * 2), -0.45, 0.45);
-        // Pelvis height drop to accommodate the lowest foot without over-extending
         const pelvisIKDrop = Math.min(0, Math.min(dHL, dHR));
         bone("pelvis").position.y += pelvisIKDrop * 0.85;
       }
 
-      const baseCurl = { index: .08, middle: .12, ring: .16, pinky: .20 };
+      // Natural anatomical finger flexion cascade (progressive curl from index to pinky)
+      const baseCurl = { index: .09, middle: .14, ring: .19, pinky: .24 };
+      const fingerSplay = { index: -.035, middle: -.01, ring: .018, pinky: .045 };
       for (const suffix of ["l", "r"]) {
         const side = suffix === "l" ? 1 : -1;
         const swing = side * step;
+        // Phase-lagged knee clearance and forearm pendulum
+        const swingVelocity = side * Math.cos(gait) * motion * stanceActive;
+        const elbowLag = Math.sin(gait - .42) * side * motion * stanceActive;
         const footDiff = suffix === "l" ? dHL : dHR;
-        // Analytical two-bone IK: place the ankle on the sampled terrain/stair
-        // height, then lock the foot's world pitch to the local slope.
+
         const hipY = joint("thigh_" + suffix)[1] + (bone("pelvis").position.y - rest[jointIndex("pelvis")].y);
-        const targetY = joint("foot_" + suffix)[1] + footDiff + Math.max(0, swing) * .05;
+        const footClearance = Math.max(0, swing) * .048 + Math.max(0, swingVelocity) * .022;
+        const targetY = joint("foot_" + suffix)[1] + footDiff + footClearance;
         const dy = Math.max(.05, hipY - targetY);
-        const dz = swing * .12;
+        const dz = swing * .125;
         const reach = T.MathUtils.clamp(Math.hypot(dy, dz), Math.abs(legL1 - legL2) + .002, legL1 + legL2 - .002);
         const kneeInterior = Math.acos(T.MathUtils.clamp((legL1 * legL1 + legL2 * legL2 - reach * reach) / (2 * legL1 * legL2), -1, 1));
         const calfBend = Math.PI - kneeInterior;
         const hipAlpha = Math.acos(T.MathUtils.clamp((legL1 * legL1 + reach * reach - legL2 * legL2) / (2 * legL1 * reach), -1, 1));
         const phi = Math.atan2(dz, dy);
-        // Sitting replaces the standing IK solution instead of adding a second
-        // hip/knee bend to its already shortened reach.
+
         const thighRot = (-(phi + hipAlpha) - crouch * .25) * (1 - seated) - seated * 1.35;
         const calfRot = (calfBend + crouch * 1.88) * (1 - seated) + seated * 1.42;
         bone("thigh_" + suffix).rotation.x = thighRot;
         bone("calf_" + suffix).rotation.x = calfRot;
-        bone("foot_" + suffix).rotation.x = -terrainPitch * .82 - (thighRot + calfRot) * .55 - crouch * 1.2;
-        bone("foot_" + suffix).rotation.z = (suffix === "l" ? 1 : -1) * terrainRoll * .35;
-        bone("upperarm_" + suffix).rotation.x = -swing * .35 - crouch * .27;
-        bone("upperarm_" + suffix).rotation.z = -side * (.025 + Math.abs(step) * .017);
-        bone("lowerarm_" + suffix).rotation.x = -.08 - crouch * .58;
+        // Heel-strike dorsiflexion to push-off plantarflexion ankle roll
+        const ankleRoll = (swing > 0 ? -swing * .14 : swing * .22) * (1 - seated) * (1 - crouch);
+        bone("foot_" + suffix).rotation.x = -terrainPitch * .82 - (thighRot + calfRot) * .55 - crouch * 1.2 + ankleRoll;
+        bone("foot_" + suffix).rotation.z = side * terrainRoll * .35;
+
+        // Upper arm & phase-lagged forearm swing
+        bone("upperarm_" + suffix).rotation.x = -swing * .34 - crouch * .27;
+        bone("upperarm_" + suffix).rotation.z = -side * (.028 + Math.abs(step) * .018);
+        bone("lowerarm_" + suffix).rotation.x = -.10 - Math.max(0, elbowLag) * .24 - Math.abs(swing) * .08 - crouch * .58;
+        bone("hand_" + suffix).rotation.z = -side * .04 + elbowLag * .06;
+
         const gripping = Boolean((look.item && !bag) || armed) && suffix === "r";
+        const phalanxWeights = { "01": .85, "02": 1.18, "03": .92 };
         for (const finger of ["index", "middle", "ring", "pinky"]) {
           const curl = baseCurl[finger];
           for (const section of ["01", "02", "03"]) {
-            bone(finger + "_" + section + "_" + suffix).rotation.x = -(gripping ? .58 : curl) +
-              Math.sin(time * .73 + side) * .015;
+            const pw = phalanxWeights[section];
+            bone(finger + "_" + section + "_" + suffix).rotation.x = -(gripping ? .58 * pw : curl * pw) +
+              Math.sin(time * .73 + side + baseCurl[finger] * 4) * .014;
+            if (section === "01" && !gripping) {
+              bone(finger + "_01_" + suffix).rotation.z = side * fingerSplay[finger];
+            }
           }
         }
         for (const section of ["01", "02", "03"]) {
           bone("thumb_" + section + "_" + suffix).rotation.set(
-            -(gripping ? .35 : .10) + Math.sin(time * .73 + side) * .01,
-            side * (gripping ? .22 : .06),
-            side * (gripping ? -.15 : -.04)
+            -(gripping ? .35 : .11) + Math.sin(time * .73 + side) * .01,
+            side * (gripping ? .22 : .07),
+            side * (gripping ? -.15 : -.045)
           );
         }
       }
+
       const freeHand = look.item && !bag ? "l" : "r";
       const cadence = time * (look.gesture === "teach" ? 1.6 : 2.1) + phase;
       bone("upperarm_" + freeHand).rotation.x -= gesture * (.27 + Math.sin(cadence) * .11);
       bone("lowerarm_" + freeHand).rotation.x -= gesture * (.58 + Math.sin(cadence * 1.4) * .12);
-      bone("hand_" + freeHand).rotation.y += gesture * .23;
+      bone("hand_" + freeHand).rotation.y += gesture * (.23 + Math.cos(cadence * .8) * .08);
+      // Expressive finger opening during active conversation gestures
+      if (gesture > .15) {
+        const openWave = (.5 + .5 * Math.sin(cadence * 1.2)) * gesture;
+        for (const finger of ["index", "middle", "ring", "pinky"]) {
+          for (const section of ["01", "02", "03"]) {
+            bone(finger + "_" + section + "_" + freeHand).rotation.x *= (1 - openWave * .52);
+          }
+        }
+      }
       if (look.item === "staff" && !armed) {
         bone("upperarm_r").rotation.x = -.12 - motion * .08;
         bone("lowerarm_r").rotation.x = -.22;
         bone("upperarm_r").rotation.z = .08;
       }
+
       const greeting = posture === "greet";
       const teaching = posture === "teach" || (look.gesture === "teach" && gesture > .2);
       const praying = posture === "prayer";
@@ -1294,37 +2008,74 @@
       }
       if (posture === "stagger") bone("spine_03").rotation.z -= .18;
       elbowBend.value.set(Math.min(1.2, Math.abs(bone("lowerarm_l").rotation.x)), Math.min(1.2, Math.abs(bone("lowerarm_r").rotation.x)));
-      const blink = 1 - T.MathUtils.clamp(Math.abs(((time + phase) % 4.67) - 2.1) / .075, 0, 1);
+
+      // 3A Blink Profile (fast closing snap ~65ms, slightly slower opening recovery ~130ms, plus occasional double-blink)
+      const blinkCycle = (time + phase) % 4.67;
+      const primaryBlink = blinkCycle > 2.02 && blinkCycle < 2.22
+        ? (blinkCycle < 2.085 ? (blinkCycle - 2.02) / .065 : 1 - (blinkCycle - 2.085) / .135) : 0;
+      const doubleBlink = ((seed & 3) === 0) && blinkCycle > 2.32 && blinkCycle < 2.48
+        ? (blinkCycle < 2.37 ? (blinkCycle - 2.32) / .05 : 1 - (blinkCycle - 2.37) / .11) : 0;
+      const blink = T.MathUtils.clamp(Math.max(primaryBlink, doubleBlink), 0, 1);
       body.morphTargetInfluences[0] = blink;
       body.morphTargetInfluences[1] = blink;
+
+      // Multi-band Speech Articulation, Jaw Coupling & Expressive Micro-Morphs
       const speechSeed = Number.isFinite(poseOptions.speechSeed) ? poseOptions.speechSeed : phase;
       const speechBreath = Math.pow(.5 + .5 * Math.sin(time * 1.18 + speechSeed), .32);
       const speechCadence = (.44 + .56 * (.5 + .5 * Math.sin(time * 2.75 + speechSeed * 1.7))) * speechBreath;
-      const phonemes = Math.sin(time * 9.2 + speechSeed) * .52 + Math.sin(time * 15.1 + speechSeed * 2.1) * .33 + Math.sin(time * 23.4) * .15;
+      const bilabialClosure = Math.max(0, Math.sin(time * 18.5 + speechSeed * 3.1));
+      const phonemes = (Math.sin(time * 9.2 + speechSeed) * .52 + Math.sin(time * 15.1 + speechSeed * 2.1) * .33 + Math.sin(time * 23.4) * .15)
+        * (1 - bilabialClosure * .45);
       body.morphTargetInfluences[2] = speaking ?
         speechCadence * (0.055 + Math.max(0, phonemes) * .28) : 0;
       groom.jawOpen.value = body.morphTargetInfluences[2];
-      body.morphTargetInfluences[3] = (look.gesture === "teach" || speaking ? .22 : .08) + Math.sin(time * .65 + phase) * .04;
-      body.morphTargetInfluences[4] = speaking ? .22 + Math.sin(time * 1.05 + speechSeed) * .08 : .10;
-      const tremorY = Math.sin(time * 19.3 + phase) * .0025;
-      const tremorX = Math.sin(time * 23.7 + phase) * .0018;
-      const gazeDart = Math.sin(time * 1.7 + phase) > .8 ? (Math.sin(time * 3.4) * .016) : 0;
+      const emphasisSyllable = speaking ? Math.max(0, phonemes) * speechCadence * .12 : 0;
+      body.morphTargetInfluences[3] = (look.gesture === "teach" || speaking ? .22 : .08) + Math.sin(time * .65 + phase) * .04 + emphasisSyllable;
+      body.morphTargetInfluences[4] = (speaking ? .22 + Math.sin(time * 1.05 + speechSeed) * .08 : .10) + emphasisSyllable * .6;
+
+      // Dynamic Pupil Dilation (dilates slightly during speech/prayer/emotion, constricts in guard/combat focus)
+      const targetPupilScale = combat ? .82 : praying ? 1.16 : speaking ? 1.08 + emphasisSyllable * .4 : 1.0 + Math.sin(time * .45 + phase) * .04;
+      uPupilScale.value += (targetPupilScale - uPupilScale.value) * ease;
+      for (const pMesh of pupils) pMesh.scale.set(uPupilScale.value, uPupilScale.value, 1);
+
+      // 3A Ballistic Eye Saccades + Vestibulo-Ocular Reflex (VOR) + Eyelid Gaze Following
+      if (time >= nextSaccadeTime || blink > .75) {
+        const sHash = hash2(Math.floor(time * 3.7) + (seed & 255), phase);
+        const sHash2 = hash2(phase, Math.floor(time * 4.3) + (seed & 255));
+        const maxYaw = speaking ? .068 : .045;
+        const maxPitch = speaking ? .032 : .020;
+        saccadeTargetYaw = (sHash - .5) * 2 * maxYaw;
+        saccadeTargetPitch = (sHash2 - .5) * 2 * maxPitch;
+        nextSaccadeTime = time + (speaking ? .45 + sHash * .95 : .85 + sHash * 1.65);
+      }
+      const saccadeEase = 1 - Math.exp(-delta * 28);
+      saccadeYaw += (saccadeTargetYaw - saccadeYaw) * saccadeEase;
+      saccadePitch += (saccadeTargetPitch - saccadePitch) * saccadeEase;
+
+      // Ocular micro-tremor + VOR compensation (eyes counter-rotate slightly against head yaw/pitch to lock fixation)
+      const tremorY = Math.sin(time * 19.3 + phase) * .0016;
+      const tremorX = Math.sin(time * 23.7 + phase) * .0012;
+      const vorYaw = -bone("head").rotation.y * .22;
+      const vorPitch = -bone("head").rotation.x * .18;
+      const finalEyeYaw = T.MathUtils.clamp(saccadeYaw + vorYaw + tremorY, -.16, .16);
+      const finalEyePitch = T.MathUtils.clamp(saccadePitch + vorPitch + tremorX, -.10, .10);
+
       for (const eye of eyes) {
         eye.visible = blink < .98;
-        eye.rotation.y = Math.sin(time * .93 + phase) * .055 + tremorY + gazeDart;
-        eye.rotation.x = Math.sin(time * .47 + phase) * .022 + tremorX;
+        eye.rotation.y = finalEyeYaw;
+        eye.rotation.x = finalEyePitch;
       }
-      // The upper lid sweeps down over the globe while the lower lid lifts a
-      // little, so a blink closes the almond instead of hiding the eye.
+
+      // Upper & lower eyelids subtly track vertical eye pitch (palpebral-ocular synkinesis) + blink closure
+      uLidShadowDynamic.value = .46 + blink * .38 + Math.max(0, finalEyePitch) * .45;
       for (const lid of lids) {
-        lid.upper.rotation.x = blink * .68;
-        lid.lower.rotation.x = -blink * .06;
+        lid.upper.rotation.x = blink * .68 + finalEyePitch * .42;
+        lid.lower.rotation.x = -blink * .06 + finalEyePitch * .24 - body.morphTargetInfluences[4] * .05;
       }
       for (const sandal of sandals) sandal.visible = posture !== "barefoot";
       if (personalItem) personalItem.visible = !armed && !combat && posture !== "cross";
 
-      // Drive the independent cloth layers (GPU compute / CPU Verlet) with wind,
-      // stride inertia, body capsules and the sampled ground/stair height.
+      // Drive independent cloth layers (GPU compute / CPU Verlet) with wind, stride inertia, body capsules & terrain height
       if (clothLayers.length && clothActive) {
         const yaw = root.rotation.y, cosH = Math.cos(yaw), sinH = Math.sin(yaw);
         const gust = (.32 + Math.sin(time * .7 + phase) * .16 + motion * .45) * (1 - seated * .75);
@@ -1343,7 +2094,7 @@
         const knees = {}, legCaps = ["l", "r"].flatMap(suffix => {
           const hip = boneLocal("thigh_" + suffix, new T.Vector3()), knee = boneLocal("calf_" + suffix, new T.Vector3()), ankle = boneLocal("foot_" + suffix, new T.Vector3());
           knees[suffix] = knee;
-          const lowShin = knee.clone().lerp(ankle, .94);
+          const lowShin = knee.clone().lerp(ankle, .92);
           return [
             { a: [hip.x, hip.y, hip.z], b: [knee.x, knee.y, knee.z], r: seated > .25 ? .132 : .108 },
             { a: [knee.x, knee.y, knee.z], b: [lowShin.x, lowShin.y, lowShin.z], r: seated > .25 ? .122 : .102 }
@@ -1354,13 +2105,21 @@
         const torsoCap = { a: [pelvisShift.x, pelvisY + pelvisDelta - .02, pelvisShift.z + .01], b: [pelvisShift.x, shoulderY + pelvisDelta - .03, pelvisShift.z + spineForward + .02], r: .176 };
         const chestCap = { a: [pelvisShift.x - .085, shoulderY + pelvisDelta - .11, pelvisShift.z + spineForward * .7 + .042], b: [pelvisShift.x + .085, shoulderY + pelvisDelta - .11, pelvisShift.z + spineForward * .7 + .042], r: .124 };
         const yokeCap = { a: [pelvisShift.x - .10, shoulderY + pelvisDelta - .03, pelvisShift.z + spineForward * .5], b: [pelvisShift.x + .10, shoulderY + pelvisDelta - .03, pelvisShift.z + spineForward * .5], r: .102 };
+        const kneeFwd = Math.max(0, knees.l?.z ?? 0, knees.r?.z ?? 0) * .25;
+        const hipMidY = (pelvisY + pelvisDelta + hem) * .5;
+        const hipR = .204 * (1 - seated * .35), skirtR = .242 * (1 - seated * .45);
+        const mantleCaps = [torsoCap, chestCap, yokeCap];
+        for (const s of [-1, 1]) {
+          mantleCaps.push(
+            { a: [pelvisShift.x + s * .054, pelvisY + pelvisDelta - .03, pelvisShift.z], b: [pelvisShift.x + s * .054, hipMidY, pelvisShift.z + kneeFwd * .4], r: hipR },
+            { a: [pelvisShift.x + s * .054, hipMidY, pelvisShift.z + kneeFwd * .4], b: [pelvisShift.x + s * .054, hem + .08, pelvisShift.z + kneeFwd], r: skirtR }
+          );
+        }
         const skirtShape = Math.round(55 * (1 - seated) + 42 * seated);
         for (const layer of clothLayers) {
           const ud = layer.mesh.userData;
           const cols = ud.restPin.length / 3;
           if (!ud.pinBuf) ud.pinBuf = new Float32Array(ud.restPin.length);
-          // The shoulder inherits the pelvis pose. Its local position alone
-          // misses that movement and leaves the mantle at standing height.
           const bind = joint(ud.pinBone);
           clothBindOffset.makeTranslation(-bind[0], -bind[1], -bind[2]);
           clothPinFrame.copy(clothToLocal).multiply(bone(ud.pinBone).matrixWorld).multiply(clothBindOffset);
@@ -1379,7 +2138,7 @@
           }
           layer.update(delta, {
             renderer: liveRenderer, time, wind: clothWind.toArray(), inertia: clothInertia.toArray(),
-            gravity: 9.8, capsules: isMantle ? [torsoCap, chestCap, yokeCap] : [torsoCap, ...legCaps],
+            gravity: 9.8, capsules: isMantle ? mantleCaps : [torsoCap, ...legCaps],
             groundY: groundLocal, pinTargets: ud.pinBuf, restFrame, stiffness: isMantle ? .84 : .8, shape: isMantle ? 30 : Math.min(ud.shape ?? 26, skirtShape)
           });
         }
@@ -1392,6 +2151,9 @@
         }
       }
     }
+    root.traverse(obj => {
+      if (obj.isMesh && /hair-cards$/.test(obj.name)) obj.receiveShadow = false;
+    });
     CharacterDetail.batchGarments(T, root, skeleton);
     animate(0, 0, 0);
     return {

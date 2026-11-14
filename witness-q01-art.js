@@ -568,7 +568,7 @@
         }
         const workingPre=!brDone&&id==='natan'&&!a.moving&&speaking!==id&&!onBench;
         const workingSaw=id==='sawyer'&&!a.moving&&speaking!==id;
-        const workingHeave=!!performanceKind&&['titus','worker1','worker2'].includes(id)&&!a.moving&&speaking!==id;
+        const workingHeave=!!performanceKind&&(performanceKind==='lever'?['titus','worker1','worker2']:['titus']).includes(id)&&!a.moving&&speaking!==id;
         const workingHearth=id==='rina'&&!a.moving&&speaking!==id;
         if(isSw()&&distV>15&&!a.moving&&speaking!==id&&!onBench&&!workingHeave&&a.lod?.posed&&(tickCount%5!==a.lod.phase)){a.moving=false;continue;}
         const posture=a.moving?'idle':benchReady?(speaking===id?'seated-talk':'seated-idle'):speaking===id?'talk':workingPre||workingSaw||workingHearth?'tend':workingHeave?'offer':'idle';
@@ -597,7 +597,7 @@
       group.removeFromParent();geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());base.dispose();
     }
     sync(state);setTime(state.sceneProgress.Q01.phase);
-    return {group,base,actors,ar,tick,sync,setTime,dispose,setViewer(p){viewer=p;},setNightRopeRest,inspectBook(step=0){const player=scene.getObjectByName('player');if(player){player.add(book);book.position.set(.08,1.18,.28);book.rotation.set(.42,-.38-step*.22,.28);}book.updateWorldMatrix(true,true);return book.getWorldPosition(new T.Vector3());},speak(who){speaking=who;for(const [id,a] of Object.entries(actors)){if(id===who)continue;const body=a?.object?.getObjectByName?.('anatomical-body');if(body?.morphTargetInfluences)body.morphTargetInfluences[2]=0;}if(!who&&latest.quests.Q01.done.includes('ledger'))dockBookOnHip();},perform(kind,on,fraction=0){performanceKind=on?kind:null;ar.animateMechanism(kind,fraction);winchSheaves.forEach((s,idx)=>{s.rotation[s.userData.axis]=fraction*Math.PI*6*(idx%2?1:-1);});},lookout(){rear.visible=true;rearMoving=.001;},departStranger(){strangerPath=ar.route({...G.anchors.stranger},G.anchors.strangerGone)||[];departing=.001;},strangerHidden(p){return departing>=1||!ar.visible({...p,y:p.y+1.5},{x:stranger.position.x,y:stranger.position.y+1.4,z:stranger.position.z});}};
+    return {group,base,actors,ar,tick,sync,setTime,dispose,setViewer(p){viewer=p;},setNightRopeRest,inspectBook(step=0){const player=scene.getObjectByName('player');if(player){player.add(book);book.position.set(.08,1.18,.28);book.rotation.set(.42,-.38-step*.22,.28);}book.updateWorldMatrix(true,true);return book.getWorldPosition(new T.Vector3());},speak(who){speaking=who;for(const [id,a] of Object.entries(actors)){if(id===who)continue;const body=a?.object?.getObjectByName?.('anatomical-body');if(body?.morphTargetInfluences)body.morphTargetInfluences[2]=0;}if(!who&&latest.quests.Q01.done.includes('ledger'))dockBookOnHip();},perform(kind,on,fraction=0,detail={}){performanceKind=on?kind:null;ar.animateMechanism(kind,fraction,detail);if(kind==='pulley'){winchSheaves.forEach((s,idx)=>{s.rotation[s.userData.axis]=fraction*Math.PI*6*(idx%2?1:-1);});}},lookout(){rear.visible=true;rearMoving=.001;},departStranger(){strangerPath=ar.route({...G.anchors.stranger},G.anchors.strangerGone)||[];departing=.001;},strangerHidden(p){return departing>=1||!ar.visible({...p,y:p.y+1.5},{x:stranger.position.x,y:stranger.position.y+1.4,z:stranger.position.z});}};
   }
   root.WitnessQ01Art={mount};
 })(globalThis);

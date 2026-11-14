@@ -2,8 +2,26 @@
 (function(root){
   'use strict';
   const DEFAULTS={sound:false,masterVolume:.8,ambienceVolume:.55,effectsVolume:.75,voiceVolume:.95,uiVolume:.4,voiceMode:'recorded',autoVoice:true,audioCaptions:true,audioRange:'natural',audioSpatial:true};
+  const VOICE_PROFILE_KEY='the-witness.voiceProfile';
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const cleanText=text=>String(text||'').normalize('NFC').replace(/[“”‘’]/g,'').replace(/\s+/g,' ').trim();
+  const voiceProfiles=()=>root.WitnessAudioLibrary?.voiceProfiles||{elevenlabs:{label:'Mặc định · ElevenLabs (Natan Beat 07 gốc)',engine:'ElevenLabs eleven_v4 + fallback',reviewStatus:'existing-baseline',fallbackToElevenLabs:true,characters:{natan:'elevenlabs'}}};
+  function normalizeVoiceProfile(id){
+    const profiles=voiceProfiles();
+    return id&&Object.hasOwn(profiles,id)?id:(Object.hasOwn(profiles,'elevenlabs')?'elevenlabs':Object.keys(profiles)[0]||'elevenlabs');
+  }
+  function resolveVoiceProfile(explicit){
+    if(explicit)return normalizeVoiceProfile(explicit);
+    try{
+      const q=root.location?.search?new URLSearchParams(root.location.search).get('voiceProfile'):null;
+      if(q&&Object.hasOwn(voiceProfiles(),q))return q;
+    }catch{}
+    try{
+      const saved=root.localStorage?.getItem?.(VOICE_PROFILE_KEY);
+      if(saved&&Object.hasOwn(voiceProfiles(),saved))return saved;
+    }catch{}
+    return normalizeVoiceProfile('elevenlabs');
+  }
   function settings(raw={}){
     const s={...DEFAULTS};
     for(const k of ['sound','autoVoice','audioCaptions','audioSpatial'])if(typeof raw[k]==='boolean')s[k]=raw[k];
@@ -47,12 +65,24 @@
     if(p.id==='ravine'&&x>=11&&x<=15&&z>=-9.5&&z<=-6.5)return 'wood';
     return p.surface;
   }
-  function recorded(person,text){
-    const key=cleanText(text);
-    return (root.WitnessAudioLibrary?.voices||[]).find(v=>v.person===person&&cleanText(v.text)===key)||null;
+  function recorded(person,text,opt={}){
+    const key=cleanText(text),lib=root.WitnessAudioLibrary||{},base=lib.voices||[],exp=lib.experimentalVoices||[];
+    if(!key)return null;
+    if(opt.voiceVariant)return exp.find(v=>v.person===person&&v.variant===opt.voiceVariant&&cleanText(v.text)===key)||null;
+    const profileId=normalizeVoiceProfile(opt.voiceProfile||opt.profile||'elevenlabs');
+    const profileEntry=voiceProfiles()[profileId];
+    if(profileId!=='elevenlabs'&&profileEntry){
+      const variant=profileEntry.characters?.[person];
+      if(variant&&variant!=='elevenlabs'){
+        const found=exp.find(v=>v.person===person&&v.variant===variant&&cleanText(v.text)===key);
+        if(found)return found;
+      }
+      if(profileEntry.fallbackToElevenLabs===false||opt.strictProfile)return null;
+    }
+    return base.find(v=>v.person===person&&cleanText(v.text)===key)||null;
   }
   function create(options={}){
-    let cfg=settings(),ctx=null,buses={},master,compressor,limiter,analyser,scene=null,state=null,mode='title',hidden=false,unlocked=false,revision=0,voiceRevision=0,voiceSource=null,voiceTimer=null,voiceRequest=null,voiceInfo=null,ducked=false;
+    let cfg=settings(),voiceProfile=resolveVoiceProfile(options.voiceProfile),ctx=null,buses={},master,compressor,limiter,analyser,scene=null,state=null,mode='title',hidden=false,unlocked=false,revision=0,voiceRevision=0,voiceSource=null,voiceTimer=null,voiceRequest=null,voiceInfo=null,ducked=false;
     let previous=null,stride=0,foot=0,lastCaption=0,activeCaption='',lastTick=0,cacheBytes=0,nextWork=0;
     const cache=new Map(),inflight=new Map(),active=new Set(),beds=new Set(),lastTake=new Map(),cooldown=new Map(),reverbs=new Map(),failures=new Set();
     const stats={played:0,footsteps:0,voiceStarts:0,missing:0,steals:0,peak:0};
@@ -155,8 +185,16 @@
       if(p.id==='L01'&&next?.layer?.step>=7)scene.beds=[{sound:'wind',gain:.48},{sound:'flood',gain:.32,at:[-28,.3,-18],ref:10},{sound:'flood',gain:.32,at:[28,.3,-18],ref:10}];
       mix();startBeds();
     }
+    function setVoiceProfile(id,persist=true){
+      const next=normalizeVoiceProfile(id);
+      if(next!==voiceProfile){stopVoice();voiceProfile=next;}
+      if(persist){try{root.localStorage?.setItem?.(VOICE_PROFILE_KEY,voiceProfile);}catch{}}
+      return voiceProfile;
+    }
     function configure(raw){
-      const old=cfg;cfg=settings(raw);if(!cfg.sound||cfg.voiceMode==='off'||cfg.voiceVolume===0)stopVoice();
+      const old=cfg;cfg=settings(raw);
+      if(raw&&raw.voiceProfile!==undefined)setVoiceProfile(raw.voiceProfile,false);
+      if(!cfg.sound||cfg.voiceMode==='off'||cfg.voiceVolume===0)stopVoice();
       if(old.audioSpatial!==cfg.audioSpatial){clearWorld();startBeds();}
       if(!cfg.sound){clearWorld();if(ctx)ctx.suspend().catch(()=>{});unlocked=false;}mix();return {...cfg};
     }
@@ -176,13 +214,18 @@
       stopVoice();voiceRequest={person,text,opt};
       if(!cfg.sound||cfg.voiceMode==='off'||cfg.voiceVolume<=0||hidden||!cleanText(text))return false;
       if(!await unlock())return false;
-      const token=voiceRevision,entry=recorded(person,text),name=opt.label||root.WitnessContent?.people?.[person]?.name||'Người dẫn chuyện';
+      const token=voiceRevision,activeProfile=opt.voiceProfile?normalizeVoiceProfile(opt.voiceProfile):voiceProfile;
+      const primary=recorded(person,text,{voiceProfile:activeProfile,voiceVariant:opt.voiceVariant,strictProfile:opt.strictProfile});
+      const fallback=!opt.strictProfile&&primary?.variant&&voiceProfiles()[activeProfile]?.fallbackToElevenLabs!==false?recorded(person,text,{voiceProfile:'elevenlabs'}):null;
+      const candidates=[primary,fallback].filter((e,i,arr)=>e&&arr.findIndex(x=>x?.file===e.file&&x?.start===e.start&&x?.end===e.end)===i);
+      const name=opt.label||root.WitnessContent?.people?.[person]?.name||'Người dẫn chuyện';
       const finish=()=>{if(token!==voiceRevision)return;voiceSource=null;clearTimeout(voiceTimer);duck(false);emitVoice(null);options.onSpeechEnd?.();};
-      if(entry){
-        duck(true);emitVoice({person,name,status:'loading',kind:'recorded',text});
+      for(const entry of candidates){
+        const meta={voiceProfile:entry.variant?activeProfile:'elevenlabs',voiceId:entry.voiceId||'ElevenLabs',variant:entry.variant||null,reviewStatus:entry.reviewStatus||'existing-baseline'};
+        duck(true);emitVoice({person,name,status:'loading',kind:'recorded',...meta,text});
         const source=await play(entry.file,{bus:'voice',gain:.83,start:entry.start,end:entry.end,onended:finish});
         if(token!==voiceRevision){drop(source);return false;}
-        if(source){voiceSource=source;stats.voiceStarts++;emitVoice({person,name,status:'playing',kind:'recorded',text});caption(name+': '+text,true);return true;}
+        if(source){voiceSource=source;stats.voiceStarts++;emitVoice({person,name,status:'playing',kind:'recorded',...meta,text});caption(name+': '+text,true);return true;}
       }
       if(token!==voiceRevision)return false;
       const voices=cfg.voiceMode==='system'?systemVoices():[];
@@ -333,12 +376,12 @@
     }
     function debug(){
       let rms=0,peak=0;if(analyser){const samples=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(samples);for(const v of samples){rms+=v*v;peak=Math.max(peak,Math.abs(v));}rms=Math.sqrt(rms/samples.length);stats.peak=Math.max(stats.peak,peak);}
-      return {context:ctx?.state||'uninitialized',unlocked,mode,hidden,scene:scene?.id,settings:{...cfg},sources:active.size,beds:beds.size,cacheBytes,pending:inflight.size,voice:voiceInfo,ducked,caption:activeCaption,rms,peak,stats:{...stats},failedFiles:[...failures]};
+      return {context:ctx?.state||'uninitialized',unlocked,mode,hidden,scene:scene?.id,voiceProfile,settings:{...cfg},sources:active.size,beds:beds.size,cacheBytes,pending:inflight.size,voice:voiceInfo,ducked,caption:activeCaption,rms,peak,stats:{...stats},failedFiles:[...failures]};
     }
     function dispose(){stopVoice();clearWorld();for(const item of [...active])drop(item,0);for(const n of reverbs.values())n.disconnect();reverbs.clear();cache.clear();cacheBytes=0;ctx?.close();}
-    const api={configure,unlock,setScene,setMode,tick,ui,material,effect,synthesize,cue,speak,stopVoice,visibility,debug,dispose,repeat(){return voiceRequest?speak(voiceRequest.person,voiceRequest.text,voiceRequest.opt):Promise.resolve(false);},get config(){return {...cfg};}};
+    const api={configure,unlock,setScene,setMode,setVoiceProfile,getVoiceProfile:()=>voiceProfile,voiceProfiles,tick,ui,material,effect,synthesize,cue,speak,stopVoice,visibility,debug,dispose,repeat(){return voiceRequest?speak(voiceRequest.person,voiceRequest.text,voiceRequest.opt):Promise.resolve(false);},get config(){return {...cfg};}};
     return api;
   }
-  const API={create,settings,profile,surfaceAt,cleanText,recorded,DEFAULTS};root.WitnessAudio=API;
+  const API={create,settings,profile,surfaceAt,cleanText,recorded,voiceProfiles,DEFAULTS};root.WitnessAudio=API;
   if(typeof module!=='undefined')module.exports=API;
 })(globalThis);

@@ -106,19 +106,71 @@ async function run(route,plan,view,mode){
  assert.equal((await state()).quests.Q01.done.includes('ledger'),true);assert.equal((await state()).sceneProgress.Q01.ledgerSeamObserved,false);await b.click('[data-q01=leave]');await reload('book-received-before-seam');await interact();await talk();
  await assertBeat(3);assert.equal((await state()).events.filter(e=>e.type==='ActionCompleted'&&e.action==='ledger').length,1);await b.shot([route,plan,view,mode,'02-ledger'].join('-')+'.png');
  await step();await assertBeat(4);await interact();await talk();await b.click(`[data-q01=${route}]`);
- await go();await interact();await talk();
+ const pct=()=>b.evaluate('parseInt(document.querySelector("#q01-rescue-work .q01-work-pct")?.textContent||"0",10)');
+ const workMsg=()=>b.evaluate('document.querySelector("#q01-rescue-work .q01-work-msg")?.textContent||""');
+ const setSlider=async val=>{await b.evaluate(`(()=>{const s=document.querySelector("#q01-rescue-work [data-q01-slider]");s.value=${JSON.stringify(String(val))};s.dispatchEvent(new Event("input",{bubbles:true}));})()`);await delay(80);};
+ const pressE=async()=>{await b.send('Input.dispatchKeyEvent',{type:'keyDown',key:'e',code:'KeyE',windowsVirtualKeyCode:69});await delay(60);await b.send('Input.dispatchKeyEvent',{type:'keyUp',key:'e',code:'KeyE',windowsVirtualKeyCode:69});await delay(140);};
  if(route==='mechanical'){
-  for(let i=0;i<12&&!(await state()).sceneProgress.Q01.rescue.steps.includes('cart');i++){await delay(600);await interact();await talk();}
-  await b.wait('WitnessQ01Campaign.presenter.readState().sceneProgress.Q01.rescue.steps.includes("cart")',12000);
+  // Trying the winch rope before pushing & chocking the counterweight cart must be blocked.
+  await b.evaluate('WitnessQ01Campaign.presenter.engine.walkTarget("q01:rope")');await b.wait('WitnessQ01Campaign.presenter.engine.within("q01:rope")&&!WitnessQ01Campaign.presenter.engine.navigationState()',45000);
+  await pressE();assert.equal((await state()).sceneProgress.Q01.rescue.steps.length,0);
+  assert(await b.evaluate('document.querySelector("#toast")?.textContent.includes("Xe đối trọng còn lỏng")'));
+  await go();await b.wait('WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("titus"),WitnessQ01Greybox.anchors.cart,4)',45000);
+  await interact();await talk();await b.wait('!document.querySelector("#q01-rescue-work").hidden&&WitnessQ01Campaign.presenter.work?.kind==="cart"',12000);
+  await b.click('[data-q01-work=cart-chock]');assert((await workMsg()).includes('chưa tới'));
+  await b.send('Input.dispatchKeyEvent',{type:'keyDown',key:'d',code:'KeyD',windowsVirtualKeyCode:68});await delay(320);await b.send('Input.dispatchKeyEvent',{type:'keyUp',key:'d',code:'KeyD',windowsVirtualKeyCode:68});
+  assert((await pct())>0,'Keyboard D must advance counterweight cart');
+  await b.send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,x:420,y:260});await b.send('Input.dispatchMouseEvent',{type:'mouseMoved',button:'left',x:660,y:210});await b.send('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,x:660,y:210});await delay(80);
+  while((await pct())<98)await b.click('[data-q01-work=step]');
+  await b.click('[data-q01-work=cart-test]');assert((await pct())<98&&(await workMsg()).includes('trượt ngược'),'Testing tension without wheel chocks must rebound');
+  await setSlider(100);assert((await pct())>=98);await b.click('[data-q01-work=cart-chock]');
+  await b.click('[data-q01-work=cart-test]');await b.wait('WitnessQ01Campaign.presenter.readState().sceneProgress.Q01.rescue.steps.includes("cart")',12000);
+  assert(Math.abs((await runtime()).barriers.cartX-(-30.9))<.001);
+  await reload('after-cart-before-pulley');
+  await go();await interact();await b.wait('WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("titus"),WitnessQ01Greybox.anchors.rope,4)',45000);
+  await interact();await talk();await b.wait('!document.querySelector("#q01-rescue-work").hidden&&WitnessQ01Campaign.presenter.work?.kind==="pulley"',12000);
+  await setSlider(100);await b.click('[data-q01-work=pulley-confirm]');assert((await pct())<98&&(await workMsg()).includes('Chưa cài chốt'),'Confirming pulley without latch pin must slip');
+  while((await pct())<98)await b.click('[data-q01-work=step]');
+  await b.click('[data-q01-work=pulley-latch]');await b.click('[data-q01-work=pulley-confirm]');
+  await b.wait('WitnessQ01Campaign.presenter.readState().sceneProgress.Q01.rescue.steps.length===2',16000);
+  assert.equal((await runtime()).barriers.sideGate,false);
  }else{
-  await go();await b.wait('WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("worker1"),WitnessQ01Greybox.anchors.lever,3)&&WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("worker2"),WitnessQ01Greybox.anchors.lever,3)&&WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("titus"),WitnessQ01Greybox.anchors.lever,4)',45000);await interact();await b.wait('WitnessQ01Campaign.presenter.readState().sceneProgress.Q01.rescue.steps.includes("workers")',12000);
+  // Trying to pry the beam alone without briefing the dockworkers must be blocked.
+  await b.evaluate('WitnessQ01Campaign.presenter.engine.walkTarget("q01:lever")');await b.wait('WitnessQ01Campaign.presenter.engine.within("q01:lever")&&!WitnessQ01Campaign.presenter.engine.navigationState()',45000);
+  await pressE();assert.equal((await state()).sceneProgress.Q01.rescue.steps.length,0);
+  assert(await b.evaluate('document.querySelector("#toast")?.textContent.includes("hai thợ")'));
+  await go();await interact();await talk();
+  await go();await b.wait('WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("worker1"),WitnessQ01Greybox.anchors.lever,3)&&WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("worker2"),WitnessQ01Greybox.anchors.lever,3)&&WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("titus"),WitnessQ01Greybox.anchors.lever,4)',45000);
+  await interact();await b.wait('!document.querySelector("#q01-rescue-work").hidden&&WitnessQ01Campaign.presenter.work?.kind==="workers"',12000);
+  await b.click('[data-q01-work=workers-confirm]');assert((await workMsg()).includes('Đặt điểm kê'));
+  await b.click('[data-q01-work=lever-fulcrum]');await b.click('[data-q01-work=workers-confirm]');await talk();
+  await b.wait('!document.querySelector("#q01-rescue-work").hidden&&WitnessQ01Campaign.presenter.work?.kind==="lever"&&WitnessQ01Campaign.presenter.readState().sceneProgress.Q01.rescue.steps.includes("workers")',12000);
+  // Reloading mid-lever before settling must return safely to the committed workers step without corrupting state.
+  await reload('after-workers-before-lever');
+  await go();await interact();await b.wait('WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("titus"),WitnessQ01Greybox.anchors.lever,4)',45000);
+  await interact();await talk();await b.wait('!document.querySelector("#q01-rescue-work").hidden&&WitnessQ01Campaign.presenter.work?.kind==="lever"',12000);
+  await b.send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,x:420,y:260});await b.send('Input.dispatchMouseEvent',{type:'mouseMoved',button:'left',x:660,y:210});await b.send('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,x:660,y:210});await delay(80);
+  while((await pct())<98)await b.click('[data-q01-work=step]');
+  await b.click('[data-q01-work=lever-settle]');assert((await pct())<98&&(await workMsg()).includes('Chưa đặt nêm'),'Settling lever without wedges must slip');
+  await setSlider(100);await b.click('[data-q01-work=lever-wedge]');await b.click('[data-q01-work=lever-settle]');
+  await b.wait('WitnessQ01Campaign.presenter.readState().sceneProgress.Q01.rescue.steps.length===2',16000);
+  assert.equal((await runtime()).barriers.sideGate,true,'Manual route must keep side gate closed');
+  assert.equal((await runtime()).barriers.mainBeam,false);
  }
- await go();await interact();await talk();await b.wait('WitnessQ01Campaign.presenter.readState().sceneProgress.Q01.rescue.steps.length===2',16000);
  await b.shot([route,plan,view,mode,'04-mechanism'].join('-')+'.png');await reload('after-route-open');
  await go();await b.wait('WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("titus"),WitnessQ01Greybox.anchors.commonDoor,2.8)',45000);await interact();await b.wait('WitnessQ01Campaign.presenter.commonOpen',12000);
  await go();await b.wait('WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("titus"),WitnessQ01Greybox.anchors.reception,2.6)',45000);await interact();await talk();await b.wait('WitnessQ01Campaign.presenter.roofChecked',12000);
+ await pressE();assert(!(await state()).sceneProgress.Q01.rescue.steps.includes('exit'),'Cannot confirm roof exit while still standing on the roof');
  await go();await interact();assert((await state()).sceneProgress.Q01.rescue.steps.includes('exit'));
- await reload('before-extraction');await interact();await talk();await go();await b.wait('WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("simeon"),WitnessQ01Greybox.anchors.reception,1.8)&&WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("apprentice"),WitnessQ01Greybox.anchors.reception,1.8)',45000);await interact();await talk();await assertBeat(5);
+ await reload('before-extraction');await interact();await talk();
+ await b.wait('!document.querySelector("#q01-escort-bar").hidden',8000);
+ await go();
+ if(!(await b.evaluate('WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("simeon"),WitnessQ01Greybox.anchors.reception,1.8)&&WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("apprentice"),WitnessQ01Greybox.anchors.reception,1.8)'))){
+  await interact();await assertBeat(4);
+ }
+ await b.wait('WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("simeon"),WitnessQ01Greybox.anchors.reception,1.8)&&WitnessQ01Interaction.near(WitnessQ01Campaign.presenter.actorPoint("apprentice"),WitnessQ01Greybox.anchors.reception,1.8)',45000);
+ await interact();await talk();await assertBeat(5);
+ assert.equal(await b.evaluate('document.querySelector("#q01-escort-bar").hidden'),true);
  const safe=await runtime();for(const id of ['titus','simeon','apprentice'])assert(safe.actors[id].y>5);
  await b.shot([route,plan,view,mode,'05-safe'].join('-')+'.png');
  await step();await assertBeat(6);await step();await assertBeat(7);await step();await go();await interact();await talk();await b.click(`[data-q01=plan-${plan}]`);await talk();

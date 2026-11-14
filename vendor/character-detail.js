@@ -3,10 +3,39 @@
 
   // All maps are deterministic, shared by the renderer and available offline.
   const resources = new WeakMap();
+  const hairTexCache = new WeakMap();
   const clamp = (value, low = 0, high = 1) => Math.max(low, Math.min(high, value));
   const fract = value => value - Math.floor(value);
+  const hash2 = (x, y) => fract(Math.sin(x * 127.1 + y * 311.7) * 43758.5453123);
   const noise = (x, y) => fract(Math.sin(x * 127.1 + y * 311.7) * 43758.5453);
   const bell = (x, width) => Math.exp(-((x / width) ** 2));
+
+  function noise2(x, y) {
+    const ix = Math.floor(x), iy = Math.floor(y);
+    const fx = x - ix, fy = y - iy;
+    const ux = fx * fx * (3 - 2 * fx);
+    const uy = fy * fy * (3 - 2 * fy);
+    const a = hash2(ix, iy);
+    const b = hash2(ix + 1, iy);
+    const c = hash2(ix, iy + 1);
+    const d = hash2(ix + 1, iy + 1);
+    return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
+  }
+
+  function gauss(val, center, width) {
+    const d = (val - center) / width;
+    return Math.exp(-(d * d));
+  }
+
+  function gauss2(x, y, cx, cy, wx, wy) {
+    const dx = (x - cx) / wx, dy = (y - cy) / wy;
+    return Math.exp(-(dx * dx + dy * dy));
+  }
+
+  function gauss3(x, y, z, cx, cy, cz, wx, wy, wz) {
+    const dx = (x - cx) / wx, dy = (y - cy) / wy, dz = (z - cz) / wz;
+    return Math.exp(-(dx * dx + dy * dy + dz * dz));
+  }
 
   function texture(T, pixels, width, height, repeat = false) {
     const map = new T.DataTexture(pixels, width, height, T.RGBAFormat);
@@ -38,8 +67,6 @@
       const rough = 215 + heights[y * size + x] * 25;
       roughPixels.set([rough, rough, rough, 255], offset);
     }
-    // Four different clumps. Each card contains many tapered, curved fibres;
-    // the transparent spaces survive mipmapping instead of forming a solid beard.
     const width = 256, height = 512, pixels = new Uint8Array(width * height * 4);
     for (let i = 0; i < pixels.length; i += 4) { pixels[i] = 206; pixels[i + 1] = 204; pixels[i + 2] = 200; }
     for (let tile = 0; tile < 4; tile++) for (let fibre = 0; fibre < 15; fibre++) {
@@ -66,16 +93,12 @@
       const coverage = clamp((edge - y / 127) / .045) * 255;
       hairlinePixels.set([coverage, coverage, coverage, 255], (y * 128 + x) * 4);
     }
-    // Pre-Integrated Skin Subsurface Scattering LUT (Penner / GPU Pro 2)
-    // Dimension X: N·L mapped from [-1, 1] to [0, 1]
-    // Dimension Y: Curvature (1 / radius) from 0.0 to 1.0
     const lutSize = 256;
     const sssLutPixels = new Uint8Array(lutSize * lutSize * 4);
     for (let y = 0; y < lutSize; y++) {
       const curvature = (y + 1) / lutSize;
       for (let x = 0; x < lutSize; x++) {
         const ndotl = (x / (lutSize - 1)) * 2 - 1;
-        // Multi-dipole diffusion approximation for Levantine 1st-century skin
         const wrapR = clamp((ndotl + curvature * 0.65) / (1 + curvature * 0.65));
         const sssR = Math.pow(wrapR, 1.0 + curvature * 0.20) + Math.exp(-Math.pow((ndotl + 0.12) / (0.32 + curvature * 0.35), 2)) * 0.28 * curvature;
         const wrapG = clamp((ndotl + curvature * 0.38) / (1 + curvature * 0.38));
@@ -90,9 +113,6 @@
         sssLutPixels[offset + 3] = 255;
       }
     }
-    // High-frequency tileable pore micro-normal. A wrapped jittered grid of
-    // sub-millimetre dimples plus fine grain reads as real skin when the camera
-    // pushes in close, where the broad 256px normal map alone goes smooth.
     const microSize = 256, microHeight = new Float32Array(microSize * microSize);
     const cell = 8, cells = microSize / cell;
     const wrapDelta = (a, b) => { const d = Math.abs(a - b); return Math.min(d, microSize - d); };
@@ -118,8 +138,6 @@
       const length = Math.hypot(dx * 2.4, dy * 2.4, 1);
       microPixels.set([128 - dx * 2.4 / length * 127, 128 - dy * 2.4 / length * 127, 128 + 127 / length, 255], offset);
     }
-    // Woven fuzz micro-normal for cloth sheen: short fibre fuzz standing off the
-    // weave, tileable, used to break the specular rim of wool/linen mantles.
     const fuzzSize = 128, fuzzHeight = new Float32Array(fuzzSize * fuzzSize);
     for (let y = 0; y < fuzzSize; y++) for (let x = 0; x < fuzzSize; x++) {
       const fibre = Math.sin(x * 1.7 + noise(x >> 2, y >> 2) * 6.28) * .5 + Math.sin(y * 2.3 + x * .4) * .3;
@@ -146,56 +164,195 @@
     return result;
   }
 
-  function sculpt(positions, landmarks, look) {
-    const eye = landmarks["joint-l-eye"];
-    for (let i = 0; i < positions.length; i += 3) {
-      const x = positions[i], y = positions[i + 1], z = positions[i + 2];
-      if (y < eye[1] - .13 || y > eye[1] + .10 || z < .08) continue;
-      const side = Math.abs(x), dy = y - eye[1];
-      // Preserve the orbital opening and the lips. Millimetre-scale changes to
-      // the surrounding planes give real silhouette and raking-light changes.
-      const orbitalRing = bell(Math.hypot(side - Math.abs(eye[0]), dy) - .015, .006);
-      const safe = 1 - orbitalRing;
-      const cheek = bell(side - .052, .018) * bell(dy + .027, .018);
-      const socket = bell(side - .039, .025) * bell(dy + .013, .009);
-      const brow = bell(side - .034, .023) * bell(dy - .021, .010);
-      const jaw = bell(side - .056, .023) * bell(dy + .083, .022);
-      const fold = bell(side - (.019 + clamp(-dy - .035) * .27), .004) * bell(dy + .054, .022);
-      positions[i + 2] += safe * (cheek * .0021 - socket * .0014 + brow * .0012 + jaw * .0009 - fold * (.0003 + look.age * .0006));
-      positions[i] += Math.sign(x) * safe * jaw * .0007;
-      // A restrained natural asymmetry, shared by both depictions of Jesus.
-      positions[i + 2] += bell(x + .047, .025) * bell(dy + .03, .026) * .00045;
+  // 1. Craniofacial & Cervical Anatomical Sculpting with orbital-aperture guard
+  function sculpt(positions, landmarks, look = {}) {
+    const eyeL = landmarks["joint-l-eye"] || [.032, 1.59, .095];
+    const eyeY = eyeL[1];
+    const eyeX = Math.abs(eyeL[0]);
+    const eyeZ = eyeL[2];
+    const female = look.gender === "female";
+    const age = clamp(look.age ?? .35);
+    const cheekStrength = look.cheek ?? .35;
+    const chinStrength = look.chin ?? .30;
+    const noseBridge = look.noseBridge ?? .25;
+    const noseWidth = look.noseWidth ?? .20;
+    const faceWidth = look.faceWidth ?? .20;
+    const mouthY = eyeY - .065;
+    const neckY = eyeY - .155;
+
+    const count = positions.length / 3;
+    for (let i = 0; i < count; i++) {
+      const idx = i * 3;
+      let x = positions[idx], y = positions[idx + 1], z = positions[idx + 2];
+      const absX = Math.abs(x);
+      const signX = x >= 0 ? 1 : -1;
+
+      if (y > neckY - .10 && y < eyeY + .16) {
+        // Keep the excised orbital opening and palpebral rim clear of inward shifts.
+        const eyeDist = Math.hypot(absX - eyeX, y - eyeY);
+        const orbitSafe = (1 - bell(eyeDist - .015, .006)) * clamp((eyeDist - .007) / .008);
+
+        if (z > eyeZ - .02) {
+          const browArch = gauss2(absX, y, eyeX * .95, eyeY + .018, .024, .0095) * orbitSafe;
+          const glabella = gauss2(absX, y, .005, eyeY + .017, .0055, .011);
+          const browProminence = (female ? .0012 : .0028) + age * .0008;
+          z += browArch * browProminence;
+          y -= browArch * (female ? -.0005 : .0007) + age * browArch * .0010;
+          const corrugator = gauss2(absX, y, .0065, eyeY + .018, .0022, .010);
+          z -= corrugator * (.0005 + age * .0011) - glabella * .0006;
+        }
+
+        if (z > -.01) {
+          const malar = gauss3(absX, y, z, .052, eyeY - .021, eyeZ - .015, .022, .018, .038);
+          const zygomaticArch = gauss3(absX, y, z, .066, eyeY - .016, eyeZ - .042, .014, .012, .035);
+          const buccalHollow = gauss3(absX, y, z, .048, mouthY + .010, eyeZ - .022, .018, .020, .032);
+          const malarPush = (.0018 + cheekStrength * .0028) * (female ? 1.08 : 1.0);
+          x += signX * (malar * malarPush + zygomaticArch * .0016);
+          z += malar * malarPush * .85;
+          y += malar * .0008;
+          const hollowFactor = (.0012 + age * .0022 + (female ? -.0004 : .0005));
+          x -= signX * buccalHollow * hollowFactor;
+          z -= buccalHollow * hollowFactor * .65;
+        }
+
+        if (z > eyeZ - .015) {
+          const troughY = eyeY - .011 - Math.max(0, absX - eyeX * .65) * .18;
+          const tearTrough = gauss2(absX, y, eyeX * .92, troughY, .016, .0038) * orbitSafe;
+          const orbitalBag = gauss2(absX, y, eyeX * .95, troughY + .0042, .014, .0032) * orbitSafe;
+          z -= tearTrough * (.0007 + age * .0014);
+          z += orbitalBag * (age * .0011);
+        }
+
+        if (absX < .032 && z > eyeZ - .01) {
+          const bridge = gauss2(absX, y, 0, eyeY - .012, .0085, .018);
+          const nasalTip = gauss2(absX, y, 0, eyeY - .034, .0095, .0085);
+          const alarWing = gauss2(absX, y, .0155, eyeY - .038, .0065, .0065);
+          const alarCrease = gauss2(absX, y, .0175, eyeY - .035, .0032, .0060);
+          const nostrilCavity = gauss2(absX, y, .0095, eyeY - .0425, .0042, .0032);
+          z += bridge * (.0012 + noseBridge * .0024) + nasalTip * .0018;
+          x += signX * alarWing * (.0008 + noseWidth * .0018);
+          z -= alarCrease * .0011;
+          y += nostrilCavity * .0012;
+          z -= nostrilCavity * .0008;
+        }
+
+        if (z > eyeZ - .025) {
+          const nlfProgress = clamp((eyeY - .034 - y) / .036);
+          const nlfCenterX = .018 + nlfProgress * .014;
+          const nlfMask = gauss(y, mouthY + .014, .019);
+          const nlfCrease = gauss(absX, nlfCenterX, .0036) * nlfMask;
+          const nlfFoldPad = gauss(absX, nlfCenterX + .0055, .0055) * nlfMask;
+          const nlfDepth = .0008 + age * .0022;
+          z -= nlfCrease * nlfDepth;
+          x -= signX * nlfCrease * nlfDepth * .35;
+          z += nlfFoldPad * nlfDepth * .72;
+
+          const marMask = gauss(y, mouthY - .016, .014);
+          const marCrease = gauss(absX, .024 + (mouthY - y) * .12, .0035) * marMask;
+          z -= marCrease * (age * .0016);
+        }
+
+        if (absX < .036 && Math.abs(y - mouthY) < .028 && z > eyeZ - .02) {
+          const philtrumGroove = gauss2(absX, y, 0, mouthY + .013, .0032, .0075);
+          const philtrumRidge = gauss2(absX, y, .0048, mouthY + .012, .0022, .0075);
+          const cupidPeak = gauss2(absX, y, .0052, mouthY + .0048, .0038, .0022);
+          const upperVermilion = gauss2(absX, y, 0, mouthY + .0028, .019, .0028);
+          const lowerVermilion = gauss2(absX, y, 0, mouthY - .0038, .017, .0034);
+          const oralCommissure = gauss2(absX, y, .0235, mouthY, .0045, .0032);
+          const labiomental = gauss2(absX, y, 0, mouthY - .0135, .014, .0045);
+
+          z -= philtrumGroove * .0011;
+          z += philtrumRidge * .00085 + cupidPeak * .0009;
+          y += cupidPeak * .0005;
+          const lipFullness = female ? 1.22 : 1.0;
+          z += (upperVermilion * .0014 + lowerVermilion * .0018) * lipFullness;
+          z -= oralCommissure * .0014 + labiomental * .0012;
+        }
+
+        if (y < mouthY + .005 && y > neckY - .02) {
+          const chinTip = gauss3(absX, y, z, .007, mouthY - .031, eyeZ - .005, .014, .012, .025);
+          const gonialAngle = gauss3(absX, y, z, .058, mouthY - .018, .012, .016, .018, .028);
+          const jowlSag = gauss3(absX, y, z, .036, mouthY - .028, .048, .016, .012, .024);
+          z += chinTip * (.0012 + chinStrength * .0026);
+          x += signX * gonialAngle * ((female ? .0006 : .0022) + faceWidth * .0015);
+          y -= jowlSag * (age * .0026);
+          x += signX * jowlSag * (age * .0012);
+        }
+
+        const temple = gauss3(absX, y, z, .064, eyeY + .016, .035, .014, .022, .028);
+        x -= signX * temple * (.0008 + age * .0014);
+        if (y < neckY + .02 && y > neckY - .09 && z > -.01) {
+          const scmT = clamp((neckY + .01 - y) / .09);
+          const scmX = .042 * (1 - scmT * .72);
+          const scm = gauss(absX, scmX, .0085) * gauss(z, .025 + scmT * .035, .025);
+          const suprasternal = gauss2(absX, y, 0, neckY - .075, .011, .014) * gauss(z, .055, .025);
+          z += scm * .0016 - suprasternal * .0022;
+        }
+      }
+
+      positions[idx] = x;
+      positions[idx + 1] = y;
+      positions[idx + 2] = z;
     }
   }
 
+  // 2. FACS Expressive Micro-Morph Targets (Morph 3: Brow Engage, Morph 4: Cheek/Duchenne Warmth)
   function expressions(T, positions, landmarks, mouth) {
-    const smile = new Float32Array(positions.length), brow = new Float32Array(positions.length);
-    const eye = landmarks["joint-l-eye"];
-    for (let i = 0; i < positions.length; i += 3) {
-      const x = positions[i], y = positions[i + 1], z = positions[i + 2];
-      if (z < .09 || y < eye[1] - .11) continue;
-      const corner = bell(Math.abs(x) - .025, .012) * bell(y - mouth[1], .013);
-      smile[i] = Math.sign(x) * corner * .0009;
-      smile[i + 1] = corner * .0023;
-      smile[i + 2] = corner * .0005;
-      const innerBrow = bell(Math.abs(x) - .019, .013) * bell(y - eye[1] - .026, .012);
-      brow[i + 1] = innerBrow * .0018;
+    const count = positions.length / 3;
+    const eyeL = landmarks["joint-l-eye"] || [.032, 1.59, .095];
+    const eyeY = eyeL[1];
+    const eyeX = Math.abs(eyeL[0]);
+    const eyeZ = eyeL[2];
+    const mouthY = mouth ? mouth[1] : eyeY - .065;
+    const mouthZ = mouth ? mouth[2] : eyeZ;
+
+    const browEngage = new Float32Array(count * 3);
+    const cheekWarmth = new Float32Array(count * 3);
+
+    for (let i = 0; i < count; i++) {
+      const idx = i * 3;
+      const x = positions[idx], y = positions[idx + 1], z = positions[idx + 2];
+      const absX = Math.abs(x);
+      const signX = x >= 0 ? 1 : -1;
+
+      if (y > mouthY - .04 && z > .01) {
+        const innerBrow = gauss3(absX, y, z, eyeX * .62, eyeY + .018, eyeZ, .018, .014, .035);
+        const midBrow = gauss3(absX, y, z, eyeX * 1.02, eyeY + .020, eyeZ - .005, .020, .013, .035);
+        const frontalis = gauss3(absX, y, z, eyeX * .75, eyeY + .042, eyeZ - .010, .032, .022, .040);
+        const upperLid = gauss3(absX, y, z, eyeX, eyeY + .007, eyeZ + .004, .014, .005, .018);
+
+        browEngage[idx] = signX * midBrow * .0006;
+        browEngage[idx + 1] = innerBrow * .0042 + midBrow * .0034 + frontalis * .0022 + upperLid * .0012;
+        browEngage[idx + 2] = (innerBrow + midBrow) * .0008 - frontalis * .0004;
+
+        const lipCorner = gauss3(absX, y, z, .023, mouthY, mouthZ - .006, .014, .011, .024);
+        const malarLift = gauss3(absX, y, z, .044, eyeY - .026, eyeZ - .012, .024, .020, .035);
+        const lowerLidSquint = gauss3(absX, y, z, eyeX * 1.05, eyeY - .009, eyeZ, .016, .006, .020);
+        const alarFlare = gauss3(absX, y, z, .016, eyeY - .038, eyeZ + .008, .008, .007, .016);
+
+        cheekWarmth[idx] = signX * (lipCorner * .0036 + malarLift * .0016 + alarFlare * .0012);
+        cheekWarmth[idx + 1] = lipCorner * .0038 + malarLift * .0032 + lowerLidSquint * .0014 + alarFlare * .0005;
+        cheekWarmth[idx + 2] = -lipCorner * .0022 + malarLift * .0024 + lowerLidSquint * .0006;
+      }
     }
-    return [smile, brow].map((values, index) => {
-      const attribute = new T.Float32BufferAttribute(values, 3);
-      attribute.name = index ? "brow-soften" : "gentle-smile";
-      return attribute;
-    });
+
+    const attrBrow = new T.Float32BufferAttribute(browEngage, 3);
+    attrBrow.name = "brow-engage";
+    const attrCheek = new T.Float32BufferAttribute(cheekWarmth, 3);
+    attrCheek.name = "cheek-warmth";
+    return [attrBrow, attrCheek];
   }
 
+  // 3. Biophysical Skin Material (Pre-Integrated SSS LUT + Thickness + Micro-Normal + 3D Pores/Wrinkles)
   function skin(T, part, look, landmarks, mouth) {
-    const shared = maps(T), eye = landmarks["joint-l-eye"], eyeY = eye[1], eyeX = Math.abs(eye[0]);
+    const shared = maps(T);
+    const eye = landmarks["joint-l-eye"] || [.032, 1.59, .095];
+    const eyeY = eye[1], eyeX = Math.abs(eye[0]);
+    const ageVal = clamp(look.age ?? .35);
+    const skinColor = new T.Color(look.skin || "#c69472");
+    const sheenColor = skinColor.clone().lerp(new T.Color("#ffe3cc"), .68);
     const uv = [], thickness = [];
     const p = part.attributes.position;
-    // Baked Thickness / Translucency Map: thin anatomy (ear helix, nose tip,
-    // nostril wings, lips, eyelids, fingers) transmits Middle-Eastern sunlight;
-    // thick torso/limb skin stays opaque. Stored per-vertex so it survives the
-    // planar UV overlap on the body and reads correctly at any camera distance.
     for (let i = 0; i < p.count; i++) {
       const x = p.getX(i), y = p.getY(i), z = p.getZ(i), side = Math.abs(x);
       uv.push(x * 32 + z * 12, y * 32);
@@ -212,21 +369,22 @@
     }
     part.setAttribute("uv", new T.Float32BufferAttribute(uv, 2));
     part.setAttribute("skinThickness", new T.Float32BufferAttribute(thickness, 1));
+
     const material = new T.MeshPhysicalMaterial({
-      vertexColors: true, roughness: .66, metalness: 0,
+      vertexColors: true, roughness: .56, metalness: 0,
       normalMap: shared.skinNormal, normalScale: new T.Vector2(.16, .16),
       roughnessMap: shared.skinRoughness,
-      ior: 1.4, clearcoat: .045, clearcoatRoughness: .42,
-      sheen: .12, sheenColor: new T.Color("#ffcdb2"), sheenRoughness: .8
+      ior: 1.42, clearcoat: .09, clearcoatRoughness: .34,
+      sheen: .24, sheenColor, sheenRoughness: .72
     });
     material.name = "skin-sss-thickness-micropore";
     material.userData.subsurface = "preintegrated-skin-sss-lut+thickness-translucency+micro-normal";
-    material.customProgramCacheKey = () => "character-skin-aaa-v2";
+    material.customProgramCacheKey = () => "character-skin-3a-sss-v3";
     material.onBeforeCompile = shader => {
       shader.uniforms.uEyeY = { value: eyeY };
       shader.uniforms.uEyeX = { value: eyeX };
       shader.uniforms.uMouth = { value: new T.Vector3(...mouth) };
-      shader.uniforms.uAge = { value: look.age };
+      shader.uniforms.uAge = { value: ageVal };
       shader.uniforms.uSkinSssLut = { value: shared.skinSssLut };
       shader.uniforms.uSkinMicroNormal = { value: shared.skinMicroNormal };
       shader.uniforms.uMicroRepeat = { value: 5.0 };
@@ -237,50 +395,78 @@
       shader.vertexShader = shader.vertexShader
         .replace("#include <common>", "#include <common>\nattribute float skinThickness;\nvarying vec3 vSkinPoint;\nvarying vec2 vSkinUv;\nvarying float vSkinThickness;")
         .replace("#include <begin_vertex>", "#include <begin_vertex>\nvSkinPoint = position;\nvSkinUv = uv;\nvSkinThickness = skinThickness;");
-      shader.fragmentShader = shader.fragmentShader.replace("#include <common>", "#include <common>" + declarations)
+      shader.fragmentShader = shader.fragmentShader
+        .replace("#include <common>", `#include <common>${declarations}
+          float skinHash3(vec3 p) {
+            p = fract(p * vec3(443.897, 441.423, 437.195));
+            p += dot(p, p.yzx + 19.19);
+            return fract((p.x + p.y) * p.z);
+          }
+          float skinNoise3(vec3 p) {
+            vec3 i = floor(p);
+            vec3 f = fract(p);
+            f = f * f * (3.0 - 2.0 * f);
+            return mix(
+              mix(mix(skinHash3(i), skinHash3(i + vec3(1,0,0)), f.x),
+                  mix(skinHash3(i + vec3(0,1,0)), skinHash3(i + vec3(1,1,0)), f.x), f.y),
+              mix(mix(skinHash3(i + vec3(0,0,1)), skinHash3(i + vec3(1,0,1)), f.x),
+                  mix(skinHash3(i + vec3(0,1,1)), skinHash3(i + vec3(1,1,1)), f.x), f.y),
+              f.z
+            );
+          }
+        `)
+        .replace("#include <roughnessmap_fragment>", `#include <roughnessmap_fragment>
+          float absSkinX = abs(vSkinPoint.x);
+          float frontSkin = smoothstep(.06, .12, vSkinPoint.z);
+          float headMask = smoothstep(uEyeY - .16, uEyeY - .10, vSkinPoint.y);
+          float skinLip = exp(-pow((vSkinPoint.y - uMouth.y) / .007, 2.)) * (1. - smoothstep(.020, .035, absSkinX)) * frontSkin;
+          float noseOil = exp(-(pow(vSkinPoint.x / .021, 2.) + pow((vSkinPoint.y - (uEyeY - .024)) / .028, 2.)));
+          float foreheadOil = exp(-(pow(vSkinPoint.x / .055, 2.) + pow((vSkinPoint.y - (uEyeY + .042)) / .032, 2.)));
+          float cheekOil = exp(-(pow((absSkinX - .034) / .022, 2.) + pow((vSkinPoint.y - (uEyeY - .026)) / .022, 2.)));
+          float skinTzone = clamp((noseOil * .85 + foreheadOil * .65 + cheekOil * .50) * frontSkin * headMask, 0.0, 1.0);
+          float poreScale = mix(340.0, 480.0, noseOil);
+          float cellNoise1 = skinNoise3(vSkinPoint * poreScale);
+          float cellNoise2 = skinNoise3(vSkinPoint * (poreScale * 2.1) + vec3(17.3, 9.1, 31.7));
+          float porePit = -pow(max(0.0, 1.0 - cellNoise1 * 1.45), 2.6) * (.42 + .58 * (noseOil + cheekOil));
+          roughnessFactor = clamp(roughnessFactor - skinTzone * .13 - skinLip * .18 - porePit * .05 + uAge * .035, .22, .80);
+        `)
         .replace("#include <normal_fragment_maps>", `#include <normal_fragment_maps>
-          float foreheadMask = exp(-pow((vSkinPoint.y - uEyeY - .055) / .027, 2.)) * (1. - smoothstep(.040, .068, abs(vSkinPoint.x))) * smoothstep(.08, .13, vSkinPoint.z);
-          float fineCrease = pow(.5 + .5 * sin((vSkinPoint.y - uEyeY) * 760. + cos(vSkinPoint.x * 42.) * 1.4), 10.);
-          float creaseHeight = fineCrease * foreheadMask * (.000025 + uAge * .000055);
+          float foreheadMask = exp(-pow((vSkinPoint.y - uEyeY - .052) / .028, 2.)) * (1. - smoothstep(.040, .068, absSkinX)) * smoothstep(.08, .13, vSkinPoint.z);
+          float fineCrease = pow(.5 + .5 * sin((vSkinPoint.y - uEyeY) * 680. + cos(vSkinPoint.x * 42.) * 1.4), 8.);
+          float canthusAngle = atan(vSkinPoint.y - uEyeY, absSkinX - uEyeX);
+          float crowsFeetMask = exp(-(pow((absSkinX - (uEyeX + .018)) / .014, 2.) + pow((vSkinPoint.y - uEyeY) / .016, 2.))) * frontSkin;
+          float crowsFeet = sin(canthusAngle * 18.0 + cellNoise1 * 1.5) * crowsFeetMask * (.15 + uAge * .65);
+          float lipGrooves = sin(vSkinPoint.x * 1150.0 + cellNoise2 * 1.8) * skinLip * .40;
+          float creaseHeight = (fineCrease * foreheadMask * (.000022 + uAge * .000055)
+            + crowsFeet * .000035 + lipGrooves * .000028 + (porePit + (cellNoise2 - .5) * .28) * .000032 * frontSkin * headMask);
           vec3 dpdx = -dFdx(vViewPosition), dpdy = -dFdy(vViewPosition);
           vec3 r1 = cross(dpdy, normal), r2 = cross(normal, dpdx);
           float determinant = dot(dpdx, r1);
           vec3 gradient = sign(determinant) * (dFdx(creaseHeight) * r1 + dFdy(creaseHeight) * r2);
           normal = normalize(abs(determinant) * normal - gradient);
-          // High-frequency pore micro-normal in an isotropic tangent frame.
           vec3 microN = texture2D(uSkinMicroNormal, vSkinUv * uMicroRepeat).xyz * 2.0 - 1.0;
           vec3 microT = normalize(cross(dpdy, normal) + vec3(1e-6));
           vec3 microB = cross(normal, microT);
-          float poreZone = smoothstep(.02, .09, vSkinPoint.z) * (1.0 - smoothstep(.055, .085, abs(vSkinPoint.x)));
+          float poreZone = smoothstep(.02, .09, vSkinPoint.z) * (1.0 - smoothstep(.055, .085, absSkinX));
           normal = normalize(normal + (microN.x * microT + microN.y * microB) * uMicroStrength * (.35 + poreZone * .65));
-        `)
-        .replace("#include <roughnessmap_fragment>", `#include <roughnessmap_fragment>
-          float frontSkin = smoothstep(.07, .12, vSkinPoint.z);
-          float skinLip = exp(-pow((vSkinPoint.y - uMouth.y) / .007, 2.)) * (1. - smoothstep(.020, .035, abs(vSkinPoint.x))) * frontSkin;
-          float skinTzone = exp(-pow(vSkinPoint.x / .021, 2.)) * exp(-pow((vSkinPoint.y - uEyeY + .010) / .042, 2.)) * frontSkin;
-          roughnessFactor = clamp(roughnessFactor - skinTzone * .10 - skinLip * .16 + uAge * .025, .28, .82);
         `)
         .replace("#include <lights_physical_pars_fragment>", `#include <lights_physical_pars_fragment>
           void RE_SkinScattering(const in IncidentLight light, const in vec3 N, const in vec3 V, inout ReflectedLight reflected) {
             float ear = smoothstep(.064, .086, abs(vSkinPoint.x)) * exp(-pow((vSkinPoint.y - uEyeY + .006) / .043, 2.));
             float nose = exp(-pow(vSkinPoint.x / .020, 2.)) * exp(-pow((vSkinPoint.y - uEyeY + .034) / .020, 2.));
             float lips = exp(-pow((vSkinPoint.y - uMouth.y) / .008, 2.)) * (1. - smoothstep(.018, .036, abs(vSkinPoint.x)));
-            // Baked thickness map drives translucency; procedural masks add helix detail.
             float thickness = clamp(vSkinThickness + ear * .18 + nose * .06, 0.0, 1.0);
 
             vec3 dNdx = dFdx(N), dNdy = dFdy(N);
             float geomCurv = clamp(length(dNdx) + length(dNdy), 0.08, 0.85);
             float anatCurv = clamp(geomCurv + ear * 0.45 + nose * 0.35 + lips * 0.25, 0.05, 0.95);
 
-            // 1. Pre-Integrated forward scattering (Penner / GPU Pro 2 skin LUT).
             float NdotL = dot(N, light.direction);
             vec2 lutUv = vec2(clamp(NdotL * 0.5 + 0.5, 0.005, 0.995), anatCurv);
             vec3 sssProfile = texture2D(uSkinSssLut, lutUv).rgb;
             vec3 scatterAlbedo = mix(vec3(1.0), uTransColor * 1.6 + 0.35, thickness * 0.5);
             reflected.directDiffuse += light.color * sssProfile * scatterAlbedo * uSssStrength * (0.35 + thickness * 0.5);
 
-            // 2. Translucency back-scatter (Frostbite / DICE): sunlight through
-            //    ears, nose tip and fingers, tinted by blood perfusion.
             vec3 transLight = normalize(light.direction + N * 0.38);
             float transDot = pow(clamp(dot(V, -transLight), 0.0, 1.0), 3.6) * 1.1;
             float transAmbient = 0.08;
@@ -295,71 +481,223 @@
     return material;
   }
 
-  function groom(T, config) {
-    const { look, positions, landmarks, mouth, headTop, faceDepth, skinned } = config;
-    const hairColor = new T.Color(look.hairColor);
-    const base = new T.MeshStandardMaterial({
-      color: hairColor, roughness: .82, side: T.DoubleSide,
-      alphaMap: maps(T).hairline, transparent: false, alphaTest: .35, depthWrite: true, forceSinglePass: true,
-      polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1
-    });
-    const material = new T.MeshPhysicalMaterial({
-      color: hairColor, map: maps(T).hair, vertexColors: true,
-      roughness: .55, metalness: 0, side: T.DoubleSide,
-      alphaTest: .16, alphaToCoverage: true, transparent: false, depthWrite: true, forceSinglePass: true,
-      sheen: .42, sheenColor: hairColor.clone().lerp(new T.Color("#b7a28a"), .24), sheenRoughness: .62
-    });
-    material.name = "groom-cards-fibre-atlas-a2c-aniso";
-    const sway = config.sway || { value: new T.Vector2() }, jawOpen = { value: 0 };
-    function batch() { return { p: [], uv: [], colors: [], indices: [], t: [] }; }
-    const fixed = batch(), flowing = batch(), beard = batch(), fibres = batch();
-    let cardIndex = 0;
-    function fibre(points, radius, shade) {
-      const curve = new T.CatmullRomCurve3(points.map(p => new T.Vector3(...p)));
-      const tube = new T.TubeGeometry(curve, 3, radius, 3, false);
-      const p = tube.attributes.position, start = fibres.p.length / 3;
-      for (let i = 0; i < p.count; i++) {
-        const t = Math.floor(i / 4) / 3, center = curve.getPointAt(t);
-        const taper = 1 - Math.pow(t, 1.7) * .94;
-        fibres.p.push(center.x + (p.getX(i) - center.x) * taper,
-          center.y + (p.getY(i) - center.y) * taper, center.z + (p.getZ(i) - center.z) * taper);
-        const value = shade * (.70 + t * .45);
-        fibres.colors.push(value, value * .98, value * .94);
+  // 4. Anisotropic Hair & Beard Shader (Marschner / Kajiya-Kay Dual-Lobe Specular + Procedural Fiber Texture)
+  function hairFiberTexture(T) {
+    if (hairTexCache.has(T)) return hairTexCache.get(T);
+    const size = 256;
+    const pixels = new Uint8Array(size * size * 4);
+    for (let y = 0; y < size; y++) {
+      const ny = y / size;
+      for (let x = 0; x < size; x++) {
+        const nx = x / size;
+        const p = (y * size + x) * 4;
+        const s1 = Math.sin(nx * 96 * Math.PI * 2 + noise2(nx * 24, ny * 8) * 1.8) * .5;
+        const s2 = Math.sin(nx * 210 * Math.PI * 2 + noise2(nx * 64, ny * 16) * 2.4) * .35;
+        const cuticleScale = Math.sin(ny * 160 * Math.PI * 2) * .12;
+        const dx = (s1 + s2) * 1.9;
+        const dy = cuticleScale;
+        const len = Math.hypot(dx, dy, 1.0);
+        pixels[p] = Math.round(((-dx / len) * .5 + .5) * 255);
+        pixels[p + 1] = Math.round(((-dy / len) * .5 + .5) * 255);
+        pixels[p + 2] = Math.round(((1.0 / len) * .5 + .5) * 255);
+        pixels[p + 3] = 255;
       }
-      for (const index of tube.index.array) fibres.indices.push(start + index);
-      tube.dispose();
     }
-    function card(target, points, width, shade, direction) {
-      const curve = new T.CatmullRomCurve3(points.map(p => new T.Vector3(...p)));
-      const tile = cardIndex++ % 4, steps = 6, start = target.p.length / 3;
-      const across = new T.Vector3(...direction).normalize();
-      for (let i = 0; i <= steps; i++) {
-        const t = i / steps, center = curve.getPoint(t);
-        const tangent = curve.getTangent(t);
-        const taper = .75 + Math.sin(t * Math.PI) * .25 - Math.pow(t, 5) * .62;
-        for (const side of [-1, 1]) {
-          const point = center.clone().addScaledVector(across, side * width * taper * .5);
-          target.p.push(...point.toArray());
-          target.t.push(tangent.x, tangent.y, tangent.z);
-          // Atlas rows are authored root first; DataTexture flipY stays false.
-          target.uv.push((tile + (side + 1) * .5) / 4, t);
-          const rootShade = .90, tipShade = 1.08;
-          const value = shade * (rootShade + (tipShade - rootShade) * t);
-          target.colors.push(value, value * .98, value * .94);
+    const tex = new T.DataTexture(pixels, size, size, T.RGBAFormat);
+    tex.wrapS = tex.wrapT = T.RepeatWrapping;
+    tex.magFilter = T.LinearFilter;
+    tex.minFilter = T.LinearMipmapLinearFilter;
+    tex.generateMipmaps = true;
+    tex.repeat.set(4, 2);
+    tex.needsUpdate = true;
+    hairTexCache.set(T, tex);
+    return tex;
+  }
+
+  function createAnisotropicHairMaterial(T, hexColor, swayUniform, jawUniform = null, age = 0, isBeard = false, mouthY = 1.52) {
+    const baseCol = new T.Color(hexColor || "#322318");
+    const greyCol = new T.Color("#b8b2a6");
+    const agedBase = age > .50 ? baseCol.clone().lerp(greyCol, (age - .50) * (isBeard ? .82 : .65)) : baseCol;
+    const secondaryTint = agedBase.clone().multiplyScalar(1.45).lerp(new T.Color("#d99b66"), .28);
+
+    const mat = new T.MeshPhysicalMaterial({
+      color: agedBase,
+      vertexColors: true,
+      roughness: .56,
+      metalness: .02,
+      normalMap: hairFiberTexture(T),
+      normalScale: new T.Vector2(.28, .08),
+      sheen: .38,
+      sheenColor: secondaryTint,
+      sheenRoughness: .48,
+      side: T.DoubleSide
+    });
+
+    mat.name = isBeard ? "anisotropic-beard-3a" : "anisotropic-hair-3a";
+    mat.customProgramCacheKey = () => "witness-hair-marschner-v3-" + (isBeard ? "beard-" + mouthY.toFixed(3) : "cranial");
+    mat.onBeforeCompile = shader => {
+      shader.uniforms.uHairSway = swayUniform || { value: new T.Vector2() };
+      shader.uniforms.uJawOpen = jawUniform || { value: 0 };
+      shader.uniforms.uSecondaryTint = { value: secondaryTint };
+      shader.uniforms.uGreyAmount = { value: Math.max(0, (age - .44) * (isBeard ? .95 : .72)) };
+
+      shader.vertexShader = shader.vertexShader
+        .replace("#include <common>", `#include <common>
+          uniform vec2 uHairSway;
+          uniform float uJawOpen;
+          varying vec3 vHairTangentView;
+          varying vec2 vHairUv;
+          varying float vStrandSeed;
+        `)
+        .replace("#include <begin_vertex>", `#include <begin_vertex>
+          vHairUv = uv;
+          vStrandSeed = fract(sin(dot(position.xyz, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+          float tipWeight = pow(clamp(uv.y, 0.0, 1.0), 1.65);
+          transformed.x += uHairSway.x * tipWeight;
+          transformed.z += uHairSway.y * tipWeight;
+          ${isBeard ? `
+            float jawInfluence = smoothstep(0.015, -0.045, position.y - ${mouthY.toFixed(4)}) * clamp(0.35 + uv.y * 0.65, 0.0, 1.0);
+            transformed.y -= uJawOpen * 0.024 * jawInfluence;
+            transformed.z -= uJawOpen * 0.009 * jawInfluence;
+          ` : ""}
+          vec3 approxTangent = normalize(vec3(position.x * 0.35, -1.0, position.z * 0.35));
+          vHairTangentView = normalize(normalMatrix * approxTangent);
+        `);
+
+      shader.fragmentShader = shader.fragmentShader
+        .replace("#include <common>", `#include <common>
+          uniform vec3 uSecondaryTint;
+          uniform float uGreyAmount;
+          varying vec3 vHairTangentView;
+          varying vec2 vHairUv;
+          varying float vStrandSeed;
+        `)
+        .replace("#include <color_fragment>", `#include <color_fragment>
+          float strandHash = fract(sin(floor(vHairUv.x * 48.0) * 127.1 + floor(vStrandSeed * 23.0) * 311.7) * 43758.5453);
+          float silverStrand = step(1.0 - clamp(uGreyAmount, 0.0, 0.78), strandHash);
+          diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.78, 0.76, 0.72), silverStrand * 0.68);
+          diffuseColor.rgb *= 0.94 + 0.20 * strandHash;
+        `)
+        .replace("#include <dithering_fragment>", `#include <dithering_fragment>
+          vec3 T_dir = normalize(vHairTangentView);
+          vec3 V_dir = normalize(vViewPosition);
+          vec3 L_dir = normalize(vec3(0.35, 0.78, 0.52));
+          vec3 H_dir = normalize(L_dir + V_dir);
+          float strandShift = sin(vHairUv.x * 180.0) * 0.045;
+          vec3 T1 = normalize(T_dir + normal * (-0.14 + strandShift));
+          vec3 T2 = normalize(T_dir + normal * (0.22 + strandShift));
+          float dotTH1 = dot(T1, H_dir);
+          float dotTH2 = dot(T2, H_dir);
+          float sinTH1 = sqrt(max(0.0, 1.0 - dotTH1 * dotTH1));
+          float sinTH2 = sqrt(max(0.0, 1.0 - dotTH2 * dotTH2));
+          float dirAtten = smoothstep(-1.0, 0.0, dot(T_dir, H_dir));
+          float specPrimary = dirAtten * pow(sinTH1, 72.0) * 0.16;
+          float specSecondary = dirAtten * pow(sinTH2, 24.0) * 0.22;
+          float rootTipMask = smoothstep(0.0, 0.18, vHairUv.y) * (1.0 - smoothstep(0.82, 1.0, vHairUv.y) * 0.45);
+          gl_FragColor.rgb += (vec3(0.95, 0.93, 0.88) * specPrimary + uSecondaryTint * specSecondary) * rootTipMask;
+        `);
+    };
+
+    return mat;
+  }
+
+  function appendSculptedLock(T, arrays, controlPoints, widthRoot, widthTip, thickness, curlAmp = 0, curlFreq = 2, layerShade = 1.0, radialCenter = null) {
+    const { vertices, indices, colors, uvs } = arrays;
+    const curve = new T.CatmullRomCurve3(controlPoints.map(pt => new T.Vector3(...pt)));
+    const lengthSegs = 12;
+    const crossSegs = 4;
+    const baseVertex = vertices.length / 3;
+
+    for (let i = 0; i <= lengthSegs; i++) {
+      const v = i / lengthSegs;
+      const pt = curve.getPoint(v);
+      const tan = curve.getTangent(v);
+      const radial = radialCenter
+        ? new T.Vector3(pt.x - radialCenter[0], pt.y - radialCenter[1], pt.z - radialCenter[2])
+        : new T.Vector3(pt.x, 0, pt.z - .02);
+      if (radial.lengthSq() < .0001) radial.set(0, 1, 0);
+      radial.normalize();
+      const binorm = new T.Vector3().crossVectors(tan, radial);
+      if (binorm.lengthSq() < .0001) binorm.set(1, 0, 0);
+      binorm.normalize();
+      const norm = new T.Vector3().crossVectors(binorm, tan).normalize();
+
+      const taper = v < .15
+        ? (.78 + (v / .15) * .22)
+        : Math.pow(1 - (v - .15) / .85, .82);
+      const halfW = T.MathUtils.lerp(widthTip, widthRoot, taper) * .5;
+      const curThick = thickness * Math.sin(v * Math.PI);
+
+      const wavePhase = v * curlFreq * Math.PI * 2;
+      const waveSide = Math.sin(wavePhase) * curlAmp * v;
+      const waveOut = (Math.cos(wavePhase) * .5 + .5) * curlAmp * .65 * v;
+
+      const rootAO = .80 + .20 * Math.pow(v, .45);
+      const tipLighten = 1.0 + Math.pow(v, 2.2) * .12;
+
+      for (let j = 0; j <= crossSegs; j++) {
+        const u = j / crossSegs;
+        const s = (u - .5) * 2;
+        const arch = (1 - s * s) * curThick;
+        const vx = pt.x + binorm.x * (s * halfW + waveSide) + norm.x * (arch + waveOut);
+        const vy = pt.y + binorm.y * (s * halfW + waveSide) + norm.y * (arch + waveOut);
+        const vz = pt.z + binorm.z * (s * halfW + waveSide) + norm.z * (arch + waveOut);
+        vertices.push(vx, vy, vz);
+
+        const edgeDarken = 1.0 - Math.abs(s) * .08;
+        const cVal = rootAO * tipLighten * edgeDarken * layerShade;
+        colors.push(cVal, cVal * .99, cVal * .97);
+        uvs.push(u, v);
+
+        if (i > 0 && j > 0) {
+          const rowStride = crossSegs + 1;
+          const a = baseVertex + i * rowStride + j;
+          const b = a - rowStride;
+          indices.push(a - 1, b - 1, a, b - 1, b, a);
         }
-        if (i) { const a = start + i * 2; target.indices.push(a - 2, a, a - 1, a - 1, a, a + 1); }
       }
     }
-    const eye = landmarks["joint-l-eye"], centerY = headTop - .125, centerZ = .046;
-    // Fit the underlay to the source cranium, not to a large geometric helmet.
+  }
+
+  function buildGroomGeometry(T, arrays) {
+    const geo = new T.BufferGeometry();
+    geo.setAttribute("position", new T.Float32BufferAttribute(arrays.vertices, 3));
+    geo.setAttribute("color", new T.Float32BufferAttribute(arrays.colors, 3));
+    geo.setAttribute("uv", new T.Float32BufferAttribute(arrays.uvs, 2));
+    geo.setIndex(arrays.indices);
+    geo.computeVertexNormals();
+    return geo;
+  }
+
+  // 5. Complete Groom System fitted to actual skull geometry & character profiles
+  function groom(T, config) {
+    const { look, positions, landmarks, mouth, headTop, faceDepth, skinned, sway } = config;
+    const jawOpen = { value: 0 };
+    const eyeL = landmarks["joint-l-eye"] || [.032, 1.59, .095];
+    const eyeY = eyeL[1];
+    const eyeX = Math.abs(eyeL[0]);
+    const eyeZ = eyeL[2];
+    const mY = mouth ? mouth[1] : eyeY - .065;
+    const mZ = mouth ? mouth[2] : eyeZ;
+    const female = look.gender === "female";
+    const age = look.age ?? .35;
+    const hairStyle = look.hair || (female ? "braids" : "waves");
+    const beardLen = female ? 0 : (look.beard ?? 0);
+    const hairMat = createAnisotropicHairMaterial(T, look.hairColor, sway, null, age, false, mY);
+    const beardMat = createAnisotropicHairMaterial(T, look.hairColor, sway, jawOpen, age, true, mY);
+
+    // Sample actual sculpted cranial vertices so cap and locks fit any faceWidth/age/gender without clipping.
+    const centerY = headTop - .125, centerZ = .046;
     const headVertices = [];
-    for (let i = 0; i < positions.length; i += 3) {
-      if (positions[i + 1] <= eye[1] + .025) continue;
-      const x = positions[i], y = positions[i + 1] - centerY, z = positions[i + 2] - centerZ;
-      const radius = Math.hypot(x, y, z);
-      headVertices.push([x / radius, y / radius, z / radius, radius]);
+    if (positions) {
+      for (let i = 0; i < positions.length; i += 3) {
+        if (positions[i + 1] <= eyeY + .025) continue;
+        const x = positions[i], y = positions[i + 1] - centerY, z = positions[i + 2] - centerZ;
+        const radius = Math.hypot(x, y, z) || .1;
+        headVertices.push([x / radius, y / radius, z / radius, radius]);
+      }
     }
-    function scalp(angle, polar, lift = .0018) {
+    function scalp(angle, polar, lift = .0020) {
       const x = Math.sin(angle) * Math.sin(polar), y = Math.cos(polar), z = Math.cos(angle) * Math.sin(polar);
       let total = 0, weight = 0;
       for (const p of headVertices) {
@@ -371,328 +709,402 @@
       const radius = (weight ? total / weight : 1 / Math.hypot(x / .080, y / .118, z / .103)) + lift;
       return [x * radius, centerY + y * radius, centerZ + z * radius];
     }
-    const hairline = angle => 1.67 - Math.cos(angle) * (look.hair === "receding" ? .65 : .32)
+    const hairline = angle => 1.67 - Math.cos(angle) * (hairStyle === "receding" ? .65 : .32)
       + Math.sin(angle * 5.0 + .5) * .055 + Math.sin(angle * 11.0) * .023;
-    const underlay = batch();
-    for (let row = 0; row <= 18; row++) for (let col = 0; col <= 56; col++) {
-      const a = col / 56 * Math.PI * 2, p = scalp(a, row / 18 * hairline(a), .0016);
-      underlay.p.push(...p);
-      underlay.uv.push(col / 56, row / 18);
-      if (row && col) { const n = row * 57 + col; underlay.indices.push(n, n - 57, n - 1, n - 1, n - 57, n - 58); }
-    }
-    const shell = new T.BufferGeometry();
-    shell.setAttribute("position", new T.Float32BufferAttribute(underlay.p, 3));
-    shell.setAttribute("uv", new T.Float32BufferAttribute(underlay.uv, 2));
-    shell.setIndex(underlay.indices); shell.computeVertexNormals();
-    skinned(shell, base, () => [["head", 1]]).name = "fitted-hair-underlay";
-    for (let i = 0; i < 320; i++) {
-      const a = i * 2.399963, edge = hairline(a);
-      const p = .08 + noise(i, 10) * (edge - .12);
-      const turn = (Math.sin(a) > 0 ? 1 : -1) * (.08 + noise(i, 11) * .1);
-      const end = Math.min(edge + .045, p + .34 + noise(i, 12) * .25);
-      card(fixed, [scalp(a, p, .002), scalp(a + turn * .4, (p + end) * .5, .0068), scalp(a + turn, end, .0038)],
-        .008 + noise(i, 13) * .010, .88 + noise(i, 14) * .24, [Math.cos(a), 0, -Math.sin(a)]);
-    }
-    if (look.hair === "waves") for (const side of [-1, 1]) for (let i = 0; i < 64; i++) {
-      const start = .25 + i / 63 * .65, shift = noise(i, 32) * .06;
-      card(fixed, [scalp(side * (.04 + shift), start, .003), scalp(side * .56, start + .22, .007),
-        scalp(side * 1.03, start + .47, .008), scalp(side * 1.45, start + .65, .004)],
-        .012, .93 + noise(i, 33) * .18, [Math.cos(start), -.3, -.4 * side]);
-    }
-    // Break up the front edge with sparse fine cards anchored in the skin.
-    for (let i = 0; i < 68; i++) {
-      const a = -1.4 + i / 67 * 2.8, edge = hairline(a);
-      card(fixed, [scalp(a, edge - .07), scalp(a + .015, edge + .005, .002), scalp(a + .035, edge + .02 + noise(i, 35) * .04, .001)],
-        .0020 + noise(i, 36) * .001, .84, [Math.cos(a), 0, -Math.sin(a)]);
-    }
-    if (look.hair === "braids") {
-      for (const side of [-1, 1]) for (let i = 0; i < 12; i++) {
-        const x = side * (.071 + i % 3 * .004), z = -.012 + Math.floor(i / 3) * .004;
-        card(flowing, [[x, eye[1] + .02, z], [x + side * .005, eye[1] - .08, z - .01], [x * .8, eye[1] - .19, z]], .012, .96, [1, 0, .3]);
-      }
-    } else if (look.hairLength > .03 && look.hair !== "receding") {
-      const drop = look.hairLength;
-      for (let i = 0; i < 220; i++) {
-        const a = 1.02 + (i % 110) / 109 * (Math.PI * 2 - 2.04);
-        const root = scalp(a, hairline(a) - .32 - Math.floor(i / 110) * .12, .003 + noise(i, 24) * .005);
-        const length = .055 + drop * (.78 + noise(i, 20) * .32);
-        const curl = (look.hair === "curls" ? .013 : .006) * Math.sin(i * 2.4);
-        const x = Math.sin(a) * .088, z = .046 + Math.cos(a) * .098;
-        card(flowing, [root, [x * 1.12, root[1] - length * .38, z + curl],
-          [x * 1.13 + curl, root[1] - length * .77, z - .004], [x * 1.04, root[1] - length, z - .012]],
-        .013 + noise(i, 22) * .006, .86 + noise(i, 23) * .30, [Math.cos(a), .06, -Math.sin(a)]);
+
+    // A. Sculpted Eyebrows
+    const browArrays = { vertices: [], indices: [], colors: [], uvs: [] };
+    for (const side of [-1, 1]) {
+      const innerX = side * (eyeX * .50);
+      const archX = side * (eyeX * 1.06);
+      const tailX = side * (eyeX * 1.48);
+      const innerY = eyeY + (female ? .0175 : .0150);
+      const archY = eyeY + (female ? .0220 : .0185);
+      const tailY = eyeY + (female ? .0155 : .0130);
+      const thick = female ? .0052 : .0076;
+
+      for (let layer = -1; layer <= 1; layer++) {
+        const yOff = layer * .0012;
+        const pts = [
+          [innerX, innerY + yOff, faceDepth(innerX, innerY) + .0018],
+          [(innerX + archX) * .5, (innerY + archY) * .5 + .0012 + yOff, faceDepth((innerX + archX) * .5, archY) + .0024],
+          [archX, archY + yOff, faceDepth(archX, archY) + .0022],
+          [tailX, tailY + yOff * .5, Math.max(eyeZ - .014, faceDepth(tailX, tailY)) + .0015]
+        ];
+        appendSculptedLock(T, browArrays, pts, thick * (1 - Math.abs(layer) * .25), thick * .28, .0018, 0, 1, layer === 0 ? 1.0 : .88);
       }
     }
-    for (const side of [-1, 1]) for (let i = 0; i < 10; i++) {
-      const x = side * (.016 + i * .0030), y = eye[1] + .018 + Math.sin(i / 9 * Math.PI) * .003;
-      const z = faceDepth(x, y) + .0018;
-      card(fixed, [[x, y, z], [x + side * .005, y + .001, z + .0005], [x + side * .009, y - .001, z]], .0045, .90, [0, 1, .25]);
+    if (browArrays.vertices.length > 0) {
+      const browGeo = buildGroomGeometry(T, browArrays);
+      const browMesh = skinned(browGeo, hairMat, () => [["head", 1]]);
+      browMesh.name = "anatomical-eyebrows-3a";
+      browMesh.castShadow = false; browMesh.receiveShadow = false;
     }
-    if (look.gender !== "female" && look.beard > .012) {
-      const length = look.beard, shortBeard = length < .04;
-      const beardCount = shortBeard ? 360 : 560;
-      for (let i = 0; i < beardCount; i++) {
-        const u = (i % 28) / 27 * 2 - 1 + (noise(i, 40) - .5) * .08, v = noise(i, 41), side = Math.abs(u);
-        const x = Math.max(-1, Math.min(1, u)) * (shortBeard ? .066 : .070);
-        const top = mouth[1] - (shortBeard ? .012 : .009) + side * (shortBeard ? .026 : .036) + Math.sin(u * 17) * .003;
-        const y = top - v * ((shortBeard ? .017 : .022) + (1 - side) * (shortBeard ? .015 : .018));
-        const z = faceDepth(x, y) + .0036;
-        const nLen = Math.hypot(x / .075, Math.max(.2, z - .02)) || 1;
-        const nx = (x / .075) / nLen, nz = Math.max(.2, z - .02) / nLen;
-        const strandLength = length * (.30 + noise(i, 42) * .48) * (1 - side * .40);
-        const outward = strandLength * .15;
-        const midX = x + nx * outward * .4, midY = y - strandLength * .47;
-        const tipX = x + nx * outward, tipY = y - strandLength;
-        const midZ = Math.max(z + .0024, faceDepth(midX, midY) + .0042 + nz * outward * .4);
-        const tipZ = Math.max(z + .0016, faceDepth(tipX, tipY) + .0034 + nz * outward);
-        card(beard, [[x, y, z], [midX, midY, midZ], [tipX, tipY, tipZ]],
-          (shortBeard ? .0038 + noise(i, 44) * .0028 : .0058 + noise(i, 44) * .0042), .92 + noise(i, 45) * .22, [nz, side * .18, -nx]);
-        fibre([[x, y, z + .0016], [midX, midY, midZ + .0016], [tipX, tipY, tipZ + .0012]],
-          .00022 + noise(i, 49) * .00014, .90 + noise(i, 50) * .38);
-      }
-      // Feathered cheek and sideburn boundary, with much shorter, sparse hairs.
-      for (const side of [-1, 1]) for (let i = 0; i < 26; i++) {
-        const t = i / 25, x = side * (.064 - t * .035), y = mouth[1] + .033 - t * .032 + noise(i, 47) * .002;
-        const z = faceDepth(x, y) + .0020;
-        card(beard, [[x, y, z], [x + side * .001, y - .003, z + .0015], [x + side * .002, y - .006, z + .001]], .0028, .90, [.65, .35, -side * .65]);
-      }
-      for (const side of [-1, 1]) for (let i = 0; i < 22; i++) {
-        const x = side * (.003 + i * .0013), y = mouth[1] + .008 - i * .00020, z = faceDepth(x, y) + .0018;
-        card(beard, [[x, y, z], [x * 1.13, y - .0028, z + .0012], [x * 1.25, y - .0065, z + .0008]], .0032, .92, [1, -.25 * side, -.18 * side]);
-        fibre([[x, y, z + .001], [x * 1.13, y - .0028, z + .0017], [x * 1.25, y - .0065, z + .001]], .00019, 1.0);
-      }
-    }
-    const specTint2 = hairColor.clone().lerp(new T.Color("#ffffff"), .35).convertSRGBToLinear();
-    function swayGLSL(moving) {
-      return moving ? `float dropWeight = 1. - smoothstep(${(eye[1] - .13).toFixed(4)}, ${(eye[1] + .04).toFixed(4)}, position.y);
-        transformed.x += uHairSway.x * dropWeight; transformed.z += uHairSway.y * dropWeight;`
-        : `float jawWeight = 1. - smoothstep(${(mouth[1] - .018).toFixed(4)}, ${(mouth[1] + .006).toFixed(4)}, position.y);
-        transformed.y -= uJawOpen * .012 * jawWeight; transformed.z -= uJawOpen * .004 * jawWeight;`;
-    }
-    // Kajiya-Kay / Marschner anisotropic fibre specular: a sharp tip-ward primary
-    // lobe plus a broader coloured secondary lobe, aligned to the card tangent.
-    function hairShader(mat, moving, jaw) {
-      mat.customProgramCacheKey = () => "hair-aaa-v1-" + (moving ? "sway" : jaw ? "jaw" : "static");
-      mat.onBeforeCompile = shader => {
-        shader.uniforms.uHairSway = sway; shader.uniforms.uJawOpen = jawOpen;
-        shader.uniforms.uSpecPower1 = { value: 40 }; shader.uniforms.uSpecPower2 = { value: 14 };
-        shader.uniforms.uShift2 = { value: .10 }; shader.uniforms.uSpecStrength = { value: .20 };
-        shader.uniforms.uSpecTint1 = { value: hairColor.clone().lerp(new T.Color("#ffffff"), .6).convertSRGBToLinear() };
-        shader.uniforms.uSpecTint2 = { value: specTint2 };
-        shader.vertexShader = shader.vertexShader
-          .replace("#include <common>", "#include <common>\nattribute vec3 hairTangent;\nvarying vec3 vHairTangent;\nuniform vec2 uHairSway; uniform float uJawOpen;")
-          .replace("#include <begin_vertex>", `#include <begin_vertex>
-            vHairTangent = normalize(normalMatrix * hairTangent);
-            ${(moving || jaw) ? swayGLSL(moving) : ""}`);
-        shader.fragmentShader = shader.fragmentShader
-          .replace("#include <common>", "#include <common>\nvarying vec3 vHairTangent;\nuniform float uSpecPower1, uSpecPower2, uShift2, uSpecStrength;\nuniform vec3 uSpecTint1, uSpecTint2;")
-          .replace("#include <lights_physical_pars_fragment>", `#include <lights_physical_pars_fragment>
-            void RE_HairAniso(const in IncidentLight light, const in vec3 N, const in vec3 V, inout ReflectedLight reflected) {
-              vec3 T = normalize(vHairTangent);
-              vec3 H = normalize(light.direction + V);
-              float dotTH = dot(T, H);
-              float sinTH = sqrt(max(0.0, 1.0 - dotTH * dotTH));
-              float primary = pow(sinTH, uSpecPower1);
-              float secondary = pow(clamp(sinTH - uShift2, 0.0, 1.0), uSpecPower2);
-              reflected.directSpecular += light.color * (primary * uSpecTint1 + secondary * uSpecTint2) * uSpecStrength;
-            }`);
-        const direct = "RE_Direct( directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );";
-        shader.fragmentShader = shader.fragmentShader.replace("#include <lights_fragment_begin>",
-          T.ShaderChunk.lights_fragment_begin.split(direct).join(direct + "\nRE_HairAniso(directLight, geometryNormal, geometryViewDir, reflectedLight);"));
-      };
-    }
-    function depthShader(mat, moving) {
-      mat.customProgramCacheKey = () => "hair-depth-" + (moving ? "sway" : "jaw");
-      mat.onBeforeCompile = shader => {
-        shader.uniforms.uHairSway = sway; shader.uniforms.uJawOpen = jawOpen;
-        shader.vertexShader = shader.vertexShader
-          .replace("#include <common>", "#include <common>\nuniform vec2 uHairSway; uniform float uJawOpen;")
-          .replace("#include <begin_vertex>", "#include <begin_vertex>\n" + swayGLSL(moving));
-      };
-    }
-    function mesh(target, name, moving = false) {
-      if (!target.p.length) return;
-      const geometry = new T.BufferGeometry();
-      geometry.setAttribute("position", new T.Float32BufferAttribute(target.p, 3));
-      geometry.setAttribute("uv", new T.Float32BufferAttribute(target.uv, 2));
-      geometry.setAttribute("color", new T.Float32BufferAttribute(target.colors, 3));
-      if (target.t.length) geometry.setAttribute("hairTangent", new T.Float32BufferAttribute(target.t, 3));
-      geometry.setIndex(target.indices); geometry.computeVertexNormals();
-      const jaw = name === "beard-hair-cards";
-      if (jaw) {
-        const pos = geometry.attributes.position, nrm = geometry.attributes.normal;
-        for (let i = 0; i < pos.count; i++) {
-          const vx = pos.getX(i), jL = Math.hypot(vx / .075, -.15, .6) || 1;
-          const nx = nrm.getX(i) * .35 + (vx / .075 / jL) * .65;
-          const ny = nrm.getY(i) * .35 + (-.15 / jL) * .65;
-          const nz = nrm.getZ(i) * .35 + (.6 / jL) * .65;
-          const l = Math.hypot(nx, ny, nz) || 1;
-          nrm.setXYZ(i, nx / l, ny / l, nz / l);
+
+    // B. Multi-Layered Cranial Hair (Fitted Under-Cap + Crown & Flowing Shoulder Locks)
+    if (hairStyle !== "none" && hairStyle !== "bald") {
+      const hairArrays = { vertices: [], indices: [], colors: [], uvs: [] };
+      const isShort = ["crop", "short", "tonsure"].includes(hairStyle);
+      const isReceding = hairStyle === "receding";
+      const isCurly = hairStyle === "curls" || hairStyle === "wavy";
+      const rawLen = look.hairLength ?? (female ? .16 : .045);
+      const dropLen = isShort ? .035 : isReceding ? .055 : (female ? .195 : .045 + rawLen * .92);
+      const curlAmp = isCurly ? .0072 : hairStyle === "waves" ? .0048 : .0024;
+      const curlFreq = isCurly ? 3.0 : 1.9;
+
+      // Layer 0: Cranial under-cap fitted directly to scalp()
+      const capRings = 14, capSegs = 40;
+      const capBase = hairArrays.vertices.length / 3;
+      for (let r = 0; r <= capRings; r++) {
+        const tr = r / capRings;
+        for (let s = 0; s <= capSegs; s++) {
+          const ts = s / capSegs;
+          const a = ts * Math.PI * 2;
+          const pt = scalp(a, tr * hairline(a), .0016);
+          hairArrays.vertices.push(pt[0], pt[1], pt[2]);
+          const shade = .58 + .24 * (1 - tr);
+          hairArrays.colors.push(shade, shade * .98, shade * .96);
+          hairArrays.uvs.push(ts, tr * .4);
+          if (r > 0 && s > 0) {
+            const stride = capSegs + 1;
+            const cur = capBase + r * stride + s;
+            const prev = cur - stride;
+            hairArrays.indices.push(cur, prev, cur - 1, cur - 1, prev, prev - 1);
+          }
         }
-        nrm.needsUpdate = true;
       }
-      const finish = moving || jaw ? material.clone() : material;
-      hairShader(finish, moving, jaw);
-      const object = skinned(geometry, finish, () => [["head", 1]]);
-      object.name = name;
-      object.renderOrder = 1;
-      if (jaw) { object.castShadow = false; object.receiveShadow = false; }
-      // The atlas casts the same cutout silhouette as the visible fibres.
-      object.customDepthMaterial = new T.MeshDepthMaterial({ depthPacking: T.RGBADepthPacking, map: maps(T).hair, alphaTest: .23, side: T.DoubleSide });
-      if (moving || jaw) depthShader(object.customDepthMaterial, moving);
-      return object;
-    }
-    mesh(fixed, "groomed-hair-cards");
-    mesh(flowing, "shoulder-length-hair-cards", true);
-    mesh(beard, "beard-hair-cards");
-    if (fibres.p.length) {
-      const geometry = new T.BufferGeometry();
-      geometry.setAttribute("position", new T.Float32BufferAttribute(fibres.p, 3));
-      geometry.setAttribute("color", new T.Float32BufferAttribute(fibres.colors, 3));
-      geometry.setIndex(fibres.indices); geometry.computeVertexNormals();
-      const finish = new T.MeshPhysicalMaterial({
-        color: hairColor, roughness: .64, vertexColors: true,
-        sheen: .36, sheenColor: hairColor.clone().lerp(new T.Color("#9d8873"), .22), sheenRoughness: .56
+
+      // Layer 1: Crown & parting locks anchored seamlessly on scalp() with spherical radial center
+      const crownCenter = [0, centerY, centerZ];
+      const crownLocks = isReceding ? 22 : 34;
+      for (let l = 0; l < crownLocks; l++) {
+        const a = l * 2.399963;
+        const edge = hairline(a);
+        const p0 = .14 + hash2(l, 10) * Math.max(.08, edge - .24);
+        const turn = (Math.sin(a) > 0 ? 1 : -1) * (.05 + hash2(l, 11) * .06);
+        const pEnd = Math.min(edge + .035, p0 + .38 + hash2(l, 12) * .22);
+        const pt0 = scalp(a, p0, .0018);
+        const pt1 = scalp(a + turn * .35, (p0 + pEnd) * .5, .0042);
+        const pt2 = scalp(a + turn, pEnd, .0024);
+        appendSculptedLock(T, hairArrays, [pt0, pt1, pt2], .022 + hash2(l, 13) * .008, .007, .0022, .0014, 1.4, .92 + hash2(l, 14) * .12, crownCenter);
+      }
+
+      // Layer 2: Flowing back/side locks for medium & long Levantine hair (staggered dense curtain)
+      if (!isShort && !isReceding && (female || rawLen > .03)) {
+        const numFlow = 34;
+        const aSpan = Math.PI * 2 - 1.96;
+        for (let l = 0; l < numFlow; l++) {
+          const u = l / (numFlow - 1);
+          const a = .98 + u * aSpan;
+          const edge = hairline(a);
+          const lenScale = .88 + .24 * hash2(l, 21);
+          const lockLen = dropLen * lenScale;
+          for (let tier = 0; tier < 2; tier++) {
+            const aStagger = a + (tier === 1 ? (.5 / numFlow) * aSpan : 0);
+            const lift = .0022 + tier * .0034;
+            const jitter = (hash2(l * 2 + tier, 29) - .5) * .007;
+            const root = scalp(aStagger, edge - .28 - tier * .10, lift);
+            const mid1 = scalp(aStagger + jitter * .5, Math.min(edge + .05, edge - .02), lift + .0040);
+            const x = Math.sin(aStagger) * (.088 + tier * .004), z = centerZ + Math.cos(aStagger) * (.098 + tier * .004);
+            const mid2 = [x * 1.07 + jitter, root[1] - lockLen * .54, z + (Math.cos(aStagger) < 0 ? -.006 : .004)];
+            const tip = [x * 1.04 + jitter * 1.2, root[1] - lockLen, z - .010];
+            appendSculptedLock(
+              T, hairArrays,
+              [root, mid1, mid2, tip],
+              .028 - tier * .003,
+              .011,
+              .0036,
+              curlAmp * (1 + tier * .25),
+              curlFreq,
+              tier === 0 ? .90 : 1.02,
+              crownCenter
+            );
+          }
+        }
+      }
+
+      // Braided front locks for female styles
+      if (hairStyle === "braids") {
+        for (const side of [-1, 1]) {
+          for (let b = 0; b < 2; b++) {
+            const bx = side * (.072 + b * .007), bz = .006 - b * .014;
+            appendSculptedLock(
+              T, hairArrays,
+              [[bx, eyeY + .02, bz], [bx + side * .006, eyeY - .06, bz + .008], [bx * .92, eyeY - .14, bz + .018], [bx * .82, eyeY - .21, bz + .024]],
+              .013, .006, .0042, .0032, 5.5, b === 0 ? .96 : .86
+            );
+          }
+        }
+      }
+
+      const hairGeo = buildGroomGeometry(T, hairArrays);
+      const hairMesh = skinned(hairGeo, hairMat, point => {
+        const neckBlend = T.MathUtils.smoothstep(point.y, eyeY - .15, eyeY - .06);
+        return [["head", neckBlend], ["spine_03", 1 - neckBlend]];
       });
-      const beardMesh = skinned(geometry, finish, () => [["head", 1]]);
-      beardMesh.name = "beard-individual-fibres";
-      beardMesh.castShadow = false; beardMesh.receiveShadow = false;
-      finish.onBeforeCompile = shader => {
-        shader.uniforms.uJawOpen = jawOpen;
-        shader.vertexShader = shader.vertexShader.replace("#include <common>", "#include <common>\nuniform float uJawOpen;")
-          .replace("#include <begin_vertex>", `#include <begin_vertex>
-            float jawWeight = 1. - smoothstep(${(mouth[1] - .018).toFixed(4)}, ${(mouth[1] + .006).toFixed(4)}, position.y);
-            transformed.y -= uJawOpen * .012 * jawWeight; transformed.z -= uJawOpen * .004 * jawWeight;
-          `);
-      };
-      finish.customProgramCacheKey = () => "beard-fibres-jaw";
+      hairMesh.name = "cranial-hair-groom-3a";
+      hairMesh.castShadow = true; hairMesh.receiveShadow = false;
     }
+
+    // C. Volumetric Jaw-Coupled Beard & Mustache
+    if (beardLen > .012) {
+      const beardArrays = { vertices: [], indices: [], colors: [], uvs: [] };
+      const lightStubble = beardLen < .028;
+
+      // Mustache sweeps
+      for (const side of [-1, 1]) {
+        for (let m = 0; m < 4; m++) {
+          const t = m / 3;
+          const startX = side * (.0025 + t * .015);
+          const startY = mY + .0085 - t * .0025;
+          const startZ = faceDepth(startX, startY) + .0022;
+          const midX = side * (.012 + t * .015);
+          const midY = mY + .002 - t * .0045;
+          const midZ = faceDepth(midX, midY) + .0034;
+          const endX = side * (.021 + t * .013);
+          const endY = mY - .007 - t * .006 - Math.min(.014, beardLen * .25);
+          const endZ = faceDepth(endX, mY - .007) + .0024;
+          appendSculptedLock(
+            T, beardArrays,
+            [[startX, startY, startZ], [midX, midY, midZ], [endX, endY, endZ]],
+            lightStubble ? .0054 : .0074, .0028, lightStubble ? .0018 : .0025, .0010, 1.4, .95 + (1 - t) * .06
+          );
+        }
+      }
+
+      // Soul patch below lower lip
+      appendSculptedLock(
+        T, beardArrays,
+        [
+          [0, mY - .008, mZ + .0016],
+          [0, mY - .017, faceDepth(0, mY - .017) + .0028],
+          [0, mY - .025 - beardLen * .22, faceDepth(0, mY - .024) + .0022]
+        ],
+        lightStubble ? .0078 : .0110, .0038, .0024, .0008, 1.2, .94
+      );
+
+      // Multi-tiered jawline, cheek-feathered & chin beard locks (continuous z-depth & staggered rows prevent sawtooth)
+      const dropTotal = lightStubble ? (.008 + beardLen * .65) : (.014 + beardLen * 1.15);
+      const lockCount = 30;
+      const layers = lightStubble ? 1 : 2;
+      const zSurf = (px, py, absU) => {
+        const jawZ = faceDepth(px, Math.min(eyeY - .038, py));
+        const sideZ = eyeZ - .018 - Math.max(0, absU - .56) * .065;
+        return (absU > .56 ? T.MathUtils.lerp(jawZ, sideZ, T.MathUtils.smoothstep(absU, .56, .88)) : Math.max(.055, jawZ));
+      };
+      for (let layer = 0; layer < layers; layer++) {
+        const layerOut = (lightStubble ? .0015 : .0026) * layer;
+        for (let i = 0; i < lockCount; i++) {
+          const uRaw = (i + layer * .5) / (lockCount - 1 + (layers > 1 ? .5 : 0));
+          const u = uRaw * 2 - 1;
+          const absU = Math.abs(u);
+          const rx = u * (lightStubble ? .061 : .063);
+          const ry = mY - .016 + Math.pow(absU, 1.65) * .034 - layer * .0035;
+          const rz = zSurf(rx, ry, absU) + .0024 + layerOut * .5;
+          const localLen = dropTotal * (1.0 - Math.pow(absU, 1.65) * .68);
+          const jitter = (hash2(i, layer + 11) - .5) * .0035;
+          const x1 = rx * .96 + jitter, y1 = ry - localLen * .38;
+          const x2 = rx * .88 + jitter * 1.4, y2 = ry - localLen * .74;
+          const x3 = rx * .78 + jitter * 1.6, y3 = ry - localLen;
+          const z1 = Math.max(rz + .0026, zSurf(x1, y1, absU) + .0028) + layerOut;
+          const z2 = Math.max(rz + .0032, zSurf(x2, y2, absU) + .0030) + layerOut;
+          const z3 = rz + .0018 + layerOut * .7;
+          appendSculptedLock(
+            T, beardArrays,
+            [[rx, ry, rz], [x1, y1, z1], [x2, y2, z2], [x3, y3, z3]],
+            (lightStubble ? .0090 : .0126) - layer * .0018,
+            lightStubble ? .0036 : .0054,
+            lightStubble ? .0022 : .0034,
+            (lightStubble ? .0008 : .0020) + beardLen * .003,
+            2.2,
+            layer === 0 ? .90 : 1.02
+          );
+        }
+      }
+
+      const beardGeo = buildGroomGeometry(T, beardArrays);
+      const beardMesh = skinned(beardGeo, beardMat, () => [["head", 1]]);
+      beardMesh.name = "facial-beard-groom-3a";
+      beardMesh.castShadow = false; beardMesh.receiveShadow = false;
+    }
+
     return { sway, jawOpen };
   }
 
-  // A rectangular sheet, settled against an elliptical torso with gravity and
-  // stretch/shear constraints. This bake is reused by the animated skinned mesh.
-  function mantle(T, { shoulderY, pelvisY, length, look }) {
-    const columns = 40, rows = 28, p = [], uv = [], colors = [], indices = [];
-    const previous = [], pinned = [];
-    const width = .98;
-    for (let row = 0; row <= rows; row++) for (let col = 0; col <= columns; col++) {
-      const u = col / columns, v = row / rows, a = 1.44 + u * (Math.PI * 2 - 2.88);
-      const shoulderDrop = Math.pow(Math.abs(Math.sin(a)), 1.8) * .034;
-      const topY = shoulderY + .034 - shoulderDrop - Math.cos(a) * .012;
-      let fold = 0;
-      for (const [center, amplitude, spread, drift] of [[.08,.010,.032,.04],[.24,.008,.042,-.03],[.45,.014,.055,.05],[.69,.010,.036,-.04],[.91,.013,.042,.025]]) {
-        fold += bell(u - center - v * drift, spread * (.55 + v * .7)) * amplitude * (.3 + v * .7);
-      }
-      const x = Math.sin(a) * (.228 + v * .022 - Math.min(1, v * 2.4) * .018 + fold);
-      const z = Math.cos(a) * (.172 - Math.min(1, v * 2.4) * .010 + v * .022 + fold);
-      const y = topY - v * length + Math.sin(u * Math.PI) * v * v * .018;
-      p.push(x, y, z); previous.push(x, y, z);
-      pinned.push(row === 0 && ((col >= 5 && col <= 11) || (col >= 15 && col <= 25) || (col >= columns - 11 && col <= columns - 5)));
-      uv.push(u, 1 - v);
-      const wear = row > rows - 2 ? .065 : 0;
-      const tone = .97 - wear + (noise(col, row) - .5) * .025;
-      colors.push(tone, tone * .99, tone * .97);
-      if (row && col) { const n = row * (columns + 1) + col; indices.push(n, n - 1, n - columns - 1, n - 1, n - columns - 2, n - columns - 1); }
-    }
-    const constraints = [];
-    const connect = (a, b, rest) => constraints.push([a, b, rest]);
-    for (let row = 0; row <= rows; row++) for (let col = 0; col <= columns; col++) {
-      const n = row * (columns + 1) + col;
-      if (col < columns) connect(n, n + 1, width / columns);
-      if (row < rows) connect(n, n + columns + 1, length / rows);
-      if (row < rows && col < columns) {
-        const diagonal = Math.hypot(width / columns, length / rows);
-        connect(n, n + columns + 2, diagonal);
-        connect(n + 1, n + columns + 1, diagonal);
-      }
-    }
-    for (let step = 0; step < 48; step++) {
-      for (let n = 0; n < pinned.length; n++) if (!pinned[n]) {
-        const i = n * 3;
-        for (let axis = 0; axis < 3; axis++) {
-          const value = p[i + axis];
-          p[i + axis] += (value - previous[i + axis]) * .78 - (axis === 1 ? .0005 : 0);
-          previous[i + axis] = value;
-        }
-      }
-      for (let iteration = 0; iteration < 3; iteration++) {
-        for (const [a, b, rest] of constraints) {
-          const ai = a * 3, bi = b * 3;
-          const dx = p[bi] - p[ai], dy = p[bi + 1] - p[ai + 1], dz = p[bi + 2] - p[ai + 2];
-          const distance = Math.hypot(dx, dy, dz) || 1;
-          const error = (distance - rest) / distance * .38;
-          const wa = pinned[a] ? 0 : pinned[b] ? 1 : .5, wb = pinned[b] ? 0 : pinned[a] ? 1 : .5;
-          p[ai] += dx * error * wa; p[bi] -= dx * error * wb;
-          p[ai + 1] += dy * error * wa; p[bi + 1] -= dy * error * wb;
-          p[ai + 2] += dz * error * wa; p[bi + 2] -= dz * error * wb;
-        }
-        for (let n = 0; n < pinned.length; n++) if (!pinned[n]) {
-          const i = n * 3, t = clamp((p[i + 1] - pelvisY) / (shoulderY - pelvisY));
-          const rx = .235 + Math.pow(t, 2.5) * .058, rz = .178 + Math.pow(t, 2.5) * .016;
-          const radius = Math.hypot(p[i] / rx, p[i + 2] / rz);
-          if (radius < 1) { p[i] /= Math.max(.1, radius); p[i + 2] /= Math.max(.1, radius); }
-        }
+  // 6. Parametric Levantine Mantle / Himation Rest Grid (41x29 Topology for CharacterCloth)
+  function mantle(T, { shoulderY, pelvisY, length, look = {} }) {
+    const mcols = 41, mrows = 29;
+    const positions = new Float32Array(mcols * mrows * 3);
+    const veiled = look.headcover === "veil";
+    const fullCloak = look.cloak === "shoulder" || veiled;
+    // Wrap from behind/over outer shoulders cleanly clear of upper arms so pinRow stays streamlined.
+    const halfSweep = fullCloak ? Math.PI * .56 : Math.PI * .48;
+
+    for (let r = 0; r < mrows; r++) {
+      const tr = r / (mrows - 1);
+      const baseY = shoulderY + .018 - tr * length;
+      const baseWidth = .192 + tr * .094;
+      const baseDepth = .144 + tr * .076;
+
+      for (let c = 0; c < mcols; c++) {
+        const tc = c / (mcols - 1);
+        const angle = (tc - .5) * 2 * halfSweep;
+        const theta = Math.PI + angle; // PI is straight back (-Z)
+        const sinT = Math.sin(theta);
+        const cosT = Math.cos(theta);
+
+        const pipeFold = (Math.sin(tc * Math.PI * 10) * .58
+          + Math.sin(tc * Math.PI * 18 + 1.2) * .28
+          + Math.cos(tc * Math.PI * 6 - .7) * .14) * tr * .014;
+
+        let vx = sinT * (baseWidth + pipeFold);
+        const scapularClear = (1 - Math.min(1, tr / .32)) * Math.max(0, -cosT) * .026;
+        let vz = cosT * (baseDepth + pipeFold * .85) - scapularClear + .008;
+        const edgeCatenary = Math.sin(tc * Math.PI) * .016 * tr;
+        const shoulderSlope = -Math.pow(Math.abs(sinT), 1.45) * .044 * (1 - tr * .65);
+        const vy = baseY + shoulderSlope - edgeCatenary;
+
+        const idx = (r * mcols + c) * 3;
+        positions[idx] = vx;
+        positions[idx + 1] = vy;
+        positions[idx + 2] = vz;
       }
     }
-    const geometry = new T.BufferGeometry();
-    geometry.setAttribute("position", new T.Float32BufferAttribute(p, 3));
-    geometry.setAttribute("uv", new T.Float32BufferAttribute(uv, 2));
-    geometry.setAttribute("color", new T.Float32BufferAttribute(colors, 3));
-    geometry.setIndex(indices); geometry.computeVertexNormals();
-    const edge = (start, stride, count) => Array.from({ length: count }, (_, i) => p.slice((start + i * stride) * 3, (start + i * stride) * 3 + 3));
-    return { geometry, edges: [edge(0, columns + 1, rows + 1), edge(columns, columns + 1, rows + 1), edge(rows * (columns + 1), 1, columns + 1)] };
+
+    const geo = new T.BufferGeometry();
+    geo.setAttribute("position", new T.Float32BufferAttribute(positions, 3));
+    return { geometry: geo };
   }
 
-  function spring(T, stiffness = 64, damping = 13) {
-    const uniform = { value: new T.Vector2() }, velocity = new T.Vector2();
-    return { uniform, update(x, z, elapsed) {
-      const steps = Math.max(1, Math.ceil(elapsed / .016)), dt = elapsed / steps;
-      for (let i = 0; i < steps; i++) {
-        velocity.x += ((x - uniform.value.x) * stiffness - velocity.x * damping) * dt;
-        velocity.y += ((z - uniform.value.y) * stiffness - velocity.y * damping) * dt;
-        uniform.value.x = clamp(uniform.value.x + velocity.x * dt, -.035, .035);
-        uniform.value.y = clamp(uniform.value.y + velocity.y * dt, -.035, .035);
+  // 7. Sub-Stepped Semi-Implicit Damped Harmonic Oscillator for Secondary Hair & Cloth Lag
+  function spring(T, stiffness = 60, damping = 10) {
+    const uniform = { value: new T.Vector2(0, 0) };
+    let vx = 0, vy = 0;
+    return {
+      uniform,
+      update(targetX, targetY, delta) {
+        const dt = Math.min(.05, Math.max(.001, delta));
+        const steps = 2;
+        const h = dt / steps;
+        for (let s = 0; s < steps; s++) {
+          const ax = (targetX - uniform.value.x) * stiffness - vx * damping;
+          const ay = (targetY - uniform.value.y) * stiffness - vy * damping;
+          vx += ax * h;
+          vy += ay * h;
+          uniform.value.x += vx * h;
+          uniform.value.y += vy * h;
+        }
+        uniform.value.x = clamp(uniform.value.x, -.048, .048);
+        uniform.value.y = clamp(uniform.value.y, -.048, .048);
       }
-    } };
+    };
   }
 
+  // 8. Static Garment Batching & Tangent Space Optimization (preserves sandals, corner fringes, cloth, hair & body)
   function batchGarments(T, root, skeleton) {
     const groups = new Map();
-    for (const mesh of [...root.children]) {
-      if (!mesh.isSkinnedMesh || mesh.geometry.morphAttributes.position?.length ||
-        !/^(woven-tunic|sleeve-|rectangular-wool|mantle-|tunic-hem|garment-corner|knotted-woven|headcloth-rolled)/.test(mesh.name)) continue;
-      const group = groups.get(mesh.material) || [];
-      group.push(mesh); groups.set(mesh.material, group);
+    const garmentAllow = /^(woven-tunic|sleeve-|tunic-neckline|knotted-woven|headcloth-rolled|draped-|sash-drape|cord-waist|leather-waist|sash-waist|towel-waist|footwashing-|agal-headband)/;
+
+    for (const child of [...root.children]) {
+      if (!child.isSkinnedMesh || !child.geometry) continue;
+      if (child.geometry.attributes.uv && child.geometry.attributes.normal && child.geometry.index && !child.geometry.attributes.tangent) {
+        try { child.geometry.computeTangents(); } catch (_) {}
+      }
+
+      if (!garmentAllow.test(child.name) ||
+          child.userData.corner !== undefined ||
+          (child.geometry.morphAttributes?.position?.length > 0)) {
+        continue;
+      }
+
+      const hasUV = Boolean(child.geometry.attributes.uv);
+      const hasColor = Boolean(child.geometry.attributes.color);
+      const key = `${child.material.uuid}|uv:${hasUV}|col:${hasColor}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(child);
     }
-    for (const [material, parts] of groups) {
-      if (parts.length < 2) continue;
-      const arrays = { position: [], normal: [], uv: [], color: [], skinIndex: [], skinWeight: [] }, indices = [];
-      let offset = 0;
-      for (const part of parts) {
-        const count = part.geometry.attributes.position.count;
-        for (const [name, values] of Object.entries(arrays)) {
-          const itemSize = name === "uv" ? 2 : name.startsWith("skin") ? 4 : 3;
-          const attribute = part.geometry.attributes[name];
-          if (attribute) for (const value of attribute.array) values.push(value);
-          else for (let i = 0; i < count * itemSize; i++) values.push(name === "color" ? 1 : 0);
+
+    for (const [, meshes] of groups) {
+      if (meshes.length < 2) continue;
+
+      let totalVerts = 0, totalIndices = 0;
+      for (const m of meshes) {
+        totalVerts += m.geometry.attributes.position.count;
+        totalIndices += m.geometry.index ? m.geometry.index.count : m.geometry.attributes.position.count;
+      }
+      if (totalVerts > 65534) continue;
+
+      const templateAttr = meshes[0].geometry.attributes;
+      const hasUV = Boolean(templateAttr.uv);
+      const hasColor = Boolean(templateAttr.color);
+
+      const posArr = new Float32Array(totalVerts * 3);
+      const normArr = new Float32Array(totalVerts * 3);
+      const uvArr = hasUV ? new Float32Array(totalVerts * 2) : null;
+      const colArr = hasColor ? new Float32Array(totalVerts * 3) : null;
+      const skinIdxArr = new Uint8Array(totalVerts * 4);
+      const skinWgtArr = new Float32Array(totalVerts * 4);
+      const indexArr = new Uint16Array(totalIndices);
+
+      let vOffset = 0, iOffset = 0;
+      const mergedNames = [];
+
+      for (const m of meshes) {
+        const g = m.geometry;
+        const vCount = g.attributes.position.count;
+        posArr.set(g.attributes.position.array, vOffset * 3);
+        if (g.attributes.normal) normArr.set(g.attributes.normal.array, vOffset * 3);
+        if (hasUV && g.attributes.uv) uvArr.set(g.attributes.uv.array, vOffset * 2);
+        if (hasColor && g.attributes.color) colArr.set(g.attributes.color.array, vOffset * 3);
+        if (g.attributes.skinIndex) skinIdxArr.set(g.attributes.skinIndex.array, vOffset * 4);
+        if (g.attributes.skinWeight) skinWgtArr.set(g.attributes.skinWeight.array, vOffset * 4);
+
+        if (g.index) {
+          const srcIdx = g.index.array;
+          for (let k = 0; k < srcIdx.length; k++) indexArr[iOffset + k] = srcIdx[k] + vOffset;
+          iOffset += srcIdx.length;
+        } else {
+          for (let k = 0; k < vCount; k++) indexArr[iOffset + k] = vOffset + k;
+          iOffset += vCount;
         }
-        if (part.geometry.index) for (const index of part.geometry.index.array) indices.push(index + offset);
-        else for (let i = 0; i < count; i++) indices.push(i + offset);
-        offset += count; part.removeFromParent(); part.geometry.dispose();
+
+        vOffset += vCount;
+        mergedNames.push(m.name);
+        root.remove(m);
+        g.dispose();
       }
-      const geometry = new T.BufferGeometry();
-      for (const [name, values] of Object.entries(arrays)) {
-        const size = name === "uv" ? 2 : name.startsWith("skin") ? 4 : 3;
-        geometry.setAttribute(name, name === "skinIndex" ? new T.Uint16BufferAttribute(values, size) : new T.Float32BufferAttribute(values, size));
+
+      const mergedGeo = new T.BufferGeometry();
+      mergedGeo.setAttribute("position", new T.Float32BufferAttribute(posArr, 3));
+      mergedGeo.setAttribute("normal", new T.Float32BufferAttribute(normArr, 3));
+      if (uvArr) mergedGeo.setAttribute("uv", new T.Float32BufferAttribute(uvArr, 2));
+      if (colArr) mergedGeo.setAttribute("color", new T.Float32BufferAttribute(colArr, 3));
+      mergedGeo.setAttribute("skinIndex", new T.Uint8BufferAttribute(skinIdxArr, 4));
+      mergedGeo.setAttribute("skinWeight", new T.Float32BufferAttribute(skinWgtArr, 4));
+      mergedGeo.setIndex(new T.BufferAttribute(indexArr, 1));
+      if (uvArr) {
+        try { mergedGeo.computeTangents(); } catch (_) {}
       }
-      geometry.setIndex(indices);
-      const mesh = new T.SkinnedMesh(geometry, material);
-      mesh.name = "batched-garments-" + material.id;
-      mesh.userData.parts = parts.map(p => p.name);
-      root.add(mesh); mesh.bind(skeleton); mesh.frustumCulled = false; mesh.castShadow = mesh.receiveShadow = true;
+
+      const batchedMesh = new T.SkinnedMesh(mergedGeo, meshes[0].material);
+      batchedMesh.name = "batched-" + mergedNames[0];
+      batchedMesh.userData.parts = mergedNames;
+      root.add(batchedMesh);
+      batchedMesh.bind(skeleton);
+      batchedMesh.frustumCulled = false;
+      batchedMesh.castShadow = true;
+      batchedMesh.receiveShadow = true;
     }
   }
 
-  globalThis.CharacterDetail = { sculpt, expressions, skin, groom, maps, mantle, spring, batchGarments };
+  globalThis.CharacterDetail = {
+    sculpt,
+    expressions,
+    skin,
+    groom,
+    maps,
+    mantle,
+    spring,
+    batchGarments
+  };
 })();

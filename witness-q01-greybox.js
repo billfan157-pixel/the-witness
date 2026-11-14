@@ -178,7 +178,7 @@
   // Transient controller-driven motion, used while a campaign interaction holds
   // control. A reload discards it and reconstructs the last committed prefix.
   // Each rendered box reads the same moving solid; there is no visual-only gate.
-  ar.animateMechanism=function(kind,fraction){
+  ar.animateMechanism=function(kind,fraction,detail={}){
    const t=Math.max(0,Math.min(1,fraction)),solid=id=>ar.solids.find(s=>s.id===id),reset=id=>{const s=solid(id);Object.assign(s,structuredClone(original.get(id)));return s;};
    if(kind==='cart'){const s=reset('counterweight-cart');s.min[0]+=1.9*t;s.max[0]+=1.9*t;}
    else if(kind==='pulley'){const s=reset('rescue-side-gate');s.enabled=true;s.min[1]+=2.45*t;s.max[1]+=2.45*t;solid('rescue-raised-panel').enabled=false;}
@@ -187,7 +187,18 @@
     for(let k=0;k<3;k++){s.min[k]=src.min[k]+(dest.min[k]-src.min[k])*t;s.max[k]=src.max[k]+(dest.max[k]-src.max[k])*t;}
     solid('rescue-rested-beam').enabled=t===1;
    }
-   ar.invalidateRoutes();ar.onPreview?.({...ar.preview,cartProgress:kind==='cart'?t:undefined});
+   ar.invalidateRoutes();ar.onPreview?.({
+    ...ar.preview,
+    cartProgress:kind==='cart'?t:undefined,
+    pulleyProgress:kind==='pulley'?t:undefined,
+    leverProgress:kind==='lever'?t:undefined,
+    cartChocked:detail.chocked,
+    testPulse:detail.testPulse||0,
+    gateSecured:detail.secured,
+    fulcrumPlaced:detail.fulcrum,
+    beamWedged:detail.wedged,
+    beamSettled:detail.settled
+   });
    return {kind,fraction:t};
   };
   // PR-03 is the owner of story state. This read-only projection deliberately
@@ -222,13 +233,16 @@
   // drum, outrigger, lifting panel and restrained trolley.
   const drum=rod('winch-drum',[-26,ROOF+.95,-10.6],[-24.6,ROOF+.95,-10.6],.22,colors.wood);
   for(const x of [-26,-24.6])rod('winch-trestle',[x,ROOF,-11],[x,ROOF+1.1,-10.6],.07,colors.wood);
-  rod('hand-rope',[-29.4,.85,-5.1],[-29.4,ROOF+1.5,-5.1],.027,'#dfc395');
+  const handRope=rod('hand-rope',[-29.4,.85,-5.1],[-29.4,ROOF+1.5,-5.1],.027,'#dfc395');
   rod('rope-to-drum',[-29.4,ROOF+1.5,-5.1],[-25.3,ROOF+1.1,-10.6],.027,'#dfc395');
   rod('rope-to-outrigger',[-25.3,ROOF+1.1,-10.6],[-31,ROOF+1.5,-8.05],.027,'#dfc395');
   rod('panel-rope',[-31,2.24,-8.05],[-31,ROOF+1.5,-8.05],.027,'#dfc395');
   const loadRope=rod('load-rope',[-32.8,1,-4.6],[-29.4,ROOF+1.5,-5.1],.027,'#dfc395'),loadLength=loadRope.geometry.parameters.height;
   rod('winch-outrigger',[-28.3,ROOF,-8.05],[-31,ROOF+1.5,-8.05],.10,colors.wood);
   const chocks=[box('cart-chock-a',-31.5,.12,-4.35,.30,.24,.35,colors.mechanical),box('cart-chock-b',-31.5,.12,-4.85,.30,.24,.35,colors.mechanical)];
+  const gatePin=box('gate-latch-pin',-29.95,2.28,-8.05,.32,.12,.22,colors.mechanical);
+  const fulcrumPad=box('lever-fulcrum-pad',-18.1,.63,-6.05,.44,.06,.44,colors.mechanical);
+  const wedges=[box('manual-wedge-a',-19.65,.12,-5.85,.36,.18,.22,colors.mechanical),box('manual-wedge-b',-19.65,.12,-6.35,.36,.18,.22,colors.mechanical)];
   const lever=rod('lever-pole',[-19,.32,-5.4],[-17.2,.9,-6.7],.07,colors.wood);
   // The book and folded cover are already separate. Greybox props identify
   // their spatial needs without opening either narrative evidence package.
@@ -246,9 +260,31 @@
   const actors={titus:actor('Titus',anchors.titus,'#7c969b'),simeon:actor('Simeon',anchors.simeon,'#a8b8ad'),apprentice:actor('Apprenti',anchors.apprentice,'#b9a793'),natan:actor('Natan',P(-5,0,1.1),'#a69e8d'),yosef:actor('Yosef',P(-2,0,-12),'#8e9c97'),worker1:actor('Thợ 1',P(-22.5,0,-1),'#a7937c'),worker2:actor('Thợ 2',P(-21,0,-1),'#9b967f')};
   const update=p=>{
    for(const [id,mesh]of dynamic){const s=ar.solids.find(s=>s.id===id);mesh.visible=s.enabled!==false;mesh.matrixAutoUpdate=false;transform(s,mesh.matrix);mesh.matrixWorldNeedsUpdate=true;}
-   const ra=new T.Vector3(Number.isFinite(p.cartProgress)?-32.8+1.9*p.cartProgress:p.route==='mechanical'&&p.prepared?-30.9:-32.8,1,-4.6),rb=new T.Vector3(-29.4,ROOF+1.5,-5.1),rd=rb.clone().sub(ra);loadRope.scale.y=rd.length()/loadLength;loadRope.position.copy(ra.add(rb).multiplyScalar(.5));loadRope.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),rd.normalize());
-   fire.visible=p.fire&&(!p.fireState||p.fireState==='burning');chocks.forEach(m=>m.visible=p.route==='mechanical'&&p.prepared);lever.rotation.z=p.route==='manual'&&p.opened?-.25:0;
-   drum.rotation.z=p.opened?.7:0;
+   const cartFrac=Number.isFinite(p.cartProgress)?p.cartProgress:p.route==='mechanical'&&p.prepared?1:0;
+   const pulseX=(p.testPulse||0)*-.035;
+   const ra=new T.Vector3(-32.8+1.9*cartFrac+pulseX,1,-4.6),rb=new T.Vector3(-29.4,ROOF+1.5,-5.1),rd=rb.clone().sub(ra);
+   loadRope.scale.y=rd.length()/loadLength;loadRope.position.copy(ra.add(rb).multiplyScalar(.5));loadRope.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),rd.normalize());
+   fire.visible=p.fire&&(!p.fireState||p.fireState==='burning');
+   const chocked=!!(p.cartChocked||(p.route==='mechanical'&&p.prepared));
+   chocks.forEach((m,i)=>{
+    m.visible=p.route==='mechanical'&&(chocked||Number.isFinite(p.cartProgress));
+    m.position.set(chocked?-31.5:-32.2,.12,chocked?(i?-4.85:-4.35):(i?-5.45:-3.75));
+   });
+   const secured=!!(p.gateSecured||(p.route==='mechanical'&&p.opened));
+   gatePin.visible=p.route==='mechanical'&&(secured||Number.isFinite(p.pulleyProgress));
+   gatePin.position.set(secured?-30.28:-29.88,2.28,-8.05);
+   const pulleyFrac=Number.isFinite(p.pulleyProgress)?p.pulleyProgress:p.route==='mechanical'&&p.opened?1:0;
+   handRope.position.y=(ROOF+2.35)/2-(pulleyFrac*.18);
+   const fulcrumOn=!!(p.fulcrumPlaced||(p.route==='manual'&&p.prepared));
+   fulcrumPad.visible=p.route==='manual'&&fulcrumOn;
+   const wedged=!!(p.beamWedged||(p.route==='manual'&&p.opened));
+   wedges.forEach((m,i)=>{
+    m.visible=p.route==='manual'&&(wedged||p.prepared||Number.isFinite(p.leverProgress));
+    m.position.set(wedged?-20.1:-19.65,wedged?.53:.12,wedged?(i?-6.85:-6.15):(i?-6.35:-5.85));
+   });
+   const leverFrac=Number.isFinite(p.leverProgress)?p.leverProgress:p.route==='manual'&&p.opened?1:0;
+   lever.rotation.z=p.route==='manual'?(p.opened||p.beamSettled?-.25:-leverFrac*.30):0;
+   drum.rotation.z=pulleyFrac*.9+(p.opened?.7:0);
    // The engine caches static shadow maps. Moving a gate / trolley invalidates
    // those maps together with the rendered pose and collision volume.
    for(const light of scene.children)if(light.isLight&&light.shadow)light.shadow.needsUpdate=true;

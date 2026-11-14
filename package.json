@@ -31,6 +31,9 @@
     "test:architecture-browser": "node test/architecture-browser.mjs",
     "dev:cloud": "node tools/serve-cloud.mjs",
     "test:backend": "node --test test/backend.test.mjs test/cloud-client.test.cjs",
+    "audio:tts": "node tools/vieneu-tts.cjs",
+    "audio:tts:regen": "node tools/vieneu-tts.cjs --changed-only",
+    "audio:tts:check": "node tools/vieneu-tts.cjs --check",
     "db:generate": "drizzle-kit generate",
     "agent:context": "node tools/check-agent-governance.cjs --task"
   },

@@ -24,17 +24,44 @@
     }
     if(event==='rescueRoute'||event==='fire')actor('titus',at.titus,3.5);
     if(event==='rescueStep'){
-      const step=payload.step;
+      const step=payload.step,r=context.rescue||context;
       const point={cart:'cart',pulley:'rope',workers:'lever',lever:'lever',exit:'mezzanine',extract:'reception'}[step];
       if(!point)throw Error('Thao tác cứu hộ không hợp lệ.');requireAt(p,at[point],step==='extract'?2.1:2.8);
-      if(step==='cart'||step==='pulley')actor('titus',at[point],4);
-      if(step==='workers'||step==='lever'){actor('worker1',at.lever,3);actor('worker2',at.lever,3);actor('titus',at.lever,4);}
+      if(step==='cart'){
+        if(scene.rescue.route!=='mechanical')throw Error('Xe đối trọng chỉ thuộc tuyến bộ tời.');
+        actor('titus',at.cart,4);
+        if(!(Number(r.cartProgress)>=.98))throw Error('Đưa xe đối trọng tới cữ ở cuối ray trước.');
+        if(!r.cartChocked)throw Error('Chèn đủ nêm giữ bánh xe trước khi thử tải.');
+        if(!r.loadTested)throw Error('Kiểm độ ổn định dây tải trước khi xác nhận.');
+      }
+      if(step==='pulley'){
+        if(scene.rescue.route!=='mechanical'||!scene.rescue.steps.includes('cart'))throw Error('Đưa xe đối trọng tới cữ và chèn bánh trước khi kéo tời.');
+        actor('titus',at.rope,4);
+        if(!(Number(r.pulleyProgress)>=.98))throw Error('Kéo dây tời đưa cánh ngăn lên hết cữ trước.');
+        if(!r.gateSecured)throw Error('Gài chốt giữ cánh ngăn an toàn trước khi xác nhận.');
+      }
+      if(step==='workers'){
+        if(scene.rescue.route!=='manual')throw Error('Nhóm thợ kê xà chỉ thuộc tuyến thủ công.');
+        actor('worker1',at.lever,3);actor('worker2',at.lever,3);actor('titus',at.lever,4);
+        if(!r.workersBriefed)throw Error('Mời và tập hợp đủ hai thợ tới chỗ kê xà trước.');
+        if(!r.fulcrumPlaced)throw Error('Đặt điểm kê và đầu đòn đúng vị trí trước khi nâng.');
+      }
+      if(step==='lever'){
+        if(scene.rescue.route!=='manual'||!scene.rescue.steps.includes('workers'))throw Error('Tập hợp đủ thợ và đặt điểm kê trước khi nâng xà.');
+        actor('worker1',at.lever,3);actor('worker2',at.lever,3);actor('titus',at.lever,4);
+        if(!(Number(r.leverProgress)>=.98))throw Error('Cùng nhóm nâng xà hết nhịp vào chỗ tựa trước.');
+        if(!r.beamWedged)throw Error('Chèn nêm dưới xà trước khi buông tay đòn.');
+        if(!r.beamSettled)throw Error('Kiểm độ vững kết cấu trước khi xác nhận mở lối.');
+      }
       if(step==='exit'){
+        const openStep=scene.rescue.route==='mechanical'?'pulley':'lever';
+        if(!scene.rescue.steps.includes(openStep))throw Error('Mở lối cứu hộ ở tầng trệt trước khi lên kiểm đường mái.');
         actor('titus',at.reception,1.6);
         if(!context.roofChecked||!context.commonOpen)throw Error('Cùng Titus kiểm điểm nhận trên mái rồi quay xuống gác trước.');
       }
       if(step==='extract'){
         if(!scene.rescue.steps.includes('exit'))throw Error('Đường nhận người chưa được kiểm.');
+        if(!context.extractBriefed&&!r.extractBriefed)throw Error('Quay xuống gác gọi Simeon và người học việc cùng đi lên trước.');
         actor('titus',at.reception,1.6);actor('simeon',at.reception,1.8);actor('apprentice',at.reception,1.8);
       }
     }

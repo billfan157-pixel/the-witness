@@ -42,7 +42,7 @@ html=html.replace(/<link rel="icon" href="\.\/([^\"]+)"[^>]+>/,(_,f)=>'<link rel
 // Embed only player-resolved images; nested architecture material candidates are web/precache-only.
 const assets=Object.fromEntries(walk('assets').filter(f=>/\.(jpg|webp)$/.test(f)&&(f.split('/').length===2||f.startsWith('assets/terrain/')||f.startsWith('assets/architecture/lite/')||f.startsWith('assets/architecture/phase-b/lite/'))).flatMap(f=>{const key=f.slice(7);return [[key,uri(f)],...(key.startsWith('land-')?[[key.slice(5,-4),uri(f)]]:[])];}));
 const scripts=[...html.matchAll(/<script src="\.\/([^\"]+)"[^>]*><\/script>/g)].map(m=>m[1]);
-const audioAssets=Object.fromEntries(all.filter(f=>/\.(mp3|wav|ogg)$/.test(f)).map(f=>[f,uri(f)]));
+const audioAssets=Object.fromEntries(all.filter(f=>/\.(mp3|wav|ogg)$/.test(f)&&!f.startsWith('assets/audio/q01/vieneu/comparison/')).map(f=>[f,uri(f)]));
 let js='globalThis.WitnessAudioAssets='+JSON.stringify(audioAssets)+';\n'+'globalThis.AdventureAssets='+JSON.stringify(assets)+';\n'+scripts.map(f=>readText(f)).join('\n');
 const kitAssets=require('./kit-offline-assets.cjs')(root,uri);
 const labAssets=require('./kit-offline-assets.cjs')(root,uri,{full:true});

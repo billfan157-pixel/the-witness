@@ -57,10 +57,13 @@
     if(q.beat===4){
       if(!r.route)return ['titus','Một đường tới hai người','Khảo sát bộ tời hoặc phương án nâng xà, rồi bắt đầu cùng Titus.'];
       const n=r.steps.length;
-      if(n===0)return [r.route==='mechanical'?'cart':session?.activity==='workers'?'lever':'workers',r.route==='mechanical'?'Đưa xe tới cữ và chèn bánh':'Mời hai thợ tới chỗ kê xà','Cùng Titus kiểm chỗ giữ tải rồi mới bắt tay vào.'];
-      if(n===1)return [r.route==='mechanical'?'rope':'lever',r.route==='mechanical'?'Kéo và giữ tay dây ở sân':'Nâng xà, đặt nêm rồi mới buông','Titus giữ nhịp. Nhìn nơi đặt nêm và chốt giữ tải.'];
+      if(n===0){
+        if(r.route==='mechanical')return ['cart','Đẩy xe đối trọng tới cữ','Đưa xe cuối ray, chèn hai nêm bánh và kiểm độ căng dây cùng Titus.'];
+        return [session?.rescue?.workersBriefed?'lever':'workers',session?.rescue?.workersBriefed?'Đặt điểm kê cùng nhóm thợ':'Mời hai thợ tới chỗ kê xà',session?.rescue?.workersBriefed?'Chờ đủ hai thợ và Titus tại chỗ kê xà, đặt điểm kê đúng thế.':'Nói với hai thợ ở sân để họ cùng Titus tới điểm nâng xà.'];
+      }
+      if(n===1)return [r.route==='mechanical'?'rope':'lever',r.route==='mechanical'?'Kéo tời và cài chốt giữ cánh':'Cùng nâng xà, chèn nêm rồi kiểm vững',r.route==='mechanical'?'Phối hợp với Titus kéo hết nhịp dây ở sân rồi gài chốt khóa cánh ngăn.':'Cùng nhóm nâng xà hết nhịp, đặt nêm gỗ rồi kiểm độ ổn định trước khi buông.'];
       if(n===2)return !session?.commonOpen?['commonDoor','Cùng Titus kiểm đường lên mái','Đi qua tuyến đã mở tới gác, chờ nhau rồi mở cửa chung.']:!session?.roofChecked?['reception','Kiểm điểm nhận ngoài khói','Đi cùng Titus tới sân mái; xác nhận điểm nhận.']:['mezzanine','Quay xuống đón hai người','Titus ở lại trên mái. Tự quay xuống gác và gọi đáp.'];
-      return session?.activity==='extract'?['reception','Đi cùng Simeon và người học việc','Chờ cả hai qua thang tới Titus rồi xác nhận nhận người.']:['mezzanine','Gọi hai người đi cùng','Titus đang chờ ở điểm nhận trên mái.'];
+      return session?.activity==='extract'?['reception','Hộ tống Simeon và người học việc','Chờ cả hai lên hết thang tới chỗ Titus trên mái rồi xác nhận.']:['mezzanine','Gọi hai người đi cùng','Titus đang chờ ở điểm nhận trên mái.'];
     }
     if(q.beat===5)return ['lookout','Một người rời hẻm','Tới lan can, chủ động quan sát. Không đọc được mặt.'];
     if(q.beat===6)return ['yosef','Một chỗ nói nhỏ','Theo thang ngoài xuống sân, gặp Yosef dưới mái hiên.'];
@@ -84,15 +87,38 @@
   function createPresenter(options){
     session?.dispose();if(!mounted)throw Error('Chưa có không gian campaign Q01.');
     const {engine,getState,write,toast,audio,refresh,onAdvance}=options,{ar,actors}=mounted;
+    const resetRescue=(steps,briefed=false)=>{
+      const s=steps||[];
+      return {
+        cartProgress:s.includes('cart')?1:0,
+        cartChocked:s.includes('cart'),
+        loadTested:s.includes('cart'),
+        pulleyProgress:s.includes('pulley')?1:0,
+        gateSecured:s.includes('pulley'),
+        workersBriefed:s.includes('workers'),
+        fulcrumPlaced:s.includes('workers'),
+        leverProgress:s.includes('lever')?1:0,
+        beamWedged:s.includes('lever'),
+        beamSettled:s.includes('lever'),
+        extractBriefed:s.includes('exit')&&briefed
+      };
+    };
     const jobs=new Map(),errors=[],history=[],node=document.createElement('section');node.id='q01-presenter';node.className='q01-presenter';node.hidden=true;node.setAttribute('aria-label','Đối thoại tại cảnh');document.querySelector('#game').append(node);
+    const workNode=document.createElement('section');workNode.id='q01-rescue-work';workNode.className='q01-rescue-work';workNode.hidden=true;workNode.setAttribute('aria-label','Thao tác cứu hộ 3D');document.querySelector('#game').append(workNode);
+    const escortNode=document.createElement('aside');escortNode.id='q01-escort-bar';escortNode.className='q01-escort-bar';escortNode.hidden=true;escortNode.setAttribute('aria-live','polite');document.querySelector('#game').append(escortNode);
     const panel=document.createElement('aside');panel.id='q01-route-guide';panel.className='q01-route-guide';document.querySelector('#game').append(panel);
-    let ui=null,last=0,disposed=false,paused=false,projection='',lightKey='',resting=null,hold=null,intro=null,lastPlane=0,alarm=false;
-    const api={activity:null,followingStranger:false,commonOpen:false,roofChecked:false,jobs,errors,history,get ui(){return ui},get introduction(){return !!intro},get blocking(){return !!(ui||hold||resting||intro)},get mounted(){return mounted}};session=api;
+    let ui=null,work=null,drag=null,last=0,disposed=false,paused=false,projection='',lightKey='',resting=null,intro=null,lastPlane=0,alarm=false,lastWorkSfx=0;
+    const api={activity:null,followingStranger:false,commonOpen:false,roofChecked:false,rescue:resetRescue(),seenIntro:{},jobs,errors,history,get ui(){return ui},get work(){return work},get introduction(){return !!intro},get blocking(){return !!(ui||work||resting||intro)},get mounted(){return mounted}};session=api;
     const point=id=>G.anchors[id],actorPoint=id=>{const a=actors[id];return a?{x:a.object.position.x,y:a.object.position.y,z:a.object.position.z,supportId:a.object.userData.supportId}:null;};
     const snapshot=()=>Object.fromEntries(Object.keys(actors).map(id=>[id,actorPoint(id)]));
     const natanVisible=()=>{const p=engine.spatial(),n=actorPoint('natan');return ar.visible({...p,y:p.y+1.45},{...n,y:n.y+1.05});};
     const stateWithPosition=()=>{const s=getState();s.spatialPositions['Q01.mortal']={schema:1,...engine.spatial()};return s;};
-    function event(id,payload){const s=stateWithPosition();write(root.WitnessModel.q01SceneEvent(s,id,payload,{actors:snapshot(),commonOpen:api.commonOpen,roofChecked:api.roofChecked,strangerHidden:mounted.strangerHidden(engine.spatial()),natanVisible:natanVisible()}));history.push({event:id,payload:copy(payload||{}),p:engine.spatial(),actors:snapshot()});sync();}
+    function event(id,payload){
+      const s=stateWithPosition(),next=root.WitnessModel.q01SceneEvent(s,id,payload,{actors:snapshot(),rescue:copy(api.rescue),commonOpen:api.commonOpen,roofChecked:api.roofChecked,extractBriefed:api.rescue.extractBriefed,strangerHidden:mounted.strangerHidden(engine.spatial()),natanVisible:natanVisible()});
+      write(next);history.push({event:id,payload:copy(payload||{}),p:engine.spatial(),actors:snapshot()});
+      if(id==='rescueRoute'||(id==='rescueStep'&&['cart','pulley','workers','lever'].includes(payload?.step)))api.rescue=resetRescue(next.sceneProgress.Q01.rescue.steps,!!api.activity);
+      sync();
+    }
     function action(id,opts){write(root.WitnessModel.act(stateWithPosition(),id,opts));sync();}
     function place(id,p){const a=actors[id];a.object.position.set(p.x,p.y,p.z);a.object.userData.supportId=p.supportId;}
     function walk(id,where,following=false){
@@ -149,7 +175,7 @@
     function spatialNear(id,r=2.6){return I.near(engine.spatial(),point(id),r);}
     function gather(id){const p=point(id);walk('titus',{...p,x:p.x+(id==='lever'?1.8:.95),z:p.z+1.05});}
     function interact(full){
-      if(disposed||resting||hold||intro)return true;if(ui)return true;const id=String(full).replace(/^q01:/,'');if(!point(id)||!engine.within('q01:'+id))return false;
+      if(disposed||resting||work||intro)return true;if(ui)return true;const id=String(full).replace(/^q01:/,'');if(!point(id)||!engine.within('q01:'+id))return false;
       const s=getState(),q=s.sceneProgress.Q01,r=q.rescue,done=s.quests.Q01.done;
       if(s.quests.Q01.route){if(id==='handoff')onAdvance();else show('outro');return true;}
       if(q.beat===0&&id==='disembark'){show('arrival',()=>event('disembark'));return true;}
@@ -170,34 +196,72 @@
       if(q.beat===4){
         if(!r.route&&id==='titus'){show('fire',null,[['mechanical','Bắt đầu cùng Titus ở bộ tời'],['manual','Bắt đầu cùng nhóm nâng xà']]);return true;}
         if(!r.route){toast(id==='cart'||id==='rope'?'Xe có cữ và dây giữ. Tay dây vận hành từ sân; cần chèn xe trước.':'Xà chắn lối chính. Hai thợ có thể cùng kê, nâng và chèn lại. Hỏi Titus để bắt đầu.');return true;}
-        if(r.steps.length===0&&r.route==='mechanical'&&id==='cart'){
-          gather('cart');if(!I.near(actorPoint('titus'),point('cart'),4)){toast('Titus đang tới giữ dây. Chờ anh ấy rồi bắt đầu.');return true;}
-          show('cart',()=>motion('cart',2.2,()=>event('rescueStep',{step:'cart'})));return true;
+        if(r.steps.length===0&&r.route==='mechanical'){
+          if(id==='rope'){audio?.effect?.('cart-block',{at:[point('cart').x,.5,point('cart').z],gain:.45});toast('Xe đối trọng còn lỏng trên ray. Đẩy xe tới cữ và chèn bánh trước khi kéo tời.');return true;}
+          if(id==='cart'){
+            gather('cart');if(!I.near(actorPoint('titus'),point('cart'),4)){toast('Titus đang tới giữ dây. Chờ anh ấy rồi bắt đầu.');return true;}
+            if(!api.seenIntro.cart){api.seenIntro.cart=true;show('cart',()=>openWork('cart'));}else openWork('cart');
+            return true;
+          }
         }
-        if(r.steps.length===0&&r.route==='manual'&&id==='workers'){
-          show('workers',()=>{api.activity='workers';walk('worker1',{...point('lever'),x:point('lever').x-1.25});walk('worker2',{...point('lever'),x:point('lever').x+1.15});gather('lever');sync();});return true;
+        if(r.steps.length===0&&r.route==='manual'){
+          if(id==='workers'){
+            show('workers',()=>{api.activity='workers';api.rescue.workersBriefed=true;walk('worker1',{...point('lever'),x:point('lever').x-1.25});walk('worker2',{...point('lever'),x:point('lever').x+1.15});gather('lever');sync();});return true;
+          }
+          if(id==='lever'){
+            if(!api.rescue.workersBriefed){toast('Xà quá nặng để làm một mình. Mời hai thợ và Titus tới cùng kê xà trước.');return true;}
+            if(!I.near(actorPoint('worker1'),point('lever'),3)||!I.near(actorPoint('worker2'),point('lever'),3)||!I.near(actorPoint('titus'),point('lever'),4)){
+              if(!jobs.has('worker1'))walk('worker1',{...point('lever'),x:point('lever').x-1.25});
+              if(!jobs.has('worker2'))walk('worker2',{...point('lever'),x:point('lever').x+1.15});
+              if(!jobs.has('titus'))gather('lever');
+              toast('Đang chờ hai thợ và Titus cùng vào vị trí kê xà.');return true;
+            }
+            openWork('workers');return true;
+          }
         }
-        if(r.steps.length===0&&r.route==='manual'&&id==='lever'&&api.activity==='workers'){
-          event('rescueStep',{step:'workers'});api.activity=null;sync();return true;
-        }
-        if(r.steps.length===1&&((r.route==='mechanical'&&id==='rope')||(r.route==='manual'&&id==='lever'))){
-          gather(id);if(!I.near(actorPoint('titus'),point(id),4)){toast('Chờ Titus vào vị trí cùng làm.');return true;}
-          show(r.route==='mechanical'?'pulley':'lever',()=>motion(r.route==='mechanical'?'pulley':'lever',2.8,()=>event('rescueStep',{step:r.route==='mechanical'?'pulley':'lever'})));return true;
+        if(r.steps.length===1){
+          if(r.route==='mechanical'&&id==='rope'){
+            gather('rope');if(!I.near(actorPoint('titus'),point('rope'),4)){toast('Chờ Titus vào vị trí cùng kéo dây.');return true;}
+            if(!api.seenIntro.pulley){api.seenIntro.pulley=true;show('pulley',()=>openWork('pulley'));}else openWork('pulley');
+            return true;
+          }
+          if(r.route==='manual'&&id==='lever'){
+            gather('lever');
+            if(!I.near(actorPoint('worker1'),point('lever'),3)||!I.near(actorPoint('worker2'),point('lever'),3)||!I.near(actorPoint('titus'),point('lever'),4)){
+              if(!jobs.has('worker1'))walk('worker1',{...point('lever'),x:point('lever').x-1.25});
+              if(!jobs.has('worker2'))walk('worker2',{...point('lever'),x:point('lever').x+1.15});
+              toast('Chờ đủ nhóm giữ đầu đòn tại xà.');return true;
+            }
+            if(!api.seenIntro.lever){api.seenIntro.lever=true;show('lever',()=>openWork('lever'));}else openWork('lever');
+            return true;
+          }
         }
         if(r.steps.length===2){
           if(id==='commonDoor'&&!api.commonOpen){
             if(!I.near(actorPoint('titus'),point('commonDoor'),3)){toast('Chờ Titus lên cùng tới cửa gác.');return true;}
-            api.commonOpen=true;ar.setPreview({common:true});audio?.material('wood',[point(id).x,point(id).z]);sync();return true;
+            api.commonOpen=true;ar.setPreview({common:true});audio?.effect?.('wood-slide',{at:[point(id).x,G.MEZZ,point(id).z],gain:.5});audio?.material('wood',[point(id).x,point(id).z]);sync();return true;
           }
           if(id==='reception'&&api.commonOpen&&!api.roofChecked){
             if(!I.near(actorPoint('titus'),point('reception'),2.8)){toast('Chờ Titus cùng kiểm điểm nhận.');return true;}
             api.roofChecked=true;walk('titus',{...point('reception'),x:point('reception').x+.25,z:point('reception').z+.55});show('receive',()=>sync());return true;
           }
-          if(id==='mezzanine'&&api.roofChecked){event('rescueStep',{step:'exit'});return true;}
+          if(id==='reception'&&api.roofChecked){toast('Titus đã giữ điểm nhận. Hãy xuống tầng gác C1 đón Simeon và người học việc.');return true;}
+          if(id==='mezzanine'&&api.roofChecked){
+            if(!I.near(actorPoint('titus'),point('reception'),1.6)){walk('titus',{...point('reception'),x:point('reception').x+.25,z:point('reception').z+.55});toast('Chờ Titus đứng ổn định tại điểm nhận trên mái trước.');return true;}
+            event('rescueStep',{step:'exit'});return true;
+          }
         }
         if(r.steps.length===3){
-          if(id==='mezzanine'&&!api.activity){show('extract',()=>{api.activity='extract';sync();});return true;}
-          if(id==='reception'&&api.activity==='extract'){event('rescueStep',{step:'extract'});api.activity=null;sync();return true;}
+          if(id==='mezzanine'&&!api.activity){show('extract',()=>{api.activity='extract';api.rescue.extractBriefed=true;sync();});return true;}
+          if(id==='reception'){
+            if(!api.activity||!api.rescue.extractBriefed){toast('Xuống gác gọi Simeon và người học việc cùng đi lên trước.');return true;}
+            const rp=point('reception');
+            if(!I.near(actorPoint('simeon'),rp,1.8)||!I.near(actorPoint('apprentice'),rp,1.8)){
+              walk('simeon',{...rp,x:rp.x-.95,z:rp.z-.55});walk('apprentice',{...rp,x:rp.x+.70,z:rp.z-.65});
+              toast('Chờ cả Simeon và người học việc lên tới điểm nhận trên mái rồi mới xác nhận.');sync();return true;
+            }
+            event('rescueStep',{step:'extract'});api.activity=null;api.extractSettling=false;sync();return true;
+          }
         }
       }
       if(q.beat===5&&id==='lookout'){mounted.lookout();show('rooftop',()=>event('rooftop'));return true;}
@@ -219,10 +283,160 @@
       toast(goal(s)[2]);return true;
     }
     function safeInteract(id){try{return interact(id);}catch(err){toast(err.message);return true;}}
-    function motion(kind,seconds,done){
-      close();options.stop?.();engine.pause(true);hold={kind,seconds,t:0,done};mounted.perform(kind,true);node.hidden=false;panel.hidden=true;node.innerHTML=`<div class="q01-dialogue-head"><span>Cùng Titus</span></div><p class="q01-spoken">${kind==='cart'?'Đưa xe trong rãnh dẫn, đặt nêm tại cữ…':kind==='pulley'?'Kéo dây, giữ cánh ngăn tại chốt…':'Nâng cùng nhịp, đặt xà lên chỗ tựa rồi chèn…'}</p>`;
-      audio?.effect(kind==='cart'?'wood':kind==='pulley'?'rope':'wood-strain',{at:[engine.spatial().x,.8,engine.spatial().z],gain:.42});
+    const workSpecs={
+      cart:{title:'Xe đối trọng · Đường ray C0',hint:'Kéo/nhấn giữ (hoặc W/D/kéo trên cảnh 3D) để đẩy xe tới cữ, chèn hai nêm bánh rồi kiểm dây tải.',target:[ -31.9,.6,-4.6],key:'cartProgress',audio:'cart-rumble',stepAudio:'wood-slide',stepLabel:'Đẩy xe tới (+25%)',holdLabel:'Giữ đẩy xe tới cữ',backLabel:'Kéo lùi'},
+      pulley:{title:'Bộ tời tay dây · Lối phụ',hint:'Cùng Titus giữ nhịp kéo dây (W/D hoặc kéo xuống trên cảnh) đưa cánh ngăn lên hết cữ, sau đó gài chốt khóa.',target:[-30.5,2.2,-7.8],key:'pulleyProgress',audio:'rope-friction',stepAudio:'rope-friction',stepLabel:'Kéo một nhịp cùng Titus (+25%)',holdLabel:'Giữ để kéo tời',backLabel:'Nới dây'},
+      workers:{title:'Kê điểm tựa · Nhóm bốn người',hint:'Đủ Titus và hai thợ đã đứng vào hàng. Đặt điểm kê gỗ vào đá đỡ và gài đầu đòn trước khi nâng.',target:[-18.4,.55,-6.4],key:null},
+      lever:{title:'Nâng xà · Đặt nêm và kiểm vững',hint:'Cùng nhóm nâng nhịp (W/D hoặc kéo) đưa xà lên gối tựa, chèn nêm gỗ rồi kiểm độ đứng vững trước khi buông.',target:[-18.8,.75,-6.5],key:'leverProgress',audio:'wood-strain',stepAudio:'wood-creak',stepLabel:'Cùng nâng một nhịp (+25%)',holdLabel:'Giữ để cùng nâng đòn',backLabel:'Hạ nhẹ'}
+    };
+    function applyWorkVisual(kind,active=true){
+      const r=api.rescue,frac=kind==='cart'?r.cartProgress:kind==='pulley'?r.pulleyProgress:r.leverProgress||0;
+      mounted.perform(kind==='workers'?'lever':kind,active,frac,{chocked:r.cartChocked,testPulse:work?.pulse||0,secured:r.gateSecured,fulcrum:r.fulcrumPlaced,wedged:r.beamWedged,settled:r.beamSettled});
     }
+    function aimWorkCamera(kind){
+      const spec=workSpecs[kind],frac=spec.key?api.rescue[spec.key]:0;
+      if(engine.cameraState().view==='first'){if(work&&!work.aimed){work.aimed=true;aimAt(...spec.target);}return;}
+      if(getState().settings.motion==='calm')return;
+      if(kind==='cart')engine.inspect([-32.8+1.9*frac,-4.6],{height:.62,camera:[-30.1,1.95,-1.95],showPlayer:true,cameraTracking:true});
+      else if(kind==='pulley')engine.inspect([-30.4,-7.9],{height:2.1+frac*1.3,camera:[-27.4,2.15,-2.9],showPlayer:true,cameraTracking:true});
+      else engine.inspect([-18.4,-6.5],{height:.88,camera:[-20.8,2.05,-2.9],showPlayer:true,cameraTracking:true});
+    }
+    function playWorkAudio(id,at){
+      const now=performance.now();if(now-lastWorkSfx<320)return;
+      lastWorkSfx=now;audio?.effect?.(id,{at,gain:.44,cooldown:240});
+    }
+    function updateWorkMeters(){
+      if(!work)return;
+      const spec=workSpecs[work.kind],pct=spec.key?Math.round(api.rescue[spec.key]*100):100;
+      const fill=workNode.querySelector('.q01-work-fill'),out=workNode.querySelector('.q01-work-pct'),slider=workNode.querySelector('[data-q01-slider]');
+      if(fill)fill.style.width=pct+'%';
+      if(out)out.textContent=pct+'%';
+      if(slider&&document.activeElement!==slider)slider.value=String(pct);
+      const r=api.rescue;
+      const chockBtn=workNode.querySelector('[data-q01-work=cart-chock]');if(chockBtn)chockBtn.disabled=r.cartChocked;
+      const latchBtn=workNode.querySelector('[data-q01-work=pulley-latch]');if(latchBtn)latchBtn.disabled=r.gateSecured;
+      const wedgeBtn=workNode.querySelector('[data-q01-work=lever-wedge]');if(wedgeBtn)wedgeBtn.disabled=r.beamWedged;
+    }
+    function renderWork(){
+      if(!work){workNode.hidden=true;return;}
+      const k=work.kind,spec=workSpecs[k],r=api.rescue,pct=spec.key?Math.round(r[spec.key]*100):0;
+      const chip=(ok,text)=>`<span class="q01-work-chip${ok?' is-done':''}">${ok?'✓':'·'} ${esc(text)}</span>`;
+      const chips=k==='cart'
+        ?chip(r.cartProgress>=.98,`Xe tại cữ (${pct}%)`)+chip(r.cartChocked,'Hai nêm bánh')+chip(r.loadTested,'Kiểm dây tải')
+        :k==='pulley'
+        ?chip(r.pulleyProgress>=.98,`Kéo tời (${pct}%)`)+chip(r.gateSecured,'Chốt giữ cánh')
+        :k==='workers'
+        ?chip(r.workersBriefed,'Titus & 2 thợ')+chip(r.fulcrumPlaced,'Điểm kê dưới xà')
+        :chip(r.leverProgress>=.98,`Nâng xà (${pct}%)`)+chip(r.beamWedged,'Nêm gỗ dưới xà')+chip(r.beamSettled,'Độ vững kết cấu');
+      const controls=k==='workers'
+        ?`<div class="q01-work-buttons"><button class="${r.fulcrumPlaced?'':'primary'}" data-q01-work="lever-fulcrum" ${r.fulcrumPlaced?'disabled':''}>Đặt điểm kê và gài đầu đòn</button><button class="${r.fulcrumPlaced?'primary':''}" data-q01-work="workers-confirm">Xác nhận đủ nhóm và điểm kê</button></div>`
+        :`<div class="q01-work-track"><div class="q01-work-bar"><div class="q01-work-fill" style="width:${pct}%"></div></div><strong class="q01-work-pct">${pct}%</strong></div><label class="q01-work-slider"><span>Kéo / trượt chỉnh trực tiếp (hoặc kéo trực tiếp trên cảnh 3D)</span><input type="range" min="0" max="100" value="${pct}" data-q01-slider aria-label="${esc(spec.title)}"></label><div class="q01-work-buttons"><button data-q01-work="back">${esc(spec.backLabel)}</button><button data-q01-hold="forward">${esc(spec.holdLabel)}</button><button class="${(k==='cart'?r.cartProgress:k==='pulley'?r.pulleyProgress:r.leverProgress)<.98?'primary':''}" data-q01-work="step">${esc(spec.stepLabel)}</button>${k==='cart'?`<button class="${r.cartProgress>=.98&&!r.cartChocked?'primary':''}" data-q01-work="cart-chock" ${r.cartChocked?'disabled':''}>Chèn hai nêm bánh xe</button><button class="${r.cartChocked?'primary':''}" data-q01-work="cart-test">Kiểm dây tải &amp; Xác nhận</button>`:k==='pulley'?`<button class="${r.pulleyProgress>=.98&&!r.gateSecured?'primary':''}" data-q01-work="pulley-latch" ${r.gateSecured?'disabled':''}>Gài chốt giữ cánh ngăn</button><button class="${r.gateSecured?'primary':''}" data-q01-work="pulley-confirm">Xác nhận lối phụ an toàn</button>`:`<button class="${r.leverProgress>=.98&&!r.beamWedged?'primary':''}" data-q01-work="lever-wedge" ${r.beamWedged?'disabled':''}>Chèn nêm dưới xà</button><button class="${r.beamWedged?'primary':''}" data-q01-work="lever-settle">Kiểm độ vững &amp; Xác nhận</button>`}</div>`;
+      workNode.hidden=false;
+      workNode.innerHTML=`<div class="q01-dialogue-head"><span>${esc(spec.title)}</span><button data-q01-work="close" aria-label="Tạm rời tay">×</button></div><p class="q01-work-hint">${esc(spec.hint)}</p><div class="q01-work-chips">${chips}</div>${work.msg?`<p class="q01-work-msg" role="status">${esc(work.msg)}</p>`:''}${controls}`;
+    }
+    function setWorkProgress(nextVal){
+      if(!work)return;const spec=workSpecs[work.kind];if(!spec.key)return;
+      const clamped=Math.max(0,Math.min(1,nextVal));
+      if(Math.abs(clamped-api.rescue[spec.key])<.0001)return;
+      api.rescue[spec.key]=clamped;
+      if(clamped<.98){if(work.kind==='cart')api.rescue.cartChocked=false;if(work.kind==='pulley')api.rescue.gateSecured=false;if(work.kind==='lever')api.rescue.beamWedged=false;}
+      applyWorkVisual(work.kind,true);aimWorkCamera(work.kind);updateWorkMeters();
+    }
+    function closeWork(restoreProjection=true){
+      if(!work)return;const kind=work.kind;work=null;drag=null;workNode.hidden=true;
+      mounted.perform(kind==='workers'?'lever':kind,false,1,{chocked:api.rescue.cartChocked,secured:api.rescue.gateSecured,fulcrum:api.rescue.fulcrumPlaced,wedged:api.rescue.beamWedged,settled:api.rescue.beamSettled});
+      if(restoreProjection){ar.projectScene(getState().sceneProgress.Q01);mounted.sync(getState());}
+      engine.pause(false);options.resume?.();sync();
+    }
+    function openWork(kind){
+      close();options.stop?.();engine.controls(0,0);engine.pause(true);
+      work={kind,pushing:0,msg:'',pulse:0,slipTimer:0,aimed:false};panel.hidden=true;
+      applyWorkVisual(kind,true);aimWorkCamera(kind);renderWork();refresh?.();
+    }
+    function workSlip(kind,progressKey,backAmount,message){
+      api.rescue[progressKey]=Math.max(0,(api.rescue[progressKey]||0)-backAmount);
+      work.msg=message;work.pulse=1;work.slipTimer=.4;
+      audio?.effect?.('wood-jolt',{at:[engine.spatial().x,.7,engine.spatial().z],gain:.62});
+      if(kind==='cart')audio?.effect?.('cart-rumble',{at:[point('cart').x,.4,point('cart').z],gain:.55});
+      applyWorkVisual(kind,true);renderWork();
+    }
+    function finishWorkStep(step){
+      const finishedKind=work?.kind;work=null;drag=null;workNode.hidden=true;
+      if(finishedKind)mounted.perform(finishedKind==='workers'?'lever':finishedKind,false,1,{chocked:api.rescue.cartChocked,secured:api.rescue.gateSecured,fulcrum:api.rescue.fulcrumPlaced,wedged:api.rescue.beamWedged,settled:api.rescue.beamSettled});
+      engine.pause(false);options.resume?.();
+      try{event('rescueStep',{step});}
+      catch(err){ar.projectScene(getState().sceneProgress.Q01);mounted.sync(getState());toast(err.message);}
+      sync();
+    }
+    function handleWorkAction(id){
+      if(!work)return;const k=work.kind,r=api.rescue,p=engine.spatial();work.msg='';
+      if(id==='close'){closeWork();return;}
+      if(id==='step'||id==='back'){
+        const spec=workSpecs[k];if(!spec.key)return;
+        playWorkAudio(spec.stepAudio,[p.x,.7,p.z]);
+        setWorkProgress(r[spec.key]+(id==='step'?.25:-.25));
+        if(r[spec.key]>=.98)renderWork();
+        return;
+      }
+      if(id==='cart-chock'){
+        if(r.cartProgress<.98){audio?.effect?.('cart-block',{at:[p.x,.4,p.z],gain:.45});work.msg='Xe chưa tới sát cữ cuối ray (-30.9m); đẩy hết cữ trước rồi mới đặt nêm.';renderWork();return;}
+        r.cartChocked=true;work.msg='Đã chèn đủ hai nêm bánh xe. Hãy kiểm dây tải.';audio?.effect?.('wood-brace',{at:[p.x,.4,p.z],gain:.55});applyWorkVisual('cart',true);renderWork();return;
+      }
+      if(id==='cart-test'){
+        if(r.cartProgress<.98){work.msg='Đưa xe tới sát cữ ở cuối ray trước đã.';renderWork();return;}
+        if(!r.cartChocked){workSlip('cart','cartProgress',.45,'Khoan! Xe vừa trượt ngược lại trên ray vì chưa chèn nêm bánh! Hãy đẩy lại sát cữ rồi chèn nêm.');return;}
+        r.loadTested=true;work.pulse=.6;audio?.effect?.('rope-friction',{at:[p.x,.8,p.z],gain:.5});audio?.effect?.('wood-thud',{at:[p.x,.4,p.z],gain:.5});
+        finishWorkStep('cart');toast('Xe đối trọng đã ăn nêm chắc. Sang tay dây ở sân cùng Titus.');return;
+      }
+      if(id==='pulley-latch'){
+        if(r.pulleyProgress<.98){audio?.effect?.('rope-friction',{at:[p.x,1,p.z],gain:.45});work.msg='Kéo cánh ngăn lên hết hành trình (100%) mới cài được chốt giữ.';renderWork();return;}
+        r.gateSecured=true;work.msg='Chốt giữ cánh ngăn đã ăn khớp.';audio?.effect?.('wood-brace',{at:[p.x,1.5,p.z],gain:.55});applyWorkVisual('pulley',true);renderWork();return;
+      }
+      if(id==='pulley-confirm'){
+        if(r.pulleyProgress<.98){work.msg='Cánh ngăn chưa lên hết cữ. Giữ nhịp kéo cùng Titus tới 100%.';renderWork();return;}
+        if(!r.gateSecured){workSlip('pulley','pulleyProgress',.28,'Chưa cài chốt giữ cánh! Cánh ngăn vừa tụt xuống một nhịp.');return;}
+        audio?.effect?.('wood-thud',{at:[p.x,1.5,p.z],gain:.55});finishWorkStep('pulley');toast('Cánh ngăn lối phụ đã được giữ chốt an toàn. Cùng Titus lên thang phụ.');return;
+      }
+      if(id==='lever-fulcrum'){
+        r.fulcrumPlaced=true;work.msg='Điểm kê và đầu đòn đã nằm đúng dưới gầm xà.';audio?.effect?.('wood-thud',{at:[p.x,.4,p.z],gain:.5});applyWorkVisual('workers',true);renderWork();return;
+      }
+      if(id==='workers-confirm'){
+        if(!r.fulcrumPlaced){audio?.effect?.('wood-thud',{at:[p.x,.4,p.z],gain:.4});work.msg='Đặt điểm kê và gài đầu đòn vào gầm xà trước khi nâng.';renderWork();return;}
+        finishWorkStep('workers');if(!api.seenIntro.lever){api.seenIntro.lever=true;show('lever',()=>openWork('lever'));}else openWork('lever');return;
+      }
+      if(id==='lever-wedge'){
+        if(r.leverProgress<.98){audio?.effect?.('wood-strain',{at:[p.x,.6,p.z],gain:.45});work.msg='Phải nâng xà hết nhịp vào gối tựa (100%) mới chèn được nêm dưới xà.';renderWork();return;}
+        r.beamWedged=true;work.msg='Đã chèn hai nêm gỗ chặt dưới xà.';audio?.effect?.('wood-brace',{at:[p.x,.4,p.z],gain:.55});applyWorkVisual('lever',true);renderWork();return;
+      }
+      if(id==='lever-settle'){
+        if(r.leverProgress<.98){work.msg='Xà chưa vào hết gối tựa. Tiếp tục nâng nhịp cùng Titus và hai thợ.';renderWork();return;}
+        if(!r.beamWedged){workSlip('lever','leverProgress',.35,'Khoan buông! Chưa đặt nêm gỗ dưới xà — nhóm vừa phải ghì lại đầu đòn!');return;}
+        r.beamSettled=true;audio?.effect?.('shoulder-test',{at:[p.x,.6,p.z],gain:.5});audio?.effect?.('wood-thud',{at:[p.x,.4,p.z],gain:.55});
+        finishWorkStep('lever');toast('Xà đã yên trên gối tựa và ăn nêm chắc. Đường chính lên gác đã mở.');
+      }
+    }
+    function renderEscort(){
+      const s=getState(),q=s.sceneProgress.Q01,showBar=!disposed&&!ui&&!work&&!resting&&!intro&&q.beat===4&&q.rescue.steps.length===3&&api.activity==='extract';
+      escortNode.hidden=!showBar;if(!showBar)return;
+      const rp=point('reception'),label=id=>I.near(actorPoint(id),rp,1.8)?'Trên mái ✓':actorPoint(id)?.y>4.5?'Sân mái':'C1 · Theo sau';
+      escortNode.innerHTML=`<span><strong>Titus</strong>: Chờ ở điểm nhận ✓</span><span><strong>Simeon</strong>: ${esc(label('simeon'))}</span><span><strong>Học việc</strong>: ${esc(label('apprentice'))}</span><button data-q01-escort="regroup">Gọi giữ nhịp</button>`;
+    }
+    escortNode.addEventListener('click',e=>{
+      const b=e.target.closest('[data-q01-escort=regroup]');if(!b)return;
+      const target=I.near(engine.spatial(),point('reception'),2.6)?point('reception'):engine.spatial();
+      walk('simeon',{...target,x:target.x-.75,z:target.z-.45});walk('apprentice',{...target,x:target.x+.65,z:target.z-.55});
+      toast('Đã gọi Simeon và người học việc đi sát theo bạn.');renderEscort();
+    });
+    workNode.addEventListener('click',e=>{const b=e.target.closest('[data-q01-work]');if(!b||b.disabled)return;handleWorkAction(b.dataset.q01Work);});
+    workNode.addEventListener('input',e=>{const sl=e.target.closest('[data-q01-slider]');if(!sl||!work)return;const spec=workSpecs[work.kind];if(!spec.key)return;playWorkAudio(spec.stepAudio,[engine.spatial().x,.7,engine.spatial().z]);setWorkProgress(Number(sl.value)/100);if(Number(sl.value)>=98)renderWork();});
+    const stopHold=()=>{if(work)work.pushing=0;};
+    workNode.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-q01-hold]');if(!b||!work)return;work.pushing=b.dataset.q01Hold==='forward'?1:-1;});
+    window.addEventListener('pointerup',stopHold);window.addEventListener('pointercancel',stopHold);
+    const worldEl=document.querySelector('#world');
+    const onWorldDown=e=>{if(!work||!workSpecs[work.kind].key||e.target.closest('#q01-rescue-work,button,input,dialog'))return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,base:api.rescue[workSpecs[work.kind].key]||0};};
+    const onWorldMove=e=>{if(!work||drag?.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y,delta=work.kind==='pulley'?(dy*.85+dx*.35)/180:(dx-dy)/200;setWorkProgress(drag.base+delta);playWorkAudio(workSpecs[work.kind].audio,[engine.spatial().x,.7,engine.spatial().z]);};
+    const onWorldUp=e=>{if(drag?.id===e.pointerId){const spec=workSpecs[work?.kind];drag=null;if(spec?.key&&api.rescue[spec.key]>=.98)renderWork();}};
+    worldEl?.addEventListener('pointerdown',onWorldDown);worldEl?.addEventListener('pointermove',onWorldMove);worldEl?.addEventListener('pointerup',onWorldUp);worldEl?.addEventListener('pointercancel',onWorldUp);
     function startRest(){
       close();options.stop?.();engine.pause(true);resting={t:0,seconds:getState().settings.motion==='calm'?1.2:7};node.hidden=false;panel.hidden=true;node.innerHTML='<div class="q01-dialogue-head"><span>Đêm ở xưởng</span></div><p class="q01-spoken">Sáng hôm sau</p><div class="q01-dialogue-actions"><button data-q01="wake">Tiếp tục sáng hôm sau</button></div>';audio?.stopVoice();audio?.setMode('quiet');
       if(engine.cameraState().view!=='first')engine.inspect([-2.3,5.88],{height:1.05,camera:[-.45,1.56,8.55],showPlayer:true,cameraTracking:true});
@@ -234,8 +448,22 @@
       node.innerHTML='<div class="q01-dialogue-head"><span>Xêdarê · Chiều muộn</span></div><p class="q01-spoken">Sóng dưới chân kè. Tiếng bào vọng ra từ hẻm.</p><div class="q01-dialogue-actions"><button data-q01="take-control">Nhận điều khiển</button></div>';
     }
     function finishIntro(){if(!intro)return;intro=null;node.hidden=true;engine.pause(false);options.resume?.();sync();}
-    const takeControl=e=>{if(intro&&/^(Key[WASDVE]|Arrow(Up|Down|Left|Right)|Escape)$/.test(e.code))finishIntro();};
-    document.addEventListener('keydown',takeControl,true);
+    const onKeyDown=e=>{
+      if(intro&&/^(Key[WASDVE]|Arrow(Up|Down|Left|Right)|Escape)$/.test(e.code)){finishIntro();return;}
+      if(!work||options.isPaused?.())return;
+      if(e.code==='Escape'){e.preventDefault();e.stopPropagation();closeWork();return;}
+      if(['KeyW','ArrowUp','KeyD','ArrowRight'].includes(e.code)){e.preventDefault();e.stopPropagation();work.pushing=1;return;}
+      if(['KeyS','ArrowDown','KeyA','ArrowLeft'].includes(e.code)){e.preventDefault();e.stopPropagation();work.pushing=-1;return;}
+      if(!e.repeat&&(e.code==='KeyE'||(e.code==='Space'&&!e.target.closest('button')))){
+        e.preventDefault();e.stopPropagation();const k=work.kind,r=api.rescue;
+        if(k==='workers')handleWorkAction(r.fulcrumPlaced?'workers-confirm':'lever-fulcrum');
+        else if(k==='cart')handleWorkAction(r.cartProgress<.98?'step':r.cartChocked?'cart-test':'cart-chock');
+        else if(k==='pulley')handleWorkAction(r.pulleyProgress<.98?'step':r.gateSecured?'pulley-confirm':'pulley-latch');
+        else if(k==='lever')handleWorkAction(r.leverProgress<.98?'step':r.beamWedged?'lever-settle':'lever-wedge');
+      }
+    };
+    const onKeyUp=e=>{if(work&&['KeyW','ArrowUp','KeyD','ArrowRight','KeyS','ArrowDown','KeyA','ArrowLeft'].includes(e.code))work.pushing=0;};
+    document.addEventListener('keydown',onKeyDown,true);document.addEventListener('keyup',onKeyUp,true);
     node.addEventListener('click',e=>{const b=e.target.closest('[data-q01]');if(!b||b.disabled)return;const id=b.dataset.q01;try{
       if(id==='next')next();else if(id==='back'&&ui?.index){ui.index--;renderPage();}else if(id==='repeat'&&ui?.pages?.length)renderPage();else if(id==='leave')close();
       else if(id==='investigate'){mounted.departStranger();close();show('investigate',()=>event('stranger',{response:'investigate'}));}
@@ -247,13 +475,14 @@
     panel.addEventListener('click',e=>{const b=e.target.closest('[data-q01-guide]');if(!b)return;if(b.dataset.q01Guide==='walk'){close();const id='q01:'+goal(getState())[0];if(!engine.walkTarget(id,()=>toast('Đã tới điểm làm việc.'),.3))toast('Chưa có đường thông. Kiểm cửa và người đi cùng.');}else if(b.dataset.q01Guide==='interact')safeInteract('q01:'+goal(getState())[0]);else if(b.dataset.q01Guide==='arrival')startIntro();});
     function checkpoint(){
       const s=getState(),q=s.sceneProgress.Q01,r=q.rescue;
+      api.rescue=resetRescue(r?.steps);api.extractSettling=false;
       if(q.beat===0)return point('boat');
       if(q.beat===4){
         if(r.steps.includes('exit')){place('titus',{...point('reception'),x:point('reception').x+.25,z:point('reception').z+.55});api.commonOpen=true;api.roofChecked=true;return point('mezzanine');}
         if(r.steps.includes('workers')){place('worker1',{...point('lever'),x:point('lever').x-1.25});place('worker2',{...point('lever'),x:point('lever').x+1.15});}
         // No partial actor positions were persisted. Restart the whole unfinished
-        // route check from C0, as explicitly specified by screenplay 2.10.
-        place('titus',point('titus'));return point('titus');
+        // route check from C0, offset slightly so avatar never overlaps Titus.
+        place('titus',point('titus'));return {...point('titus'),x:point('titus').x+.95,z:point('titus').z+.55};
       }
       if(q.beat>=5){const rp=point('reception');place('titus',{...rp,x:rp.x+.25,z:rp.z+.55});place('simeon',{...rp,x:rp.x-.95,z:rp.z-.55});place('apprentice',{...rp,x:rp.x+.70,z:rp.z-.65});}
       if(q.beat>=7)for(const [i,id]of ['titus','simeon','apprentice'].entries())place(id,{x:-16+i*1.05,y:0,z:-1,supportId:'world'});
@@ -266,7 +495,8 @@
       if(lightKey!==q.phase){lightKey=q.phase;if(!resting)mounted.setTime(q.phase);}
       if(q.beat===3&&!alarm){alarm=true;audio?.effect('wood-strain',{at:[-25,2,-10],gain:.35});audio?.effect('q01-bell',{at:[-25,3,-10],gain:.4});}
       const [id,title,detail]=goal(s);panel.innerHTML=`<span class="q01-chapter-label">XÊDARÊ · CHƯƠNG I</span><strong>${esc(title)}</strong><p>${esc(detail)}</p><div><button data-q01-guide="walk">Đi theo lối tới điểm này</button><button data-q01-guide="interact">Thao tác tại chỗ</button>${q.beat===0&&I.near(engine.spatial(),point('boat'),.5)&&engine.cameraState().view!=='first'?'<button data-q01-guide="arrival">Mở cảnh bến cảng</button>':''}</div>`;
-      panel.dataset.goal=id;panel.hidden=!!options.isTitle?.()||s.settings.guideMode==='off'||!!root.WitnessCraft.field(s)||!!(ui||hold||resting||intro);mounted.sync(s);
+      panel.dataset.goal=id;panel.hidden=!!options.isTitle?.()||s.settings.guideMode==='off'||!!root.WitnessCraft.field(s)||!!(ui||work||resting||intro);
+      renderEscort();mounted.sync(s);
       if(q.beat>=6&&!mounted.descending){mounted.descending=true;for(const [i,id]of ['titus','simeon','apprentice'].entries())if(actorPoint(id).y>4){chain(id,[point('roofExit'),point('descentTop'),{x:-12,y:2.52,z:-13.5,supportId:'q01-landing'},{x:-9,y:2.52,z:-13.5,supportId:'q01-landing'},{x:-9,y:0,z:-19.6,supportId:'world'},{x:-16+i*1.05,y:0,z:-1,supportId:'world'}],i*2);}}
       if(q.beat===7&&!mounted.nightWalk){mounted.nightWalk=true;walk('natan',{...point('rest'),x:-2.35,z:6.42});}
       if(q.beat===2&&s.quests.Q01.done.includes('brace')&&!mounted.natanToDesk){mounted.natanToDesk=true;walk('natan',{x:-4,y:0,z:1,supportId:'world'});}
@@ -286,20 +516,20 @@
         if(k===1)finishIntro();
       }
       if(q.beat<3&&t-lastPlane>8){lastPlane=t;audio?.material('wood',[-10,6]);}
-      if(hold){
-        hold.t+=dt;const hk=Math.min(1,hold.t/hold.seconds);mounted.perform(hold.kind,true,hk);
-        if(engine.cameraState().view!=='first'&&getState().settings.motion!=='calm'){
-          if(hold.kind==='cart')engine.inspect([-32.8+1.9*hk, -4.6],{height:.62,camera:[-30.1,1.95,-1.95],showPlayer:true,cameraTracking:true});
-          else if(hold.kind==='pulley')engine.inspect([-30.4,-7.9],{height:2.4+hk*1.2,camera:[-27.4,2.15,-2.9],showPlayer:true,cameraTracking:true});
-          else engine.inspect([-18.2,-6.7],{height:.95,camera:[-20.8,2.05,-2.9],showPlayer:true,cameraTracking:true});
+      if(work){
+        if(work.slipTimer>0){work.slipTimer=Math.max(0,work.slipTimer-dt);if(work.slipTimer===0){work.pulse=0;applyWorkVisual(work.kind,true);}}
+        if(work.pushing&&workSpecs[work.kind].key){
+          const spec=workSpecs[work.kind],prev=api.rescue[spec.key];
+          setWorkProgress(prev+work.pushing*dt*.65);
+          if(Math.abs(api.rescue[spec.key]-prev)>.0001){playWorkAudio(spec.audio,[engine.spatial().x,.7,engine.spatial().z]);if((prev<.98&&api.rescue[spec.key]>=.98)||(prev>=.98&&api.rescue[spec.key]<.98))renderWork();}
         }
-        if(hold.t>=hold.seconds){const done=hold.done;mounted.perform(hold.kind,false,1);hold=null;node.hidden=true;engine.pause(false);options.resume?.();try{done();}catch(err){ar.projectScene(getState().sceneProgress.Q01);mounted.sync(getState());toast(err.message);}sync();}
       }
       if(resting){resting.t+=rawDt;mounted.setTime('dawn',Math.min(1,resting.t/resting.seconds));if(resting.t>=resting.seconds)wake();}
-      if(!ui&&!hold&&!resting&&q.beat===4&&q.rescue.steps.length===2&&!api.roofChecked)follow('titus',dt);
-      if(!ui&&api.activity==='extract'){
+      if(!ui&&!work&&!resting&&q.beat===4&&q.rescue.steps.length===2&&!api.roofChecked)follow('titus',dt);
+      if(!ui&&q.beat===4&&q.rescue.steps.length===3&&api.activity==='extract'){
         if(!api.extractSettling&&I.near(engine.spatial(),point('reception'),2)){api.extractSettling=true;const rp=point('reception');walk('simeon',{...rp,x:rp.x-.95,z:rp.z-.55});walk('apprentice',{...rp,x:rp.x+.70,z:rp.z-.65});}
         if(!api.extractSettling){follow('simeon',dt);follow('apprentice',dt,actorPoint('simeon'));}
+        if((tick.escortStamp=(tick.escortStamp||0)+dt)>.35){tick.escortStamp=0;renderEscort();}
       }
       for(const [id,j]of jobs){if(j.wait>0){j.wait-=dt;continue;}const p=actorPoint(id);while(j.path.length&&Math.hypot(p.x-j.path[0].x,p.z-j.path[0].z)<.06&&Math.abs(p.y-j.path[0].y)<.23)j.path.shift();
         if(!j.path.length){jobs.delete(id);j.done?.();continue;}const to=j.path[0],d=Math.hypot(to.x-p.x,to.z-p.z),step=Math.min(d,dt*2.25),next=ar.move(p,(to.x-p.x)/Math.max(.001,d)*step,(to.z-p.z)/Math.max(.001,d)*step);place(id,next);
@@ -310,7 +540,7 @@
     }
     const initial=checkpoint();engine.restoreSpatial(initial);if(getState().sceneProgress.Q01.beat===0)engine.rotate(Math.PI+.26);mounted.sync(getState());
     api.engine=engine;api.readState=()=>copy(getState());api.interact=safeInteract;api.sync=sync;api.tick=tick;api.close=close;api.stateWithPosition=stateWithPosition;api.actorPoint=actorPoint;
-    api.setPaused=value=>{paused=value;};api.dispose=()=>{disposed=true;document.removeEventListener('keydown',takeControl,true);node.remove();panel.remove();audio?.stopVoice();jobs.clear();if(session===api)session=null;};
+    api.setPaused=value=>{paused=value;};api.dispose=()=>{disposed=true;document.removeEventListener('keydown',onKeyDown,true);document.removeEventListener('keyup',onKeyUp,true);window.removeEventListener('pointerup',stopHold);window.removeEventListener('pointercancel',stopHold);worldEl?.removeEventListener('pointerdown',onWorldDown);worldEl?.removeEventListener('pointermove',onWorldMove);worldEl?.removeEventListener('pointerup',onWorldUp);worldEl?.removeEventListener('pointercancel',onWorldUp);node.remove();workNode.remove();escortNode.remove();panel.remove();audio?.stopVoice();jobs.clear();if(session===api)session=null;};
     sync();if(getState().sceneProgress.Q01.beat===0&&getState().settings.motion!=='calm')startIntro();return api;
   }
   root.WitnessQ01Campaign={active,goal,plan,mount,createPresenter,notes,script:dialogue,release(){session?.dispose();mounted?.dispose();mounted=null;},get mounted(){return mounted},get presenter(){return session}};
