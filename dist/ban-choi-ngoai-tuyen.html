@@ -11369,7 +11369,7 @@ root.WitnessQ01GIData={"algorithm":"q01-aabb-diffuse-pathtrace-sh9-v1","sourceHa
       group.removeFromParent();geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());base.dispose();
     }
     sync(state);setTime(state.sceneProgress.Q01.phase);
-    return {group,base,actors,ar,tick,sync,setTime,dispose,setViewer(p){viewer=p;},setNightRopeRest,inspectBook(step=0){const player=scene.getObjectByName('player');if(player){player.add(book);book.position.set(.08,1.18,.28);book.rotation.set(.42,-.38-step*.22,.28);}book.updateWorldMatrix(true,true);return book.getWorldPosition(new T.Vector3());},speak(who){speaking=who;if(!who&&latest.quests.Q01.done.includes('ledger'))dockBookOnHip();},perform(kind,on,fraction=0){performanceKind=on?kind:null;ar.animateMechanism(kind,fraction);winchSheaves.forEach((s,idx)=>{s.rotation[s.userData.axis]=fraction*Math.PI*6*(idx%2?1:-1);});},lookout(){rear.visible=true;rearMoving=.001;},departStranger(){strangerPath=ar.route({...G.anchors.stranger},G.anchors.strangerGone)||[];departing=.001;},strangerHidden(p){return departing>=1||!ar.visible({...p,y:p.y+1.5},{x:stranger.position.x,y:stranger.position.y+1.4,z:stranger.position.z});}};
+    return {group,base,actors,ar,tick,sync,setTime,dispose,setViewer(p){viewer=p;},setNightRopeRest,inspectBook(step=0){const player=scene.getObjectByName('player');if(player){player.add(book);book.position.set(.08,1.18,.28);book.rotation.set(.42,-.38-step*.22,.28);}book.updateWorldMatrix(true,true);return book.getWorldPosition(new T.Vector3());},speak(who){speaking=who;for(const [id,a] of Object.entries(actors)){if(id===who)continue;const body=a?.object?.getObjectByName?.('anatomical-body');if(body?.morphTargetInfluences)body.morphTargetInfluences[2]=0;}if(!who&&latest.quests.Q01.done.includes('ledger'))dockBookOnHip();},perform(kind,on,fraction=0){performanceKind=on?kind:null;ar.animateMechanism(kind,fraction);winchSheaves.forEach((s,idx)=>{s.rotation[s.userData.axis]=fraction*Math.PI*6*(idx%2?1:-1);});},lookout(){rear.visible=true;rearMoving=.001;},departStranger(){strangerPath=ar.route({...G.anchors.stranger},G.anchors.strangerGone)||[];departing=.001;},strangerHidden(p){return departing>=1||!ar.visible({...p,y:p.y+1.5},{x:stranger.position.x,y:stranger.position.y+1.4,z:stranger.position.z});}};
   }
   root.WitnessQ01Art={mount};
 })(globalThis);
@@ -11654,7 +11654,7 @@ root.WitnessQ01GIData={"algorithm":"q01-aabb-diffuse-pathtrace-sh9-v1","sourceHa
       else if(jobs.get(id)?.following)jobs.delete(id);
     }
     function tick(t){
-      if(disposed)return;const dt=Math.min(.05,Math.max(0,t-last)||0);last=t;if(paused||options.isTitle?.()||options.isPaused?.())return;
+      if(disposed)return;const rawDt=Math.min(2,Math.max(0,t-last)||0),dt=Math.min(.05,rawDt);last=t;if(paused||options.isTitle?.()||options.isPaused?.())return;
       const q=getState().sceneProgress.Q01;
       if(intro){
         intro.t+=dt;const k=Math.min(1,intro.t/intro.seconds),ease=v=>v*v*(3-2*v),rise=ease(Math.min(1,k*1.85)),settle=ease(Math.max(0,k*1.65-.65)),p=intro.p;
@@ -11671,7 +11671,7 @@ root.WitnessQ01GIData={"algorithm":"q01-aabb-diffuse-pathtrace-sh9-v1","sourceHa
         }
         if(hold.t>=hold.seconds){const done=hold.done;mounted.perform(hold.kind,false,1);hold=null;node.hidden=true;engine.pause(false);options.resume?.();try{done();}catch(err){ar.projectScene(getState().sceneProgress.Q01);mounted.sync(getState());toast(err.message);}sync();}
       }
-      if(resting){resting.t+=dt;mounted.setTime('dawn',Math.min(1,resting.t/resting.seconds));if(resting.t>=resting.seconds)wake();}
+      if(resting){resting.t+=rawDt;mounted.setTime('dawn',Math.min(1,resting.t/resting.seconds));if(resting.t>=resting.seconds)wake();}
       if(!ui&&!hold&&!resting&&q.beat===4&&q.rescue.steps.length===2&&!api.roofChecked)follow('titus',dt);
       if(!ui&&api.activity==='extract'){
         if(!api.extractSettling&&I.near(engine.spatial(),point('reception'),2)){api.extractSettling=true;const rp=point('reception');walk('simeon',{...rp,x:rp.x-.95,z:rp.z-.55});walk('apprentice',{...rp,x:rp.x+.70,z:rp.z-.65});}

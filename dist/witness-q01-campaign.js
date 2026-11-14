@@ -278,7 +278,7 @@
       else if(jobs.get(id)?.following)jobs.delete(id);
     }
     function tick(t){
-      if(disposed)return;const dt=Math.min(.05,Math.max(0,t-last)||0);last=t;if(paused||options.isTitle?.()||options.isPaused?.())return;
+      if(disposed)return;const rawDt=Math.min(2,Math.max(0,t-last)||0),dt=Math.min(.05,rawDt);last=t;if(paused||options.isTitle?.()||options.isPaused?.())return;
       const q=getState().sceneProgress.Q01;
       if(intro){
         intro.t+=dt;const k=Math.min(1,intro.t/intro.seconds),ease=v=>v*v*(3-2*v),rise=ease(Math.min(1,k*1.85)),settle=ease(Math.max(0,k*1.65-.65)),p=intro.p;
@@ -295,7 +295,7 @@
         }
         if(hold.t>=hold.seconds){const done=hold.done;mounted.perform(hold.kind,false,1);hold=null;node.hidden=true;engine.pause(false);options.resume?.();try{done();}catch(err){ar.projectScene(getState().sceneProgress.Q01);mounted.sync(getState());toast(err.message);}sync();}
       }
-      if(resting){resting.t+=dt;mounted.setTime('dawn',Math.min(1,resting.t/resting.seconds));if(resting.t>=resting.seconds)wake();}
+      if(resting){resting.t+=rawDt;mounted.setTime('dawn',Math.min(1,resting.t/resting.seconds));if(resting.t>=resting.seconds)wake();}
       if(!ui&&!hold&&!resting&&q.beat===4&&q.rescue.steps.length===2&&!api.roofChecked)follow('titus',dt);
       if(!ui&&api.activity==='extract'){
         if(!api.extractSettling&&I.near(engine.spatial(),point('reception'),2)){api.extractSettling=true;const rp=point('reception');walk('simeon',{...rp,x:rp.x-.95,z:rp.z-.55});walk('apprentice',{...rp,x:rp.x+.70,z:rp.z-.65});}
