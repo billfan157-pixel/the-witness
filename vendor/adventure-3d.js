@@ -4294,7 +4294,7 @@ function hS(s) {
     if (!x?.isConnected) return;
     let { width: B, height: q } = x.getBoundingClientRect();
     if (B < 2 || q < 2) return;
-    let pr = Math.min(devicePixelRatio || 1, QMode === "balanced" ? 1.15 : t ? 1.45 : 2, 2e3 / B) * at;
+    let pr = Math.min(devicePixelRatio || 1, QMode === "balanced" ? 1.15 : t ? 1.45 : 2, 2e3 / B) * at * (pp?.isSoftware ? 0.72 : 1);
     i.setPixelRatio(pr), i.setSize(B, q, false), pp?.setSize(B, q, pr), a.aspect = B / q, a.updateProjectionMatrix();
   }
   function Mt(B, q) {
@@ -4324,7 +4324,7 @@ function hS(s) {
   }
   function W(B, q, nt, ft = false) {
     if (b === B && y && !ft) return;
-    ae(), y && ig(y), _.clear(), m.clear(), y = new Zs(), T = j0(y, B, !n && i.shadowMap.enabled, nt), AdventureVisuals.environment(bn, i, y, T.layout.biome), Bt?.setBiome(T.layout.biome), g = T.obstacles, b = B, v = B;
+    ae(), y && (y.traverse((o2) => o2.userData?.disposeWater?.()), ig(y)), _.clear(), m.clear(), y = new Zs(), T = j0(y, B, !n && i.shadowMap.enabled, nt), pp?.isSoftware && T?.sun?.shadow && (T.sun.shadow.mapSize.set(1024, 1024), T.sun.shadow.map?.dispose(), T.sun.shadow.map = null, T.sun.shadow.needsUpdate = true), AdventureVisuals.environment(bn, i, y, T.layout.biome), Bt?.setBiome(T.layout.biome), g = T.obstacles, b = B, v = B;
     T.night=!!AdventureVisuals.atmosphere(T.layout.biome).night;
     // Retire starter terrain obstacles for the authored level. St() still adds
     // the current campaign's real craft/prop solids to g; do not bypass those.
@@ -4669,7 +4669,7 @@ function hS(s) {
       let ft = Math.max(0, K - Vt.at);
       Vt.points.visible = e && ft < 0.31, Vt.points.visible && (Vt.points.scale.setScalar(0.35 + ft * 5.2), Vt.points.material.opacity = 0.92 * (1 - ft / 0.31));
     }
-    Zt(e ? 1 - Math.exp(-nt * 11) : 1), !n && i.shadowMap.enabled && K >= (T.nextShadow ?? 0) && (T.refreshShadows(), T.nextShadow = K + 0.08), WitnessGraphics.followShadow(bn, T.sun, w?.object?.position, a), pp ? pp.render(y, a, T.sun, T.night) : i.render(y, a), x.dataset.ready = "true", At(B);
+    Zt(e ? 1 - Math.exp(-nt * 11) : 1), !n && i.shadowMap.enabled && K >= (T.nextShadow ?? 0) && (T.refreshShadows(), T.nextShadow = K + (pp?.isSoftware ? 0.25 : 0.08)), WitnessGraphics.followShadow(bn, T.sun, w?.object?.position, a), pp ? pp.render(y, a, T.sun, T.night) : i.render(y, a), x.dataset.ready = "true", At(B);
   }
   function pt(B, q, nt = false) {
     U = [B, q], Y = nt, (B || q) && (C = null);
@@ -4845,7 +4845,7 @@ function hS(s) {
     let B = _.get(I.actor);
     B && E(B.object, B.position), I = null, C = null;
   }, stop() {
-    V = true, Re(), y && ig(y), pp?.dispose(), i.dispose(), kt?.close();
+    V = true, Re(), y && (y.traverse((o2) => o2.userData?.disposeWater?.()), ig(y)), pp?.dispose(), i.dispose(), kt?.close();
   }, setQuality(q) {
     QMode = q === "balanced" || q === "high" || q === "ultra" ? q : t ? "high" : "ultra", n = t && QMode === "balanced", i.shadowMap.enabled = !n, pp?.setQuality(QMode), globalThis.WitnessGraphics?.setQuality?.(QMode), ge(), T?.refreshShadows();
   } };

@@ -132,6 +132,15 @@
   const envCache = new WeakMap();
   // The active engine pipeline; water registers its planar-reflection pass here.
   let currentPipeline = null;
+  function isSoftwareGL(renderer) {
+    try {
+      const gl = renderer?.getContext?.();
+      if (!gl) return false;
+      const ext = gl.getExtension("WEBGL_debug_renderer_info");
+      const name = (gl.getParameter(gl.RENDERER) || "") + " " + (ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) || "" : "");
+      return /swiftshader|llvmpipe|softpipe|software|basic render/i.test(name);
+    } catch { return false; }
+  }
 
   function environment(T, renderer, scene, biome) {
     if (!T.PMREMGenerator || !renderer) return null;
@@ -962,11 +971,13 @@
     mesh.receiveShadow = true;
 
     // Planar reflection pass, driven by the engine pipeline's pre-render hook.
-    const reflectionRT = new T.WebGLRenderTarget(512, 512, {
+    const reflRes = currentPipeline?.isSoftware ? 256 : 512;
+    const reflectionRT = new T.WebGLRenderTarget(reflRes, reflRes, {
       minFilter: T.LinearFilter, magFilter: T.LinearFilter, depthBuffer: true
     });
     reflectionRT.texture.userData.sharedMap = true;
     const virtualCamera = new T.PerspectiveCamera();
+    const _reflMatrix = new T.Matrix4(), _reflFrustum = new T.Frustum();
     const reflectorWorldPosition = new T.Vector3(), cameraWorldPosition = new T.Vector3();
     const rotationMatrix = new T.Matrix4(), normal = new T.Vector3(), view = new T.Vector3();
     const lookAtPosition = new T.Vector3(), target = new T.Vector3();
@@ -975,7 +986,20 @@
     let frame = 0, removeHook = null, disposed = false;
     function updateReflection(renderer, scene, camera) {
       if (disposed || currentPipeline?.quality === "balanced") { uniforms.uHasReflection.value = 0; return; }
-      if (currentPipeline?.quality === "high" && ++frame % 2) return;
+      let node = mesh;
+      while (node && node !== scene) {
+        if (!node.visible) { uniforms.uHasReflection.value = 0; return; }
+        node = node.parent;
+      }
+      if (node !== scene) { uniforms.uHasReflection.value = 0; return; }
+      if (currentPipeline?.isSoftware) {
+        if (uniforms.uHasReflection.value > .5 && ++frame % 3) return;
+      } else if (currentPipeline?.quality === "high" && ++frame % 2) return;
+      camera.updateMatrixWorld();
+      _reflMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+      _reflFrustum.setFromProjectionMatrix(_reflMatrix);
+      mesh.updateWorldMatrix(true, false);
+      if (!_reflFrustum.intersectsObject(mesh)) return;
       mesh.getWorldPosition(reflectorWorldPosition);
       camera.getWorldPosition(cameraWorldPosition);
       rotationMatrix.extractRotation(mesh.matrixWorld);
@@ -1184,6 +1208,7 @@
     let mode = quality;
     let enabled = true;
     let width = 800, height = 600;
+    const isSoftware = isSoftwareGL(renderer);
     const gl = renderer.getContext();
     const extFloat = renderer.extensions?.has?.("EXT_color_buffer_half_float") ||
       renderer.extensions?.has?.("EXT_color_buffer_float");
@@ -1207,8 +1232,8 @@
     const sceneRT = new T.WebGLRenderTarget(800, 600, targetOpts);
     // Canvas antialiasing does not cover offscreen postprocessing targets.
     const format = targetType === T.HalfFloatType ? gl.RGBA16F : gl.RGBA8;
-    const sampleCounts = Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, format, gl.SAMPLES) || []);
-    sceneRT.samples = Math.max(0, ...sampleCounts.filter(samples => samples <= 4));
+    const sampleCounts = Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, format, gl.SAMPLES) || []).filter(samples => samples > 0 && samples <= 4).sort((a, b) => a - b);
+    sceneRT.samples = sampleCounts.length ? (isSoftware ? sampleCounts[0] : sampleCounts[sampleCounts.length - 1]) : 0;
     sceneRT.depthTexture = new T.DepthTexture(800, 600, T.UnsignedIntType);
     sceneRT.depthTexture.minFilter = sceneRT.depthTexture.magFilter = T.NearestFilter;
     let framebufferChecked = false;
@@ -1219,7 +1244,7 @@
     const aoMat = new T.ShaderMaterial({
       ...gtao.GTAOShader,
       uniforms:T.UniformsUtils.clone(gtao.GTAOShader.uniforms),
-      defines:{...gtao.GTAOShader.defines,NORMAL_VECTOR_TYPE:0,SAMPLES:24},
+      defines:{...gtao.GTAOShader.defines,NORMAL_VECTOR_TYPE:0,SAMPLES:isSoftware?12:24},
       depthTest:false,depthWrite:false,toneMapped:false,blending:T.NoBlending
     });
     Object.assign(aoMat.uniforms.tDepth,{value:sceneRT.depthTexture});
@@ -1228,11 +1253,12 @@
     aoMat.uniforms.thickness.value = .8;
     aoMat.uniforms.distanceExponent.value = 1.6;
     aoMat.uniforms.distanceFallOff.value = 1;
+    const pdSamples = isSoftware ? 4 : 8;
     const denoiseMat = new T.ShaderMaterial({
       ...gtao.PoissonDenoiseShader,
       uniforms:T.UniformsUtils.clone(gtao.PoissonDenoiseShader.uniforms),
-      defines:{...gtao.PoissonDenoiseShader.defines,NORMAL_VECTOR_TYPE:0,SAMPLES:8,
-        SAMPLE_VECTORS:gtao.generatePdSamplePointInitializer(8,2,1)},
+      defines:{...gtao.PoissonDenoiseShader.defines,NORMAL_VECTOR_TYPE:0,SAMPLES:pdSamples,
+        SAMPLE_VECTORS:gtao.generatePdSamplePointInitializer(pdSamples,2,1)},
       depthTest:false,depthWrite:false,toneMapped:false,blending:T.NoBlending
     });
     denoiseMat.uniforms.tDepth.value = sceneRT.depthTexture;
@@ -1443,7 +1469,7 @@
       brightMat.uniforms.knee.value = .22;
       compositeMat.uniforms.bloomIntensity.value = mode === "ultra" ? .18 : .12;
       compositeMat.uniforms.vignette.value = mode === "ultra" ? .08 : .05;
-      const samples=mode==='ultra'?24:12;
+      const samples=isSoftware?12:(mode==='ultra'?24:12);
       if(aoMat.defines.SAMPLES!==samples){aoMat.defines.SAMPLES=samples;aoMat.needsUpdate=true;}
       compositeMat.uniforms.aoIntensity.value = mode==='balanced'?0:mode==='ultra'?.8:.65;
       if(mode==='balanced')compositeMat.uniforms.bloomIntensity.value=0;
@@ -1508,7 +1534,7 @@
         renderer.render(postScene, postCam);
 
         // Separable blur passes
-        const passes = mode === "ultra" ? 2 : 1;
+        const passes = !isSoftware && mode === "ultra" ? 2 : 1;
         postQuad.material = blurMat;
         const dx = 1 / Math.max(1, bloomA.width);
         const dy = 1 / Math.max(1, bloomA.height);
@@ -1586,7 +1612,7 @@
 
     setQuality(quality);
     const api = {
-      setSize, setQuality, render, dispose, diagnostics, renderer,
+      setSize, setQuality, render, dispose, diagnostics, renderer, isSoftware,
       get quality() { return mode; },
       addBeforeRender(fn) {
         beforeHooks.push(fn);
@@ -1601,6 +1627,7 @@
     atmosphere, sunDirection, light, environment, sky, ridges, surface,
     rocks, treeTrunk, canopy, grass, vegetation, water, tent, accessory,
     createPipeline, getRenderer: () => currentPipeline?.renderer ?? null,
+    isSoftware: () => !!currentPipeline?.isSoftware,
     windUniforms, windGLSL
   };
 })();

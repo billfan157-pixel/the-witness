@@ -388,6 +388,7 @@
     water=null;emberLight=null;reactive=[];animators=[];placeSolids=[];
     root.WitnessGraphics?.setQuality(s.settings?.graphics);
     if(root.WitnessQ01Campaign?.active(s)){
+      scene.traverse(o=>o.userData?.disposeWater?.());
       const mounted=root.WitnessQ01Campaign.mount(context,s);
       animators.push(time=>root.WitnessQ01Campaign.presenter?.tick(time));
       root.WitnessGraphics?.configureScene(T,scene,biome,'Q01');
