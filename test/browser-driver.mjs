@@ -15,11 +15,35 @@ export async function browserDriver(out,port=19551,options={}){
   // path scales them instead of failing on a fixed threshold that a CPU renderer cannot meet.
   const waitScale=hardware?1:Number(process.env.WITNESS_QA_WAIT_SCALE||10);
   const chrome=process.env.WITNESS_CHROME||(['C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe','/usr/bin/google-chrome','/usr/bin/chromium','/usr/bin/chromium-browser','/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'].find(candidate=>fs.existsSync(candidate))||'chrome');
-  const child=spawn(chrome,['--headless=new',...gpuArgs,'--no-first-run',`--remote-debugging-port=${port}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore',windowsHide:true});
+  const linuxArgs=process.platform==='linux'?['--no-sandbox','--disable-setuid-sandbox','--disable-gpu-sandbox','--disable-dev-shm-usage','--disable-background-networking','--no-default-browser-check','--password-store=basic','--use-mock-keychain']:[];
+  const env=process.platform==='linux'&&!process.env.DBUS_SESSION_BUS_ADDRESS?{...process.env,DBUS_SESSION_BUS_ADDRESS:'/dev/null'}:process.env;
+  const child=spawn(chrome,['--headless=new',...gpuArgs,...linuxArgs,'--no-first-run','--remote-debugging-address=127.0.0.1',`--remote-debugging-port=${port}`,`--user-data-dir=${profile}`,'about:blank'],{env,stdio:['ignore','ignore','pipe'],windowsHide:true});
+  let stderrOutput='',spawnError=null,exitInfo=null;
+  child.stderr?.on('data',chunk=>{if(stderrOutput.length<8192)stderrOutput+=chunk.toString('utf8').slice(0,8192-stderrOutput.length);});
+  child.on('error',err=>{spawnError=err;});
+  child.on('exit',(code,signal)=>{exitInfo={code,signal};});
   let socket;
-  const closeBrowser=()=>{try{if(socket?.readyState===WebSocket.OPEN)socket.send(JSON.stringify({id:2147483647,method:'Browser.close'}));}catch{}setTimeout(()=>{socket?.close();child.kill();const resolved=path.resolve(profile),prefix=path.resolve(os.tmpdir())+path.sep+'witness-craft-qa-';if(resolved.startsWith(prefix))try{fs.rmSync(resolved,{recursive:true,force:true,maxRetries:5,retryDelay:300});}catch{}},300);};
+  const cleanupProfile=()=>{const resolved=path.resolve(profile),prefix=path.resolve(os.tmpdir())+path.sep+'witness-craft-qa-';if(resolved.startsWith(prefix))try{fs.rmSync(resolved,{recursive:true,force:true,maxRetries:5,retryDelay:300});}catch{}};
+  const closeBrowser=()=>{
+    const isSocketOpen=socket?.readyState===WebSocket.OPEN;
+    try{if(isSocketOpen)socket.send(JSON.stringify({id:2147483647,method:'Browser.close'}));}catch{}
+    child.stderr?.destroy();
+    const finalize=()=>{try{socket?.close();}catch{}if(child.exitCode===null&&child.signalCode===null)try{child.kill();}catch{}cleanupProfile();};
+    if(!isSocketOpen){finalize();return;}
+    const timer=setTimeout(finalize,300);
+    if(typeof timer.unref==='function')timer.unref();
+  };
   try{
-    let endpoint;for(let i=0;i<50;i++){try{endpoint=(await(await fetch(`http://127.0.0.1:${port}/json/list`)).json()).find(x=>x.type==='page')?.webSocketDebuggerUrl;if(endpoint)break;}catch{}await delay(200);}assert(endpoint);socket=new WebSocket(endpoint);await new Promise(r=>socket.addEventListener('open',r,{once:true}));
+    const startTimeoutMs=Number(process.env.WITNESS_QA_START_TIMEOUT_MS||((hardware&&process.platform!=='linux')?15000:60000));
+    const startDeadline=Date.now()+startTimeoutMs;
+    let endpoint;
+    while(Date.now()<startDeadline){
+      if(spawnError||exitInfo)break;
+      try{endpoint=(await(await fetch(`http://127.0.0.1:${port}/json/list`,{signal:AbortSignal.timeout(1500)})).json()).find(x=>x.type==='page')?.webSocketDebuggerUrl;if(endpoint)break;}catch{}
+      await delay(200);
+    }
+    assert(endpoint,`Chrome DevTools endpoint unavailable within ${startTimeoutMs}ms (chrome=${chrome}, exit=${JSON.stringify(exitInfo)}, spawnError=${spawnError?.message||null})\n${stderrOutput.trim()}`);
+    socket=new WebSocket(endpoint);await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',()=>reject(Error(`WebSocket error connecting to ${endpoint}`)),{once:true});});
     let sequence=0;const pending=new Map(),errors=[];socket.addEventListener('message',event=>{const d=JSON.parse(event.data);if(d.id){const p=pending.get(d.id);pending.delete(d.id);d.error?p?.reject(Error(JSON.stringify(d.error))):p?.resolve(d.result);}else if(d.method==='Runtime.exceptionThrown')errors.push(d.params.exceptionDetails.exception?.description||d.params.exceptionDetails.text);});
     const send=(method,params={})=>new Promise((resolve,reject)=>{const id=++sequence,timer=setTimeout(()=>{pending.delete(id);reject(Error('Browser protocol timeout: '+method));},protocolTimeout);pending.set(id,{resolve:v=>{clearTimeout(timer);resolve(v);},reject:e=>{clearTimeout(timer);reject(e);}});socket.send(JSON.stringify({id,method,params}));});
     const evaluate=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
