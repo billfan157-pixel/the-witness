@@ -961,4 +961,9 @@ html[data-q01=campaign] #objective,html[data-q01=campaign] #companion-hud{displa
 html[data-q01=campaign] .q01-presenter:not([hidden])~#subtitle,html[data-q01=campaign]:has(.q01-presenter:not([hidden])) .adv-markers{visibility:hidden}
 html[data-q01=campaign] .adv-marker.is-near{opacity:.22}
 html[data-q01=campaign] .toast{top:max(78px,env(safe-area-inset-top) + 66px);bottom:auto}
+.voice-audition{margin:14px 0;padding:12px 14px;border:1px solid #b59b6d55;border-radius:8px;background:rgba(255,250,240,.45)}
+.voice-audition-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;font-size:.86rem}
+.voice-audition-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}
+.voice-audition-list button{margin:0;min-height:40px;padding:7px 10px;font-size:.78rem;text-align:left}
+#voice-audition-status{margin:8px 0 0;font-size:.78rem;color:#526c60}
 @media(max-width:720px){.q01-route-guide{right:12px;top:83px;width:210px;padding:10px 12px}.q01-route-guide p{display:none}.q01-route-guide strong{font-size:14px}.q01-route-guide>div{margin-top:8px}.q01-presenter{bottom:16px;padding:15px 17px}.q01-spoken{font-size:17px}.q01-dialogue-actions{gap:6px}.q01-dialogue-actions button{padding:8px 10px}.q01-route-guide button{min-height:36px}.q01-dialogue-head em,.q01-pips{display:none}}

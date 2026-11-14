@@ -17,7 +17,7 @@
   const loaded=M.load();
   const Q01Campaign=globalThis.WitnessQ01Campaign;
   let q01Presenter=null;
-  let state=loaded.state,engine,controls,title=true,dialog=null,last=null,activePuzzle=null,toastTimer,subTimer,checkpointTime=0,walking=false,escortLive=false,storageWarning=false,currentTarget=null,audioOn=false,legendOrder=[],legendHint=0,attuneChosen=false;
+  let state=loaded.state,engine,controls,title=true,dialog=null,last=null,activePuzzle=null,toastTimer,subTimer,checkpointTime=0,walking=false,escortLive=false,storageWarning=false,currentTarget=null,audioOn=false,auditionPreviewed=false,legendOrder=[],legendHint=0,attuneChosen=false;
   const cloud=WitnessCloud.create({model:M,onStatus(info){
     const text=info.storageFailed?'Bộ nhớ máy đã đầy · hãy xuất bản lưu':info.message;
     setText('#save-status',text);setText('#cloud-title-status',text);
@@ -58,9 +58,13 @@
     onCaption(text){const el=$('#audio-caption');if(!el)return;el.textContent=text;el.hidden=false;clearTimeout(el._audioTimer);el._audioTimer=setTimeout(()=>{if(!audio.debug().voice||audio.debug().voice.status!=='playing')el.hidden=true;},6500);},
     onVoice(info){
       currentVoice=info;
+      const statusText=!info?'Có thể nghe lại':info.status==='loading'?'Đang mở bản thoại…':info.status==='playing'?(info.kind==='system'?'Giọng máy tiếng Việt · ':info.variant?'Đang nói ('+(info.voiceId||info.variant)+' · thử nghiệm) · ':info.voiceProfile==='elevenlabs'?'Đang nói (ElevenLabs gốc) · ':'Đang nói · ')+info.name:info.kind==='no-vietnamese'?'Máy chưa có giọng tiếng Việt':'Câu này chưa có bản thu';
       const label=dialog?.querySelector('[data-voice-status]');
-      if(label)label.textContent=!info?'Có thể nghe lại':info.status==='loading'?'Đang mở bản thoại…':info.status==='playing'?(info.kind==='system'?'Giọng máy tiếng Việt · ':'Đang nói · ')+info.name:info.kind==='no-vietnamese'?'Máy chưa có giọng tiếng Việt':'Câu này chưa có bản thu';
+      if(label)label.textContent=statusText;
+      const auditionStatus=dialog?.querySelector('#voice-audition-status');
+      if(auditionStatus)auditionStatus.textContent=!info?'Sẵn sàng nghe thử đối chiếu.':statusText;
       const stop=dialog?.querySelector('[data-act="audio-stop"]');if(stop)stop.disabled=!info||info.status==='unavailable';
+      const auditionStop=dialog?.querySelector('[data-act="voice-audition-stop"]');if(auditionStop)auditionStop.disabled=!info||info.status==='unavailable';
       if(!info){const el=$('#audio-caption');if(el)el.hidden=true;}
     }
   });
@@ -114,7 +118,7 @@
     save();applyView();
     toast(state.settings.cameraMode==='first'?'Góc nhìn thứ nhất · nhấn V để trở lại. Kéo hoặc bấm chuột để nhìn, WASD để đi.':'Góc nhìn thứ ba.');
   }
-  function close(){audio.stopVoice();audio.setMode(title?'title':'world');if(dialog){dialog.close();dialog.remove();dialog=null;}document.body.classList.remove('inspect-active');activePuzzle=null;if(engine){const held=!!q01Presenter?.blocking;engine.pause(title||held);controls?.enable(!title&&!held);}refreshField();}
+  function close(){audio.stopVoice();if(auditionPreviewed){auditionPreviewed=false;if(state)audio.configure(state.settings);}audio.setMode(title?'title':'world');if(dialog){dialog.close();dialog.remove();dialog=null;}document.body.classList.remove('inspect-active');activePuzzle=null;if(engine){const held=!!q01Presenter?.blocking;engine.pause(title||held);controls?.enable(!title&&!held);}refreshField();}
   function show(label,content,footer='',wide=false){
     audio.stopVoice();audio.setMode('dialogue');
     document.body.classList.remove('inspect-active');
@@ -928,9 +932,17 @@
   }
 
   function audioSettings(){
-    const s=WitnessAudio.settings(state.settings);
+    const s=WitnessAudio.settings(state.settings),profiles=WitnessAudio.voiceProfiles(),activeProfile=audio.getVoiceProfile();
     const sliders=[['masterVolume','Âm lượng chung'],['ambienceVolume','Môi trường'],['effectsVolume','Bước chân & vật liệu'],['voiceVolume','Giọng nhân vật'],['uiVolume','Thao tác giao diện']];
-    return `<fieldset class="audio-settings"><legend>Âm thanh & giọng nói</legend><label class="check"><input id="setting-sound" type="checkbox" ${s.sound?'checked':''}>Bật âm thanh</label><div class="audio-sliders">${sliders.map(([key,label])=>`<label class="audio-slider" for="audio-${key}"><span>${label}</span><input type="range" id="audio-${key}" min="0" max="100" step="1" value="${Math.round(s[key]*100)}"><output for="audio-${key}">${Math.round(s[key]*100)}%</output></label>`).join('')}</div><div class="field-row"><label class="field">Cách đọc thoại<select id="setting-voice-mode"><option value="recorded" ${s.voiceMode==='recorded'?'selected':''}>Giọng thu sẵn theo nhân vật</option><option value="system" ${s.voiceMode==='system'?'selected':''}>Thu sẵn + giọng máy tiếng Việt khi thiếu</option><option value="off" ${s.voiceMode==='off'?'selected':''}>Chỉ đọc phụ đề</option></select></label><label class="field">Khoảng âm lượng<select id="setting-audio-range"><option value="natural" ${s.audioRange==='natural'?'selected':''}>Tự nhiên</option><option value="night" ${s.audioRange==='night'?'selected':''}>Êm cho loa nhỏ / ban đêm</option></select></label></div><label class="check"><input id="setting-auto-voice" type="checkbox" ${s.autoVoice?'checked':''}>Tự đọc khi mở lời thoại</label><label class="check"><input id="setting-audio-spatial" type="checkbox" ${s.audioSpatial?'checked':''}>Âm thanh theo hướng và khoảng cách (nên dùng tai nghe)</label><label class="check"><input id="setting-audio-captions" type="checkbox" ${s.audioCaptions?'checked':''}>Hiện mô tả tiếng động và người đang nói</label><p class="credits">Giọng tạo bằng AI từ lời có sẵn trong game. Phần diễn ý Kinh Thánh dùng người dẫn chuyện. Bạn có thể dừng, nghe lại hoặc đi tiếp bất cứ lúc nào.</p></fieldset>`;
+    const samples=[
+      ['elevenlabs','natan','Con ngồi đi. Cha con hay để mái chèo ở phía ấy.','Natan · ElevenLabs gốc (Beat 07)'],
+      ['vieneu-a','natan','Con ngồi đi. Cha con hay để mái chèo ở phía ấy.','Natan · VieNeu A (Thiền Tâm Đức)'],
+      ['vieneu-b','natan','Con ngồi đi. Cha con hay để mái chèo ở phía ấy.','Natan · VieNeu B (Thiện Minh)'],
+      ['vieneu-a','titus','Simeon! Còn nghe tôi không?','Titus · VieNeu (Hải Đăng)'],
+      ['vieneu-a','yosef','Bạn vừa từ xưởng Natan sang phải không?','Yosef · VieNeu (Xuân Vĩnh)'],
+      ['vieneu-a','rina','Đêm nay vẫn có chỗ nằm ở xưởng. Lượt bếp sáng cần thêm phần dầu.','Rina · VieNeu (Ngọc Linh)']
+    ];
+    return `<fieldset class="audio-settings"><legend>Âm thanh & giọng nói</legend><label class="check"><input id="setting-sound" type="checkbox" ${s.sound?'checked':''}>Bật âm thanh</label><div class="audio-sliders">${sliders.map(([key,label])=>`<label class="audio-slider" for="audio-${key}"><span>${label}</span><input type="range" id="audio-${key}" min="0" max="100" step="1" value="${Math.round(s[key]*100)}"><output for="audio-${key}">${Math.round(s[key]*100)}%</output></label>`).join('')}</div><label class="field">Phương án giọng nhân vật (thử nghiệm · không đổi dữ liệu lưu)<select id="setting-voice-profile">${Object.entries(profiles).map(([key,item])=>`<option value="${esc(key)}" ${activeProfile===key?'selected':''}>${esc(item.label)}</option>`).join('')}</select></label><div class="field-row"><label class="field">Cách đọc thoại<select id="setting-voice-mode"><option value="recorded" ${s.voiceMode==='recorded'?'selected':''}>Giọng thu sẵn theo nhân vật</option><option value="system" ${s.voiceMode==='system'?'selected':''}>Thu sẵn + giọng máy tiếng Việt khi thiếu</option><option value="off" ${s.voiceMode==='off'?'selected':''}>Chỉ đọc phụ đề</option></select></label><label class="field">Khoảng âm lượng<select id="setting-audio-range"><option value="natural" ${s.audioRange==='natural'?'selected':''}>Tự nhiên</option><option value="night" ${s.audioRange==='night'?'selected':''}>Êm cho loa nhỏ / ban đêm</option></select></label></div><div class="voice-audition"><div class="voice-audition-head"><strong>Nghe thử đối chiếu Beat 07 &amp; Q01</strong><button type="button" class="text-link" data-act="voice-audition-stop" disabled>Dừng nghe thử</button></div><div class="voice-audition-list">${samples.map(([profileId,person,line,label])=>`<button type="button" data-act="voice-audition" data-profile="${esc(profileId)}" data-person="${esc(person)}" data-line="${esc(line)}">${esc(label)}</button>`).join('')}</div><p id="voice-audition-status" class="note">Sẵn sàng nghe thử đối chiếu.</p></div><label class="check"><input id="setting-auto-voice" type="checkbox" ${s.autoVoice?'checked':''}>Tự đọc khi mở lời thoại</label><label class="check"><input id="setting-audio-spatial" type="checkbox" ${s.audioSpatial?'checked':''}>Âm thanh theo hướng và khoảng cách (nên dùng tai nghe)</label><label class="check"><input id="setting-audio-captions" type="checkbox" ${s.audioCaptions?'checked':''}>Hiện mô tả tiếng động và người đang nói</label><p class="credits">Giọng tạo bằng AI từ lời có sẵn trong game: bản ElevenLabs gốc được giữ làm đối chiếu, còn mẫu VieNeu-TTS v3 Turbo (Apache-2.0, chế độ preset không clone) đang ở trạng thái chờ duyệt. Phần diễn ý Kinh Thánh dùng người dẫn chuyện. Bạn có thể dừng, nghe lại hoặc đi tiếp bất cứ lúc nào.</p></fieldset>`;
   }
 
   function pause(){
@@ -1095,6 +1107,15 @@
       }
       else if(act==='audio-repeat'){const v=button.closest('.voice-controls')._voice;audio.speak(v.person,v.text,{label:v.label});}
       else if(act==='audio-stop')audio.stopVoice();
+      else if(act==='voice-audition'){
+        const preview={...WitnessAudio.settings(state?.settings),sound:true};
+        for(const key of ['masterVolume','ambienceVolume','effectsVolume','voiceVolume','uiVolume']){const el=$('#audio-'+key);if(el)preview[key]=Number(el.value)/100;}
+        const vm=$('#setting-voice-mode')?.value;if(vm&&vm!=='off')preview.voiceMode=vm;else if(preview.voiceMode==='off')preview.voiceMode='recorded';
+        const cap=$('#setting-audio-captions');if(cap)preview.audioCaptions=cap.checked;
+        auditionPreviewed=true;audio.configure(preview);
+        audio.speak(person,button.dataset.line,{voiceProfile:button.dataset.profile,strictProfile:true});
+      }
+      else if(act==='voice-audition-stop')audio.stopVoice();
       else if(act==='person-talk'){FeedbackAudio.choice();showPersonDialog(person);}
       else if(act==='talk-topic'){
         const t=M.talkTopics(state,person).find(x=>x.id===topic);
@@ -1192,6 +1213,8 @@
         state.settings.sound=sound;
         for(const key of ['masterVolume','ambienceVolume','effectsVolume','voiceVolume','uiVolume'])state.settings[key]=Number($('#audio-'+key).value)/100;
         state.settings.voiceMode=$('#setting-voice-mode').value;state.settings.autoVoice=$('#setting-auto-voice').checked;state.settings.audioCaptions=$('#setting-audio-captions').checked;state.settings.audioSpatial=$('#setting-audio-spatial').checked;state.settings.audioRange=$('#setting-audio-range').value;
+        auditionPreviewed=false;
+        if($('#setting-voice-profile'))audio.setVoiceProfile($('#setting-voice-profile').value,true);
         audio.configure(state.settings);audio.unlock();save();close();refresh();
       }
       else if(act==='layer-intro')layerIntro(kind,id);

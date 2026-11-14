@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-11-14T19:30:19.195Z",
+  "reviewStatus": "generated-awaiting-human-audio-review",
+  "scope": "Automated Chromium Web Audio playback (HTTP server + offline standalone blocked-HTTP), subtitle visibility, repeat, skip/stop, volume control, fallback & asset hashes. Not human listening approval.",
+  "hardwareBackend": {
+    "engine": {
+      "sdkPackage": "vieneu",
+      "sdkVersion": "3.8.4",
+      "onnxruntimeVersion": "1.32.0",
+      "seaG2pVersion": "0.10.0",
+      "soundfileVersion": "0.14.0",
+      "backend": "onnx",
+      "precision": "fp32",
+      "sampleRate": 48000,
+      "loadSeconds": 20.388,
+      "hfModelRepo": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "hfCachedRevision": "61b85e3d937fbbacb387714180e8182823512523",
+      "codecCachedRevision": "ceff0d0749bfb3fa2d61149794ec6feef0d1e1ae"
+    },
+    "license": {
+      "spdx": "Apache-2.0",
+      "upstreamRepo": "https://github.com/pnnbao97/VieNeu-TTS",
+      "hfModelRepo": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "hfModelRevision": "61b85e3d937fbbacb387714180e8182823512523",
+      "codecRepo": "OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano-ONNX",
+      "codecRevision": "ceff0d0749bfb3fa2d61149794ec6feef0d1e1ae",
+      "allowVoiceCloning": false,
+      "note": "Only built-in curated preset voices shipped with VieNeu-TTS v3 Turbo under Apache-2.0 are permitted. Zero external voice cloning or cloning of ElevenLabs tracks."
+    },
+    "generatedClips": 28,
+    "comparisonReels": 2
+  },
+  "standaloneBundle": {
+    "file": "dist/ban-choi-ngoai-tuyen.html",
+    "bytes": 24468109,
+    "underCloudflare25MiBLimit": true,
+    "sha256": "fb70345f0f6f7d17d5d907089e1b3618fd50edadf9ea96583d6e425d292786a5",
+    "embeddedVieNeuRuntimeClips": 28,
+    "excludedComparisonReels": true
+  },
+  "webPlayback": {
+    "auditions": [
+      {
+        "profile": "vieneu-a",
+        "person": "natan",
+        "variant": "thien-tam-duc",
+        "voiceId": "Thiền Tâm Đức",
+        "captionText": "Natan: Con ngồi đi. Cha con hay để mái chèo ở phía ấy.",
+        "statusLabel": "Đang nói (Thiền Tâm Đức · thử nghiệm) · Natan",
+        "maxRms": 0.127247,
+        "maxPeak": 0.398124
+      },
+      {
+        "profile": "vieneu-b",
+        "person": "natan",
+        "variant": "thien-minh",
+        "voiceId": "Thiện Minh",
+        "captionText": "Natan: Con ngồi đi. Cha con hay để mái chèo ở phía ấy.",
+        "statusLabel": "Đang nói (Thiện Minh · thử nghiệm) · Natan",
+        "maxRms": 0.194374,
+        "maxPeak": 0.364134
+      },
+      {
+        "profile": "vieneu-a",
+        "person": "titus",
+        "variant": "hai-dang",
+        "voiceId": "Hải Đăng",
+        "captionText": "Titus: Simeon! Còn nghe tôi không?",
+        "statusLabel": "Đang nói (Hải Đăng · thử nghiệm) · Titus",
+        "maxRms": 0.219456,
+        "maxPeak": 0.466002
+      },
+      {
+        "profile": "vieneu-a",
+        "person": "yosef",
+        "variant": "xuan-vinh",
+        "voiceId": "Xuân Vĩnh",
+        "captionText": "Yosef: Bạn vừa từ xưởng Natan sang phải không?",
+        "statusLabel": "Đang nói (Xuân Vĩnh · thử nghiệm) · Yosef",
+        "maxRms": 0.17769,
+        "maxPeak": 0.476458
+      },
+      {
+        "profile": "vieneu-a",
+        "person": "rina",
+        "variant": "ngoc-linh",
+        "voiceId": "Ngọc Linh",
+        "captionText": "Rina: Đêm nay vẫn có chỗ nằm ở xưởng. Lượt bếp sáng cần thêm phần dầu.",
+        "statusLabel": "Đang nói (Ngọc Linh · thử nghiệm) · Rina",
+        "maxRms": 0.170521,
+        "maxPeak": 0.379288
+      },
+      {
+        "profile": "elevenlabs",
+        "person": "natan",
+        "variant": "elevenlabs-baseline",
+        "voiceId": "ElevenLabs",
+        "captionText": "Natan: Con ngồi đi. Cha con hay để mái chèo ở phía ấy.",
+        "statusLabel": "Đang nói (ElevenLabs gốc) · Natan",
+        "maxRms": 0.165411,
+        "maxPeak": 0.33451
+      }
+    ],
+    "repeatVerified": true,
+    "skipInterruptVerified": true,
+    "volumeScalingVerified": true,
+    "fallbackVerified": true,
+    "profilePersistenceReloadVerified": true,
+    "failedFiles": [],
+    "runtimeErrors": 0
+  },
+  "offlinePlayback": {
+    "auditions": [
+      {
+        "profile": "vieneu-a",
+        "person": "natan",
+        "variant": "thien-tam-duc",
+        "voiceId": "Thiền Tâm Đức",
+        "captionText": "Natan: Con ngồi đi. Cha con hay để mái chèo ở phía ấy.",
+        "statusLabel": "Đang nói (Thiền Tâm Đức · thử nghiệm) · Natan",
+        "maxRms": 0.106388,
+        "maxPeak": 0.282381
+      },
+      {
+        "profile": "vieneu-b",
+        "person": "natan",
+        "variant": "thien-minh",
+        "voiceId": "Thiện Minh",
+        "captionText": "Natan: Con ngồi đi. Cha con hay để mái chèo ở phía ấy.",
+        "statusLabel": "Đang nói (Thiện Minh · thử nghiệm) · Natan",
+        "maxRms": 0.186323,
+        "maxPeak": 0.414228
+      },
+      {
+        "profile": "vieneu-a",
+        "person": "titus",
+        "variant": "hai-dang",
+        "voiceId": "Hải Đăng",
+        "captionText": "Titus: Simeon! Còn nghe tôi không?",
+        "statusLabel": "Đang nói (Hải Đăng · thử nghiệm) · Titus",
+        "maxRms": 0.179334,
+        "maxPeak": 0.405452
+      },
+      {
+        "profile": "vieneu-a",
+        "person": "yosef",
+        "variant": "xuan-vinh",
+        "voiceId": "Xuân Vĩnh",
+        "captionText": "Yosef: Bạn vừa từ xưởng Natan sang phải không?",
+        "statusLabel": "Đang nói (Xuân Vĩnh · thử nghiệm) · Yosef",
+        "maxRms": 0.139905,
+        "maxPeak": 0.381179
+      },
+      {
+        "profile": "vieneu-a",
+        "person": "rina",
+        "variant": "ngoc-linh",
+        "voiceId": "Ngọc Linh",
+        "captionText": "Rina: Đêm nay vẫn có chỗ nằm ở xưởng. Lượt bếp sáng cần thêm phần dầu.",
+        "statusLabel": "Đang nói (Ngọc Linh · thử nghiệm) · Rina",
+        "maxRms": 0.148832,
+        "maxPeak": 0.27055
+      },
+      {
+        "profile": "elevenlabs",
+        "person": "natan",
+        "variant": "elevenlabs-baseline",
+        "voiceId": "ElevenLabs",
+        "captionText": "Natan: Con ngồi đi. Cha con hay để mái chèo ở phía ấy.",
+        "statusLabel": "Đang nói (ElevenLabs gốc) · Natan",
+        "maxRms": 0.189571,
+        "maxPeak": 0.387355
+      }
+    ],
+    "blockedHttp": true,
+    "failedFiles": [],
+    "runtimeErrors": 0
+  }
+}

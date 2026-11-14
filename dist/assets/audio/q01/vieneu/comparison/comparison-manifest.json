@@ -1,0 +1,131 @@
+{
+  "generatedAt": "2026-11-14T15:41:19.106Z",
+  "reviewStatus": "generated-awaiting-human-audio-review",
+  "reference": "assets/audio/q01/natan-night.mp3",
+  "natanReels": [
+    {
+      "id": "natan-beat07-thien-tam-duc",
+      "voiceId": "Thiền Tâm Đức",
+      "mp3File": "assets/audio/q01/vieneu/comparison/natan-beat07-thien-tam-duc.mp3",
+      "mp3Sha256": "666cb19f7e90a60a24dbb6324940495158924e69e96ed496219b6ab3e8dba8e2",
+      "mp3Bytes": 136992,
+      "wavFile": "outputs/agent-work/vieneu-comparison/natan-beat07-thien-tam-duc.wav",
+      "durationSeconds": 16.0506,
+      "qc": {
+        "samples": 770429,
+        "sampleRate": 48000,
+        "channels": 1,
+        "durationSeconds": 16.0506,
+        "peak": 0.798899,
+        "rms": 0.097539,
+        "dcOffset": 0.000031,
+        "clippingFraction": 0,
+        "activeRatio": 0.5611,
+        "peakDbfs": -1.95,
+        "rmsDbfs": -20.22,
+        "finite": true,
+        "passed": true,
+        "issues": []
+      },
+      "segments": [
+        {
+          "jobId": "natan/thien-tam-duc/q01.night.0",
+          "text": "Con ngồi đi. Cha con hay để mái chèo ở phía ấy.",
+          "start": 0,
+          "end": 3.626,
+          "durationSeconds": 3.626
+        },
+        {
+          "jobId": "natan/thien-tam-duc/q01.night.3",
+          "text": "Mấy hôm nay chú cứ quay sang hỏi ông ấy một câu. Hỏi xong mới nhớ ra.",
+          "start": 4.286,
+          "end": 9.363,
+          "durationSeconds": 5.076
+        },
+        {
+          "jobId": "natan/thien-tam-duc/q01.night.6",
+          "text": "Chú cũng chưa quen.",
+          "start": 10.163,
+          "end": 11.385,
+          "durationSeconds": 1.223
+        },
+        {
+          "jobId": "natan/thien-tam-duc/q01.night.8",
+          "text": "Nếu con muốn nói, chú nghe.",
+          "start": 11.615,
+          "end": 13.41,
+          "durationSeconds": 1.795
+        },
+        {
+          "jobId": "natan/thien-tam-duc/q01.night.10",
+          "text": "Đèn còn dầu. Con cứ ngồi.",
+          "start": 13.92,
+          "end": 16.051,
+          "durationSeconds": 2.131
+        }
+      ]
+    },
+    {
+      "id": "natan-beat07-thien-minh",
+      "voiceId": "Thiện Minh",
+      "mp3File": "assets/audio/q01/vieneu/comparison/natan-beat07-thien-minh.mp3",
+      "mp3Sha256": "eb2a1371e21353733ccf38aa002b261b82c4900d327c3c4d54b89060917f117c",
+      "mp3Bytes": 132528,
+      "wavFile": "outputs/agent-work/vieneu-comparison/natan-beat07-thien-minh.wav",
+      "durationSeconds": 12.643,
+      "qc": {
+        "samples": 606864,
+        "sampleRate": 48000,
+        "channels": 1,
+        "durationSeconds": 12.643,
+        "peak": 0.688257,
+        "rms": 0.095377,
+        "dcOffset": 0.000008,
+        "clippingFraction": 0,
+        "activeRatio": 0.5988,
+        "peakDbfs": -3.24,
+        "rmsDbfs": -20.41,
+        "finite": true,
+        "passed": true,
+        "issues": []
+      },
+      "segments": [
+        {
+          "jobId": "natan/thien-minh/q01.night.0",
+          "text": "Con ngồi đi. Cha con hay để mái chèo ở phía ấy.",
+          "start": 0,
+          "end": 2.644,
+          "durationSeconds": 2.644
+        },
+        {
+          "jobId": "natan/thien-minh/q01.night.3",
+          "text": "Mấy hôm nay chú cứ quay sang hỏi ông ấy một câu. Hỏi xong mới nhớ ra.",
+          "start": 3.304,
+          "end": 7.003,
+          "durationSeconds": 3.7
+        },
+        {
+          "jobId": "natan/thien-minh/q01.night.6",
+          "text": "Chú cũng chưa quen.",
+          "start": 7.803,
+          "end": 8.897,
+          "durationSeconds": 1.094
+        },
+        {
+          "jobId": "natan/thien-minh/q01.night.8",
+          "text": "Nếu con muốn nói, chú nghe.",
+          "start": 9.127,
+          "end": 10.601,
+          "durationSeconds": 1.474
+        },
+        {
+          "jobId": "natan/thien-minh/q01.night.10",
+          "text": "Đèn còn dầu. Con cứ ngồi.",
+          "start": 11.111,
+          "end": 12.643,
+          "durationSeconds": 1.532
+        }
+      ]
+    }
+  ]
+}

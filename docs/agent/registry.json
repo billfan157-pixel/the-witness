@@ -632,6 +632,36 @@
       "path": "docs/environment-kit/validation/q01-pr05/verification.json",
       "owner": "environment-qa",
       "reason": "PR-05 candidate-bound new-character campaign acceptance, offline/audio playback and compatibility evidence, with explicit incomplete voice/art/release scope"
+    },
+    {
+      "path": "tools/vieneu-cast.json",
+      "owner": "q01-audio",
+      "reason": "VieNeu-TTS v3 Turbo preset voice cast, pronunciation lexicon, CPU ONNX QC thresholds, Apache-2.0 metadata and comparison profile map (non-cloning)"
+    },
+    {
+      "path": "tools/vieneu-tts-worker.py",
+      "owner": "q01-audio",
+      "reason": "Local isolated CPU ONNX Runtime fp32 synthesis and PCM QC/MP3 encoding worker for VieNeu-TTS v3 Turbo preset voices"
+    },
+    {
+      "path": "tools/vieneu-tts.cjs",
+      "owner": "q01-audio",
+      "reason": "Reusable dialogue extraction, incremental hash-based regeneration, integrity verification and WitnessAudioLibrary compiler"
+    },
+    {
+      "path": "test/vieneu-pipeline.cjs",
+      "owner": "audio-qa",
+      "reason": "Unit checks for VieNeu script extraction, pronunciation lexicon, incremental hash change detection, non-cloning license metadata and WitnessAudio profile selection/fallback"
+    },
+    {
+      "path": "test/q01-vieneu-browser.mjs",
+      "owner": "audio-qa",
+      "reason": "Real Chromium Web Audio verification of VieNeu audition and gameplay voices across live HTTP and blocked-HTTP standalone HTML builds"
+    },
+    {
+      "path": "docs/environment-kit/validation/vieneu-tts-proof.json",
+      "owner": "audio-qa",
+      "reason": "Candidate-bound Chromium Web Audio, PCM QC, bundle size and hash proof for experimental VieNeu-TTS v3 Turbo voices; reviewStatus stays generated-awaiting-human-audio-review"
     }
   ],
   "requiredFiles": [

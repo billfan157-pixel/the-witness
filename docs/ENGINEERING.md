@@ -18,7 +18,7 @@ nhật thứ tự nạp, builder, standalone và consumer.
 | Q01 PR-05 campaign | `witness-q01-campaign.js` nối chín Beat, thoại và choreography vào campaign; `witness-q01-interaction.js` giữ tiền đề vị trí/người tại model; `witness-q01-art.js` dựng hình ảnh trên cùng blueprint PR-04 |
 | Engine đọc được | `tools/environment-kit/engine-runtime.js`; build-engine ghép vào vendor/adventure-3d, giữ core pin hash |
 | Renderer/nhân vật | các module trong vendor; phần tùy biến ở đó vẫn là nguồn, không tự thay toàn thư mục |
-| Âm thanh/dẫn hướng | witness-audio, audio-library, ambience, compass; ghi nguồn/giấy phép của media thật |
+| Âm thanh/dẫn hướng | witness-audio, audio-library, ambience, compass; `tools/vieneu-tts.cjs` + `tools/vieneu-cast.json` + `tools/vieneu-tts-worker.py` (local `local/vieneu-venv`); ghi nguồn/giấy phép của media thật |
 | Kit | tools/environment-kit/runtime.mjs và bundle-loader; scope/lease quản ownership |
 
 Tên witness rút gọn trong bảng là file JS ở gốc; tên vendor nằm trong `vendor/`.
@@ -76,6 +76,7 @@ Không dùng asset/reference [H] như bản đo khảo cổ.
 
 | Producer | Đầu ra |
 | --- | --- |
+| tools/vieneu-tts.cjs (`--changed-only` / `--check` / `--sync`) | `assets/audio/q01/vieneu/**`, `assets/audio/q01/vieneu-sources.json` và phần `experimentalVoices`/`voiceProfiles` trong `witness-audio-library.js`; giữ nguyên bản ElevenLabs gốc |
 | build-engine | Phần runtime trong vendor/adventure-3d.js |
 | bake-q01-gi (`--check` chỉ kiểm) | vendor/witness-q01-gi-data.js và metadata GI |
 | build:kit và material builders | GLB/manifests/loader/reference board; đọc phạm vi ghi trước khi chạy |
